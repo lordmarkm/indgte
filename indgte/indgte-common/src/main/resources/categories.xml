@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="categories" class="java.util.HashMap">
+		<constructor-arg index="0">
+			<map>
+				<entry key="Services">
+					<list>
+						<value>Plumbing</value>
+						<value>Salad tossing</value>
+					</list>
+				</entry>
+				<entry key="Illegal">
+					<list>
+						<value>Prostitution</value>
+						<value>Free thought coaching</value>
+					</list>
+				</entry>
+				<entry key="Products">
+					<list>
+						<value>Guns - Automatic</value>
+						<value>Guns - Semiautomatic</value>
+						<value>Guns - Sidearms</value>
+						<value>Weed</value>
+						<value>Abortificients</value>
+					</list>
+				</entry>
+				<entry key="Religion">
+					<list>
+						<value>Child molestation tutorial</value>
+						<value>Brainwashing</value>
+						<value>Ignoring Logic</value>
+						<value>Being an ass</value>
+						<value>Tomfoolery</value>
+						<value>All out war</value>
+						<value>Jihad</value>
+						<value>Disguising Jihad</value>
+						<value>Our Jewish Brothers</value>
+						<value>The Klan</value>
+						<value>Stopping Gay Marriage</value>
+					</list>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+</beans>
