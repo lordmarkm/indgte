@@ -8,15 +8,15 @@ import com.baldwin.indgte.pers‪istence.dao.BusinessDao;
 
 @Service
 public class BusinessService {
-	@Autowired BusinessDao bizDao;
+	@Autowired BusinessDao dao;
 	
-	public BusinessProfile get(String bizName) {
-		return bizDao.get(bizName);
+	public BusinessProfile get(String name) {
+		return dao.get(name);
 	}
 	public void save(BusinessProfile bizProfile) {
-		bizDao.save(bizProfile);
+		dao.save(bizProfile);
 	}
 	public void delete(BusinessProfile bizProfile) {
-		bizDao.delete(bizProfile);
+		dao.delete(bizProfile);
 	}
 }

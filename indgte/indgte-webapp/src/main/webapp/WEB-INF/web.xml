@@ -33,6 +33,8 @@
 		<param-value>
 				classpath:servlet-context.xml
 				classpath:security-context.xml
+				classpath:persistence-context.xml
+				classpath:common-context.xml
 		</param-value>
 	</context-param>
 	<listener>

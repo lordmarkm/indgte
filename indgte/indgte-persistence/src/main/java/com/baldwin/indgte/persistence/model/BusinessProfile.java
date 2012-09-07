@@ -1,50 +1,43 @@
 package com.baldwin.indgte.persistence.model;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="INDGTE_PROFILE_BUSINESS")
 public class BusinessProfile {
-	@Id @GeneratedValue @Column(name="BUSINESS_ID")
+	@Id @GeneratedValue @Column(name="business_id")
 	private long id;
 	
-	@Column(name="DOMAIN", nullable=false, unique=true)
+	@Column(nullable=false, unique=true)
 	private String domain;
 	
-	@Column(name="LONG_NAME")
+	@Column
 	private String fullName;
 	
 	@Column
-	private String street;
+	private String address;
+	
+	@Column 
+	private String email;
 	
 	@Column
-	private String city;
+	private String landline;
 	
-	@ManyToMany(cascade={CascadeType.PERSIST})
-	@JoinTable(name="USER_BUSINESS_MAPPING", 
-		joinColumns={@JoinColumn(name="BUSINESS_ID")},
-		inverseJoinColumns={@JoinColumn(name="USER_ID")})
-	private List<User> admins;
+	@Column
+	private String cellphone;
 	
-	@OneToMany(cascade=CascadeType.ALL)
-	private List<Page> pages;
-
+	@Column
+	private String creator;
+	
 	@Override
 	public String toString() {
 		return domain + ":" + fullName;
 	}
-	
+
 	public long getId() {
 		return id;
 	}
@@ -69,35 +62,43 @@ public class BusinessProfile {
 		this.fullName = fullName;
 	}
 
-	public String getStreet() {
-		return street;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setStreet(String street) {
-		this.street = street;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
-	public String getCity() {
-		return city;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setCity(String city) {
-		this.city = city;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
-	public List<User> getAdmins() {
-		return admins;
+	public String getLandline() {
+		return landline;
 	}
 
-	public void setAdmins(List<User> admins) {
-		this.admins = admins;
+	public void setLandline(String landline) {
+		this.landline = landline;
 	}
 
-	public List<Page> getPages() {
-		return pages;
+	public String getCellphone() {
+		return cellphone;
 	}
 
-	public void setPages(List<Page> pages) {
-		this.pages = pages;
+	public void setCellphone(String cellphone) {
+		this.cellphone = cellphone;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
 	}
 }
