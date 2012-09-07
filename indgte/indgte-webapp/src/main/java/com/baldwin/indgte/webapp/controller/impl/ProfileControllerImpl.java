@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
-import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.ProfileController;
 
 @Component
@@ -21,27 +19,16 @@ public class ProfileControllerImpl implements ProfileController {
 	static Logger log = LoggerFactory.getLogger(ProfileControllerImpl.class);
 	
 	@Autowired
-	private BusinessService bizService;
-	
-	@Autowired
-	private UserService userService;
+	private BusinessService businessService;
 	
 	@Override
 	public ModelAndView profile(@PathVariable String domain) {
 		log.debug("Profile requested for {}", domain);
 		
-		BusinessProfile profile = bizService.get(domain);
-		String facebookId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		User user = userService.getUser(facebookId);
-		
-		boolean admin = false;
-		if(profile.isAdmin(user)) {
-			admin = true;
-		}
+		BusinessProfile profile = businessService.get(domain);
 		
 		return render("profile")
 				.addObject("profile", profile)
-				.addObject("admin", admin)
 				.mav();
 	}
 }

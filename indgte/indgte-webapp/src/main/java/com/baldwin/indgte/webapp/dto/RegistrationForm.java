@@ -1,10 +1,6 @@
 package com.baldwin.indgte.webapp.dto;
 
-import java.util.List;
-
 import com.baldwin.indgte.persistence.model.BusinessProfile;
-import com.baldwin.indgte.persistence.model.Page;
-import com.baldwin.indgte.persistence.model.User;
 
 public class RegistrationForm {
 	private BusinessProfile businessProfile;
@@ -29,10 +25,6 @@ public class RegistrationForm {
 		return businessProfile.toString();
 	}
 
-	public void addAdmin(User user) {
-		businessProfile.addAdmin(user);
-	}
-
 	public long getId() {
 		return businessProfile.getId();
 	}
@@ -55,46 +47,6 @@ public class RegistrationForm {
 
 	public void setFullName(String fullName) {
 		businessProfile.setFullName(fullName);
-	}
-
-	public String getStreet() {
-		return businessProfile.getStreet();
-	}
-
-	public void setStreet(String street) {
-		businessProfile.setStreet(street);
-	}
-
-	public String getCity() {
-		return businessProfile.getCity();
-	}
-
-	public void setCity(String city) {
-		businessProfile.setCity(city);
-	}
-
-	public List<User> getAdmins() {
-		return businessProfile.getAdmins();
-	}
-
-	public void setAdmins(List<User> admins) {
-		businessProfile.setAdmins(admins);
-	}
-
-	public List<Page> getPages() {
-		return businessProfile.getPages();
-	}
-
-	public void setPages(List<Page> pages) {
-		businessProfile.setPages(pages);
-	}
-
-	public String getCategory() {
-		return businessProfile.getCategory();
-	}
-
-	public void setCategory(String category) {
-		businessProfile.setCategory(category);
 	}
 
 	public String getEmail() {

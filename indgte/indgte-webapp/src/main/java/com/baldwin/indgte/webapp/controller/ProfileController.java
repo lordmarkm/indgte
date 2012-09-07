@@ -6,8 +6,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller @RequestMapping("/profile/")
 public interface ProfileController {
-	final String OWNPROFILE = "/";
-	
 	@RequestMapping("/{domain}")
 	ModelAndView profile(String domain);
 }
