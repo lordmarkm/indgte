@@ -33,6 +33,7 @@
 		<property name="annotatedClasses">
 			<list>
 				<value>com.baldwin.indgte.persistence.model.BusinessProfile</value>
+				<value>com.baldwin.indgte.persistence.model.User</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

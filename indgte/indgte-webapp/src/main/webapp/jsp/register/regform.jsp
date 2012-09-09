@@ -1,7 +1,10 @@
-<%@ include file="/jsp/tags.jsp" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<spring:url value="/register/save/" var="urlSubmit" />
-<form:form method="post" commandName="regForm" action="${urlSubmit }">
+<spring:url value="/r/save/1/" var="urlSubmit" />
+
+<form:form method="post" commandName="regform" action="${urlSubmit }">
 <ul>
 	<li>
 		<form:label path="domain">Domain:</form:label>
@@ -14,18 +17,13 @@
 	</li>
 	
 	<li>
-		<form:label path="category">Category:</form:label>
-		<form:select path="category" items="${categories }" />
+		<form:label path="description">Description</form:label>
+		<form:input path="description" />s
 	</li>
 	
 	<li>
-		<form:label path="street">Street:</form:label>
-		<form:input path="street" />
-	</li>
-	
-	<li>
-		<form:label path="city">City:</form:label>
-		<form:input path="city" />
+		<form:label path="address">Address:</form:label>
+		<form:input path="address" />
 	</li>
 	
 	<li>

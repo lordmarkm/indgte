@@ -11,7 +11,7 @@ public class MavBuilder {
 	}
 	
 	public static MavBuilder redirect(String view) {
-		return new MavBuilder(new RedirectView(view));
+		return new MavBuilder(new RedirectView(view, true));
 	}
 	
 	public MavBuilder(String view) {

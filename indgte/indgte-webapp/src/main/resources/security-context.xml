@@ -9,6 +9,9 @@
 		<custom-filter position="FORM_LOGIN_FILTER" ref="springSocialSecurityAuthenticationFilter" />
 		<anonymous />
 		<logout logout-success-url="/login.jsp?loggedout=true"/>
+		
+		<intercept-url pattern="/r/**" access="hasRole('ROLE_USER')"/>
+		<intercept-url pattern="/p/**" access="hasRole('ROLE_USER')"/>
 	</http>
 	
 	<authentication-manager alias="authenticationManager" />

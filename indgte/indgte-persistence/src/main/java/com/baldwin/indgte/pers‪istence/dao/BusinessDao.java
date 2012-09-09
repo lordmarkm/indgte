@@ -4,6 +4,7 @@ import com.baldwin.indgte.persistence.model.BusinessProfile;
 
 public interface BusinessDao {
 	BusinessProfile get(String bizName);
-	void save(BusinessProfile bizProfile);
+	void create(BusinessProfile bizProfile, String owner);
+	void update(BusinessProfile bizProfile);
 	void delete(BusinessProfile bizProfile);
 }

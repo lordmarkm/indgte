@@ -13,8 +13,11 @@ public class BusinessService {
 	public BusinessProfile get(String name) {
 		return dao.get(name);
 	}
-	public void save(BusinessProfile bizProfile) {
-		dao.save(bizProfile);
+	public void save(BusinessProfile bizProfile, String owner) {
+		dao.create(bizProfile, owner);
+	}
+	public void update(BusinessProfile business) {
+		dao.update(business);
 	}
 	public void delete(BusinessProfile bizProfile) {
 		dao.delete(bizProfile);

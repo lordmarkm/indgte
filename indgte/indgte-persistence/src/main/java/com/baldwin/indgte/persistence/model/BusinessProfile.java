@@ -2,8 +2,11 @@ package com.baldwin.indgte.persistence.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -19,6 +22,9 @@ public class BusinessProfile {
 	private String fullName;
 	
 	@Column
+	private String description;
+	
+	@Column
 	private String address;
 	
 	@Column 
@@ -30,8 +36,19 @@ public class BusinessProfile {
 	@Column
 	private String cellphone;
 	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(
+		name="owner_id", 
+		referencedColumnName="connection_id", 
+		nullable=false
+	)
+	private User owner;
+	
 	@Column
-	private String creator;
+	private Double latitude;
+	
+	@Column
+	private Double longitude;
 	
 	@Override
 	public String toString() {
@@ -94,11 +111,35 @@ public class BusinessProfile {
 		this.cellphone = cellphone;
 	}
 
-	public String getCreator() {
-		return creator;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setCreator(String creator) {
-		this.creator = creator;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
 	}
 }

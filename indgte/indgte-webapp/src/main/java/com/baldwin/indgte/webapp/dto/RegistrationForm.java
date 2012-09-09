@@ -1,6 +1,7 @@
 package com.baldwin.indgte.webapp.dto;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.User;
 
 public class RegistrationForm {
 	private BusinessProfile businessProfile;
@@ -49,6 +50,14 @@ public class RegistrationForm {
 		businessProfile.setFullName(fullName);
 	}
 
+	public String getAddress() {
+		return businessProfile.getAddress();
+	}
+
+	public void setAddress(String address) {
+		businessProfile.setAddress(address);
+	}
+
 	public String getEmail() {
 		return businessProfile.getEmail();
 	}
@@ -73,7 +82,37 @@ public class RegistrationForm {
 		businessProfile.setCellphone(cellphone);
 	}
 
-	public boolean equals(Object obj) {
-		return businessProfile.equals(obj);
+	public String getDescription() {
+		return businessProfile.getDescription();
 	}
+
+	public void setDescription(String description) {
+		businessProfile.setDescription(description);
+	}
+
+	public User getOwner() {
+		return businessProfile.getOwner();
+	}
+
+	public void setOwner(User owner) {
+		businessProfile.setOwner(owner);
+	}
+
+	public Double getLatitude() {
+		return businessProfile.getLatitude();
+	}
+
+	public void setLatitude(Double latitude) {
+		businessProfile.setLatitude(latitude);
+	}
+
+	public Double getLongitude() {
+		return businessProfile.getLongitude();
+	}
+
+	public void setLongitude(Double longitude) {
+		businessProfile.setLongitude(longitude);
+	}
+
+	
 }

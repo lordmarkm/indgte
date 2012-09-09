@@ -35,6 +35,7 @@
 				classpath:security-context.xml
 				classpath:persistence-context.xml
 				classpath:common-context.xml
+				classpath:social-context.xml
 		</param-value>
 	</context-param>
 	<listener>
