@@ -1,9 +1,14 @@
-<div class="fb-info" class="hide">
-	<img class="fb-img" />
-	<span class="fb-name"></span>
-</div>
-<div class="fb-login-button">Login with Facebook</div>
-<div id="fb-root"></div>
+<section id="navbar" class="grid_12" style="height: 100px;">
+	<h3>This part is all javascript:</h3>
+	
+	<div class="fb-info" class="hide">
+		<img class="fb-img" />
+		<span class="fb-name"></span>
+	</div>
+	<div class="fb-login-button">Login with Facebook</div>
+	<div id="fb-root"></div>
+</section>
+
 <script>
 window.facebook = {
 	statusChange : function(statusChangeResponse) {
@@ -11,7 +16,6 @@ window.facebook = {
 			$('.fb-login-button').hide();
 			FB.api('/me', function(user){
 				if(user) {
-					facebook.authenticate(user.name, statusChangeResponse.authResponse.userID);
 					$('.fb-info').show()
 						.find('.fb-img').attr('src', 'https://graph.facebook.com/' + user.id + '/picture?type=square').css('width', '25px').end()
 						.find('.fb-name').text(user.name);
@@ -20,10 +24,6 @@ window.facebook = {
 		} else {
 			$('.fb-login-button').show();
 		}
-	},
-	
-	authenticate : function(username, userID) {
-		$.post('${authurl}', {'username':username, 'userID':userID});
 	}
 }
 

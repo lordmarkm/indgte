@@ -3,6 +3,8 @@ package com.baldwin.indgte.pers‪istence.dao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,8 @@ import com.baldwin.indgte.persistence.model.User;
 @Transactional
 public class BusinessDaoImpl implements BusinessDao {
 
+	static Logger log = LoggerFactory.getLogger(BusinessDao.class);
+	
 	private final static String BUSINESS_DOMAIN = "domain";
 	
 	private final static String USER_USERNAME = "username";
@@ -39,8 +43,13 @@ public class BusinessDaoImpl implements BusinessDao {
 				.add(Restrictions.like(USER_USERNAME, ownerName))
 				.add(Restrictions.like(USER_PROVIDERID, USER_PROVIDERID_SPRINGSOCSEC))
 				.uniqueResult();
+		
+		log.info("Creating business {} for owner {}", profile.getDomain(), owner.getDisplayName());
+		
 		owner.getBusinesses().add(profile);
 		profile.setOwner(owner);
+		
+		session.update(owner);
 		session.save(profile);
 	}
 

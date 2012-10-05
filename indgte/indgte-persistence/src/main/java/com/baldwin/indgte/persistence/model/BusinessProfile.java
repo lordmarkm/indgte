@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="INDGTE_PROFILE_BUSINESS")
+@Table(name="businesses")
 public class BusinessProfile {
 	@Id @GeneratedValue @Column(name="business_id")
 	private long id;

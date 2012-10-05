@@ -22,7 +22,7 @@ public class MavBuilder {
 		mav = new ModelAndView(redirectView);
 	}
 	
-	public MavBuilder addObject(String name, Object object) {
+	public MavBuilder put(String name, Object object) {
 		mav.addObject(name, object);
 		return this;
 	}

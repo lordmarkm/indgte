@@ -21,7 +21,7 @@
 	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
 		<property name="definitions">
 			<list>
-				<value>/jsp/tiles/*.xml</value>
+				<value>/jsp/tiles/tiles-default.xml</value>
 			</list>
 		</property>
 	</bean>

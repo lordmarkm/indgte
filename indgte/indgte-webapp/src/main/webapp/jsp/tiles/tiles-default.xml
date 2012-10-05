@@ -4,8 +4,12 @@
        "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
 <tiles-definitions>
 	<definition name="default" template="/jsp/tiles/default.jsp">
-		<put-attribute name="header" value="/jsp/header.jsp" />
-		<put-attribute name="navbar" value="/jsp/navbar.jsp" />
+		<put-attribute name="header" value="/jsp/tiles/header.jsp" />
+		<put-attribute name="navbar" value="/jsp/tiles/navbar.jsp" />
 		<put-attribute name="body" value="" />
+	</definition>
+	
+	<definition name="ownprofile" extends="default">
+		<put-attribute name="body" value="/jsp/profile/ownprofile.jsp" />
 	</definition>
 </tiles-definitions>

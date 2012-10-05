@@ -37,7 +37,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 		model.put("regform", regform);
 		
 		return render("register/regform")
-				.addObject("regForm", regform)
+				.put("regForm", regform)
 				.mav();
 	}
 
@@ -47,7 +47,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 		businessService.save(regform.getBusinessProfile(), principal.getName());
 		
 		return render("register/pinpointlocation")
-				.addObject("regform", regform)
+				.put("regform", regform)
 				.mav();
 	}
 	

@@ -2,6 +2,8 @@ package com.baldwin.indgte.webapp.controller;
 
 import java.security.Principal;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.social.facebook.api.Facebook;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,17 +18,16 @@ import org.springframework.web.servlet.ModelAndView;
  * @author mbmartinez
  */
 
-@Controller 
+@Controller
 @RequestMapping("/p/")
 public interface ProfileController {
 	
 	@RequestMapping("/")
-	public ModelAndView profile();
+	ModelAndView profile(Principal user);
 	
 	@RequestMapping("/user/{displayName}")
 	public ModelAndView userProfile(String displayName);
 	
 	@RequestMapping("/{domain}")
 	public ModelAndView businessProfile(Principal principal, String domain);
-	
 }
