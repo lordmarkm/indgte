@@ -1,5 +1,5 @@
 <section id="navbar" class="grid_12" style="height: 100px;">
-	<h3>This part is all javascript:</h3>
+	<h3>This profile description is all javascript:</h3>
 	
 	<div class="fb-info" class="hide">
 		<img class="fb-img" />

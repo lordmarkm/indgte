@@ -1,5 +1,6 @@
 package com.baldwin.indgte.persistence.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -11,7 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="userconnection")
+@Table(name="UserConnection")
 public class User {
 	@Id 
 	@GeneratedValue 
@@ -158,6 +159,9 @@ public class User {
 	}
 
 	public Set<BusinessProfile> getBusinesses() {
+		if(null == businesses) {
+			businesses = new HashSet<BusinessProfile>();
+		}
 		return businesses;
 	}
 

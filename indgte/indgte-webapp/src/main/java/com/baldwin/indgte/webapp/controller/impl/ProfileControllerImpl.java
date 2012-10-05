@@ -24,8 +24,6 @@ import com.baldwin.indgte.webapp.controller.ProfileController;
 public class ProfileControllerImpl implements ProfileController {
 	static Logger log = LoggerFactory.getLogger(ProfileControllerImpl.class);
 	
-	private static String defaultProviderId = "facebook";
-	
 	@Autowired
 	private BusinessService businessService;
 	
@@ -39,7 +37,7 @@ public class ProfileControllerImpl implements ProfileController {
 	public ModelAndView profile(Principal principal) {
 		log.debug("Profile page requested by {}", principal);
 		
-		User user = userService.getByUsername(principal.getName(), defaultProviderId);
+		User user = userService.getFacebook(principal.getName());
 		
 		return render("ownprofile")
 				.put("user", user)

@@ -3,7 +3,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <section class="grid_12">
-	<h3>This part uses no javascript:</h3>
-	<p>User: ${user}
-	<p><img src="${user.imageUrl }" /> ${user.displayName }
+	<h3>This profile description doesn't use FB.js:</h3>
+	<p><img src="${user.imageUrl }" /> ${user.username }
 </section>

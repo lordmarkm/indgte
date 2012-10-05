@@ -5,7 +5,7 @@
 <tiles-definitions>
 	<definition name="default" template="/jsp/tiles/default.jsp">
 		<put-attribute name="header" value="/jsp/tiles/header.jsp" />
-		<put-attribute name="navbar" value="/jsp/tiles/navbar.jsp" />
+		<put-attribute name="navbar" value="/jsp/tiles/navbar_nofbjs.jsp" />
 		<put-attribute name="body" value="" />
 	</definition>
 	
