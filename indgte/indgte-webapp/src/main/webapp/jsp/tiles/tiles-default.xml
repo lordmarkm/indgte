@@ -12,4 +12,8 @@
 	<definition name="ownprofile" extends="default">
 		<put-attribute name="body" value="/jsp/profile/ownprofile.jsp" />
 	</definition>
+	
+	<definition name="help" extends="default">
+		<put-attribute name="body" value="/jsp/help/help.jsp" />
+	</definition>
 </tiles-definitions>
