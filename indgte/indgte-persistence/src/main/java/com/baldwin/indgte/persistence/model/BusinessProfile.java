@@ -18,7 +18,7 @@ public class BusinessProfile {
 	@Column(nullable=false, unique=true)
 	private String domain;
 	
-	@Column
+	@Column(nullable=false)
 	private String fullName;
 	
 	@Column

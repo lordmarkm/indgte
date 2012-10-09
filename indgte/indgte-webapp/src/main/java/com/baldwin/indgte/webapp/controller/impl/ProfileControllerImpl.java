@@ -1,17 +1,20 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
+import static com.baldwin.indgte.webapp.controller.MavBuilder.isAjax;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
+import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.social.connect.Connection;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.social.connect.ConnectionRepository;
-import org.springframework.social.facebook.api.Facebook;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
@@ -33,35 +36,76 @@ public class ProfileControllerImpl implements ProfileController {
 	@Autowired
 	private ConnectionRepository conns;
 	
+	@Value("${imgur.devkey}")
+	private String imgurKey;
+	
 	@Override
-	public ModelAndView profile(Principal principal) {
+	public ModelAndView profile(Principal principal, WebRequest request) {
 		log.debug("Profile page requested by {}", principal);
 		
 		User user = userService.getFacebook(principal.getName());
+		String loadhere = request.getParameter("loadhere");
 		
-		return render("ownprofile")
-				.put("user", user)
-				.mav();
+		ModelAndView mav = new ModelAndView()
+							.addObject("user", user)
+							.addObject("authorities", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+		
+		if(loadhere != null && Boolean.parseBoolean(loadhere)) {
+			mav.setViewName("profile/ownprofile");
+		} else {
+			mav.setViewName("ownprofile");
+		}
+		
+		return mav;
 	}
 	
 	@Override
-	public ModelAndView userProfile(@PathVariable String displayName) {
+	public ModelAndView myBusinesses(Principal principal, WebRequest request) {
+		log.debug("Profile page requested by {}", principal);
+		
+		User fbUser = userService.getFacebook(principal.getName());
+		Collection<BusinessProfile> businesses = businessService.getBusinesses(principal.getName());
+		
+		String loadhere = request.getParameter("loadhere");
+		
+		ModelAndView mav = new ModelAndView()
+							.addObject("user", fbUser)
+							.addObject("businesses", businesses);
+		
+		if(loadhere != null && Boolean.parseBoolean(loadhere)) {
+			mav.setViewName("profile/businesses");
+		} else {
+			mav.setViewName("businesses");
+		}
+		
+		return mav;
+	}
+	
+	@Override
+	public ModelAndView userProfile(@PathVariable String userId) {
 		//TODO
 		return null;
 	}
 	
 	@Override
-	public ModelAndView businessProfile(Principal principal, @PathVariable String domain) {
+	public ModelAndView businessProfile(Principal principal, WebRequest request, @PathVariable String domain) {
 		log.debug("Profile requested for {}", domain);
+
+		User user = userService.getFacebook(principal.getName());
+		BusinessProfile business = businessService.get(domain);
 		
-		Connection<Facebook> conn = conns.findPrimaryConnection(Facebook.class);
-		
-		log.debug("Display name {}", conn.getDisplayName());
-		
-		BusinessProfile profile = businessService.get(domain);
-		
-		return render("profile/profile")
-				.put("business", profile)
+		ModelAndView mav = render(user)
+				.put("business", business)
+				.put("owner", business.getOwner().getUsername().equals(user.getUsername()))
+				.put("imgurKey", imgurKey)
 				.mav();
+		
+		if(isAjax(request)) {
+			mav.setViewName("profile/businessprofile");
+		} else {
+			mav.setViewName("businessprofile");
+		}
+		
+		return mav;
 	}
 }

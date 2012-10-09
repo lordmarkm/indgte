@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.webapp.dto.RegistrationForm;
@@ -27,14 +28,14 @@ public interface RegistrationController {
 	final static String URL_SAVE_PAGE2 = "/save/2/";
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public ModelAndView regform(RegistrationForm regform, ModelMap model);
+	public ModelAndView regform(Principal principal, RegistrationForm regform, ModelMap model, WebRequest request);
 	
 	/**
 	 * Save essential business information
 	 * @param regform
 	 * @return Page 2 of registration flow
 	 */
-	@RequestMapping(URL_SAVE_PAGE1)
+	@RequestMapping(value = URL_SAVE_PAGE1, method = RequestMethod.POST)
 	public ModelAndView savePageOne(Principal principal, RegistrationForm regform);
 	
 	/**
@@ -44,6 +45,6 @@ public interface RegistrationController {
 	 * @param regform
 	 * @return redirect to profile page
 	 */
-	@RequestMapping(URL_SAVE_PAGE2)
-	public ModelAndView savePageTwo(RegistrationForm regform);
+	@RequestMapping(value = URL_SAVE_PAGE2, method = RequestMethod.POST)
+	public ModelAndView savePageTwo(Principal principal, RegistrationForm regform);
 }

@@ -1,5 +1,7 @@
 package com.baldwin.indgte.webapp.controller;
 
+import java.security.Principal;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
@@ -16,6 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 public interface MiscController {
 
 	@RequestMapping("/help/")
-	public ModelAndView help(WebRequest request);
+	public ModelAndView help(Principal principal, WebRequest request);
 
 }

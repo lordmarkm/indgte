@@ -8,9 +8,31 @@
 		<put-attribute name="navbar" value="/jsp/tiles/navbar_nofbjs.jsp" />
 		<put-attribute name="body" value="" />
 	</definition>
+
+	<!-- Home -->
+	<definition name="home" extends="default">
+		<put-attribute name="body" value="/jsp/home.jsp" />
+	</definition>
 	
+	<!-- Register -->
+	<definition name="regform" extends="default">
+		<put-attribute name="body" value="/jsp/register/regform.jsp" />
+	</definition>
+	<definition name="pinpointlocation" extends="default">
+		<put-attribute name="body" value="/jsp/register/pinpointlocation.jsp" />
+	</definition>
+	
+	<!-- User Profile -->
 	<definition name="ownprofile" extends="default">
 		<put-attribute name="body" value="/jsp/profile/ownprofile.jsp" />
+	</definition>
+	<definition name="businesses" extends="default">
+		<put-attribute name="body" value="/jsp/profile/businesses.jsp" />
+	</definition>
+	
+	<!-- Business Profile -->
+	<definition name="businessprofile" extends="default">
+		<put-attribute name="body" value="/jsp/profile/businessprofile.jsp" />
 	</definition>
 	
 	<definition name="help" extends="default">

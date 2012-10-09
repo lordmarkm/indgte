@@ -1,25 +1,43 @@
 package com.baldwin.indgte.webapp.controller;
 
+import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
+
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import com.baldwin.indgte.persistence.model.User;
 
 public class MavBuilder {
 	ModelAndView mav;
 	
-	public static MavBuilder render(String view) {
-		return new MavBuilder(view);
+	public static MavBuilder render(User user) {
+		return new MavBuilder()
+			.put("user", user);
+	}
+	
+	public static MavBuilder render(String viewname) {
+		return new MavBuilder(viewname);
+	}
+	
+	public static MavBuilder render(User user, String viewname) {
+		return new MavBuilder(viewname).put("user", user);
 	}
 	
 	public static MavBuilder redirect(String view) {
 		return new MavBuilder(new RedirectView(view, true));
 	}
 	
-	public MavBuilder(String view) {
-		mav = new ModelAndView(view);
+	public MavBuilder() {
+		mav = new ModelAndView();
 	}
 	
-	public MavBuilder(RedirectView redirectView) {
-		mav = new ModelAndView(redirectView);
+	public MavBuilder(String viewname) {
+		mav = new ModelAndView(viewname);
+	}
+	
+	public MavBuilder(RedirectView redirectViewname) {
+		mav = new ModelAndView(redirectViewname);
 	}
 	
 	public MavBuilder put(String name, Object object) {
@@ -29,5 +47,15 @@ public class MavBuilder {
 	
 	public ModelAndView mav() {
 		return mav;
+	}
+	
+	/**
+	 * Ajax as determined by ?loadhere=true
+	 * @param request
+	 * @return boolean
+	 */
+	public static boolean isAjax(WebRequest request) {
+		String loadhere = request.getParameter("loadhere");
+		return (loadhere != null && Boolean.parseBoolean(loadhere));
 	}
 }

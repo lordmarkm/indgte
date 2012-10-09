@@ -1,5 +1,7 @@
 package com.baldwin.indgte.persistence.service;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +23,8 @@ public class BusinessService {
 	}
 	public void delete(BusinessProfile bizProfile) {
 		dao.delete(bizProfile);
+	}
+	public Collection<BusinessProfile> getBusinesses(String userId) {
+		return dao.getBusinesses(userId);
 	}
 }

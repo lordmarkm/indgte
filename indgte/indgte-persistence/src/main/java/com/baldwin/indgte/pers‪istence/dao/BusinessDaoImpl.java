@@ -1,5 +1,8 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
+import java.util.Collection;
+
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -25,7 +28,7 @@ public class BusinessDaoImpl implements BusinessDao {
 	public BusinessProfile get(String domain) {
 		return (BusinessProfile) sessions.getCurrentSession()
 				.createCriteria(BusinessProfile.class)
-				.add(Restrictions.like(TableConstants.BUSINESS_DOMAIN, domain))
+				.add(Restrictions.eq(TableConstants.BUSINESS_DOMAIN, domain))
 				.uniqueResult();
 	}
 
@@ -55,5 +58,18 @@ public class BusinessDaoImpl implements BusinessDao {
 	@Override
 	public void delete(BusinessProfile profile) {
 		sessions.getCurrentSession().delete(profile);
+	}
+
+	@Override
+	public Collection<BusinessProfile> getBusinesses(String userId) {
+		Session session = sessions.getCurrentSession();
+		
+		User owner = (User) session.createCriteria(User.class)
+				.add(Restrictions.eq(TableConstants.USER_PROVIDER_USERID, userId))
+				.add(Restrictions.eq(TableConstants.USER_PROVIDERID, TableConstants.USER_PROVIDERID_SPRINGSOCSEC))
+				.uniqueResult();
+		Hibernate.initialize(owner.getBusinesses());
+		
+		return owner.getBusinesses();
 	}
 }

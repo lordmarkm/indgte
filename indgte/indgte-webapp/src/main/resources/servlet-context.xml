@@ -31,4 +31,11 @@
         <property name="suffix" value=".jsp" />
         <property name="order" value="1" />
     </bean>
+    
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+	    <property name="basenames">
+	        <value>/WEB-INF/messages</value>
+	    </property>
+	    <property name="cacheSeconds" value="0" />
+	</bean> 
 </beans>

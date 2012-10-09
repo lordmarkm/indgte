@@ -4,6 +4,8 @@ import java.security.Principal;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -20,12 +22,30 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/p/")
 public interface ProfileController {
 	
+	/**
+	 * Current U=user's profile
+	 */
 	@RequestMapping("/")
-	ModelAndView profile(Principal user);
+	public ModelAndView profile(Principal principal, WebRequest request);
+
+	@RequestMapping("/user/{userId}")
+	public ModelAndView userProfile(String userId);
 	
-	@RequestMapping("/user/{displayName}")
-	public ModelAndView userProfile(String displayName);
+	@RequestMapping("/biz")
+	public ModelAndView myBusinesses(Principal principal, WebRequest request);
 	
 	@RequestMapping("/{domain}")
-	public ModelAndView businessProfile(Principal principal, String domain);
+	public ModelAndView businessProfile(Principal principal, WebRequest request, String domain);
+
+	/**
+	 * Return a link to the business's existing profile pic
+	 */
+	@RequestMapping(value = "/{domain}/profilepic", method = RequestMethod.GET)
+	public String profilepic();
+	
+	/**
+	 * The owner has uploaded a new profile pic for a business and we need to save the details
+	 */
+	@RequestMapping(value = "/{domain}/profilepic", method = RequestMethod.POST)
+	public String newProfilepic(WebRequest request);
 }
