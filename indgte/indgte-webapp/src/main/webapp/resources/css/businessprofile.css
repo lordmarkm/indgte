@@ -1,0 +1,134 @@
+.cover {
+	height: 200px;
+	background-color: black;
+	cursor: pointer;
+	overflow: hidden;
+}
+.coverpic {
+	width: 100%;
+	border: 1px solid grey;
+}
+
+.rightbar {
+	height: 1000px;
+	background-color: red;
+}
+
+.content {
+	margin-top: -830px;
+}
+
+.profilepic-container {
+	height: 140px;
+	top: 0;
+}
+.profilepic-inner-container {
+	height: 100px;
+	width: 100px;
+	border: 1px dotted grey;
+	background-color: white;
+	margin: auto;
+}
+.profilepic {
+	max-width: 90px;
+	max-height: 90px;
+	margin: 5px 5px;
+	cursor: pointer;
+}
+
+.fullname {
+	margin-bottom: 5px;
+}
+.description {
+	font-style: italic;
+}
+.content-info {
+	margin-top: 40px;
+	height: 130px;
+}
+.tabs {
+	font-size: 0.7em;
+}
+
+.newpost {
+	background-color: #FFFBD7;
+	padding: 3px;
+	width: 450px;
+	border: 1px dotted lightgrey;
+}
+
+.newpost-poster-pic {
+	position: absolute;
+	float: left;
+	max-width: 30px;
+	max-height: 30px;
+	margin: 2px 5px 2px 2px;
+}
+.newpost-poster {
+	margin: 7px 0 0 35px;
+}
+.newpost-action {
+	margin-top: 3px;
+	height: 110px;
+}
+.newpost-title-label {
+	display: inline-block;
+	width: 44px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+}
+.newpost-title {
+	width: 390px;;
+}
+.newpost-text {
+	height: 55px;
+	width: 444px;
+}
+.newpost-submit {
+	float: right;
+}
+
+.feed-posts-container {
+	margin: 10px 0 0 0;
+}
+
+.feed-posts {
+	list-style-type: none;
+	font-size: 1.2em;
+}
+
+.post {
+	border-color: #E9E9E9;
+	border-style: solid;
+	border-width: 1px 0 0;
+	min-height: 65px;
+}
+
+.post-pic {
+	position: absolute;
+	margin: 5px;
+	width: 50px;
+	height: 50px;
+}
+
+.post-data-container {
+	margin: 10px 10px 10px 60px;
+}
+
+.post-title, .post-title a {
+	color: #530000;
+	font-size:1.1em;
+	text-decoration: none;
+}
+
+.post-text {
+	margin-top: 6px;
+}
+
+.post-time {
+	margin-top: 2px;
+	color: grey;
+	font-size:0.9em;
+}
