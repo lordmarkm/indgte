@@ -8,17 +8,17 @@
 <ul>
 	<li>
 		<form:label path="domain">Domain:</form:label>
-		<form:input path="domain" />
+		<form:input path="domain" maxlength="20" />
 	</li>
 	
 	<li>
 		<form:label path="fullName">Business Name:</form:label>
-		<form:input path="fullName" />
+		<form:input path="fullName" maxlength="45"/>
 	</li>
 	
 	<li>
 		<form:label path="description">Description</form:label>
-		<form:input path="description" />s
+		<form:input path="description" maxlength="150"/>
 	</li>
 	
 	<li>

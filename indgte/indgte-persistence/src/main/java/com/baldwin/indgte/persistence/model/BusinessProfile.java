@@ -1,5 +1,9 @@
 package com.baldwin.indgte.persistence.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -20,6 +26,14 @@ public class BusinessProfile {
 	
 	@Column(nullable=false)
 	private String fullName;
+	
+	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
+	@JoinColumn(name="profilepicId")
+	private Imgur profilepic;
+	
+	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
+	@JoinColumn(name="coverpicId")
+	private Imgur coverpic;
 	
 	@Column
 	private String description;
@@ -49,6 +63,9 @@ public class BusinessProfile {
 	
 	@Column
 	private Double longitude;
+	
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="business")
+	private Set<Category> categories;
 	
 	@Override
 	public String toString() {
@@ -141,5 +158,32 @@ public class BusinessProfile {
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+	}
+
+	public Imgur getProfilepic() {
+		return profilepic;
+	}
+
+	public void setProfilepic(Imgur profilepic) {
+		this.profilepic = profilepic;
+	}
+
+	public Imgur getCoverpic() {
+		return coverpic;
+	}
+
+	public void setCoverpic(Imgur coverpic) {
+		this.coverpic = coverpic;
+	}
+
+	public Set<Category> getCategories() {
+		if(null == categories) {
+			categories = new HashSet<Category>();
+		}
+		return categories;
+	}
+
+	public void setCategories(Set<Category> categories) {
+		this.categories = categories;
 	}
 }

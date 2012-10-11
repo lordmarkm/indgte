@@ -1,7 +1,9 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
 import java.util.Collection;
+import java.util.Date;
 
+import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.User;
 
 @Repository 
@@ -26,8 +29,14 @@ public class BusinessDaoImpl implements BusinessDao {
 	
 	@Override
 	public BusinessProfile get(String domain) {
-		return (BusinessProfile) sessions.getCurrentSession()
-				.createCriteria(BusinessProfile.class)
+		return get(domain, null);
+	}
+	
+	private BusinessProfile get(String domain, Session session) {
+		if(null == session) {
+			session = sessions.getCurrentSession();
+		}
+		return (BusinessProfile) session.createCriteria(BusinessProfile.class)
 				.add(Restrictions.eq(TableConstants.BUSINESS_DOMAIN, domain))
 				.uniqueResult();
 	}
@@ -67,9 +76,35 @@ public class BusinessDaoImpl implements BusinessDao {
 		User owner = (User) session.createCriteria(User.class)
 				.add(Restrictions.eq(TableConstants.USER_PROVIDER_USERID, userId))
 				.add(Restrictions.eq(TableConstants.USER_PROVIDERID, TableConstants.USER_PROVIDERID_SPRINGSOCSEC))
+				.setFetchMode("businesses", FetchMode.JOIN)
 				.uniqueResult();
-		Hibernate.initialize(owner.getBusinesses());
 		
 		return owner.getBusinesses();
+	}
+
+	@Override
+	public void saveProfilepic(String domain, Imgur profilepic) {
+		Session session = sessions.getCurrentSession();
+		BusinessProfile business = get(domain, session);
+		if(null != business.getProfilepic()) {
+			session.delete(business.getProfilepic());
+		}
+		
+		profilepic.setUploaded(new Date());
+		business.setProfilepic(profilepic);
+		session.update(business);
+	}
+
+	@Override
+	public void saveCoverpic(String domain, Imgur coverpic) {
+		Session session = sessions.getCurrentSession();
+		BusinessProfile business = get(domain, session);
+		if(null != business.getCoverpic()) {
+			session.delete(business.getCoverpic());
+		}
+		
+		coverpic.setUploaded(new Date());
+		business.setCoverpic(coverpic);
+		session.update(business);
 	}
 }

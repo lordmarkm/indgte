@@ -1,8 +1,9 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
 <spring:url var="urlHome" value="/" />
 <spring:url var="urlProfile" value="/p/" />
-<spring:url var="urlMyBusinesses" value="/p/biz" />
+<spring:url var="urlMyBusinesses" value="/p/businesses" />
 <spring:url var="urlHelp" value="/etc/help/" />
 <spring:url var="urlLogout" value="/j_spring_security_logout" />
 <spring:url var="cssNavbar" value="/resources/css/navbar.css" />
@@ -28,6 +29,10 @@
 			<div class="user-menu-divider">&nbsp;</div>
 			<div class="user-menu-item"><a href="${urlLogout }">Logout</a></div>
 			<div class="user-menu-item"><a class="loadhere" href="${urlHelp }">Help</a></div>
+			<sec:authorize access="hasRole('ROLE_ADMIN')">
+			<div class="user-menu-divider">&nbsp;</div>
+			<div class="user-menu-item"><a href="<spring:url value='/a/daotest/'/>">Dao Tester</a></div>
+			</sec:authorize>
 		</div>
 	</div>
 	
@@ -69,7 +74,7 @@ $(function(){
 		if($a.hasClass('loadhere')) {
 			$('#body').load($a.attr('href') + '?loadhere=true');
 		} else {
-			window.location.href = $that.find('a:first-child').attr('href');	
+			window.location.href = $that.find('a:only-child').attr('href');	
 		}
 	});
 	
@@ -77,7 +82,7 @@ $(function(){
 	$navigation.click(function(){
 		var $that = $(this);
 		var $a = $that.find('a:first-child');
-		window.location.href = $that.find('a:first-child').attr('href');	
+		window.location.href = $that.find('a:only-child').attr('href');	
 	});
 	
 	//all .loadhere links while navbar is active

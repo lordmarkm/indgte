@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.pers‪istence.dao.BusinessDao;
 
 @Service
@@ -26,5 +27,11 @@ public class BusinessService {
 	}
 	public Collection<BusinessProfile> getBusinesses(String userId) {
 		return dao.getBusinesses(userId);
+	}
+	public void saveProfilepic(String domain, Imgur profilepic) {
+		dao.saveProfilepic(domain, profilepic);
+	}
+	public void saveCoverpic(String domain, Imgur coverpic) {
+		dao.saveCoverpic(domain, coverpic);
 	}
 }

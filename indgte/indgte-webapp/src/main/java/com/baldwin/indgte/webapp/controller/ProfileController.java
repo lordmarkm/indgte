@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.baldwin.indgte.persistence.model.Imgur;
+
 /**
  * Handles both business and personal profiles
  * 
@@ -31,9 +33,12 @@ public interface ProfileController {
 	@RequestMapping("/user/{userId}")
 	public ModelAndView userProfile(String userId);
 	
-	@RequestMapping("/biz")
+	@RequestMapping("/businesses")
 	public ModelAndView myBusinesses(Principal principal, WebRequest request);
 	
+	/**
+	 * View a business domain directly
+	 */
 	@RequestMapping("/{domain}")
 	public ModelAndView businessProfile(Principal principal, WebRequest request, String domain);
 
@@ -41,11 +46,14 @@ public interface ProfileController {
 	 * Return a link to the business's existing profile pic
 	 */
 	@RequestMapping(value = "/{domain}/profilepic", method = RequestMethod.GET)
-	public String profilepic();
+	public String profilepic(String domain);
 	
 	/**
 	 * The owner has uploaded a new profile pic for a business and we need to save the details
 	 */
 	@RequestMapping(value = "/{domain}/profilepic", method = RequestMethod.POST)
-	public String newProfilepic(WebRequest request);
+	public JSON newProfilepic(String domain, Imgur profilepic);
+
+	@RequestMapping(value = "/{domain}/coverpic", method = RequestMethod.POST)
+	public JSON newCoverpic(String domain, Imgur coverpic);
 }

@@ -9,6 +9,11 @@
 		<put-attribute name="body" value="" />
 	</definition>
 
+	<!-- Admin -->
+	<definition name="daotester" extends="default">
+		<put-attribute name="body" value="/jsp/admin/daotester.jsp" />
+	</definition>
+
 	<!-- Home -->
 	<definition name="home" extends="default">
 		<put-attribute name="body" value="/jsp/home.jsp" />

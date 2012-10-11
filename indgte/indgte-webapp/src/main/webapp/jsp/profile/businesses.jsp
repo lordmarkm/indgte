@@ -11,7 +11,7 @@
 	<c:when test="${fn:length(businesses) gt 0 }">
 	<c:forEach items="${businesses }" var="business">
 	<div class="business">
-		<div class="business-title"><a class="loadhere" href="${urlBizProfile}${business.domain}">${business.fullName }</a></div>
+		<div class="business-title"><a href="${urlBizProfile}${business.domain}">${business.fullName }</a></div>
 		<div class="business-description">${business.description }</div>
 	</div>
 	</c:forEach>

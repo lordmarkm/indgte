@@ -14,13 +14,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.UserService;
+import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.ProfileController;
 
 @Component
@@ -107,5 +110,23 @@ public class ProfileControllerImpl implements ProfileController {
 		}
 		
 		return mav;
+	}
+
+	@Override
+	public @ResponseBody String profilepic(@PathVariable String domain) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @ResponseBody JSON newProfilepic(@PathVariable String domain, Imgur profilepic) {
+		businessService.saveProfilepic(domain, profilepic);
+		return JSON.ok();
+	}
+	
+	@Override
+	public @ResponseBody JSON newCoverpic(@PathVariable String domain, Imgur coverpic) {
+		businessService.saveCoverpic(domain, coverpic);
+		return JSON.ok();
 	}
 }

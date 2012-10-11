@@ -7,9 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Version;
-
-import org.springframework.test.annotation.Timed;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * This is the imgur upload response:
@@ -48,7 +47,7 @@ public class Imgur {
 	public static String urlSmallSquare = "http://i.imgur.com/";
 	public static String urlLargeThumbnail = "http://i.imgur.com/";
 	
-	@Column 
+	@Column(name="imageId")
 	@Id 
 	@GeneratedValue
 	private long imageId;
@@ -59,48 +58,9 @@ public class Imgur {
 	@Column
 	private String deletehash;
 	
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column
 	private Date uploaded;
-	
-	public static String getUrlOriginal() {
-		return urlOriginal;
-	}
-
-	public static void setUrlOriginal(String urlOriginal) {
-		Imgur.urlOriginal = urlOriginal;
-	}
-
-	public static String getUrlImgurPage() {
-		return urlImgurPage;
-	}
-
-	public static void setUrlImgurPage(String urlImgurPage) {
-		Imgur.urlImgurPage = urlImgurPage;
-	}
-
-	public static String getUrlDelete() {
-		return urlDelete;
-	}
-
-	public static void setUrlDelete(String urlDelete) {
-		Imgur.urlDelete = urlDelete;
-	}
-
-	public static String getUrlSmallSquare() {
-		return urlSmallSquare;
-	}
-
-	public static void setUrlSmallSquare(String urlSmallSquare) {
-		Imgur.urlSmallSquare = urlSmallSquare;
-	}
-
-	public static String getUrlLargeThumbnail() {
-		return urlLargeThumbnail;
-	}
-
-	public static void setUrlLargeThumbnail(String urlLargeThumbnail) {
-		Imgur.urlLargeThumbnail = urlLargeThumbnail;
-	}
 
 	public long getImageId() {
 		return imageId;

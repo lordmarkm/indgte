@@ -8,11 +8,12 @@
 	<http auto-config='false' use-expressions="true" entry-point-ref="springSocialSecurityEntryPoint">
 		<custom-filter position="FORM_LOGIN_FILTER" ref="springSocialSecurityAuthenticationFilter" />
 		<anonymous />
-		<logout logout-success-url="/login.jsp?loggedout=true"/>
+		<logout logout-success-url="/login.jsp?loggedout=true" />
 		
-		<intercept-url pattern="/" access="hasRole('ROLE_USER')"/>
-		<intercept-url pattern="/r/**" access="hasRole('ROLE_USER')"/>
-		<intercept-url pattern="/p/**" access="hasRole('ROLE_USER')"/>
+		<intercept-url pattern="/" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/r/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/p/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/a/**" access="hasRole('ROLE_ADMIN')" />
 	</http>
 	
 	<authentication-manager alias="authenticationManager" />

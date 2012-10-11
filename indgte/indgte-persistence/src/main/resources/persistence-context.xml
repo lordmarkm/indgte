@@ -33,7 +33,11 @@
 		<property name="annotatedClasses">
 			<list>
 				<value>com.baldwin.indgte.persistence.model.BusinessProfile</value>
+				<value>com.baldwin.indgte.persistence.model.Category</value>
+				<value>com.baldwin.indgte.persistence.model.Product</value>
 				<value>com.baldwin.indgte.persistence.model.User</value>
+				<value>com.baldwin.indgte.persistence.model.Imgur</value>
+				<value>com.baldwin.indgte.persistence.model.Post</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
