@@ -3,6 +3,7 @@ package com.baldwin.indgte.webapp.controller.impl;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.pers‪istence.dao.PostDao;
 import com.baldwin.indgte.webapp.controller.AdminController;
@@ -31,7 +34,10 @@ public class AdminControllerImpl implements AdminController {
 	private UserService users;
 	
 	@Autowired 
-	PostDao postDao;
+	private PostDao postDao;
+	
+	@Autowired
+	private BusinessService businesses;
 	
 	@Override
 	public ModelAndView daoTester(Principal principal) {
@@ -62,5 +68,12 @@ public class AdminControllerImpl implements AdminController {
 			log.error("Exception testing dao method", e);
 			return JSON.status500(e);
 		}
+	}
+
+	@Override
+	public @ResponseBody JSON getCategory(@PathVariable String name) {
+		Collection<Category> categories = businesses.getCategories(name, true);
+		log.debug("Found {} categories for {}", categories.size(), name);
+		return JSON.ok().put("cat", categories);
 	}
 }

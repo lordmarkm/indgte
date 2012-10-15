@@ -18,4 +18,6 @@ public interface AdminController {
 	@RequestMapping("/daotest/{name}")
 	public JSON daoTest(String name,  WebRequest request);
 	
+	@RequestMapping("/category/{name}.json")
+	public JSON getCategory(String name);
 }

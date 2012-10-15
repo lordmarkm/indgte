@@ -1,0 +1,136 @@
+.category-welcome,
+.product-welcome {
+	min-height: 170px;
+}
+
+.category-welcome-image-container,
+.product-welcome-image-container {
+	border: 1px dotted grey;
+	width: 170px;
+	height: 170px;
+	float: left;
+	position:relative;	
+}
+
+.category-welcome-image,
+.product-welcome-image {
+	max-width:	150px;
+	max-height: 150px;
+	width: 150px;
+	height: 150px;
+	margin: 10px 10px;
+	cursor: pointer;
+	position: absolute;
+	z-index: 1;
+}
+
+.category-welcome h3,
+.product-welcome h3 {
+	display: inline-block;
+	vertical-align: bottom;
+	font-size: 1.6em;
+	margin: 0 0 0 6px;
+}
+
+.category-welcome-description,
+.product-welcome-description {
+	margin: 0 0 10px 178px;
+	font-size: 0.9em;
+}
+
+.category-welcome-provider,
+.product-welcome-category,
+.product-welcome-provider {
+	position: relative;
+	margin-left: 170px;
+}
+
+.category-provider-image,
+.product-category-image,
+.product-provider-image {
+	max-width: 40px;
+	max-height: 40px;
+	margin: 10px 0 0 6px;
+	cursor: pointer;
+}
+
+.category-provider-info,
+.product-category-info,
+.product-provider-info {
+	display: inline-block;
+	margin: 10px 0 5px 5px;
+	vertical-align: top;
+}
+.category-provider-info h4,
+.product-category-info h4,
+.product-provider-info h4 {
+	margin: 0;
+}
+.category-provider-info h4 a, 
+.product-category-info h4 a,
+.product-provider-info h4 a {
+	text-decoration: none;
+	color: black;	
+}
+.category-provider-info div,
+.product-category-info div,
+.product-provider-info div {
+	font-size: 0.8em;
+	color: grey;
+}
+
+.category-welcome-divider,
+.product-welcome-divider {
+    background: none repeat scroll 0 0 grey;
+    font-size: 0;
+    height: 1px;
+    line-height: 0;
+    width: 62%;
+    margin: auto;
+}
+
+.summary-container {
+    margin: 15px 0 0 0;
+    font-size: 0.9em;
+    background-color: #E9E9E9;
+    padding: 5px;
+    border: 1px dotted grey;
+}
+.summary-container h5 {
+	margin: 0;
+}
+.products-summary {
+	margin-top: 5px;
+}
+
+.products-container {
+	list-style-type: none;
+}
+
+.product {
+	min-height: 75px;
+	margin: 0 0 25px 0;
+	padding: 10px;
+	border: 1px solid transparent;
+}
+.product:hover {
+	border: 1px dotted #C0C6CC;
+}
+
+.product-pic-container {
+	padding: 2px;
+	float: left;
+	margin: 0 10px 10px;
+}
+
+.product-pic {
+	max-height: 65px;
+	max-width: 65px;
+}
+
+.product-name {
+	border-color: #E9E9E9;
+    border-style: solid;
+    border-width: 0 0 1px;
+    margin: 10px 0;
+}

@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,10 +43,11 @@ import javax.persistence.TemporalType;
 @Table(name="imgurs")
 public class Imgur {
 	public static String urlOriginal = "http://i.imgur.com/";
-	public static String urlImgurPage = "http://imgur.com/";
-	public static String urlDelete = "http://imgur.com/delete/";
 	public static String urlSmallSquare = "http://i.imgur.com/";
 	public static String urlLargeThumbnail = "http://i.imgur.com/";
+	public static String urlImgurPage = "http://imgur.com/";
+	public static String urlDelete = "http://imgur.com/delete/";
+
 	
 	@Column(name="imageId")
 	@Id 
@@ -62,6 +64,36 @@ public class Imgur {
 	@Column
 	private Date uploaded;
 
+	@Override
+	public String toString() {
+		return hash;
+	}
+	
+	@PrePersist
+	protected void onCreate() {
+		uploaded = new Date();
+	}
+	
+	public String getOriginal() {
+		return urlOriginal + hash + ".jpg";
+	}
+	
+	public String getSmallSquare() {
+		return urlSmallSquare + hash + "s.jpg";
+	}
+	
+	public String getLargeThumbnail() {
+		return urlLargeThumbnail + hash + "l.jpg";
+	}
+	
+	public String getImgurPage() {
+		return urlImgurPage + hash;
+	}
+	
+	public String getDelete() {
+		return urlDelete + hash;
+	}
+	
 	public long getImageId() {
 		return imageId;
 	}

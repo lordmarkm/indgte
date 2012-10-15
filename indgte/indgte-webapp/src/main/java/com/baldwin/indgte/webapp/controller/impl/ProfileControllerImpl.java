@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,9 +34,6 @@ public class ProfileControllerImpl implements ProfileController {
 	
 	@Autowired
 	private UserService userService;
-	
-	@Autowired
-	private ConnectionRepository conns;
 	
 	@Value("${imgur.devkey}")
 	private String imgurKey;
@@ -113,9 +109,8 @@ public class ProfileControllerImpl implements ProfileController {
 	}
 
 	@Override
-	public @ResponseBody String profilepic(@PathVariable String domain) {
-		// TODO Auto-generated method stub
-		return null;
+	public @ResponseBody Imgur profilepic(@PathVariable String domain) {
+		return businessService.getProfilepic(domain);
 	}
 
 	@Override

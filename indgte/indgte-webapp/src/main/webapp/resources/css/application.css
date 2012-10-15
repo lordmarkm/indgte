@@ -1,9 +1,31 @@
+/* general styles */
 body {
 	font-family: helvetica, arial, serif;
 	font-size: 11pt;
 }
 
+/* descriptive-name classes */
 .hide {display: none;}
+
+	/* layout */
 .inline {display: inline;}
 .inline-block {display: inline-block;}
 .floatright {float: right;}
+	/* fonts */
+.italic {font-style: italic;}
+
+/* special classes */
+.overlay {
+	background-color: white;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	opacity: 0.8;
+	top: 0;
+	left: 0;
+	background-image: url("../images/spinner.gif");
+	background-repeat: no-repeat;
+	background-position: center;
+	border: 1px dotted grey;
+	z-index: 9001;
+}

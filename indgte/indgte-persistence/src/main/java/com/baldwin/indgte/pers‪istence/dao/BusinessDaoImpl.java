@@ -1,8 +1,11 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -15,7 +18,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
+import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.User;
 
 @Repository 
@@ -106,5 +111,130 @@ public class BusinessDaoImpl implements BusinessDao {
 		coverpic.setUploaded(new Date());
 		business.setCoverpic(coverpic);
 		session.update(business);
+	}
+
+	@Override
+	public Imgur getProfilepic(String domain) {
+		return (Imgur) sessions.getCurrentSession().createQuery("select profilepic from BusinessProfile where domain = :domain")
+			.setString("domain", domain)
+			.uniqueResult();
+	}
+
+	@Override
+	public Category createCategory(String domain, String name, String description) {
+		log.debug("Creating category {} in {}", name, domain);
+		
+		Session session = sessions.getCurrentSession();
+
+		BusinessProfile business = get(domain, session);
+		Hibernate.initialize(business.getCategories());
+		
+		Category category = new Category();
+		category.setName(name);
+		category.setDescription(description);
+		category.setBusiness(business);
+		
+		business.getCategories().add(category);
+		session.update(business);
+		
+		return category;
+	}
+
+	@Override
+	public Collection<Category> getCategories(String domain, boolean loadProducts) {
+		log.debug("Finding categories for domain {}", domain);
+		Criteria criteria = sessions.getCurrentSession().createCriteria(BusinessProfile.class)
+				.add(Restrictions.eq(TableConstants.BUSINESS_DOMAIN, domain))
+				.setFetchMode(TableConstants.BUSINESS_CATEGORIES, FetchMode.JOIN);
+		
+		if(loadProducts) {
+			criteria.setFetchMode(TableConstants.BUSINESS_CATEGORIES + "." + TableConstants.CATEGORY_PRODUCTS, FetchMode.JOIN);
+		}
+		
+		BusinessProfile business = (BusinessProfile) criteria.uniqueResult();
+		
+		return business.getCategories();
+	}
+
+	@Override
+	public Category getCategory(long categoryId) {
+		return getCategory(categoryId, null);
+	}
+
+	private Category getCategory(long categoryId, Session session) {
+		if(null == session) {
+			session = sessions.getCurrentSession();
+		}
+		return (Category) session.get(Category.class, categoryId);
+	}
+	
+	@Override
+	public void saveCategoryMainpic(String domain, long categoryId, Imgur mainpic) {
+		Session session = sessions.getCurrentSession();
+		Category category = (Category) session.get(Category.class, categoryId);
+		category.setMainpic(mainpic);
+		session.update(category);
+	}
+
+	@Override
+	public void createProduct(long categoryId, Product product) {
+		Session session = sessions.getCurrentSession();
+		Category category = getCategory(categoryId, session);
+		category.getProducts().add(product);
+		product.setCategory(category);
+		session.update(category);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection<Product> getProducts(long categoryId) {
+		return sessions.getCurrentSession().createCriteria(Product.class)
+			.add(Restrictions.eq(TableConstants.PRODUCT_CATEGORYID, categoryId))
+			.setFetchMode(TableConstants.PRODUCT_PICS, FetchMode.JOIN)
+			.list();
+	}
+
+	@Override
+	public Product getProduct(long productId) {
+		Product product = (Product) sessions.getCurrentSession().get(Product.class, productId);
+		Hibernate.initialize(product.getPics());
+		return product;
+	}
+
+	@Override
+	public Collection<Imgur> getProductPics(long productId) {
+		Product product = (Product) sessions.getCurrentSession().createCriteria(Product.class)
+			.add(Restrictions.eq(TableConstants.PRODUCT_ID, productId))
+			.setFetchMode(TableConstants.PRODUCT_PICS, FetchMode.JOIN)
+			.uniqueResult();
+		List<Imgur> results = new ArrayList<Imgur>(product.getPics());
+		if(null != product.getMainpic()) results.add(product.getMainpic());
+		return results;
+
+//		String hql = "select pic, p.mainpic from Product p inner join p.pics pic where p.id = :productId";
+//		List<Imgur> results = sessions.getCurrentSession().createQuery(hql)
+//			.setLong("productId", productId)
+//			.list();
+//		log.debug("getProductPics(...) found {} results for productId {}", results.size(), productId);
+//		return results;
+	}
+
+	@Override
+	public Imgur addProductPic(long productId, Imgur pic) {
+		Session session = sessions.getCurrentSession();
+		Product product = (Product) session.get(Product.class, productId);
+		Hibernate.initialize(product.getPics());
+		
+		pic.setUploaded(new Date());
+		product.getPics().add(pic);
+		
+		session.update(product);
+		
+		/**
+		 *TODO: NOT AT ALL SURE IF THIS RETURNS THE NEWEST PIC!!! 
+		 *Edit: it doesn't! 
+		 */
+		//return product.getPics().iterator().next();
+		return product.getPics().get(0);
 	}
 }

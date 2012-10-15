@@ -34,8 +34,8 @@ public class Post {
 	@Column
 	private String title;
 	
-	@Lob @Basic(fetch=FetchType.EAGER)
 	@Column
+	@Lob @Basic(fetch=FetchType.EAGER)
 	private String text;
 
 	@Override

@@ -46,7 +46,7 @@ public interface ProfileController {
 	 * Return a link to the business's existing profile pic
 	 */
 	@RequestMapping(value = "/{domain}/profilepic", method = RequestMethod.GET)
-	public String profilepic(String domain);
+	public Imgur profilepic(String domain);
 	
 	/**
 	 * The owner has uploaded a new profile pic for a business and we need to save the details

@@ -1,3 +1,8 @@
+//we give 0 ***** about corrupting the global namespace
+window.debug = function(m) {
+	console.debug(m);
+}
+
 $(function(){
 	$('a.loadhere').on('click', function(){
 		$('#body').load($(this).attr('href') + '?loadhere=true');

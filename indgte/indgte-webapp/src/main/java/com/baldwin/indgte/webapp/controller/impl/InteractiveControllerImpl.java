@@ -1,5 +1,7 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
+import static com.baldwin.indgte.webapp.controller.MavBuilder.*;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,8 +26,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 
 	@Override
 	public @ResponseBody JSON post(long posterId, PostType type, String title, String text) {
-		title = StringEscapeUtils.escapeHtml(title).replace("\n", "<br>");
-		text = StringEscapeUtils.escapeHtml(text).replace("\n", "<br>");
+		title = clean(title);
+		text = clean(text);
 		Post post = postDao.newPost(posterId, type, title, text);
 		return JSON.ok().put("post", post);
 	}

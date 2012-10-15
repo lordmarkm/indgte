@@ -2,10 +2,13 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <spring:url var="noimage" value="/resources/images/noimage.jpg" />
+<spring:url var="noimage50" value="/resources/images/noimage50.png" />
 <spring:url var="spinner" value="/resources/images/spinner.gif" />
 <spring:url var="urlProfileRoot" value="/p/" />
 <spring:url var="urlPosts" value="/i/posts/" />
 <spring:url var="urlBusinessPost" value="/i/posts/business/" />
+<spring:url var="urlCategories" value="/b/categories/" />
+<spring:url var="urlCreateCategory" value="/b/newcategory/" />
 
 <link rel="stylesheet" href="<spring:url value='/resources/css/businessprofile.css' />" />
 
@@ -62,30 +65,44 @@
 	
 	<!-- Business's feed - shows posts by the business -->
 	<div id="feed">
-		<c:if test="${owner }">
-		<div class="newpost">
-			<img class="newpost-poster-pic" src=${urlSmallProfilepic } />
-			<div class="newpost-poster">
-				<div class="newpost-posting-as"><spring:message code="business.newpost.postingas" /></div>
-				<strong class="newpost-poster-name">${business.fullName }</strong>
+		<div class="feed-container">
+			<c:if test="${owner }">
+			<div class="feed-owner-container">
+				<div class="newpost">
+					<img class="newpost-poster-pic" src=${urlSmallProfilepic } />
+					<div class="newpost-poster">
+						<div class="newpost-posting-as"><spring:message code="business.newpost.postingas" /></div>
+						<strong class="newpost-poster-name">${business.fullName }</strong>
+					</div>
+					<div class="newpost-action">
+						<div class="newpost-title-label"><spring:message code="business.newpost.title" /></div>
+						<input type="text" class="newpost-title" maxlength="250" />
+						<div><textarea class="newpost-text"></textarea></div>
+						<button class="newpost-submit"><spring:message code="business.newpost.buttontext" /></button>
+					</div>
+				</div>
 			</div>
-			<div class="newpost-action">
-				<div class="newpost-title-label"><spring:message code="business.newpost.title" /></div>
-				<input type="text" class="newpost-title" maxlength="250" />
-				<div><textarea class="newpost-text"></textarea></div>
-				<button class="newpost-submit"><spring:message code="business.newpost.buttontext" /></button>
+			</c:if>
+			
+			<div class="feed-posts-container">
+				<ul class="feed-posts"></ul>
 			</div>
-		</div>
-		</c:if>
-		
-		<div class="feed-posts-container">
-			<ul class="feed-posts"></ul>
 		</div>
 	</div>
 	
 	<div id="catalog">
-		<c:if test="${owner }">
-		</c:if>	
+		<div class="catalog-container">
+			<c:if test="${owner }">
+			<div class="catalog-owner-container">
+				<div class="catalog-new">
+					<a class="dialog" href="${urlCreateCategory}${business.domain}"><spring:message code="business.newcategory.link" /></a>
+				</div>
+			</div>
+			</c:if>	
+			<div class="catalog-categories-container">
+				<ul class="catalog-categories"></ul>
+			</div>
+		</div>
 	</div>
 	
 	<div id="reviews">Reviews</div>
@@ -103,15 +120,86 @@ $(function(){
 	var hasPic = '${not empty business.profilepic }' === 'true';
 		
 	var urlPosts = '${urlPosts}',
-		urlSmallProfilepic = '${urlSmallProfilepic}';
+		urlNoImage = '${noimage}',
+		urlNoImage50 = '${noimage50}',
+		urlSmallProfilepic = '${urlSmallProfilepic}',
+		urlCategories = '${urlCategories}';
 	
-	var $posts = $('.feed-posts');
+	//feed
+	var $feedContainer = $('.feed-container'),
+		$posts = $('.feed-posts');
+	
+	//catalog
+	var $catalogContainer = $('.catalog-container'),
+		$categories = $('.catalog-categories');
 	
 	//tabs lol
-	$('.tabs').tabs();
+	$('.tabs').tabs({
+		select: function(event, ui){
+			onTab(event, ui)
+		}
+	});
+	
+	function onTab(event, ui) {
+		switch(ui.panel.id) {
+		case 'feed':
+			reloadPosts();
+			break;
+		case 'catalog':
+			onCatalog();
+			break;
+		case 'reviews':
+		case 'comments':
+			break;
+		}
+	}
+
+	//handle the catalog tab
+	function onCatalog() {
+		var $overlay = $('<div class="overlay">').appendTo($catalogContainer);
+		$categories.html('');
+		$.get(urlCategories + domain + '.json', function(response) {
+			switch(response.status) {
+			case '200':
+				if(response.categories.length === 0) {
+					$categories.append($('<span class="removeme">').text('No products or services yet for ' + fullName));
+				} else {
+					$.each(response.categories, function(i, category) {
+						addCategory(category);
+					});
+				}
+				break;
+			default:
+				debug(response);
+			}
+			
+			$overlay.remove();
+		});
+	}
+	
+	function addCategory(category) {
+		var $category = $('<li class="category">').appendTo($categories);
+
+		//picture
+		var $picContainer = $('<div class="category-pic-container">').appendTo($category);
+		$('<img class="category-pic">').attr('src', category.mainpic ? category.mainpic.smallSquare : urlNoImage50).appendTo($picContainer);
+
+		var $dataContainer = $('<div class="category-data-container">').appendTo($category);
+		
+		//title
+		var $name = $('<strong class="category-name">').appendTo($dataContainer);
+		$('<a>').attr('href', urlCategories + domain + '/' + category.id).html(category.name).appendTo($name);
+		$('<div class="category-description italic">').text(category.description).appendTo($dataContainer);
+	}
+	
+	function addProduct(product, $category) {
+		
+	}
 	
 	//load the last 10 posts by this business
 	function reloadPosts() {
+		var $overlay = $('<div class="overlay">').appendTo($feedContainer);
+		$posts.html('');
 		$.get(urlPosts, 
 			{
 				posterId : businessId,
@@ -133,6 +221,7 @@ $(function(){
 				default:
 					debug(response);
 				}
+				$overlay.remove();
 			}
 		);
 	}
@@ -150,10 +239,6 @@ $(function(){
 		$('<a>').attr('href', urlPosts + post.id).html(post.title).appendTo($title);
 		var $text = $('<div class="post-text">').html(post.text).appendTo($dataContainer);
 		var $date = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow()).appendTo($dataContainer);
-	}
-	
-	function debug(m) {
-		console.debug(m);
 	}
 });
 </script>

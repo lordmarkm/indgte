@@ -1,19 +1,28 @@
 package com.baldwin.indgte.persistence.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 @Entity
 @Table(name="products")
@@ -27,11 +36,12 @@ public class Product {
 	
 	@Column
 	private String name;
-	
+
 	@Column
+	@Lob @Basic(fetch=FetchType.EAGER)
 	private String description;
 	
-	@OneToOne
+	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="mainpicId")
 	private Imgur mainpic;
 	
@@ -41,8 +51,17 @@ public class Product {
 		joinColumns = @JoinColumn(name="imageId"),
 		inverseJoinColumns = @JoinColumn(name="productId")
 	)
-	private Set<Imgur> pics;
+	private List<Imgur> pics;
 
+	@Version
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastUpdate;
+	
+	@Override
+	public String toString() {
+		return name + ": " + description;
+	}
+	
 	public long getId() {
 		return id;
 	}
@@ -50,7 +69,8 @@ public class Product {
 	public void setId(long id) {
 		this.id = id;
 	}
-
+	
+	@JsonIgnore
 	public Category getCategory() {
 		return category;
 	}
@@ -83,14 +103,22 @@ public class Product {
 		this.mainpic = mainpic;
 	}
 
-	public Set<Imgur> getPics() {
+	public List<Imgur> getPics() {
 		if(null == pics) {
-			pics = new HashSet<Imgur>();
+			pics = new ArrayList<Imgur>();
 		}
 		return pics;
 	}
 
-	public void setPics(Set<Imgur> pics) {
+	public void setPics(List<Imgur> pics) {
 		this.pics = pics;
+	}
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 }

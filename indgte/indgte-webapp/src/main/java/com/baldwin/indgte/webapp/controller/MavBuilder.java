@@ -1,5 +1,6 @@
 package com.baldwin.indgte.webapp.controller;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -18,6 +19,9 @@ public class MavBuilder {
 		return new MavBuilder(viewname);
 	}
 	
+	/**
+	 * @param user - must always be 3rd party provider (like Facebook)!
+	 */
 	public static MavBuilder render(User user, String viewname) {
 		return new MavBuilder(viewname).put("user", user);
 	}
@@ -48,12 +52,30 @@ public class MavBuilder {
 	}
 	
 	/**
-	 * Ajax as determined by ?loadhere=true
+	 * Ajax as determined by 
+	 * 	1. presence of ?loadhere=true (iframe-like behavior)
+	 *  2. presence of ?dialog=true (view to be displayed as dialog)
 	 * @param request
 	 * @return boolean
 	 */
 	public static boolean isAjax(WebRequest request) {
 		String loadhere = request.getParameter("loadhere");
-		return (loadhere != null && Boolean.parseBoolean(loadhere));
+		String dialog = request.getParameter("dialog");
+		if(loadhere != null && Boolean.parseBoolean(loadhere)) return true;
+		if(dialog != null && Boolean.parseBoolean(dialog)) return true;
+		return false;
+	}
+	
+	/**
+	 * Escape potentially exploitative user inputs while retaining newlines
+	 * (and potentially other useful harmless markup in the future)
+	 */
+	public static String clean(String dirty) {
+		String clean = StringEscapeUtils.escapeHtml(dirty);
+		if(null != clean) {
+			return clean.replace("\n", "<br>");
+		} else {
+			return null;
+		}
 	}
 }

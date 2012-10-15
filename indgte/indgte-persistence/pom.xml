@@ -35,6 +35,13 @@
 			<version>1.4</version>
 		</dependency>
 
+		<!-- Spring's friends -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.8.1</version>
+		</dependency>
+		
 		<!-- Test Libraries -->
 		<dependency>
 			<groupId>org.springframework</groupId>
