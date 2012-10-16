@@ -10,7 +10,7 @@ import com.baldwin.indgte.persistence.model.Product;
 public interface BusinessDao {
 	BusinessProfile get(String bizName);
 	void create(BusinessProfile bizProfile, String owner);
-	void update(BusinessProfile bizProfile);
+	Object update(Object dirtyObject);
 	void delete(BusinessProfile bizProfile);
 	Collection<BusinessProfile> getBusinesses(String userId);
 	void saveProfilepic(String domain, Imgur profilepic);
@@ -24,5 +24,7 @@ public interface BusinessDao {
 	Collection<Product> getProducts(long categoryId);
 	Product getProduct(long productId);
 	Collection<Imgur> getProductPics(long productId);
+	Collection<Imgur> getProductPics(long productId, int howmany);
 	Imgur addProductPic(long productId, Imgur pic);
+	Imgur updatePic(long imgurId, String title, String description);
 }

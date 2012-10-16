@@ -73,7 +73,7 @@ public class MavBuilder {
 	public static String clean(String dirty) {
 		String clean = StringEscapeUtils.escapeHtml(dirty);
 		if(null != clean) {
-			return clean.replace("\n", "<br>");
+			return clean.replaceAll("(\r\n|\n\r|\r|\n)", "<br>");
 		} else {
 			return null;
 		}

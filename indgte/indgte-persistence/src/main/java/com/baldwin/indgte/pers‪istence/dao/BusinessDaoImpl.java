@@ -65,8 +65,9 @@ public class BusinessDaoImpl implements BusinessDao {
 	}
 
 	@Override
-	public void update(BusinessProfile profile) {
-		sessions.getCurrentSession().update(profile);
+	public Object update(Object dirtyObject) {
+		sessions.getCurrentSession().update(dirtyObject);
+		return dirtyObject;
 	}
 	
 	@Override
@@ -190,7 +191,6 @@ public class BusinessDaoImpl implements BusinessDao {
 	public Collection<Product> getProducts(long categoryId) {
 		return sessions.getCurrentSession().createCriteria(Product.class)
 			.add(Restrictions.eq(TableConstants.PRODUCT_CATEGORYID, categoryId))
-			.setFetchMode(TableConstants.PRODUCT_PICS, FetchMode.JOIN)
 			.list();
 	}
 
@@ -218,23 +218,32 @@ public class BusinessDaoImpl implements BusinessDao {
 //		log.debug("getProductPics(...) found {} results for productId {}", results.size(), productId);
 //		return results;
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection<Imgur> getProductPics(long productId, int howmany) {
+		String hql = "select pic from Product p inner join p.pics pic where p.id = :productId";
+		List<Imgur> results = sessions.getCurrentSession().createQuery(hql)
+				.setLong("productId", productId)
+				.setMaxResults(howmany).list();
+		log.debug("Results: {}", results);
+		return results;
+	}
 
 	@Override
 	public Imgur addProductPic(long productId, Imgur pic) {
 		Session session = sessions.getCurrentSession();
 		Product product = (Product) session.get(Product.class, productId);
-		Hibernate.initialize(product.getPics());
-		
 		pic.setUploaded(new Date());
 		product.getPics().add(pic);
-		
-		session.update(product);
-		
-		/**
-		 *TODO: NOT AT ALL SURE IF THIS RETURNS THE NEWEST PIC!!! 
-		 *Edit: it doesn't! 
-		 */
-		//return product.getPics().iterator().next();
-		return product.getPics().get(0);
+		return pic;
+	}
+
+	@Override
+	public Imgur updatePic(long imgurId, String title, String description) {
+		Imgur imgur = (Imgur) sessions.getCurrentSession().get(Imgur.class, imgurId);
+		imgur.setTitle(title);
+		imgur.setDescription(description);
+		return imgur;
 	}
 }

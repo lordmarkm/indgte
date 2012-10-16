@@ -2,6 +2,7 @@ package com.baldwin.indgte.webapp.controller.impl;
 
 import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.isAjax;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
@@ -12,8 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -153,6 +157,16 @@ public class BusinessControllerImpl implements BusinessController {
 			return JSON.status500(e);
 		}
 	}
+	
+	@Override
+	public @ResponseBody JSON getProductPics(@PathVariable String domain, @PathVariable long productId, @PathVariable int howmany) {
+		try {
+			return JSON.ok().put("imgurs", businesses.getProductPics(productId, howmany));
+		} catch (Exception e) {
+			log.error("Exception getting product pics", e);
+			return JSON.status500(e);
+		}
+	}
 
 	@Override
 	public @ResponseBody JSON addProductPic(@PathVariable String domain, @PathVariable long productId, Imgur pic) {
@@ -161,6 +175,42 @@ public class BusinessControllerImpl implements BusinessController {
 			return JSON.ok().put("imgur", businesses.addProductPic(productId, pic));
 		} catch (Exception e) {
 			log.error("Exception adding product pic", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public ModelAndView editProductPage(Principal principal, @PathVariable String domain, @PathVariable long productId, Model model) {
+		User user = users.getFacebook(principal.getName());
+		BusinessProfile business = businesses.get(domain);
+		Product product = businesses.getProduct(productId);
+		model.addAttribute("product", product);
+		
+		log.debug("Edit product requested for {}-{}", product.getId(), product.getName());
+		
+		return render(user, "editproduct")
+					.put("business", business)
+					.put("product", product)
+					.mav();
+	}
+
+	@Override
+	public ModelAndView editProduct(Principal principal, @PathVariable String domain, @PathVariable long productId, @ModelAttribute("product") Product product) {
+		log.debug("Edit form submitted for {}-{}", product.getId(), product.getName());
+		product.setName(clean(product.getName()));
+		product.setDescription(clean(product.getDescription()));
+		businesses.update(product);
+		
+		return redirect("/b/products/" + domain + "/" + productId).mav();
+	}
+
+	@Override
+	public JSON editPic(Principal principal, @PathVariable String domain, @PathVariable long imgurId, 
+			@RequestParam String title, @RequestParam String description) {
+		try {
+			return JSON.ok().put("imgur", businesses.updatePic(imgurId, title, description));
+		} catch (Exception e) {
+			log.error("Exception updating picture", e);
 			return JSON.status500(e);
 		}
 	}

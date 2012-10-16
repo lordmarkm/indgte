@@ -3,8 +3,10 @@ package com.baldwin.indgte.webapp.controller;
 import java.security.Principal;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,6 +20,7 @@ import com.baldwin.indgte.persistence.model.Product;
 
 @Controller
 @RequestMapping("/b/")
+@SessionAttributes(types = Product.class)
 public interface BusinessController {
 	/*
 	 * Category operations for domain
@@ -51,6 +54,9 @@ public interface BusinessController {
 	@RequestMapping(value = "/products/{domain}/{productId}/pics.json", method = RequestMethod.GET)
 	public JSON getProductPics(String domain, long productId);
 
+	@RequestMapping(value = "/products/{domain}/{productId}/pics/{howmany}.json", method = RequestMethod.GET)
+	public JSON getProductPics(String domain, long productId, int howmany);
+	
 	@RequestMapping(value = "/products/{domain}/{productId}/pics.json", method = RequestMethod.POST)
 	public JSON addProductPic(String domain, long productId, Imgur pic);
 	
@@ -63,4 +69,17 @@ public interface BusinessController {
 	
 	@RequestMapping(value = "/newproduct/{domain}/{categoryId}.json", method = RequestMethod.POST)
 	public JSON createProduct(Principal principal, String domain, long categoryId, Product product);
+	
+	@RequestMapping(value = "/editproduct/{domain}/{productId}", method = RequestMethod.GET)
+	public ModelAndView editProductPage(Principal principal, String domain, long productId, Model model);
+	
+	@RequestMapping(value = "/editproduct/{domain}/{productId}", method = RequestMethod.POST)
+	public ModelAndView editProduct(Principal principal, String domain, long productId, Product product);
+	
+	/*
+	 * Picture operations
+	 */
+	
+	@RequestMapping(value = "/editpics/{domain}/{imgurId}.json", method = RequestMethod.POST)
+	public JSON editPic(Principal principal, String domain, long imgurId, String title, String description);
 }

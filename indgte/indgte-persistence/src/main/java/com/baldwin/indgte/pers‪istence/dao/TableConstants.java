@@ -16,4 +16,6 @@ public class TableConstants {
 	public static final String PRODUCT_CATEGORYID = "category.id";
 	public static final String PRODUCT_PICS = "pics";
 	public static final String PRODUCT_ID = "id";
+	
+	public static final String IMGUR_UPLOADED = "uploaded";
 }

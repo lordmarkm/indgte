@@ -54,10 +54,8 @@
 	min-height: 150px;
 }
 .newpost {
-	background-color: #FFFBD7;
 	padding: 3px;
 	width: 450px;
-	border: 1px dotted lightgrey;
 	position: absolute;
 	z-index: 1;
 }
@@ -97,6 +95,7 @@
 
 .feed-container {
 	position: relative;
+	min-height: 300px;
 }
 
 .feed-posts-container {
@@ -128,7 +127,6 @@
 
 .post-title, .post-title a,
 .category-name, .category-name a {
-	color: #530000;
 	font-size:1.1em;
 	text-decoration: none;
 }
@@ -145,6 +143,7 @@
 
 .catalog-container {
 	position: relative;	
+	min-height: 300px;
 }
 
 .catalog-categories {

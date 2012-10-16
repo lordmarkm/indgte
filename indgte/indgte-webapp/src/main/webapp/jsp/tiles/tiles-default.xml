@@ -41,16 +41,22 @@
 	</definition>
 	
 	<!-- Business Operations -->
-	<definition name="createcategory" extends="default">
-		<put-attribute name="body" value="/jsp/businessops/createcategory.jsp" />
-	</definition>
 	<definition name="viewcategory" extends="default">
 		<put-attribute name="body" value="/jsp/businessops/viewcategory.jsp" />
 	</definition>
 	<definition name="viewproduct" extends="default">
 		<put-attribute name="body" value="/jsp/businessops/viewproduct.jsp" />
  	</definition>
+ 	
+	<definition name="createcategory" extends="default">
+		<put-attribute name="body" value="/jsp/businessops/createcategory.jsp" />
+	</definition>
+
+	<definition name="editproduct" extends="default">
+		<put-attribute name="body" value="/jsp/businessops/editproduct.jsp" />
+	</definition>
 	
+	<!-- Misc -->
 	<definition name="help" extends="default">
 		<put-attribute name="body" value="/jsp/help/help.jsp" />
 	</definition>

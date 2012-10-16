@@ -2,7 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@include file="../tiles/links.jsp" %>
 
-<link rel="stylesheet" href="<c:url value='/resources/css/businessops-view.css' />" />
+<link rel="stylesheet" href="<c:url value='/resources/css/businessops.css' />" />
 <link rel="stylesheet" href="<c:url value='/resources/galleria/themes/classic/galleria.classic.css' />" />
 
 <!-- WARN: Galleria is heavy! -->
@@ -21,9 +21,9 @@
 		</div>
 		<c:if test="${owner }">
 		<div class="product-owner-operations">
-			<button class="btn-edit-product">Edit</button>
-			<button class="btn-product-add-photo">Add Photo</button>
-			<button class="btn-product-promote">Promote</button>
+			<a href="${urlEditProduct}${business.domain}/${product.id}" class="button btn-edit-product"><spring:message code="generics.edit" /></a>
+			<button class="btn-product-add-photo"><spring:message code="product.addphotos.button" /></button>
+			<button class="btn-product-promote"><spring:message code="generics.promote" /></button>
 		</div>
 		</c:if>
 		<div class="product-welcome-divider">&nbsp;</div>
@@ -31,7 +31,7 @@
 			<a href="${urlCategories }${business.domain}/${product.category.id}"><img class="product-category-image" /></a>
 			<div class="product-category-info">
 				<h4><a href="${urlCategories }${business.domain}/${product.category.id}">${product.category.name }</a></h4>
-				<div>Category</div>
+				<div><spring:message code="generics.category" /></div>
 			</div>
 		</div>
 		<div class="product-welcome-divider">&nbsp;</div>
@@ -39,22 +39,29 @@
 			<a href="${urlProfile }${business.domain}"><img class="product-provider-image" /></a>
 			<div class="product-provider-info">
 				<h4><a href="${urlProfile }${business.domain}">${business.fullName }</a></h4>
-				<div>Provider</div>
+				<div><spring:message code="generics.provider" /></div>
 			</div>
 		</div>
 	</section>
 	
 	<section>
 		<div id="galleria"></div>
+		<div class="centercontent">
+			<button class="galleria-fullscreen">Fullscreen</button>
+		</div>
 	</section>
 </div>
 
 <style>
-	#galleria{height:320px;}
+#galleria {
+	height: 500px;
+	width: 500px;
+	margin: 20px auto 20px;
+}
 </style>
 
 <c:if test="${not empty product.mainpic}">
-	<c:set var="productPic" value="${product.mainpic.smallSquare }" />
+	<c:set var="productPic" value="${product.mainpic.largeThumbnail }" />
 	<c:set var="productPicImgur" value="${product.mainpic.imgurPage }" />
 </c:if>
 <c:if test="${not empty product.category.mainpic }">
@@ -119,7 +126,6 @@ $(function(){
 			    dataSource: images,
 	            transition: 'slide',
 	            transitionSpeed: 750,
-	            autoplay: 2500,
 	            imageCrop: true,
 	            maxScaleRatio: 1,
 	            overlayBackground: '#39561D',
@@ -131,6 +137,10 @@ $(function(){
 		default:
 			debug('Error. response: ' + response);
 		}
+	});
+	
+	$('.galleria-fullscreen').click(function(){
+		Galleria.get(0).enterFullscreen();
 	});
 });
 </script>
@@ -184,6 +194,12 @@ div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
 	display: table-cell;
     vertical-align: middle;
 }
+
+.upload-preview-img {
+	max-width: 50px;
+	max-height: 50px;
+	margin: 2px;
+}
 </style>
 
 <script>
@@ -208,8 +224,9 @@ $(function(){
 	});
 	
 	$btnAddPhoto.click(function(){
+		$uploadPreview.html('');
 		$addPhoto.dialog({
-			title: '<spring:message code="product.addphoto.title" arguments="${product.name}"/>',
+			title: '<spring:message code="product.addphotos.title" arguments="${product.name}"/>',
 			buttons: {
 				'<spring:message code="generics.done" />' : function(){
 					$addPhoto.dialog('close');
@@ -251,20 +268,33 @@ $(function(){
     		function(dgteResponse){
 	    		switch(dgteResponse.status) {
 	    		case '200':
+	    			var imgur = dgteResponse.imgur;
 	    			$('<img class="upload-preview-img">')
-	    				.attr('src', dgteResponse.imgur.smallSquare)
+	    				.attr('src', imgur.smallSquare)
 	    				.appendTo($uploadPreview);
+
+	    			//push to gallery
+	    			var galleria = Galleria.get(0).push({
+						image: imgur.largeThumbnail,
+						thumb: imgur.smallSquare,
+						big: imgur.original,
+						title: constants.productName,
+						description: 'Category: ' + constants.categoryName,
+						link: imgur.imgurPage
+	    			});
+	    			
+	    			//show last image but give gallery some time to init
+	    			setTimeout(function(){$('.galleria-image:last').click()}, 250);
 	    			break;
 	    		default:
 	    			debug('Error: ' + dgteResponse);
     		}
     		
     		//remove overlay if all files are done processing
-    		console.debug('upload done. waiting files: ' + waitingFiles);
     		if(--waitingFiles === 0) {
 				$dropbox.find('.overlay').remove();
 			} else {
-				debug('still ' + waitingFiles + ' waiting. overlay stays');
+				debug('still ' + waitingFiles + ' files waiting to upload. overlay stays');
 			}
     	});
     }
@@ -272,7 +302,6 @@ $(function(){
 	function upload(file, onComplete) {
 		++waitingFiles;
 		if(!$dropbox.find('.overlay').length) {
-			debug('appending overlay');
 			$('<div class="overlay">').appendTo($dropbox);
 		}
 		

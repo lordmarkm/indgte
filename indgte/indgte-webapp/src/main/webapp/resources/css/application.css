@@ -1,7 +1,12 @@
-/* general styles */
+/* general styles and jquery-ui overrides */
 body {
 	font-family: helvetica, arial, serif;
 	font-size: 11pt;
+}
+
+.ui-button .ui-button-text {
+	font-size: 10pt !important;
+	line-height: 1.0 !important;
 }
 
 /* descriptive-name classes */
@@ -11,6 +16,7 @@ body {
 .inline {display: inline;}
 .inline-block {display: inline-block;}
 .floatright {float: right;}
+.centercontent {text-align: center;}
 	/* fonts */
 .italic {font-style: italic;}
 
@@ -28,4 +34,7 @@ body {
 	background-position: center;
 	border: 1px dotted grey;
 	z-index: 9001;
+	/*center the info text, if any*/
+	text-align: center;
+	font-size: 14pt !important;
 }

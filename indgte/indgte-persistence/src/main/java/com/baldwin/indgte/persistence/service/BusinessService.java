@@ -21,8 +21,8 @@ public class BusinessService {
 	public void save(BusinessProfile bizProfile, String owner) {
 		dao.create(bizProfile, owner);
 	}
-	public void update(BusinessProfile business) {
-		dao.update(business);
+	public void update(Object dirty) {
+		dao.update(dirty);
 	}
 	public void delete(BusinessProfile bizProfile) {
 		dao.delete(bizProfile);
@@ -60,10 +60,16 @@ public class BusinessService {
 	public Product getProduct(long productId) {
 		return dao.getProduct(productId);
 	}
+	public Collection<Imgur> getProductPics(long productId, int howmany) {
+		return dao.getProductPics(productId, howmany);
+	}
 	public Collection<Imgur> getProductPics(long productId) {
 		return dao.getProductPics(productId);
 	}
 	public Imgur addProductPic(long productId, Imgur pic) {
 		return dao.addProductPic(productId, pic);
+	}
+	public Imgur updatePic(long imgurId, String title, String description) {
+		return dao.updatePic(imgurId, title, description);
 	}
 }

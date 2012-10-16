@@ -64,6 +64,15 @@ public class Imgur {
 	@Column
 	private Date uploaded;
 
+	@Column(length=25)
+	private String title;
+	
+	@Column(length=140)
+	private String description;
+
+	@Column
+	private boolean hidden = false;
+	
 	@Override
 	public String toString() {
 		return hash;
@@ -124,5 +133,29 @@ public class Imgur {
 
 	public void setUploaded(Date uploaded) {
 		this.uploaded = uploaded;
+	}
+
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

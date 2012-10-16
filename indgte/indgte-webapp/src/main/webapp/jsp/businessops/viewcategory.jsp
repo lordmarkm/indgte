@@ -2,7 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@include file="../tiles/links.jsp" %>
 
-<link rel="stylesheet" href="<c:url value='/resources/css/businessops-view.css' />" />
+<link rel="stylesheet" href="<c:url value='/resources/css/businessops.css' />" />
 
 <title><spring:message code="category.title" arguments="${category.name },${business.domain }"/></title>
 
@@ -55,6 +55,11 @@ window.urls = {
 	urlProducts : '${urlProducts}'	
 }
 
+window.constants = {
+	domain : '${business.domain}',
+	previewPicsCount : 5
+}
+
 window.products = {
 	domain : '${business.domain}',
 	$summary : $('.products-summary'),
@@ -78,7 +83,19 @@ window.products = {
 		}
 		
 		var $title = $('<a id="' + product.id + '">').attr('href', urls.urlProducts + this.domain + '/' + product.id).appendTo($container);
-		$('<h3 class="product-name">').text(product.name).appendTo($title)
+		var $h3 = $('<h3 class="product-name">').text(product.name).appendTo($title)
+		
+		$.get(urls.urlProducts + constants.domain + '/' + product.id + '/pics/' + constants.previewPicsCount + '.json', function(response){
+			switch(response.status){
+			case '200':
+				for(var i = 0; i < response.imgurs.length; ++i) {
+					$('<img class="product-otherpics-preview">').attr('src', response.imgurs[i].smallSquare).appendTo($h3);
+				}
+				break;
+			default:
+				debug('Error: ' + response);
+			}
+		});
 
 		$('<div>').html(product.description).appendTo($container);
 	}
@@ -170,10 +187,6 @@ $(function(){
 <style>
 div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
 	display:none;	
-}
-.ui-button .ui-button-text {
-	font-size: 10pt;
-	line-height: 1.0;
 }
 
 .category-owner-operations {

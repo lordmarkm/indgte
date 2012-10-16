@@ -134,3 +134,10 @@
     border-width: 0 0 1px;
     margin: 10px 0;
 }
+
+.product-otherpics-preview {
+	max-width: 40px;
+	max-height: 40px;
+	float: right;
+	margin: 5px;
+}

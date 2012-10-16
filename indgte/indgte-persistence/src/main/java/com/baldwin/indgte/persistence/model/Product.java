@@ -1,7 +1,6 @@
 package com.baldwin.indgte.persistence.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -18,9 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Version;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -53,10 +49,6 @@ public class Product {
 	)
 	private List<Imgur> pics;
 
-	@Version
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastUpdate;
-	
 	@Override
 	public String toString() {
 		return name + ": " + description;
@@ -103,6 +95,7 @@ public class Product {
 		this.mainpic = mainpic;
 	}
 
+	@JsonIgnore
 	public List<Imgur> getPics() {
 		if(null == pics) {
 			pics = new ArrayList<Imgur>();
@@ -112,13 +105,5 @@ public class Product {
 
 	public void setPics(List<Imgur> pics) {
 		this.pics = pics;
-	}
-
-	public Date getLastUpdate() {
-		return lastUpdate;
-	}
-
-	public void setLastUpdate(Date lastUpdate) {
-		this.lastUpdate = lastUpdate;
 	}
 }
