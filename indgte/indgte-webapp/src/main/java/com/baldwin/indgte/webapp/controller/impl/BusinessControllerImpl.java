@@ -205,10 +205,9 @@ public class BusinessControllerImpl implements BusinessController {
 	}
 
 	@Override
-	public JSON editPic(Principal principal, @PathVariable String domain, @PathVariable long imgurId, 
-			@RequestParam String title, @RequestParam String description) {
+	public @ResponseBody JSON editPic(Principal principal, @PathVariable String domain, @PathVariable long imgurId, Imgur imgur) {
 		try {
-			return JSON.ok().put("imgur", businesses.updatePic(imgurId, title, description));
+			return JSON.ok().put("imgur", businesses.updatePic(imgurId, clean(imgur.getTitle()), clean(imgur.getDescription())));
 		} catch (Exception e) {
 			log.error("Exception updating picture", e);
 			return JSON.status500(e);

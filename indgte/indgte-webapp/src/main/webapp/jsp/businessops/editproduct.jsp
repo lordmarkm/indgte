@@ -77,6 +77,28 @@
 			<li><a href="#info-overlay-options">Options</a></li>
 			<li><a href="#info-overlay-edit">Edit</a></li>
 		</ul>
+		<div id="info-overlay-options">
+			<ul>
+				<li>
+					<spring:message code="generics.title" />: <span class="title">THIS HAS THIRTY CHARACTERS IN</span>
+				</li>
+				<li>
+					<spring:message code="generics.description" />: <span class="description">@LeslieMcLellan: Everything booked for #Smalltown2012! Can't wait to see everyone, enjoy the #140conf and #Hutch!!</span>
+				</li>
+				<li>
+					<a href="javascript:;" class="a-edit-pic"><spring:message code="product.edit.photos.edit" /></a>
+					- <spring:message code="product.edit.photos.edithelp" />
+				</li>
+				<li>
+					<a href="javascript:;" class="a-hide-pic"><spring:message code="product.edit.photos.hide" /></a>
+					- <spring:message code="product.edit.photos.hidehelp" />
+				</li>
+				<li>
+					<a href="javascript:;" class="a-delete-pic"><spring:message code="product.edit.photos.delete" /></a>
+					- <spring:message code="product.edit.photos.deletehelp" />
+				</li>
+			</ul>
+		</div>
 		<div id="info-overlay-edit">
 			<ul>
 				<li>
@@ -90,28 +112,6 @@
 				<li style="padding-top: 10px; text-align: right;">
 					<a class="save" href="javascript:;">Save</a>
 					<a class="cancel" href="javascript:;">Cancel</a>
-				</li>
-			</ul>
-		</div>
-		<div id="info-overlay-options">
-			<ul>
-				<li>
-					<spring:message code="generics.title" />: <span class="img-title">THIS HAS THIRTY CHARACTERS IN</span>
-				</li>
-				<li>
-					<spring:message code="generics.description" />: <span class="img-description">@LeslieMcLellan: Everything booked for #Smalltown2012! Can't wait to see everyone, enjoy the #140conf and #Hutch!!</span>
-				</li>
-				<li>
-					<a href="javascript:;" class="a-edit-pic"><spring:message code="product.edit.photos.edit" /></a>
-					- <spring:message code="product.edit.photos.edithelp" />
-				</li>
-				<li>
-					<a href="javascript:;" class="a-hide-pic"><spring:message code="product.edit.photos.hide" /></a>
-					- <spring:message code="product.edit.photos.hidehelp" />
-				</li>
-				<li>
-					<a href="javascript:;" class="a-delete-pic"><spring:message code="product.edit.photos.delete" /></a>
-					- <spring:message code="product.edit.photos.deletehelp" />
 				</li>
 			</ul>
 		</div>
@@ -192,6 +192,13 @@
 .info-overlay a {
 	font-weight: bold;
 }
+
+.triangle {
+	height: 0; 
+	width: 0; 
+	border-top: 30px solid transparent; 
+	border-bottom: 30px solid transparent;
+}
 </style>
 
 <script>
@@ -238,11 +245,14 @@ $(function(){
 	
 	//picture
 	var $infotabs = $('.info-overlay-tabs'),
+		$optionsTitle = $('#info-overlay-options .title'),
+		$optionsDesc = $('#info-overlay-options .description'),
 		$editlink = $('.a-edit-pic'),
 		$editFieldTitle = $('#info-overlay-edit .title'),
-		$editFieldDesc = $('#info-overlayy-edit .description'),
+		$editFieldDesc = $('#info-overlay-edit .description'),
 		$editBtnSave = $('#info-overlay-edit .save'),
-		$editBtnCancel = $('#info-overlay-edit .cancel');
+		$editBtnCancel = $('#info-overlay-edit .cancel')
+		$triangle = $('<div class="triangle">').appendTo('body');
 	
 	$infotabs.tabs().removeClass('ui-corner-all');
 	
@@ -260,6 +270,7 @@ $(function(){
 	*/
 	$editlink.click(function(){
 		$infotabs.tabs('option', 'selected', 1);
+		debug('setting to ' + $div.imgur.title);
 		$editFieldTitle.val($div.imgur.title);
 		$editFieldDesc.val($div.imgur.description);
 	});
@@ -269,14 +280,44 @@ $(function(){
 		$editFieldDesc.val($div.imgur.description);
 	});
 	$editBtnSave.click(function(){
+		$('<div class="overlay">').text('Updating picture...').appendTo($div);
+		var imgur = {
+			title : $editFieldTitle.val(),
+			description : $editFieldDesc.val()
+		};
+		console.debug('submitting edit ' + JSON.stringify(imgur));
 		$.post(urls.editpics + constants.domain + '/' + $div.imgur.id + '.json',
-			{
-				title : $editFieldTitle.val(),
-				description : $editFieldDesc.val()
-			},
+			imgur,
 			function(response){
 				switch(response.status) {
 				case '200':
+					var newtitle = unescapeBrs(response.imgur.title);
+					var newdesc = unescapeBrs(response.imgur.description);
+					
+					debug('before: ' + response.imgur.description + ' after: ' + newdesc);
+					
+					if($div.imgur && $div.imgur.id === response.imgur.imageId) {
+						//because user may have clicked another imgur while .post was in progress
+						$optionsTitle.text(newtitle);
+						$optionsDesc.text(newdesc);
+						$div.imgur.title = newtitle;
+						$div.imgur.description = newdesc;
+						$infotabs.tabs('option', 'selected', 0);
+					} else {
+						debug('Mismatch! Updated id: ' + response.imgur.imageId + ' New imgur: ' + ($div.imgur ? $div.imgur.id : 'undefined'));
+					}
+					
+					var $updatedImg = $('img[imgur-id="' + response.imgur.imageId + '"]');
+					if($updatedImg.length) {
+						$updatedImg.attr('title', newtitle)
+							.attr('alt', newtitle)
+							.attr('imgur-title', newtitle)
+							.attr('imgur-description', newdesc);
+					} else {
+						debug('No image found for id ' + response.imgur.imageId);
+					}
+					
+					$div.find('.overlay').remove();
 					break;
 				default:
 					debug('Error: ' + response.message);
@@ -290,15 +331,18 @@ $(function(){
 	function appendEditablePicContainer(imgur, $parent) {
 		var $container = $('<div class="editable-pic-container">').appendTo($parent);
 		
+		var title = unescapeBrs(imgur.title);
+		var desc = unescapeBrs(imgur.description);
+		
 		var $img = $('<img class="editable-pic">')
 			.attr('src', imgur.smallSquare)
-			.attr('alt', imgur.title)
-			.attr('title', imgur.title)
+			.attr('alt', title)
+			.attr('title', title)
 			.appendTo($container);
 		
 		$img.attr('imgur-hash', imgur.hash)
-			.attr('imgur-description', imgur.description)
-			.attr('imgur-title', imgur.title)
+			.attr('imgur-description', desc)
+			.attr('imgur-title', title)
 			.attr('imgur-id', imgur.imageId);
 		
 		$img.click(function(event){
@@ -325,25 +369,26 @@ $(function(){
 		
 		$div.show();
 		if(ifGt960Left > 960) {
-			$div.overlay($target, 'left');
+			$div.overlay($target, 'left', $triangle);
 		} else {
-			$div.overlay($target, 'right');
+			$div.overlay($target, 'right', $triangle);
 		}
 		
 		if(positionOnly) return;
 		
+		$infotabs.tabs('option', 'selected', 0);
 		$div.find('.overlay').remove();
 		$div.find('img').attr('src', $target.attr('src'));
-		$div.find('.img-title').text($target.attr('title') ? $target.attr('title') : constants.notitle);
-		$div.find('.img-description').text($target.attr('description') ? $target.attr('description') : constants.nodescription);
+		$optionsTitle.text($target.attr('imgur-title') ? $target.attr('imgur-title') : constants.notitle);
+		$optionsDesc.text($target.attr('imgur-description') ? $target.attr('imgur-description') : constants.nodescription);
 		$div.master = $target;
 		$div.imgur = {
-			id : $target.attr('imgur-id'),
+			id : parseInt($target.attr('imgur-id')),
 			title: $target.attr('imgur-title'),
 			description : $target.attr('imgur-description')
 		}
-		debug($div.imgur);
-		debug('$div.imgur: ' + JSON.stringify($div.imgur));
+		$editFieldTitle.val($div.imgur.title);
+		$editFieldDesc.val($div.imgur.description);
 	}
 	
 	$(window).resize(function() {
@@ -358,6 +403,7 @@ $(function(){
 	
 	function hideOverlay() {
 		$div.hide();
+		$triangle.hide();
 		$div.master = null;
 	}
 });

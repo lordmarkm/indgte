@@ -116,8 +116,8 @@ $(function(){
 					image: imgur.largeThumbnail,
 					thumb: imgur.smallSquare,
 					big: imgur.original,
-					title: constants.productName,
-					description: 'Category: ' + constants.categoryName,
+					title: imgur.title ? imgur.title : constants.productName,
+					description: imgur.description ? imgur.description : 'Category: ' + constants.categoryName,
 					link: imgur.imgurPage
 				});
 			}
@@ -130,7 +130,10 @@ $(function(){
 	            maxScaleRatio: 1,
 	            overlayBackground: '#39561D',
 	            height: 500,
-	            width: 500
+	            width: 500,
+	            extend: function(options) {
+	                Galleria.get(0).$('info-link').click();
+	            }
 			});
 			//Galleria.run('#galleria', {dataSource: images});
 			break;
@@ -199,6 +202,15 @@ div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
 	max-width: 50px;
 	max-height: 50px;
 	margin: 2px;
+}
+
+.galleria-info-text {
+	background-color: grey;
+	opacity: 0.8;
+	filter:alpha(opacity=80); /* For IE8 and earlier */
+}
+.galleria-info-description {
+	color: white !important;
 }
 </style>
 

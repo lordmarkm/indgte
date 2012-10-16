@@ -81,5 +81,5 @@ public interface BusinessController {
 	 */
 	
 	@RequestMapping(value = "/editpics/{domain}/{imgurId}.json", method = RequestMethod.POST)
-	public JSON editPic(Principal principal, String domain, long imgurId, String title, String description);
+	public JSON editPic(Principal principal, String domain, long imgurId, Imgur imgur);
 }
