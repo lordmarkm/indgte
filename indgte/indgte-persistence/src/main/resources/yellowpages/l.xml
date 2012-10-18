@@ -1,0 +1,251 @@
+<matches>
+	<query><![CDATA[l]]></query>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>label printing</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>laboratory equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>laboratory research</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>ladders</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>ladies accessories</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>ladies clothes shops</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>laminating</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>land agents</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>land surveyors</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>landscape architects</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>landscapers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>language courses</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>laser applications</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>laser equipment and services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>laser services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>launderettes</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>laundries</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>laundry equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>laundry services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lawnmowers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lead products</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>leasing companies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>leather furniture</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>leather materials</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>leather suppliers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>leather working</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>leathergoods</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>legal services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>legal specialisms</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>letting agents</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>libraries</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>library services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lift manufacturers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lifting gear</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lifting gear services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lifting systems</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lifts</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>light fittings</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lighting</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lighting consultants</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lighting hire</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lighting installers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lighting production</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lighting products</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lightning conductors</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lime suppliers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>limousine hire</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>linen hire</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>linen suppliers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lingerie</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>literary agents</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>livestock auctioneers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>livestock breeders</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>loans</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lobby groups</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>local government</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lock manufacturers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>locksmiths</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lofts</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lubricanting equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>lubricants</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>luggage</base>
+		<meta>1</meta>
+	</match>
+</matches>

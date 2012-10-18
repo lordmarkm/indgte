@@ -1,0 +1,383 @@
+<matches>
+	<query><![CDATA[d]]></query>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dairies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dairy equipment and supplies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dairy produce</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dairy products</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dairy services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>damp proofing</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dancewear</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dancing schools</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>data communication system services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>data information specialisms</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>data recovery</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>data services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>debt adjustment and management</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>debt advice and counselling</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>debt collectors</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>decking</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>decorating supplies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>delicatessens</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>delicatessens speciality goods</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>delivery and collections</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>demolition</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>demolition services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dental equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dental practices</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dental treatment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dentists</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>department stores</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>design and development engineer services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>design consultants services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>design work</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>desk top publishing</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>detective agencies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>detectors</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>development organisations</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>diagnostic equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dictating machines services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>diesel engineers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>diesel fuel injection</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>diesel repairs</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dieting and weight control</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>digital imaging</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>digital imaging services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>direct mail</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>disability aids and equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>disability information and services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>disabled driving equipment and services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>disco equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>disco equipment services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>discount stores</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dishwashers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dishwashing machine services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>display contractors</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>display makers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>disposable products</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>distillers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>distribution services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>divers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>divers equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>diving schools and equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>diy stores products</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dna testing</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>doctors</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>document management</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dog and cat grooming</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dog breeders</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dog grooming services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dog supplies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dog training</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>doll and teddy hospital services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>domestic cleaning</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>domestic maintenance and repair services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>domestic maintenance services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>door and window fittings</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>door manufacturers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>doors</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>drain and pipe work</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>drain cleaning equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>drains and pipe cleaning</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>draughting and design work</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>drawing equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>drawing office supplies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dressmaker services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dressmakers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>drilling contractor equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>drilling contractors</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>drilling contractors services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>driving schools</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>drum dealers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dry cleaners</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dry cleaning services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dry foods</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>ducting and ductwork</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>duplicating services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dust extraction and ventilation</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>dvd and cd services</base>
+		<meta>1</meta>
+	</match>
+</matches>

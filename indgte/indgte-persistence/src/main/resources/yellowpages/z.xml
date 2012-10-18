@@ -1,0 +1,7 @@
+<matches>
+	<query><![CDATA[z]]></query>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>zoos</base>
+		<meta>1</meta>
+	</match>
+</matches>

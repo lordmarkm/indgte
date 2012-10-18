@@ -1,15 +1,11 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.FuzzyQuery;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
@@ -26,9 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.baldwin.indgte.persistence.constants.SearchConstants;
-import com.baldwin.indgte.persistence.dto.SearchResultTransformer;
 import com.baldwin.indgte.persistence.dto.SearchResult;
+import com.baldwin.indgte.persistence.dto.SearchResultTransformer;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
@@ -307,25 +302,30 @@ public class BusinessDaoImpl implements BusinessDao {
 		for(BusinessProfile business : businesses) {
 			ftSession.index(business);
 		}
+		for(Product product : (List<Product>)session.createQuery("from Product").list()) {
+			ftSession.index(product);
+		}
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<SearchResult> search(String term) throws ParseException {
-		log.debug("Searching for term {}", term);
-		
+	public List<SearchResult> search(String term, int maxResults) throws ParseException {
 		Session session = sessions.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
-		MultiFieldQueryParser parser = new MultiFieldQueryParser(SearchConstants.version, BusinessProfile.searchableFields, new StandardAnalyzer(SearchConstants.version));
 		
 		QueryBuilder q = ftSession.getSearchFactory().buildQueryBuilder().forEntity(BusinessProfile.class).get();
 		org.apache.lucene.search.Query lQuery = q.keyword().fuzzy().withThreshold(0.8f).withPrefixLength(1).onFields(BusinessProfile.searchableFields).matching(term).createQuery();
 
 		Query query = ftSession.createFullTextQuery(lQuery, BusinessProfile.class)
 				.setResultTransformer(new SearchResultTransformer());
+		if(maxResults != -1) {
+			query.setMaxResults(maxResults);
+		}
 		return query.list();
 		
-		//This returns exact results
+		//This returns exact matches
+//		MultiFieldQueryParser parser = new MultiFieldQueryParser(SearchConstants.version, BusinessProfile.searchableFields, new StandardAnalyzer(SearchConstants.version));
+
 //		Query query = ftSession.createFullTextQuery(parser.parse(term), BusinessProfile.class)
 //			.setResultTransformer(new SearchResultTransformer());
 //		return query.list();
@@ -336,5 +336,22 @@ public class BusinessDaoImpl implements BusinessDao {
 //			results.add(business.toSearchResult());
 //		}
 //		return results;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<SearchResult> searchProduct(String term, int maxResults) {
+		Session session = sessions.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		
+		QueryBuilder q = ftSession.getSearchFactory().buildQueryBuilder().forEntity(Product.class).get();
+		org.apache.lucene.search.Query lQuery = q.keyword().fuzzy().withThreshold(0.8f).withPrefixLength(1).onFields(Product.searchableFields).matching(term).createQuery();
+
+		Query query = ftSession.createFullTextQuery(lQuery, Product.class)
+				.setResultTransformer(new SearchResultTransformer());
+		if(maxResults != -1) {
+			query.setMaxResults(maxResults);
+		}
+		return query.list();
 	}
 }

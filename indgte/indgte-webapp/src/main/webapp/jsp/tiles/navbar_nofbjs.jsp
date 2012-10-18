@@ -53,8 +53,10 @@
 window.navbar = {
 	search : {
 		minlength : 3, //god's number trololololol
+		maxDisplay : 5, //god's number plus two!!!
 		url : '<spring:url value="/s/" />',
 		urlBusiness: '<spring:url value="/p/" />',
+		urlProduct: '<spring:url value="/b/products/" />',
 		urlImgur: 'http://i.imgur.com/'
 	}
 }
@@ -97,7 +99,8 @@ $(function(){
 		window.location.href = $that.find('a:only-child').attr('href');	
 	});
 	
-	$btnSearch.button({ icons: {primary: 'ui-icon-search'}});
+	$btnSearch.button({ icons: {primary: 'ui-icon-search'}}).click(function(){
+	});
 	var searchtimeout;
 	$searchInput.bind({
 		keyup: startTimeout,
@@ -139,12 +142,21 @@ $(function(){
 					++visibleResults;
 				}
 				
-				$('<div class="ui-widget-header">').text('Businesses').appendTo($autocompleteResults);
-				for(var i = 0, length = response.business.length; i < length; i++) {
-					makeAutocompleteResult(response.business[i], navbar.search.urlBusiness);
+				if(response.business && response.business.length > 0) {
+					$('<div class="ui-widget-header">').text('Businesses').appendTo($autocompleteResults);
+					for(var i = 0, length = response.business.length; i < length; i++) {
+						makeAutocompleteResult(response.business[i], navbar.search.urlBusiness);
+					}
 				}
 				
-				var $deepSearch = $('<div style="font-weight: bolder; padding-left: 2px;">').appendTo($autocompleteResults);
+				if(response.product && response.product.length > 0) {
+					$('<div class="ui-widget-header">').text('Products').appendTo($autocompleteResults);
+					for(var i = 0, length = response.product.length; i < length; i++) {
+						makeAutocompleteResult(response.product[i], navbar.search.urlProduct);
+					}
+				}
+				
+				var $deepSearch = $('<div class="autocomplete-allresults">').appendTo($autocompleteResults);
 				$('<a>').attr('href', navbar.search.url + term).text('See all results...').appendTo($deepSearch);
 				
 				if(visibleResults) {
@@ -159,6 +171,12 @@ $(function(){
 		});
 	}
 	
+	$autocompleteResults.on(
+		{
+			mouseover: function(){$(this).addClass('ui-state-active')}, 
+			mouseout:  function(){$(this).removeClass('ui-state-active')}
+		},
+		'.autocomplete-container');
 	
 	//all .loadhere links while navbar is active
 	//hide popups

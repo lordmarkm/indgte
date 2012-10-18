@@ -1,0 +1,35 @@
+<matches>
+	<query><![CDATA[j]]></query>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>janitorial supplies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>jewellers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>jewellers services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>jewellery services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>jewellery supplies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>joinery manufacturers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>juke boxes</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>jumping castles</base>
+		<meta>1</meta>
+	</match>
+</matches>

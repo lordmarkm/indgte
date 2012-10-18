@@ -1,0 +1,455 @@
+<matches>
+	<query><![CDATA[f]]></query>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fabric retailer services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fabric shops</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fabricated steel products</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fabrication services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fabrics</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>facilities management services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>factoring and invoice discounting</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>factory shops</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>family planning clinics</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fan and blower services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fancy goods</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fancy goods services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fans and blowers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>farm facilities and services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>farm stalls</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>farmers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>farrier services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fascias</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fashion accessories</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fashion designer services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fashion designers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fast food</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fencing</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fencing materials</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>feng shui</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>ferry services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fertilizers and compost</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fibre extrusion equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fibre optic installations</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fibres</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>film and video production equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>film and video production services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>filter manufacturers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>filters</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>finance</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>finance brokers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>financial advice</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fire alarms</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fire brigade</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fire escapes</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fire extinguishers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fire protection engineers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fire safety services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fireplace accessories</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fireplaces</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fireproofing</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fireworks</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>first aid supplies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>first aid training</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fish and chip shops</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fish farms</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fish merchants</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fishing</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fishing companies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fishing tackle</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fishmongers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fixings and fastenings</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>flags and banners</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>flood damage</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>floor coverings</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>floor treatments</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>flooring equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>flooring materials</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>flooring work</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>floral display services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>florists</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>flowers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>flying schools</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>foam products</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>food additives</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>food and drink catering supplies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>food and drink manufacturing</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>food flavourings</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>food manufacturers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>food manufacturers services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>food processing equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>food processors</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>food suppliers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>footwear manufacturers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>footwear suppliers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>foreign exchange</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>forensic services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>forestry</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>forgings</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fork lift truck parts and repairs</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fork lift truck services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fork lift trucks</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fortune tellers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>foundries</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>franchising</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>freight containers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>freight forwarding</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>french polishers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fridges and freezer repairs</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fridges and freezer retail</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>frozen food</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fruit and vegetables</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fruit juice wholesalers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fuel</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fuel injection</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fumigation</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>function hire services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fund raising</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>funeral directors</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>funeral directors equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>fur retailers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>furniture and furnishings</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>furniture dealers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>furniture hire</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>furniture manufacturers and designers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>furniture removals</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>furniture restoration</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>further education</base>
+		<meta>1</meta>
+	</match>
+</matches>

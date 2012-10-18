@@ -1,0 +1,23 @@
+<matches>
+	<query><![CDATA[y]]></query>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>yacht brokers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>yacht equipment</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>yachts</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>yoga</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>youth and community groups</base>
+		<meta>1</meta>
+	</match>
+</matches>

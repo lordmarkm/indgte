@@ -48,7 +48,7 @@ public class SearchControllerImpl implements SearchController {
 		long startTime = System.currentTimeMillis();
 		try {
 			JSON response = JSON.ok();
-			for(Entry<SearchResult.ResultType, List<SearchResult>> result : search.searchAll(term).entrySet()) {
+			for(Entry<SearchResult.ResultType, List<SearchResult>> result : search.searchAll(term, 5).entrySet()) {
 				response.put(String.valueOf(result.getKey()), result.getValue());
 			}
 			response.put("searchtime", System.currentTimeMillis() - startTime);

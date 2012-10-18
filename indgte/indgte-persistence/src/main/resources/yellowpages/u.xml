@@ -1,0 +1,31 @@
+<matches>
+	<query><![CDATA[u]]></query>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>uniforms and staff wear</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>uninterruptible power supplies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>universities</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>upholstered items</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>upholsterers</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>upholsterers supplies</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>used car dealers</base>
+		<meta>1</meta>
+	</match>
+</matches>

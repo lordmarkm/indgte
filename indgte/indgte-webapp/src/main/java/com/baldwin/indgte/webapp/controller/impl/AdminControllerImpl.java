@@ -45,6 +45,7 @@ public class AdminControllerImpl implements AdminController {
 		return render(user, "daotester").mav();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public @ResponseBody JSON daoTest(@PathVariable String name, WebRequest request) {
 		log.debug("Request params: {}", request.getParameterMap().keySet());

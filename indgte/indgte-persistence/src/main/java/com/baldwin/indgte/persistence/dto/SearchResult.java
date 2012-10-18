@@ -2,7 +2,8 @@ package com.baldwin.indgte.persistence.dto;
 
 public class SearchResult {
 	public enum ResultType {
-		business
+		business,
+		product
 	}
 	
 	private ResultType type;

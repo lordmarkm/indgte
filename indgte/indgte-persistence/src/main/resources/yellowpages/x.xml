@@ -1,0 +1,15 @@
+<matches>
+	<query><![CDATA[x]]></query>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>x-ray apparatus</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>x-ray services</base>
+		<meta>1</meta>
+	</match>
+	<match start="0" stop="1" quality="255" meta="0" score="0">
+		<base>xmas clubs</base>
+		<meta>1</meta>
+	</match>
+</matches>

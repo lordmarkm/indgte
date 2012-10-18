@@ -19,20 +19,33 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 
+import com.baldwin.indgte.persistence.dto.SearchResult;
+import com.baldwin.indgte.persistence.dto.Searchable;
+import com.baldwin.indgte.persistence.dto.SearchResult.ResultType;
+
+@Indexed
 @Entity
 @Table(name="products")
-public class Product {
+public class Product implements Searchable {
+	
+	public static final String[] searchableFields = new String[]{"name", "description"};
+	
 	@Id @GeneratedValue @Column(name="productId")
 	private long id;
 	
 	@ManyToOne(optional=false)
 	@JoinColumn(name="categoryId", nullable=false, updatable=true)
 	private Category category;
-	
+
+	@Field(store = Store.YES)
 	@Column
 	private String name;
 
+	@Field
 	@Column
 	@Lob @Basic(fetch=FetchType.EAGER)
 	private String description;
@@ -52,6 +65,11 @@ public class Product {
 	@Override
 	public String toString() {
 		return name + ": " + description;
+	}
+
+	@Override
+	public SearchResult toSearchResult() {
+		return new SearchResult(ResultType.product, name, description, category.getBusiness().getDomain() + "/" + id, mainpic == null ? null : mainpic.getHash());
 	}
 	
 	public long getId() {
@@ -106,4 +124,5 @@ public class Product {
 	public void setPics(List<Imgur> pics) {
 		this.pics = pics;
 	}
+
 }

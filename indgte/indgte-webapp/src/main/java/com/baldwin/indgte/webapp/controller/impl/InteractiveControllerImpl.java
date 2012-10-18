@@ -1,8 +1,7 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.webapp.controller.MavBuilder.*;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseBody;

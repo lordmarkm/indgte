@@ -35,5 +35,6 @@ public interface BusinessDao {
 	void unhidePics(List<Long> imgurIds);
 	void deletePics(long productId, List<Long> imgurIds);
 	void reindex();
-	List<SearchResult> search(String term) throws ParseException;
+	List<SearchResult> search(String term, int maxResults) throws ParseException;
+	List<SearchResult> searchProduct(String term, int maxResults);
 }

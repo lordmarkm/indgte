@@ -37,9 +37,9 @@ public class BusinessProfile implements Searchable {
 	@Column(nullable=false, unique=true)
 	@Field(store = Store.YES)
 	private String domain;
-	
-	@Column(nullable=false)
+
 	@Field(store = Store.YES)
+	@Column(nullable=false)
 	private String fullName;
 	
 	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
