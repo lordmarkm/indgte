@@ -1,6 +1,7 @@
 package com.baldwin.indgte.webapp.controller;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -82,4 +83,13 @@ public interface BusinessController {
 	
 	@RequestMapping(value = "/editpics/{domain}/{imgurId}.json", method = RequestMethod.POST)
 	public JSON editPic(Principal principal, String domain, long imgurId, Imgur imgur);
+	
+	@RequestMapping(value = "/hidepics/{domain}/{productId}.json", method = RequestMethod.POST)
+	public JSON hidePics(Principal principal, String domain, List<Long> imgurIds);
+	
+	@RequestMapping(value = "/showpics/{domain}/{productId}.json", method = RequestMethod.POST)
+	public JSON showPics(Principal principal, String domain, List<Long> imgurIds);
+	
+	@RequestMapping(value = "/deletepics/{domain}/{productId}.json", method = RequestMethod.POST)
+	public JSON deletePics(Principal principal, String domain, long productId, List<Long> imgurIds);
 }

@@ -59,7 +59,7 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-taglibs</artifactId>
 		</dependency>
-
+		
 		<!-- Spring Social+Sec -->
 		<dependency>
 			<groupId>org.socialsignin</groupId>

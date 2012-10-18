@@ -7,6 +7,7 @@ import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,6 +211,42 @@ public class BusinessControllerImpl implements BusinessController {
 			return JSON.ok().put("imgur", businesses.updatePic(imgurId, clean(imgur.getTitle()), clean(imgur.getDescription())));
 		} catch (Exception e) {
 			log.error("Exception updating picture", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON hidePics(Principal principal, @PathVariable String domain, @RequestParam("imgurIds[]") List<Long> imgurIds) {
+		log.debug("Pics to hide: " + imgurIds);
+		try {
+			businesses.hidePics(imgurIds);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Exception hiding pics", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON showPics(Principal principal, @PathVariable String domain, @RequestParam("imgurIds[]") List<Long> imgurIds) {
+		log.debug("Pics to unhide: " + imgurIds);
+		try {
+			businesses.unhidePics(imgurIds);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Exception unhiding pics", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON deletePics(Principal principal, @PathVariable String domain,	@PathVariable long productId, @RequestParam("imgurIds[]") List<Long> imgurIds) {
+		log.debug("Pics to delete: " + imgurIds);
+		try {
+			businesses.deletePics(productId, imgurIds);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Exception deleting pics", e);
 			return JSON.status500(e);
 		}
 	}

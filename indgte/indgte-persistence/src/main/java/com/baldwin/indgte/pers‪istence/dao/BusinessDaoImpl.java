@@ -3,20 +3,32 @@ package com.baldwin.indgte.pers‪istence.dao;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.queryParser.MultiFieldQueryParser;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.FuzzyQuery;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baldwin.indgte.persistence.constants.SearchConstants;
+import com.baldwin.indgte.persistence.dto.SearchResultTransformer;
+import com.baldwin.indgte.persistence.dto.SearchResult;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
@@ -203,13 +215,13 @@ public class BusinessDaoImpl implements BusinessDao {
 
 	@Override
 	public Collection<Imgur> getProductPics(long productId) {
-		Product product = (Product) sessions.getCurrentSession().createCriteria(Product.class)
-			.add(Restrictions.eq(TableConstants.PRODUCT_ID, productId))
-			.setFetchMode(TableConstants.PRODUCT_PICS, FetchMode.JOIN)
-			.uniqueResult();
-		List<Imgur> results = new ArrayList<Imgur>(product.getPics());
-		if(null != product.getMainpic()) results.add(product.getMainpic());
-		return results;
+//		Product product = (Product) sessions.getCurrentSession().createCriteria(Product.class)
+//			.add(Restrictions.eq(TableConstants.PRODUCT_ID, productId))
+//			.setFetchMode(TableConstants.PRODUCT_PICS, FetchMode.JOIN)
+//			.uniqueResult();
+//		List<Imgur> results = new ArrayList<Imgur>(product.getPics());
+//		if(null != product.getMainpic()) results.add(product.getMainpic());
+//		return results;
 
 //		String hql = "select pic, p.mainpic from Product p inner join p.pics pic where p.id = :productId";
 //		List<Imgur> results = sessions.getCurrentSession().createQuery(hql)
@@ -217,15 +229,20 @@ public class BusinessDaoImpl implements BusinessDao {
 //			.list();
 //		log.debug("getProductPics(...) found {} results for productId {}", results.size(), productId);
 //		return results;
+		
+		return getProductPics(productId, -1);
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<Imgur> getProductPics(long productId, int howmany) {
 		String hql = "select pic from Product p inner join p.pics pic where p.id = :productId";
-		List<Imgur> results = sessions.getCurrentSession().createQuery(hql)
-				.setLong("productId", productId)
-				.setMaxResults(howmany).list();
+		Query query = sessions.getCurrentSession().createQuery(hql)
+				.setLong("productId", productId);
+		if(howmany != -1) {
+			query.setMaxResults(howmany).list();
+		}
+		Collection<Imgur> results = query.list();
 		log.debug("Results: {}", results);
 		return results;
 	}
@@ -244,6 +261,80 @@ public class BusinessDaoImpl implements BusinessDao {
 		Imgur imgur = (Imgur) sessions.getCurrentSession().get(Imgur.class, imgurId);
 		imgur.setTitle(title);
 		imgur.setDescription(description);
+		log.debug("{} updated.", imgur.getTitle());
 		return imgur;
+	}
+
+	@Override
+	public void hidePics(List<Long> imgurIds) {
+		String hql = "update Imgur set hidden = true where imageId in (:imgurIds)";
+		int updated = sessions.getCurrentSession().createQuery(hql)
+			.setParameterList("imgurIds", imgurIds)
+			.executeUpdate();
+		log.debug("{} pictures hidden.", updated);
+	}
+
+	@Override
+	public void unhidePics(List<Long> imgurIds) {
+		String hql = "update Imgur set hidden = false where imageId in (:imgurIds)";
+		int updated = sessions.getCurrentSession().createQuery(hql)
+			.setParameterList("imgurIds", imgurIds)
+			.executeUpdate();
+		log.debug("{} pictures unhidden.", updated);
+	}
+
+	@Override
+	public void deletePics(long productId, List<Long> imgurIds) {
+		Product product = getProduct(productId);
+		int deleted = 0;
+		for(Iterator<Imgur> i = product.getPics().iterator(); i.hasNext();) {
+			Imgur candidate = i.next();
+			if(imgurIds.contains(candidate.getImageId())) {
+				i.remove();
+				++deleted;
+			}
+		}
+		log.debug("{} pictures deleted from database.", deleted);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public void reindex() {
+		Session session = sessions.getCurrentSession();
+		List<BusinessProfile> businesses = session.createQuery("from BusinessProfile").list();
+		
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		for(BusinessProfile business : businesses) {
+			ftSession.index(business);
+		}
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<SearchResult> search(String term) throws ParseException {
+		log.debug("Searching for term {}", term);
+		
+		Session session = sessions.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		MultiFieldQueryParser parser = new MultiFieldQueryParser(SearchConstants.version, BusinessProfile.searchableFields, new StandardAnalyzer(SearchConstants.version));
+		
+		QueryBuilder q = ftSession.getSearchFactory().buildQueryBuilder().forEntity(BusinessProfile.class).get();
+		org.apache.lucene.search.Query lQuery = q.keyword().fuzzy().withThreshold(0.8f).withPrefixLength(1).onFields(BusinessProfile.searchableFields).matching(term).createQuery();
+
+		Query query = ftSession.createFullTextQuery(lQuery, BusinessProfile.class)
+				.setResultTransformer(new SearchResultTransformer());
+		return query.list();
+		
+		//This returns exact results
+//		Query query = ftSession.createFullTextQuery(parser.parse(term), BusinessProfile.class)
+//			.setResultTransformer(new SearchResultTransformer());
+//		return query.list();
+		
+//		List<BusinessProfile> businesses = query.list();
+//		List<SearchResult> results = new ArrayList<SearchResult>();
+//		for(BusinessProfile business : businesses) {
+//			results.add(business.toSearchResult());
+//		}
+//		return results;
 	}
 }

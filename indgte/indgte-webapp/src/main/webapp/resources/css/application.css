@@ -3,6 +3,9 @@ body {
 	font-family: helvetica, arial, serif;
 	font-size: 11pt;
 }
+#body {
+	min-height: 640px;	
+}
 
 .ui-button .ui-button-text {
 	font-size: 10pt !important;

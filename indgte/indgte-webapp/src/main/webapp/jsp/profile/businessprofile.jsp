@@ -68,7 +68,7 @@
 		<div class="feed-container">
 			<c:if test="${owner }">
 			<div class="feed-owner-container">
-				<div class="newpost ui-state-highlight ui-corner-all">
+				<div class="newpost ui-state-active ui-corner-all">
 					<img class="newpost-poster-pic" src=${urlSmallProfilepic } />
 					<div class="newpost-poster">
 						<div class="newpost-posting-as"><spring:message code="business.newpost.postingas" /></div>

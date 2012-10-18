@@ -10,9 +10,9 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost/njfp" />
-		<property name="username" value="root" />
-		<property name="password" value="" />
+		<property name="url" value="jdbc:mysql://${db.host}/${db.schema}" />
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
 		<property name="maxActive" value="20" />
 		<property name="maxIdle" value="10" />
 		<property name="maxWait" value="10000" />
@@ -45,6 +45,10 @@
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				
+				<!-- Hibernate Search -->
+				<prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.impl.FSDirectoryProvider</prop>
+				<prop key="hibernate.search.default.indexBase">${search.index}</prop>
 			</props>
 		</property>
 	</bean>
@@ -55,6 +59,7 @@
         <property name="dataSource" ref="dataSource" />
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
-
+	
+	<bean class="org.springframework.orm.hibernate4.HibernateExceptionTranslator" />
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 </beans>

@@ -1,6 +1,7 @@
 package com.baldwin.indgte.persistence.service;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,5 +72,14 @@ public class BusinessService {
 	}
 	public Imgur updatePic(long imgurId, String title, String description) {
 		return dao.updatePic(imgurId, title, description);
+	}
+	public void hidePics(List<Long> imgurIds) {
+		dao.hidePics(imgurIds);
+	}
+	public void unhidePics(List<Long> imgurIds) {
+		dao.unhidePics(imgurIds);
+	}
+	public void deletePics(long productId, List<Long> imgurIds) {
+		dao.deletePics(productId, imgurIds);
 	}
 }

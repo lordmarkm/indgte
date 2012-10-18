@@ -14,3 +14,6 @@
 
 <spring:url var="urlPics" value="/b/pics/" />
 <spring:url var="urlEditPics" value="/b/editpics/" />
+<spring:url var="urlHidePics" value="/b/hidepics/" />
+<spring:url var="urlShowPics" value="/b/showpics/" />
+<spring:url var="urlDeletePics" value="/b/deletepics/" />

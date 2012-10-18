@@ -166,6 +166,10 @@ $(function(){
 	</div>
 </div>
 
+<div class="image-upload-error" style="display:none;">
+	<span class="message"></span>
+</div>
+
 <style>
 div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
 	display:none;	
@@ -221,7 +225,8 @@ $(function(){
 		$dropbox = $('.image-upload-dropbox'),
 		$btnAddPhoto = $('.btn-product-add-photo'),
 		$uploadPreview = $('.image-upload-preview'),
-		$fieldImageUpload = $('.image-upload-file');
+		$fieldImageUpload = $('.image-upload-file'),
+		$errorDialog = $('.image-upload-error');
 	
 	var waitingFiles = 0;
 	
@@ -237,13 +242,14 @@ $(function(){
 	
 	$btnAddPhoto.click(function(){
 		$uploadPreview.html('');
-		$addPhoto.dialog({
-			title: '<spring:message code="product.addphotos.title" arguments="${product.name}"/>',
-			buttons: {
-				'<spring:message code="generics.done" />' : function(){
-					$addPhoto.dialog('close');
+		$addPhoto.find('.overlay').remove().end()
+			.dialog({
+				title: '<spring:message code="product.addphotos.title" arguments="${product.name}"/>',
+				buttons: {
+					'<spring:message code="generics.done" />' : function(){
+						$addPhoto.dialog('close');
+					}
 				}
-			}
 		});
 	});
 	
@@ -326,8 +332,50 @@ $(function(){
 	    var xhr = new XMLHttpRequest();
 	    xhr.open("POST", "http://api.imgur.com/2/upload.json");
 	    xhr.onload = function() {
+	    	if(xhr.status != 200) {
+	    		return xhr.onerror();
+	    	}
+	    	
 	    	var response = JSON.parse(xhr.responseText);
 	    	onComplete(response);
+	    }
+	    xhr.onerror = function() {
+	    	var response = JSON.parse(xhr.responseText);
+	    	if(response) {
+	    		debug('Error ' + xhr.status + ' - ' + JSON.stringify(response));
+	    		
+	    		var message;
+	    		if(response.error && response.error.message) {
+	    			message = response.error.message + ' Please try again after 1 hour.';
+	    		} else {
+	    			message = 'Unspecified error. Please try again after 1 hour.';
+	    		}
+	    		
+	    		if($errorDialog.is(':visible') === false) {
+	    			$errorDialog.find('.message').text(message).end()
+		    			.dialog({
+		    				title: 'Does not compute !@#$)@',
+		    				buttons: {
+		    					'OK' : function(){
+		    						$(this).dialog('close');
+		    						$addPhoto.dialog('close');
+		    					}
+		    				}
+		    			});
+		    		
+	    			$.get('http://api.imgur.com/2/credits.json', function(response){
+	    				var resetMessage = '';
+	    				if(response.credits) {
+	    					resetMessage = 'Credits reset in ' + response.credits.refresh_in_secs + ' seconds.';
+	    				} else {
+	    					resetMessage = 'Credits reset in ' + $.parseJSON(response).credits.refresh_in_secs + ' seconds.';
+	    				}
+	    				$errorDialog.append('Imgur credits reset in ' + response.credits + ' seconds.');
+	    			});
+	    		}
+	    	} else {
+	    		debug('Error ' + xhr.status);
+	    	}
 	    }
 		xhr.send(fd);		
 	}

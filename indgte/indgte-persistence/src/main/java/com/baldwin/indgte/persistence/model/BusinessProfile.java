@@ -17,16 +17,29 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
+
+import com.baldwin.indgte.persistence.dto.SearchResult;
+import com.baldwin.indgte.persistence.dto.Searchable;
+
+@Indexed
 @Entity
 @Table(name="businesses")
-public class BusinessProfile {
+public class BusinessProfile implements Searchable {
+	
+	public static final String[] searchableFields = new String[]{"domain", "fullName", "description"};
+	
 	@Id @GeneratedValue @Column(name="business_id")
 	private long id;
 	
 	@Column(nullable=false, unique=true)
+	@Field(store = Store.YES)
 	private String domain;
 	
 	@Column(nullable=false)
+	@Field(store = Store.YES)
 	private String fullName;
 	
 	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
@@ -39,6 +52,7 @@ public class BusinessProfile {
 	
 	@Column
 	@Lob @Basic(fetch=FetchType.EAGER)
+	@Field
 	private String description;
 	
 	@Column
@@ -75,6 +89,15 @@ public class BusinessProfile {
 		return domain + ":" + fullName;
 	}
 
+	@Override
+	public SearchResult toSearchResult() {
+		return new SearchResult(SearchResult.ResultType.business, 
+				fullName, 
+				description, 
+				domain, 
+				profilepic == null ? null : profilepic.getHash());
+	}
+	
 	public long getId() {
 		return id;
 	}
