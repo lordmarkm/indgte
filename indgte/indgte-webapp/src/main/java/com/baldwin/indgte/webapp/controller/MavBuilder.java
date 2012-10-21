@@ -71,11 +71,16 @@ public class MavBuilder {
 	 * (and potentially other useful harmless markup in the future)
 	 */
 	public static String clean(String dirty) {
-		String clean = StringEscapeUtils.escapeHtml(dirty);
-		if(null != clean) {
-			return clean.replaceAll("(\r\n|\n\r|\r|\n)", "<br>");
-		} else {
+		return clean(dirty, true);
+	}
+	
+	public static String clean(String dirty, boolean allowBr) {
+		if(null == dirty) {
 			return null;
+		} else if(allowBr) {
+			return StringEscapeUtils.escapeHtml(dirty).replaceAll("(\r\n|\n\r|\r|\n)", "<br>");
+		} else {
+			return StringEscapeUtils.escapeHtml(dirty);
 		}
 	}
 }

@@ -1,4 +1,10 @@
 //we give 0 ***** about corrupting the global namespace
+window.dgte = {
+	constants : {
+		postsPerPage : 10
+	}
+}
+
 window.debug = function(m) {
 	console.debug(m);
 }
@@ -12,6 +18,16 @@ window.unescapeBrs = function(target) {
 		return target.replace(/\<br\s*\>/g, '\n');
 	}
 }
+
+//override jquery ui dialog defaults
+$.extend($.ui.dialog.prototype.options, {
+    modal: true,
+    resizable: false,
+    maxHeight: 250,
+    width:500,
+	closeOnEscape: false,
+	hide: {effect: "fade", duration: 200}
+});
 
 $.fn.extend({
 	overlay : function(target, location, $triangle) {
@@ -59,11 +75,6 @@ $.fn.extend({
 });
 
 $(function(){
-	$('a.loadhere').on('click', function(){
-		$('#body').load($(this).attr('href') + '?loadhere=true');
-		return false;
-	});
-	
 	//make buttons (real and fake) conform to our ui theme
 	$('button').button();
 	$('.button').button();

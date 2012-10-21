@@ -28,7 +28,7 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public User getBySSSUserId(String userId) {
+	public User getSpring(String userId) {
 		log.debug("Trying to get SSS User by providerUserId = {}", userId);
 		
 		User user =  (User)sessions.getCurrentSession()

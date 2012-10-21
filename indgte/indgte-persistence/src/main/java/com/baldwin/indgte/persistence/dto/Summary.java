@@ -1,29 +1,17 @@
 package com.baldwin.indgte.persistence.dto;
 
-public class SearchResult {
-	public enum ResultType {
+public class Summary {
+	public enum SummaryType {
 		business,
 		product
 	}
 	
-	private ResultType type;
+	private Long id;
+	private SummaryType type;
 	private String title;
 	private String description;
 	private String thumbnailHash;
 	
-	public SearchResult(ResultType type, String title, String description,	String identifier, String thumbnailHash) {
-		super();
-		this.type = type;
-		this.title = title;
-		this.description = description;
-		this.identifier = identifier;
-		this.thumbnailHash = thumbnailHash;
-	}
-
-	public SearchResult() {
-		// TODO Auto-generated constructor stub
-	}
-
 	/**
 	 * User: username
 	 * BusinessProfile : domain
@@ -32,11 +20,25 @@ public class SearchResult {
 	 */
 	private String identifier;
 
-	public ResultType getType() {
+	public Summary(SummaryType type, Long id, String title, String description,	String identifier, String thumbnailHash) {
+		super();
+		this.type = type;
+		this.id = id;
+		this.title = title;
+		this.description = description;
+		this.identifier = identifier;
+		this.thumbnailHash = thumbnailHash;
+	}
+
+	public Summary() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public SummaryType getType() {
 		return type;
 	}
 
-	public void setType(ResultType type) {
+	public void setType(SummaryType type) {
 		this.type = type;
 	}
 
@@ -70,5 +72,13 @@ public class SearchResult {
 
 	public void setThumbnailHash(String thumbnailHash) {
 		this.thumbnailHash = thumbnailHash;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

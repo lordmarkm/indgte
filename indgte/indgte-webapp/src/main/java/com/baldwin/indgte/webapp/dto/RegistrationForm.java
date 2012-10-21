@@ -1,10 +1,10 @@
 package com.baldwin.indgte.webapp.dto;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
-import com.baldwin.indgte.persistence.model.User;
 
 public class RegistrationForm {
 	private BusinessProfile businessProfile;
+	private String category;
 	
 	public RegistrationForm() {
 		this.businessProfile = new BusinessProfile();
@@ -34,6 +34,13 @@ public class RegistrationForm {
 		businessProfile.setId(id);
 	}
 
+	public String getCategory() {
+		return category;
+	}
+	
+	public void setCategory(String category) {
+		this.category = category;
+	}
 	public String getDomain() {
 		return businessProfile.getDomain();
 	}
@@ -90,13 +97,13 @@ public class RegistrationForm {
 		businessProfile.setDescription(description);
 	}
 
-	public User getOwner() {
-		return businessProfile.getOwner();
-	}
-
-	public void setOwner(User owner) {
-		businessProfile.setOwner(owner);
-	}
+//	public User getOwner() {
+//		return businessProfile.getOwner();
+//	}
+//
+//	public void setOwner(User owner) {
+//		businessProfile.setOwner(owner);
+//	}
 
 	public Double getLatitude() {
 		return businessProfile.getLatitude();

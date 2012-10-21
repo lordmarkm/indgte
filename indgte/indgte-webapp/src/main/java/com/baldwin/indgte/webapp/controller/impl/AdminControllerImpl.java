@@ -62,6 +62,17 @@ public class AdminControllerImpl implements AdminController {
 				
 				Set<Post> posts = postDao.getByDomain(domain, Integer.parseInt(start), Integer.parseInt(howmany));
 				return JSON.ok().put("posts", posts);
+			case postsGetSubposts:
+				String username = request.getParameter("username");
+				try{
+					Collection<Post> subPosts = postDao.getSubposts(username, 0, 15);
+					if(null == subPosts) {
+						return JSON.status404().put("message", username + " not found.");
+					}
+					return JSON.ok().put("posts", subPosts);
+				} catch (Exception e) {
+					return JSON.status500(e);
+				}
 			default:
 				return JSON.status404();
 			}

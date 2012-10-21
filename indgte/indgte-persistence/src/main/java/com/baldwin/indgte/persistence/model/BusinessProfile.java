@@ -21,18 +21,22 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
-import com.baldwin.indgte.persistence.dto.SearchResult;
-import com.baldwin.indgte.persistence.dto.Searchable;
+import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.dto.Summarizable;
 
 @Indexed
 @Entity
 @Table(name="businesses")
-public class BusinessProfile implements Searchable {
+public class BusinessProfile implements Summarizable {
 	
 	public static final String[] searchableFields = new String[]{"domain", "fullName", "description"};
 	
 	@Id @GeneratedValue @Column(name="business_id")
 	private long id;
+	
+	@OneToOne
+	@JoinColumn(name="categoryId")
+	private BusinessCategory category;;
 	
 	@Column(nullable=false, unique=true)
 	@Field(store = Store.YES)
@@ -90,8 +94,9 @@ public class BusinessProfile implements Searchable {
 	}
 
 	@Override
-	public SearchResult toSearchResult() {
-		return new SearchResult(SearchResult.ResultType.business, 
+	public Summary summarize() {
+		return new Summary(Summary.SummaryType.business, 
+				id,
 				fullName, 
 				description, 
 				domain, 
@@ -211,5 +216,13 @@ public class BusinessProfile implements Searchable {
 
 	public void setCategories(Set<Category> categories) {
 		this.categories = categories;
+	}
+
+	public BusinessCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(BusinessCategory category) {
+		this.category = category;
 	}
 }

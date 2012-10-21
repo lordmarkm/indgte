@@ -22,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.baldwin.indgte.persistence.dto.SearchResult;
-import com.baldwin.indgte.persistence.dto.SearchResultTransformer;
+import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.dto.Summarizer;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
@@ -67,7 +67,6 @@ public class BusinessDaoImpl implements BusinessDao {
 		owner.getBusinesses().add(profile);
 		profile.setOwner(owner);
 		
-		session.update(owner);
 		session.save(profile);
 	}
 
@@ -75,6 +74,18 @@ public class BusinessDaoImpl implements BusinessDao {
 	public Object update(Object dirtyObject) {
 		sessions.getCurrentSession().update(dirtyObject);
 		return dirtyObject;
+	}
+	
+	@Override
+	public void saveOrUpdate(BusinessProfile businessProfile, String owner) {
+		log.info("Saving: [{}]", businessProfile);
+		log.info("Owner: [{}]", businessProfile.getOwner());
+		
+		if(businessProfile.getOwner() != null && owner.equals(businessProfile.getOwner().getUsername())) {
+			update(businessProfile);
+		} else {
+			create(businessProfile, owner);
+		}
 	}
 	
 	@Override
@@ -210,21 +221,6 @@ public class BusinessDaoImpl implements BusinessDao {
 
 	@Override
 	public Collection<Imgur> getProductPics(long productId) {
-//		Product product = (Product) sessions.getCurrentSession().createCriteria(Product.class)
-//			.add(Restrictions.eq(TableConstants.PRODUCT_ID, productId))
-//			.setFetchMode(TableConstants.PRODUCT_PICS, FetchMode.JOIN)
-//			.uniqueResult();
-//		List<Imgur> results = new ArrayList<Imgur>(product.getPics());
-//		if(null != product.getMainpic()) results.add(product.getMainpic());
-//		return results;
-
-//		String hql = "select pic, p.mainpic from Product p inner join p.pics pic where p.id = :productId";
-//		List<Imgur> results = sessions.getCurrentSession().createQuery(hql)
-//			.setLong("productId", productId)
-//			.list();
-//		log.debug("getProductPics(...) found {} results for productId {}", results.size(), productId);
-//		return results;
-		
 		return getProductPics(productId, -1);
 	}
 	
@@ -309,7 +305,7 @@ public class BusinessDaoImpl implements BusinessDao {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<SearchResult> search(String term, int maxResults) throws ParseException {
+	public List<Summary> search(String term, int maxResults) throws ParseException {
 		Session session = sessions.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 		
@@ -317,30 +313,16 @@ public class BusinessDaoImpl implements BusinessDao {
 		org.apache.lucene.search.Query lQuery = q.keyword().fuzzy().withThreshold(0.8f).withPrefixLength(1).onFields(BusinessProfile.searchableFields).matching(term).createQuery();
 
 		Query query = ftSession.createFullTextQuery(lQuery, BusinessProfile.class)
-				.setResultTransformer(new SearchResultTransformer());
+				.setResultTransformer(new Summarizer());
 		if(maxResults != -1) {
 			query.setMaxResults(maxResults);
 		}
 		return query.list();
-		
-		//This returns exact matches
-//		MultiFieldQueryParser parser = new MultiFieldQueryParser(SearchConstants.version, BusinessProfile.searchableFields, new StandardAnalyzer(SearchConstants.version));
-
-//		Query query = ftSession.createFullTextQuery(parser.parse(term), BusinessProfile.class)
-//			.setResultTransformer(new SearchResultTransformer());
-//		return query.list();
-		
-//		List<BusinessProfile> businesses = query.list();
-//		List<SearchResult> results = new ArrayList<SearchResult>();
-//		for(BusinessProfile business : businesses) {
-//			results.add(business.toSearchResult());
-//		}
-//		return results;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<SearchResult> searchProduct(String term, int maxResults) {
+	public List<Summary> searchProduct(String term, int maxResults) {
 		Session session = sessions.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 		
@@ -348,10 +330,11 @@ public class BusinessDaoImpl implements BusinessDao {
 		org.apache.lucene.search.Query lQuery = q.keyword().fuzzy().withThreshold(0.8f).withPrefixLength(1).onFields(Product.searchableFields).matching(term).createQuery();
 
 		Query query = ftSession.createFullTextQuery(lQuery, Product.class)
-				.setResultTransformer(new SearchResultTransformer());
+				.setResultTransformer(new Summarizer());
 		if(maxResults != -1) {
 			query.setMaxResults(maxResults);
 		}
 		return query.list();
 	}
+
 }

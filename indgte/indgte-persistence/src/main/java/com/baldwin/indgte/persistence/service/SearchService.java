@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baldwin.indgte.persistence.dto.SearchResult;
-import com.baldwin.indgte.persistence.dto.SearchResult.ResultType;
+import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.pers‪istence.dao.BusinessDao;
 
 @Service
@@ -26,13 +26,13 @@ public class SearchService {
 		businesses.reindex();
 	}
 
-	public Map<ResultType, List<SearchResult>> searchAll(String term, int maxResults) throws ParseException {
-		List<SearchResult> businessResults = businesses.search(term, maxResults);
-		List<SearchResult> productResults = businesses.searchProduct(term, maxResults);
+	public Map<SummaryType, List<Summary>> searchAll(String term, int maxResults) throws ParseException {
+		List<Summary> businessResults = businesses.search(term, maxResults);
+		List<Summary> productResults = businesses.searchProduct(term, maxResults);
 		
-		Map<ResultType, List<SearchResult>> results = new HashMap<ResultType, List<SearchResult>>();
-		results.put(ResultType.business, businessResults);
-		results.put(ResultType.product, productResults);
+		Map<SummaryType, List<Summary>> results = new HashMap<SummaryType, List<Summary>>();
+		results.put(SummaryType.business, businessResults);
+		results.put(SummaryType.product, productResults);
 		
 		log.debug("Search for completed, found {} businesses and {} products", businessResults.size(), productResults.size());
 		return results;

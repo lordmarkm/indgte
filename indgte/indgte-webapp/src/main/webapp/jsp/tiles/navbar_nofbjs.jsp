@@ -22,13 +22,13 @@
 		</div>
 		<div class="user-menu-partialborder"></div>
 		<div class="user-menu">
-			<div class="user-menu-item"><a class="loadhere" href="${urlProfile }">View Profile</a></div>
-			<div class="user-menu-item"><a class="loadhere" href="${urlMyBusinesses }">View My Businesses</a></div>
+			<div class="user-menu-item"><a href="${urlProfile }">View Profile</a></div>
+			<div class="user-menu-item"><a href="${urlMyBusinesses }">View My Businesses</a></div>
 			<div class="user-menu-divider">&nbsp;</div>
 			<div class="user-menu-item">Account Settings</div>
 			<div class="user-menu-divider">&nbsp;</div>
 			<div class="user-menu-item"><a href="${urlLogout }">Logout</a></div>
-			<div class="user-menu-item"><a class="loadhere" href="${urlHelp }">Help</a></div>
+			<div class="user-menu-item"><a href="${urlHelp }">Help</a></div>
 			<sec:authorize access="hasRole('ROLE_ADMIN')">
 			<div class="user-menu-divider">&nbsp;</div>
 			<div class="user-menu-item"><a href="<spring:url value='/a/daotest/'/>">Dao Tester</a></div>
@@ -85,11 +85,7 @@ $(function(){
 		var $that = $(this);
 		var $a = $that.find('a:first-child');
 		
-		if($a.hasClass('loadhere')) {
-			$('#body').load($a.attr('href') + '?loadhere=true');
-		} else {
-			window.location.href = $that.find('a:only-child').attr('href');	
-		}
+		window.location.href = $that.find('a:only-child').attr('href');	
 	});
 	
 	//same goes for navigation
@@ -185,11 +181,6 @@ $(function(){
 		$userMenu.hide();
 		$autocompleteResults.hide();
 		$btnShowUsermenu.removeClass('active');
-	});
-	
-	$(document).on('a.loadhere', 'click', function(){
-		$('#body').load($(this).attr('href') + '?loadhere=true');
-		return false;
 	});
 });
 </script>

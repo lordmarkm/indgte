@@ -27,6 +27,11 @@
 			<button class="postsGetByDomain-submit">Query</button>
 			</fieldset>
 		</li>
+		<li>
+			Get subposts for:
+			<input type="text" class="postsGetSubposts-username" value="${user.username }"/>
+			<button class="postsGetSubposts-get">Get</button>
+		</li>
 	</ul>
 </section>
 
@@ -69,9 +74,15 @@ $(function(){
 		});
 	});
 	
-	function debug(m) {
-		console.debug(m);
-	}
+	//2. Get subposts
+	var $2username = $('.postsGetSubposts-username'),
+		$2get = $('.postsGetSubposts-get');
+	
+	$2get.click(function(){
+		$.get(urlDaoTester + 'postsGetSubposts', {'username' : $2username.val()}, function(response) {
+			console.debug(response);
+		});
+	});
 });
 </script>
 

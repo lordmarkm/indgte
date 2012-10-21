@@ -237,7 +237,7 @@ $(function(){
 	    maxHeight: 250,
 	    width:500,
 		closeOnEscape: false,
-		hide: {effect: "fade", duration: 500}
+		hide: {effect: "fade", duration: 200}
 	});
 	
 	$btnAddPhoto.click(function(){

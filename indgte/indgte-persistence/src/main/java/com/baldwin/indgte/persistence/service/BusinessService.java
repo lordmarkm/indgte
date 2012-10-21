@@ -6,16 +6,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baldwin.indgte.persistence.model.BusinessCategory;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.pers‪istence.dao.BusinessDao;
+import com.baldwin.indgte.pers‪istence.dao.CategoryDao;
 
 @Service
 public class BusinessService {
 	@Autowired BusinessDao dao;
-	
+	@Autowired CategoryDao cDao;
 	public BusinessProfile get(String domain) {
 		return dao.get(domain);
 	}
@@ -24,6 +26,9 @@ public class BusinessService {
 	}
 	public void update(Object dirty) {
 		dao.update(dirty);
+	}
+	public void saveOrUpdate(BusinessProfile businessProfile, String owner) {
+		dao.saveOrUpdate(businessProfile, owner);
 	}
 	public void delete(BusinessProfile bizProfile) {
 		dao.delete(bizProfile);
@@ -82,4 +87,13 @@ public class BusinessService {
 	public void deletePics(long productId, List<Long> imgurIds) {
 		dao.deletePics(productId, imgurIds);
 	}
+	
+	//category dao ops
+	public BusinessCategory getCategory(String name) {
+		return cDao.get(name);
+	}
+	public String getBusinessCategories(String firstLetter) {
+		return cDao.getCategories(firstLetter);
+	}
+
 }

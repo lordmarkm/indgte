@@ -11,6 +11,7 @@
 <spring:url var="urlCreateCategory" value="/b/newcategory/" />
 
 <link rel="stylesheet" href="<spring:url value='/resources/css/businessprofile.css' />" />
+<link rel="stylesheet" href="<spring:url value='/resources/css/lists.css' />" />
 
 <c:choose>
 <c:when test="${not empty business.profilepic }">
@@ -44,11 +45,13 @@
 		</c:otherwise>
 		</c:choose>
 	</div>
+	<div class="button btn-subscribe-toggle">Subscribe</div>
 </div>
 
 <div class="content-info">
 	<h2 class="ui-widget-header fullname">${business.fullName }</h2>
 	<div class="content-info-indented grid_7">
+		<div style="text-transform: capitalize;">${business.category.name }</div>
 		<div class="description">${business.description }</div>
 		<div class="biz-url">www.indumaguete.com/p/${business.domain }</div>
 		<div class="biz-owner"><a href="${urlProfileRoot}user/${business.owner.username}">${business.owner.username }</a></div>
@@ -59,6 +62,7 @@
 	<ul>
 		<li><a href="#feed"><spring:message code="business.profile.tabs.feed" /></a></li>
 		<li><a href="#catalog"><spring:message code="business.profile.tabs.products" /></a></li>
+		<li><a href="#map">Map</a>
 		<li><a href="#reviews"><spring:message code="business.profile.tabs.reviews" /></a></li>
 		<li><a href="#comments"><spring:message code="business.profile.tabs.comments" /></a>
 	</ul>
@@ -105,6 +109,10 @@
 		</div>
 	</div>
 	
+	<div id="map">
+		<div class="map"></div>
+	</div>
+	
 	<div id="reviews">Reviews</div>
 	<div id="comments">Comments</div>
 </div>
@@ -112,18 +120,72 @@
 </div>
 
 <script>
+window.business = {
+	latitude: '${business.latitude}',
+	longitude: '${business.longitude}',
+	domain: '${business.domain}',
+	fullName: '${business.fullName}',
+	address: '${business.address}'
+}
+window.urls = {
+	subscribe : '<spring:url value="/i/subscribe/business/${business.id}.json" />',
+	unsubscribe : '<spring:url value="/i/unsubscribe/business/${business.id}.json" />',
+}
+
 $(function(){
 	var domain = '${business.domain}',
 		fullName = '${business.fullName}',
 		businessId = '${business.id}';
 	
 	var hasPic = '${not empty business.profilepic }' === 'true';
-		
-	var urlPosts = '${urlPosts}',
+	
+	var urlSubscribe = 
+		urlPosts = '${urlPosts}',
 		urlNoImage = '${noimage}',
 		urlNoImage50 = '${noimage50}',
 		urlSmallProfilepic = '${urlSmallProfilepic}',
 		urlCategories = '${urlCategories}';
+
+	//subscribe
+	var subscribed = '${subscribed}' === 'true';
+	var $btnSubscribe = $('.btn-subscribe-toggle');
+	
+	function refreshSubsButton() {
+		if(subscribed) {
+			$btnSubscribe
+				.button({label: 'Subscribed', icons: {secondary: 'ui-icon-circle-check'}})
+				.unbind('hover')
+				.hover(function(){
+					$btnSubscribe.button({label: 'Unsubscribe', icons: {}});
+				}, function(){
+					$btnSubscribe.button({label: 'Subscribed', icons:{secondary: 'ui-icon-circle-check'}});
+				});
+		} else {
+			$btnSubscribe
+				.button({label: 'Not subscribed', icons: {secondary: 'ui-icon-circle-close'}})				
+				.unbind('hover')
+				.hover(function(){
+					$btnSubscribe.button({label: 'Subscribe', icons: {}});
+				}, function(){
+					$btnSubscribe.button({label: 'Not subscribed', icons:{secondary: 'ui-icon-circle-close'}});
+				});
+		}
+	}
+	refreshSubsButton();
+
+	$btnSubscribe.click(function(){
+		var url = subscribed ? urls.unsubscribe : urls.subscribe;
+		$.post(url, function(response) {
+			switch(response.status) {
+			case '200':
+				subscribed = !subscribed;
+				refreshSubsButton();
+				break;
+			default:
+				debug(response);
+			}
+		});
+	});
 	
 	//feed
 	var $feedContainer = $('.feed-container'),
@@ -147,6 +209,9 @@ $(function(){
 			break;
 		case 'catalog':
 			onCatalog();
+			break;
+		case 'map':
+			onMap();
 			break;
 		case 'reviews':
 		case 'comments':
@@ -192,10 +257,6 @@ $(function(){
 		$('<div class="category-description italic">').text(category.description).appendTo($dataContainer);
 	}
 	
-	function addProduct(product, $category) {
-		
-	}
-	
 	//load the last 10 posts by this business
 	function reloadPosts() {
 		var $overlay = $('<div class="overlay">').appendTo($feedContainer);
@@ -239,6 +300,38 @@ $(function(){
 		$('<a>').attr('href', urlPosts + post.id).html(post.title).appendTo($title);
 		var $text = $('<div class="post-text">').html(post.text).appendTo($dataContainer);
 		var $date = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow()).appendTo($dataContainer);
+	}
+	
+	//map
+	var $map = $('.map');
+	var map;
+	
+	function onMap() {
+		if(!map) {
+			initializeMap();
+		} else {
+			//TODO pan map center to business
+		}
+	}
+	
+	function initializeMap() {
+		var location = new google.maps.LatLng(business.latitude, business.longitude);
+		
+		map = new google.maps.Map($map[0], {
+			zoom: 15,
+			center: location,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		});
+		
+		var marker = new google.maps.Marker({
+			map: map,
+			position: location
+		});
+		
+		var infowindow = new google.maps.InfoWindow({
+			content: '<h3>' + business.fullName + '</h3>' + business.address,
+		});
+		infowindow.open(map, marker);
 	}
 });
 </script>
@@ -288,16 +381,6 @@ $(function(){
 		$btnNewpostSubmit = $('.newpost-submit'),
 		$newpostTitle = $('.newpost-title'),
 		$newpostText = $('.newpost-text');
-	
-	//override jquery ui dialog defaults
-	$.extend($.ui.dialog.prototype.options, {
-	    modal: true,
-	    resizable: false,
-	    maxHeight: 250,
-	    width:500,
-		closeOnEscape: false,
-		hide: {effect: "fade", duration: 500}
-	});
 	
 	//update cover
 	$cover.unbind('click').click(function(){
@@ -411,3 +494,4 @@ $(function(){
 
 <spring:url var="jsApplication" value="/resources/javascript/application.js" />
 <script type="text/javascript" src="${jsApplication }"></script>
+<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>

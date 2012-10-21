@@ -8,6 +8,8 @@ public class TableConstants {
 	public final static String USER_PROVIDERID_SPRINGSOCSEC = "springSocialSecurity";
 	public static final String USER_PROVIDERID_FACEBOOK = "facebook";
 	
+	public static final String BIZCATEGORY_NAME = "name";
+	
 	public final static String BUSINESS_DOMAIN = "domain";
 	public static final String BUSINESS_CATEGORIES = "categories";
 	
@@ -18,4 +20,6 @@ public class TableConstants {
 	public static final String PRODUCT_ID = "id";
 	
 	public static final String IMGUR_UPLOADED = "uploaded";
+	
+	public static final String POST_TIME = "postTime";
 }

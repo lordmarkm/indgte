@@ -1,6 +1,6 @@
 package com.baldwin.indgte.persistence.constants;
 
-public enum BusinessCategory {
+public enum BusinessCategoryList {
 
 	a("abattoirs,abortion clinics,abrasives,access control,accident investigations,accommodation,accommodation agents,accountants,accounting services,acoustics,actuaries,acupuncture,addressing machines,adhesives,adoption,adult education,adult entertainment,adventure sports,advertising,advertising agencies,aerial installations,aerial photography,aerial platforms,after school centres,agricultural consultants,agricultural contractors,agricultural engineers,agricultural machinery,agricultural services,air charter,air compressors,air conditioner repairs,air conditioners,air conditioning,air conditioning consultants,air filters and purification,air filters and purification services,air ticket reservations,aircraft parts,aircraft services,airlines,airport parking,airport transfers,airports,alloys,aluminium products,aluminium services,ambulance services,amusement machines,amusement parks,animal feed,animal rehabilitation,animal welfare societies,animation,anodisers,antique dealers,antique restoration,aquarium and pond supplies,archaeological surveys,archery,architects,armed forces,aromatherapy,art dealers,art galleries,art schools,artificial flowers,artificial surfaces,artist services,artists,artists paints,artists work,arts and crafts,asbestos,asbestos removal,asphalt,asphalt contractors,astrologers,attorneys,auctioneers,audio visual equipment,audio visual servcies,auto electricians,automation systems,aviaries"),
 	b("baby products and services,babysitters,badges,bags,baked products,bakers,bakers supplies,bakery equipment,balustrades,bands,banks,bar code products,bar fitting,bar fixtures,barcoding,baskets,bath enamelling,bathroom design,bathroom fittings,batteries,battery servicing,beads and beadwork,bearing related items,bearings,beauty salons,beauty schools,beauty supplies,bed and breakfast,beds and bedding,beekeepers and bee removals,beekeepers equipment,betting events,bingo,binoculars and telescopes,bins,biokinetics,bird breeders,blacksmiths,blast cleaning,blinds and awnings,blinds and awnings accessories,blood services,boarding kennels,boat accessories,boat builders and repairs,boats,bodyguards,boiler cleaning and repairs,boiler parts,boiler services,bolts,bonsai,bookbinding,bookbinding equipment,bookkeepers,bookmakers,books and magazines,bookseller services,borehole drillers,borehole services,bottle stores,braai equipment,brakes and clutches,brazing,breakdown recovery,breweries,brewing services,brick structures,brickmaking machinery,bricks,bridal wear,broadcasting services,brushes,builders,builders board,builders merchants,building blocks,building cleaning services,building consultants,building machinery,building maintenance,building materials,building products,building services engineering,building societies,built-in units,bus and coach services,bus lines,business centre services,business consultants,business development,business enterprise agencies,business skills training,business software,business specific training,butchers"),
@@ -31,7 +31,7 @@ public enum BusinessCategory {
 
 	private String values;
 	
-	private BusinessCategory(String values) {
+	private BusinessCategoryList(String values) {
 		this.values = values;
 	}
 	

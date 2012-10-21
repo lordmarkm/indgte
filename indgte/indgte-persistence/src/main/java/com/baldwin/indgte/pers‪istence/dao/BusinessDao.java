@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.lucene.queryParser.ParseException;
 
-import com.baldwin.indgte.persistence.dto.SearchResult;
+import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
@@ -15,6 +15,7 @@ public interface BusinessDao {
 	BusinessProfile get(String bizName);
 	void create(BusinessProfile bizProfile, String owner);
 	Object update(Object dirtyObject);
+	void saveOrUpdate(BusinessProfile businessProfile, String owner);
 	void delete(BusinessProfile bizProfile);
 	Collection<BusinessProfile> getBusinesses(String userId);
 	void saveProfilepic(String domain, Imgur profilepic);
@@ -35,6 +36,6 @@ public interface BusinessDao {
 	void unhidePics(List<Long> imgurIds);
 	void deletePics(long productId, List<Long> imgurIds);
 	void reindex();
-	List<SearchResult> search(String term, int maxResults) throws ParseException;
-	List<SearchResult> searchProduct(String term, int maxResults);
+	List<Summary> search(String term, int maxResults) throws ParseException;
+	List<Summary> searchProduct(String term, int maxResults);
 }

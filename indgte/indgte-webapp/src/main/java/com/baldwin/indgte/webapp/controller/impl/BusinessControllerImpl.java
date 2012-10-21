@@ -29,6 +29,7 @@ import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
+import com.baldwin.indgte.persistence.service.PostsService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.BusinessController;
 import com.baldwin.indgte.webapp.controller.JSON;

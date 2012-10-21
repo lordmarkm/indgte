@@ -32,6 +32,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 			<list>
+				<value>com.baldwin.indgte.persistence.model.BusinessCategory</value>
 				<value>com.baldwin.indgte.persistence.model.BusinessProfile</value>
 				<value>com.baldwin.indgte.persistence.model.Category</value>
 				<value>com.baldwin.indgte.persistence.model.Product</value>
@@ -43,7 +44,7 @@
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
-				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 				
 				<!-- Hibernate Search -->

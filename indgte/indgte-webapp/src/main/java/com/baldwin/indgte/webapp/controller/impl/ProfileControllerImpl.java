@@ -21,6 +21,7 @@ import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
+import com.baldwin.indgte.persistence.service.PostsService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.ProfileController;
@@ -34,6 +35,9 @@ public class ProfileControllerImpl implements ProfileController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private PostsService posts;
 	
 	@Value("${imgur.devkey}")
 	private String imgurKey;
@@ -95,6 +99,7 @@ public class ProfileControllerImpl implements ProfileController {
 		
 		ModelAndView mav = render(user)
 				.put("business", business)
+				.put("subscribed", posts.isSubscribed(principal.getName(), business.getId()))
 				.put("owner", business.getOwner().getUsername().equals(user.getUsername()))
 				.put("imgurKey", imgurKey)
 				.mav();

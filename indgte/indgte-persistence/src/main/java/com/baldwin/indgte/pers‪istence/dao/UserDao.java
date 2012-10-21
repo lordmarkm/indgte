@@ -12,6 +12,6 @@ public interface UserDao {
 	 * User id is common accross all providers
 	 */
 	User getByUsername(String username, String providerId);
-	User getBySSSUserId(String userId);
+	User getSpring(String userId);
 	User getFacebook(String userId);
 }

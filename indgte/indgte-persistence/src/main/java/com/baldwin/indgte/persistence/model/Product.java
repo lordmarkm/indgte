@@ -23,14 +23,14 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
-import com.baldwin.indgte.persistence.dto.SearchResult;
-import com.baldwin.indgte.persistence.dto.Searchable;
-import com.baldwin.indgte.persistence.dto.SearchResult.ResultType;
+import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.dto.Summarizable;
+import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 
 @Indexed
 @Entity
 @Table(name="products")
-public class Product implements Searchable {
+public class Product implements Summarizable {
 	
 	public static final String[] searchableFields = new String[]{"name", "description"};
 	
@@ -68,8 +68,8 @@ public class Product implements Searchable {
 	}
 
 	@Override
-	public SearchResult toSearchResult() {
-		return new SearchResult(ResultType.product, name, description, category.getBusiness().getDomain() + "/" + id, mainpic == null ? null : mainpic.getHash());
+	public Summary summarize() {
+		return new Summary(SummaryType.product, id, name, description, category.getBusiness().getDomain() + "/" + id, mainpic == null ? null : mainpic.getHash());
 	}
 	
 	public long getId() {

@@ -16,8 +16,8 @@ public class UserService {
 		return dao.getByUsername(userId, providerId);
 	}
 
-	public User getBySSSUserId(String userId) {
-		return dao.getBySSSUserId(userId);
+	public User getMain(String userId) {
+		return dao.getSpring(userId);
 	}
 
 	public User getFacebook(String userId) {

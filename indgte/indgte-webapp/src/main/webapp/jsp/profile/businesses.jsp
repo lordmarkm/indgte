@@ -24,7 +24,7 @@
 	</c:choose>
 	
 	<div class="grid_8">
-		<a class="loadhere" href="${urlRegister }"><spring:message code="businesses.register" /></a>
+		<a href="${urlRegister }"><spring:message code="businesses.register" /></a>
 	</div>
 </section>
 

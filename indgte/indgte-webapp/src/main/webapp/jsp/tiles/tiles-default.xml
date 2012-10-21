@@ -24,6 +24,9 @@
 	<definition name="regform" extends="default">
 		<put-attribute name="body" value="/jsp/register/regform.jsp" />
 	</definition>
+	<definition name="choosecategory" extends="default">
+		<put-attribute name="body" value="/jsp/register/choosecategory.jsp" />
+	</definition>
 	<definition name="pinpointlocation" extends="default">
 		<put-attribute name="body" value="/jsp/register/pinpointlocation.jsp" />
 	</definition>

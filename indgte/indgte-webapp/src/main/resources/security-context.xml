@@ -15,6 +15,7 @@
 		<intercept-url pattern="/p/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/a/**" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url pattern="/b/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/i/**" access="hasRole('ROLE_USER')" />
 	</http>
 	
 	<authentication-manager alias="authenticationManager" />

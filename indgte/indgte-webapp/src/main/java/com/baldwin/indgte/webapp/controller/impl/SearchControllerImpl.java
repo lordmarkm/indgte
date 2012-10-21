@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.baldwin.indgte.persistence.dto.SearchResult;
+import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.service.SearchService;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.SearchController;
@@ -48,7 +48,7 @@ public class SearchControllerImpl implements SearchController {
 		long startTime = System.currentTimeMillis();
 		try {
 			JSON response = JSON.ok();
-			for(Entry<SearchResult.ResultType, List<SearchResult>> result : search.searchAll(term, 5).entrySet()) {
+			for(Entry<Summary.SummaryType, List<Summary>> result : search.searchAll(term, 5).entrySet()) {
 				response.put(String.valueOf(result.getKey()), result.getValue());
 			}
 			response.put("searchtime", System.currentTimeMillis() - startTime);
