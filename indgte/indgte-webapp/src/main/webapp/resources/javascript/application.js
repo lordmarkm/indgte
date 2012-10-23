@@ -1,7 +1,15 @@
 //we give 0 ***** about corrupting the global namespace
 window.dgte = {
+	home: {
+		postMaxlength: 140,
+		statusColsCollapsed: 30,
+		statusColsExpanded: 60
+	},
 	constants : {
 		postsPerPage : 10
+	},
+	urls : {
+		blackSquareSmall : 'http://i.imgur.com/Y0NTes.jpg'
 	}
 }
 

@@ -53,11 +53,25 @@ public class RegistrationControllerImpl implements RegistrationController {
 			.put("regform", regform)
 			.mav();
 	}
-
+	
 	@Override
-	public @ResponseBody boolean isDomainTaken(@RequestParam String domain) {
+	public ModelAndView editform(Principal principal, RegistrationForm regform, @PathVariable String domain) {
+		log.debug("Edit form requested by {} for {}", principal.getName(), domain);
+		
+		User user = userService.getFacebook(principal.getName());
+		BusinessProfile business = businesses.get(domain);
+		regform.setBusinessProfile(business);
+
+		return render(user, "regform")
+				.put("regform", regform)
+				.put("editdomain", domain)
+				.mav();
+	}
+	
+	@Override
+	public @ResponseBody boolean isDomainTaken(@RequestParam String domain, @RequestParam String editDomain) {
 		log.debug("Checking uniqueness of domain [{}]", domain);
-		return null == businesses.get(domain);
+		return domain.equals(editDomain) || null == businesses.get(domain);
 	}
 	
 	public ModelAndView savePageOne(Principal principal, @ModelAttribute User user, @ModelAttribute RegistrationForm regform) {
@@ -72,7 +86,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 	public ModelAndView savePageTwo(Principal principal, @ModelAttribute User user, @ModelAttribute RegistrationForm regform) {
 		log.debug("Registration flow, Page 2 save request form domain {}. Category is now [{}]", regform.getDomain(), regform.getCategory());
 		//User user = userService.getFacebook(principal.getName());
-		String name = clean(regform.getCategory(), false);
+		String name = clean(regform.getRegformCategory(), false);
 		BusinessCategory category = businesses.getCategory(name);
 		regform.getBusinessProfile().setCategory(category);
 		
@@ -83,7 +97,12 @@ public class RegistrationControllerImpl implements RegistrationController {
 	
 	public ModelAndView savePageThree(Principal principal, @ModelAttribute RegistrationForm regform) {
 		log.info("Successful edit or registration of domain {} by {}.", regform.getDomain(), principal.getName());
-		businesses.saveOrUpdate(regform.getBusinessProfile(), principal.getName());
+		BusinessProfile business = regform.getBusinessProfile();
+		if(business.getLatitude() == null) {
+			business.setLatitude(0d);
+			business.setLongitude(0d);
+		}
+		businesses.saveOrUpdate(business, principal.getName());
 		
 		return redirect("/p/" + regform.getDomain())
 				.mav();

@@ -1,0 +1,151 @@
+.ui-tabs {
+	font-size: 0.8em;
+}
+
+.newpost {
+	margin: 10px 0 10px 0;
+	border: 1px solid transparent;
+	width: 500px;
+	position: relative;
+}
+.newpost.active {
+	border: 1px dotted lightskyblue;
+	padding: 10px;
+}
+
+.status-title-container {
+	margin-bottom: -1px;	
+}
+
+.status-title {
+	border-bottom-style: dashed;
+	padding: 4px;
+}
+
+.status-textarea {
+	resize: none;
+	line-height: 1.8;
+	overflow-y: hidden;
+	font-weight: normal !important;
+	padding: 4px;
+}
+.status-textarea.ui-state-active {
+	border-top: 0;
+}
+.status-textarea:not(.noattachment) {
+	border-bottom: 0;
+}
+
+.status-textarea:-moz-placeholder, .status-title:-moz-placeholder{
+	color: grey;
+}
+.status-textarea:-webkit-input-placeholder, .status-title:-webkit-input-placeholder  {
+	color: grey
+}
+
+.attach-input-container {
+	margin-top: -1px;
+	border-top-style: dashed !important;
+	padding: 2px;	
+}
+
+.newpost-errors {
+	margin: 2px 0 2px 0;
+	padding: 2px;
+	font-weight: bold;
+	color: red;
+}
+
+.status-options {
+	margin-top: 5px;
+	width: 500px;
+}
+
+.floatright {
+	display: table;
+}
+
+.floatright div {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.status-counter {
+	margin-right: 5px;
+}
+
+.post-as, .attach {
+	cursor: pointer;
+	position: relative;
+	margin: 0 5px 0 0;
+}
+
+.post-as-visibles:not(.ui-state-highlight):not(.ui-state-active),
+.attach-visibles:not(.ui-state-highlight):not(.ui-state-active) {
+	border: 1px dotted lightskyblue;
+}
+
+.attach-visibles {
+	height: 25px;
+	padding: 0 0 0 5px;
+}
+
+.attach-visibles img {
+	margin: 5px 0 0 2px;
+}
+
+.post-as img {
+	max-height: 25px;
+	max-width: 25px;
+	vertical-align: middle;
+}
+
+.attach img {
+	vertical-align: middle;
+}
+
+.post-as-menu, .attach-menu {
+	width: 300px;
+	max-height: 200px;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow-y: auto;
+	position: absolute;
+    right: 0px;
+    position: absolute;
+    z-index: 1;
+}
+
+.attach-menu {
+	width: 140px;
+}
+
+.post-as-menu div, .attach-menu div {
+	display: block;
+}
+
+.attach-triangle {
+	margin-top: 6px;
+}
+
+.post-as-option:not(.ui-state-highlight), .attach-option:not(.ui-state-highlight) {
+	border: 1px solid transparent;
+}
+.post-as-option, .attach-option {
+	padding: 3px;
+}
+.post-as-option img, .attach-option img {
+	float: left;
+	margin-right: 5px;
+}
+.post-as-option .name, .attach-option .name {
+	margin-top: -2px;
+}
+
+.post-as-category {
+	margin-top: -3px;
+	font-size: 0.7em;
+	opacity: 0.7;
+	text-transform: capitalize;
+}

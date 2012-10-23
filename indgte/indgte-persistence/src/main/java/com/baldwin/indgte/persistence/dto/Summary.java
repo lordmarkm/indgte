@@ -2,6 +2,14 @@ package com.baldwin.indgte.persistence.dto;
 
 public class Summary {
 	public enum SummaryType {
+		none,
+		
+		image,
+		video,
+		link,
+		
+		/* types below fall under 'entity' in the front end */
+		user,
 		business,
 		product
 	}

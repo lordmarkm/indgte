@@ -7,12 +7,16 @@
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 <div class="grid_12">
-<div class="map"></div>
-<form:form method="post" commandName="regform" action="${urlSubmit }">
-	<form:hidden path="latitude" value="0" />
-	<form:hidden path="longitude" value="0" />
-	<input type="submit" value="Submit fake LatLng" />
-</form:form>
+	<h3 style="margin: 10px;">Where in Dumaguete is ${regform.fullName }?</h3>
+	<div class="map"></div>
+	<div style="text-align: center;">
+	<form:form method="post" commandName="regform" action="${urlSubmit }">
+		<form:hidden path="latitude" />
+		<form:hidden path="longitude" />
+		<button class="satisfied">I'm satisfied with this location</button>
+		<button class="nolatlng">${regform.fullName } doesn't have a Mappable location</button>
+	</form:form>
+	</div>
 </div>
 
 <div class="dialog" style="display: none;">
@@ -23,9 +27,14 @@
 
 <style>
 .map {
-	width: 640px;
-	height: 480px;
+	width: 780px;
+	height: 420px;
 	margin: auto;
+	border: 1px dotted grey;
+}
+
+#regform {
+	margin: 10px 0;
 }
 
 .dialog {
@@ -40,6 +49,8 @@ window.constants = {
 $(function(){
 	//map
 	var $map = $('.map'),
+		$btnSatisfied = $('.satisfied').button('disable'),
+		$btnNolatlng = $('.nolatlng'),
 		$yes = $('.yes'),
 		$no = $('.no'),
 		$latitude = $('#latitude'),
@@ -52,11 +63,23 @@ $(function(){
 		latLng;
 	
 	function initializeMap() {
+		var edit = $latitude.val() && $latitude.val() != 0;
+		var lat = edit ? $latitude.val() : 9.3167;
+		var lng = edit ? $longitude.val() : 123.3000;
+		var zoom = edit ? 16 : 12;
+		
 		map = new google.maps.Map($map[0], {
-			zoom: 12,
-			center: new google.maps.LatLng(9.3167, 123.3000),
+			zoom: zoom,
+			scrollwheel: false,
+			panControl: false,
+			streetViewControl: false,
+			center: new google.maps.LatLng(lat, lng),
 			mapTypeId: google.maps.MapTypeId.ROADMAP
-		});		
+		});
+		
+		if(edit) {
+			makeMarker(new google.maps.LatLng(lat, lng));
+		}
 	}
 	
 	initializeMap();
@@ -73,15 +96,11 @@ $(function(){
 		infowindow.open(map);
 	});
 	
-	$yes.click(function(event){
-		event.stopPropagation();
-		$latitude.val(latLng.lat());
-		$longitude.val(latLng.lng());
-
+	function makeMarker(provLatLng) {
 		if(marker) marker.setMap(null);
 		marker = new google.maps.Marker({
 			animation: google.maps.Animation.DROP,
-			position: latLng
+			position: provLatLng ? provLatLng : latLng
 		});
 		marker.setMap(map);
 		
@@ -97,12 +116,25 @@ $(function(){
 			if(markerHoverInfoWindow) markerHoverInfoWindow.close();
 		});
 		
+		$btnSatisfied.button('enable');
+	}
+	
+	$yes.click(function(event){
+		event.stopPropagation();
+		$latitude.val(latLng.lat());
+		$longitude.val(latLng.lng());
+		makeMarker();
 		infowindow.close();
 	});
 	
 	$no.click(function(event){
 		event.stopPropagation();
 		infowindow.close();
+	});
+	
+	$btnNolatlng.click(function(){
+		$latitude.val(0);
+		$longitude.val(0);
 	});
 });
 </script>

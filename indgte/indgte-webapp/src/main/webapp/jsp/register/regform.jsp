@@ -87,9 +87,10 @@ label.ui-state-error {
 				</div>
 			</td>
 			<td>
-				<form:input class="ui-state-active" path="address" />
+				<form:textarea path="address" class="ui-state-active" rows="3" maxlength="140"/>
 			</td>
 		</tr>
+		<tr><td></td><td class="error"></td></tr>
 		<tr>
 			<td>
 				<div class="registration-label">
@@ -159,13 +160,16 @@ $(function(){
 				remote: {
 					url: urls.uniqueDomain,
 					type: 'post',
-					data: {domain: function(){return $('#domain').val()}}
+					data: {domain: function(){return $('#domain').val()}, editDomain: '${editdomain}'}
 				} 
 			},
 			fullName: {
 				required: true,
 				rangelength: [4, 45],
 				fullName: '^[a-zA-Z0-9 ]+$'
+			},
+			address: {
+				maxlength: 140
 			},
 			email: {
 				email: true
@@ -193,5 +197,9 @@ $(function(){
 			return false;
 		}
 	});
+	
+	//unescape brs for edit
+	unescapeBrs($('#address'));
+	unescapeBrs($('#description'));
 });
 </script>

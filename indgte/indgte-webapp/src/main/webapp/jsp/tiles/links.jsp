@@ -3,6 +3,8 @@
 <spring:url var="noimage" value="/resources/images/noimage.jpg" />
 <spring:url var="noimage50" value="/resources/images/noimage50.png" />
 <spring:url var="spinner" value="/resources/images/spinner.gif" />
+<spring:url var="paperclip" value="/resources/images/icons/paperclip.png" />
+
 <spring:url var="urlProfile" value="/p/" />
 
 <spring:url var="urlNewCategory" value="/b/newcategory/" />

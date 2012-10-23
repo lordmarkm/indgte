@@ -39,9 +39,12 @@ public class Post {
 	private String posterImgurHash;
 	
 	@Column
-	private Long attachmentId;
+	private SummaryType attachmentType;
 	
 	@Column
+	private Long attachmentId;
+	
+	@Column(length=500)
 	private String attachmentIdentifier;
 	
 	@Column
@@ -49,9 +52,6 @@ public class Post {
 	
 	@Column
 	private String attachmentImgurHash;
-	
-	@Column
-	private SummaryType attachmentType;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column
@@ -66,7 +66,7 @@ public class Post {
 
 	@Override
 	public String toString() {
-		return title;
+		return title + ": " + text;
 	}
 	
 	public Post() {

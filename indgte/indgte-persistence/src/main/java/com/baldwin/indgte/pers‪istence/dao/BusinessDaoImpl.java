@@ -54,6 +54,11 @@ public class BusinessDaoImpl implements BusinessDao {
 	}
 
 	@Override
+	public BusinessProfile get(long businessId) {
+		return (BusinessProfile) sessions.getCurrentSession().get(BusinessProfile.class, businessId);
+	}
+	
+	@Override
 	public void create(BusinessProfile profile, String ownerName) {
 		Session session = sessions.getCurrentSession();
 		
@@ -336,5 +341,4 @@ public class BusinessDaoImpl implements BusinessDao {
 		}
 		return query.list();
 	}
-
 }

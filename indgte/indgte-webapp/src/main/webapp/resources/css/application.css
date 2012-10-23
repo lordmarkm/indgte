@@ -9,6 +9,9 @@ body {
 	line-height: 1.0 !important;
 }
 
+/* margins and other trivial stuff */
+.mr5 {margin-right: 5px;}
+
 /* descriptive-name classes */
 .hide {display: none;}
 

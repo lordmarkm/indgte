@@ -3,7 +3,9 @@ package com.baldwin.indgte.webapp.controller.impl;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
 
 import java.security.Principal;
+import java.util.Date;
 
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +13,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
 
 import com.baldwin.indgte.persistence.constants.PostType;
+import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
+import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Post;
+import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.PostsService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.pers‪istence.dao.PostDao;
 import com.baldwin.indgte.webapp.controller.InteractiveController;
 import com.baldwin.indgte.webapp.controller.JSON;
+import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 
 @Component
 public class InteractiveControllerImpl implements InteractiveController {
@@ -28,7 +37,11 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Autowired
 	private PostsService posts;
 	
-	@Autowired UserService users;
+	@Autowired 
+	private UserService users;
+	
+	@Autowired
+	private BusinessService businesses;
 	
 	@Autowired
 	private PostDao postDao;
@@ -48,6 +61,63 @@ public class InteractiveControllerImpl implements InteractiveController {
 		return JSON.ok().put("posts", postDao.getById(posterId, type, start, howmany));
 	}
 
+	@Override
+	public @ResponseBody JSON newstatus(Principal principal, WebRequest request) {
+		log.debug("Poster id: [{}]", request.getParameter("posterId"));
+		log.debug("Poster type: [{}]", request.getParameter("posterType"));
+		log.debug("Text: [{}]", request.getParameter("text"));
+		
+		log.debug("Attachment? {}", request.getParameter("attachmentType"));
+		
+		Summary poster;
+		PostType postType = PostType.valueOf(request.getParameter("posterType"));
+		switch(postType) {
+		case user:
+			User user = users.getFacebook(principal.getName());
+			poster = user.summarize();
+			break;
+		case business:
+			BusinessProfile business = businesses.get(Long.parseLong(request.getParameter("posterId")));
+			poster = business.summarize();
+			break;
+		default:
+			throw new IllegalArgumentException("Illegal post type " + postType);
+		}
+		
+		Summary attachment;
+		SummaryType attachmentType = SummaryType.valueOf(request.getParameter("attachmentType"));
+		switch(attachmentType) {
+		case image:
+			attachment = new Summary(attachmentType, null, null, null, null, request.getParameter("hash"));
+			break;
+		case video:
+			String embed = request.getParameter("embed");
+			embed = Jsoup.clean(embed, DgteTagWhitelist.videos());
+			attachment = new Summary(attachmentType, null, null, null, embed, null);
+			break;
+		case none:
+			attachment = null;
+			break;
+		default:
+			throw new IllegalArgumentException("Illegal attachment type " + attachmentType);
+		}
+		
+		Post post = new Post(poster, attachment);
+		
+		String title = clean(request.getParameter("title"));
+		String text = clean(request.getParameter("text"));
+		
+		post.setType(postType);
+		post.setPostTime(new Date());
+		post.setTitle(title);
+		post.setText(text);
+		
+		posts.saveOrUpdate(post);
+		log.debug("Post: {} text: {}", post);
+		
+		return JSON.ok().put("post", post);
+	}
+	
 	@Override
 	public @ResponseBody JSON post(long posterId, PostType type, String title, String text) {
 		title = clean(title);

@@ -183,4 +183,9 @@ public class PostDaoImpl implements PostDao {
 	public boolean isSubscribed(String username, long businessId) {
 		return users.getSpring(username).getBusinessSubscriptions().contains(businessId);
 	}
+
+	@Override
+	public void saveOrUpdate(Post post) {
+		sessions.getCurrentSession().saveOrUpdate(post);
+	}
 }

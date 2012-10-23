@@ -1,8 +1,6 @@
 package com.baldwin.indgte.persistence.service;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,5 +44,9 @@ public class PostsService {
 
 	public boolean isSubscribed(String username, long businessId) {
 		return dao.isSubscribed(username, businessId);
+	}
+
+	public void saveOrUpdate(Post post) {
+		dao.saveOrUpdate(post);
 	}
 }

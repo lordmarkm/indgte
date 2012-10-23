@@ -1,5 +1,6 @@
 package com.baldwin.indgte.webapp.dto;
 
+import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 
 public class RegistrationForm {
@@ -34,7 +35,14 @@ public class RegistrationForm {
 		businessProfile.setId(id);
 	}
 
+	
+	public String getRegformCategory() {
+		return category;
+	}
 	public String getCategory() {
+		if(businessProfile.getCategory() != null) {
+			return businessProfile.getCategory().getName();
+		}
 		return category;
 	}
 	
@@ -62,7 +70,7 @@ public class RegistrationForm {
 	}
 
 	public void setAddress(String address) {
-		businessProfile.setAddress(address);
+		businessProfile.setAddress(clean(address));
 	}
 
 	public String getEmail() {
@@ -94,7 +102,7 @@ public class RegistrationForm {
 	}
 
 	public void setDescription(String description) {
-		businessProfile.setDescription(description);
+		businessProfile.setDescription(clean(description));
 	}
 
 //	public User getOwner() {

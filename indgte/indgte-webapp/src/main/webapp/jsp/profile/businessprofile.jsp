@@ -5,6 +5,7 @@
 <spring:url var="noimage50" value="/resources/images/noimage50.png" />
 <spring:url var="spinner" value="/resources/images/spinner.gif" />
 <spring:url var="urlProfileRoot" value="/p/" />
+<spring:url var="urlEdit" value="/r/edit/" />
 <spring:url var="urlPosts" value="/i/posts/" />
 <spring:url var="urlBusinessPost" value="/i/posts/business/" />
 <spring:url var="urlCategories" value="/b/categories/" />
@@ -55,10 +56,16 @@
 		<div class="description">${business.description }</div>
 		<div class="biz-url">www.indumaguete.com/p/${business.domain }</div>
 		<div class="biz-owner"><a href="${urlProfileRoot}user/${business.owner.username}">${business.owner.username }</a></div>
+		<c:if test="${owner }">
+		<div class="business-owner-operations">
+			<a class="button" href="${urlEdit }${business.domain}">Edit</a>
+			<button class="btn-promote">Promote</button>
+		</div>
+		</c:if>
 	</div>
 </div>
 
-<div class="tabs">
+<div class="tabs grid_10">
 	<ul>
 		<li><a href="#feed"><spring:message code="business.profile.tabs.feed" /></a></li>
 		<li><a href="#catalog"><spring:message code="business.profile.tabs.products" /></a></li>
@@ -304,21 +311,30 @@ $(function(){
 	
 	//map
 	var $map = $('.map');
-	var map;
+	var map,
+		location = new google.maps.LatLng(business.latitude, business.longitude);
 	
 	function onMap() {
+		if(~~business.latitude === 0.0) {
+			$map.html('');
+			$('<h5>').text('<spring:message code="business.nolatlng" arguments="' + business.fullName + '"/>').appendTo($map);
+			$('<p>').html(business.address).appendTo($map);
+			return;
+		}
+		
 		if(!map) {
 			initializeMap();
 		} else {
-			//TODO pan map center to business
+			map.panTo(location);
 		}
 	}
 	
 	function initializeMap() {
-		var location = new google.maps.LatLng(business.latitude, business.longitude);
-		
 		map = new google.maps.Map($map[0], {
 			zoom: 15,
+			scrollwheel: false,
+			panControl: false,
+			streetViewControl: false,
 			center: location,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		});
@@ -329,7 +345,7 @@ $(function(){
 		});
 		
 		var infowindow = new google.maps.InfoWindow({
-			content: '<h3>' + business.fullName + '</h3>' + business.address,
+			content: '<p><strong style="font-size: 1.1em;">' + business.fullName + '</strong></p>' + business.address
 		});
 		infowindow.open(map, marker);
 	}

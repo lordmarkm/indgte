@@ -29,6 +29,9 @@ public interface RegistrationController {
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView regform(Principal principal, RegistrationForm regform);
 	
+	@RequestMapping(value="/edit/{domain}", method=RequestMethod.GET)
+	public ModelAndView editform(Principal principal, RegistrationForm regform, String domain);
+	
 	/**
 	 * Save essential business information
 	 * @param regform
@@ -41,7 +44,7 @@ public interface RegistrationController {
 	 * @return true if the domain is available
 	 */
 	@RequestMapping(value = "/uniquedomain/", method = RequestMethod.POST)
-	public boolean isDomainTaken(String domain);
+	public boolean isDomainTaken(String domain, String editDomain);
 	
 	@RequestMapping(value = URL_SAVE_PAGE2, method = RequestMethod.POST)
 	public ModelAndView savePageTwo(Principal principal, User user, RegistrationForm regform);

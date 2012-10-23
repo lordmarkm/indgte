@@ -15,9 +15,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
+import com.baldwin.indgte.persistence.dto.Summarizable;
+import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
+
 @Entity
 @Table(name="UserConnection")
-public class User {
+public class User implements Summarizable {
 	@Id 
 	@GeneratedValue 
 	@Column(name="connection_id")
@@ -83,6 +87,11 @@ public class User {
 		return username;
 	}
 
+	@Override
+	public Summary summarize() {
+		return new Summary(SummaryType.user, id, username, null, username, imageUrl);
+	}
+	
 	public String getUsername() {
 		return username;
 	}

@@ -13,6 +13,7 @@ import com.baldwin.indgte.persistence.model.Product;
 
 public interface BusinessDao {
 	BusinessProfile get(String bizName);
+	BusinessProfile get(long businessId);
 	void create(BusinessProfile bizProfile, String owner);
 	Object update(Object dirtyObject);
 	void saveOrUpdate(BusinessProfile businessProfile, String owner);

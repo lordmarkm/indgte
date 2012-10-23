@@ -26,4 +26,6 @@ public interface PostDao {
 	public boolean isSubscribed(String username, long businessId);
 
 	public void unsubscribeFromBusiness(String username, Long id);
+
+	public void saveOrUpdate(Post post);
 }

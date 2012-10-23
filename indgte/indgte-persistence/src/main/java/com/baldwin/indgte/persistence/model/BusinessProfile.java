@@ -46,11 +46,11 @@ public class BusinessProfile implements Summarizable {
 	@Column(nullable=false)
 	private String fullName;
 	
-	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
+	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="profilepicId")
 	private Imgur profilepic;
 	
-	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
+	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="coverpicId")
 	private Imgur coverpic;
 	
@@ -80,10 +80,10 @@ public class BusinessProfile implements Summarizable {
 	private User owner;
 	
 	@Column
-	private Double latitude;
+	private Double latitude = 0d;
 	
 	@Column
-	private Double longitude;
+	private Double longitude = 0d;
 	
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="business")
 	private Set<Category> categories;

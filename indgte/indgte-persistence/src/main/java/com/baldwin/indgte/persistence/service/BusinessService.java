@@ -21,6 +21,9 @@ public class BusinessService {
 	public BusinessProfile get(String domain) {
 		return dao.get(domain);
 	}
+	public BusinessProfile get(long businessId) {
+		return dao.get(businessId);
+	}
 	public void save(BusinessProfile bizProfile, String owner) {
 		dao.create(bizProfile, owner);
 	}

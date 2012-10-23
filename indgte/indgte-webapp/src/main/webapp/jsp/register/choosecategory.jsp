@@ -3,6 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.3/jquery.scrollTo.min.js"></script>
 
 <spring:url value="/r/save/2/" var="urlSubmit" />
 
@@ -13,7 +14,7 @@
 </div>
 
 <form:form method="post" commandName="regform" action="${urlSubmit }">
-	<form:hidden path="category" value="uncategorized" />
+	<form:hidden path="category" />
 </form:form>
 
 <div style="text-align: center; margin-top: 10px;">
@@ -27,7 +28,7 @@
 	<p>Looks like we missed a category of business. We're sorry. Please enter your business category here:</p>
 	<div style="text-align: center;">
 	<form id="newcategory-form" action="javascript:;">
-		<input class="field-newcategory required" minlength="4" maxlength="45" type="text" />
+		<input id="fldNewcategory" class="field-newcategory required" minlength="4" maxlength="45" type="text" />
 		<div>&nbsp;<span></span></div>
 	</form>
 	</div>
@@ -100,10 +101,7 @@ $(function(){
 	var loaded = [];
 	$tabs.tabs({
 		create: function(event, ui) {
-			debug(event);
-			debug(ui);
-			onTab('a', $('#a'));
-			
+			if(!isEdit()) onTab('a', $('#a'));
 			$('.tabs-heads').prepend('<div class="tabs-title">Choose a Category</div>');
 		},
 		select: function(event, ui){
@@ -113,7 +111,7 @@ $(function(){
 		}
 	});
 	
-	function onTab(firstLetter, $panel) {
+	function onTab(firstLetter, $panel, callback) {
 		loaded.push(firstLetter);
 		
 		var $overlay = $('<div class="overlay">').appendTo($panel);
@@ -124,12 +122,24 @@ $(function(){
 				for(var i = 0, length = categories.length; i < length; ++i) {
 					$panel.append(makeCategory(categories[i]));
 				}
+				if(typeof(callback) == typeof(Function)) {
+					callback();
+				}
 				break;
 			default:
 				debug(response);
 			}
 			
 			$overlay.delay(800).fadeOut(200, function() { $overlay.remove(); });
+
+			var category = $('#category').val();
+			if(category) {
+				var catFirstLetter = category[0];
+				if(catFirstLetter === firstLetter) {
+					var $cat = $('.category[title="' + category + '"]').click();
+					$('#' + firstLetter).scrollTo($cat, 1000, {over:-5});
+				}
+			}
 		});
 	}
 	
@@ -169,6 +179,22 @@ $(function(){
 			}
 		});
 	});
+	
+	//handle edit
+	function isEdit(){
+		var category = $('#category').val();
+		if(category === '') {
+			return false;
+		}
+		var firstLetter = category[0];
+		
+		if(firstLetter === 'a') {
+			onTab('a', $('#a'));
+		} else {
+			$tabs.tabs('select', '#' + firstLetter);
+		}
+		return true;
+	}
 	
 	$(document).on({
 		click : function(){
