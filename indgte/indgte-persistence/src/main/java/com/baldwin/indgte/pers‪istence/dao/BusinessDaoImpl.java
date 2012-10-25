@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.lucene.queryParser.ParseException;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
@@ -13,17 +12,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.baldwin.indgte.persistence.dto.Summary;
-import com.baldwin.indgte.persistence.dto.Summarizer;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
@@ -185,6 +179,13 @@ public class BusinessDaoImpl implements BusinessDao {
 		return getCategory(categoryId, null);
 	}
 
+	@Override
+	public Category getCategoryWithProducts(long categoryId) {
+		Category category = (Category) sessions.getCurrentSession().get(Category.class, categoryId);
+		Hibernate.initialize(category.getProducts());
+		return category;
+	}
+	
 	private Category getCategory(long categoryId, Session session) {
 		if(null == session) {
 			session = sessions.getCurrentSession();
@@ -294,51 +295,15 @@ public class BusinessDaoImpl implements BusinessDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public void reindex() {
-		Session session = sessions.getCurrentSession();
-		List<BusinessProfile> businesses = session.createQuery("from BusinessProfile").list();
-		
-		FullTextSession ftSession = Search.getFullTextSession(session);
-		for(BusinessProfile business : businesses) {
-			ftSession.index(business);
-		}
-		for(Product product : (List<Product>)session.createQuery("from Product").list()) {
-			ftSession.index(product);
-		}
+	public String findDomainForProductId(long productId) {
+		Product product = (Product) sessions.getCurrentSession().get(Product.class, productId);
+		return product.getCategory().getBusiness().getDomain();
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public List<Summary> search(String term, int maxResults) throws ParseException {
-		Session session = sessions.getCurrentSession();
-		FullTextSession ftSession = Search.getFullTextSession(session);
-		
-		QueryBuilder q = ftSession.getSearchFactory().buildQueryBuilder().forEntity(BusinessProfile.class).get();
-		org.apache.lucene.search.Query lQuery = q.keyword().fuzzy().withThreshold(0.8f).withPrefixLength(1).onFields(BusinessProfile.searchableFields).matching(term).createQuery();
-
-		Query query = ftSession.createFullTextQuery(lQuery, BusinessProfile.class)
-				.setResultTransformer(new Summarizer());
-		if(maxResults != -1) {
-			query.setMaxResults(maxResults);
-		}
-		return query.list();
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Summary> searchProduct(String term, int maxResults) {
-		Session session = sessions.getCurrentSession();
-		FullTextSession ftSession = Search.getFullTextSession(session);
-		
-		QueryBuilder q = ftSession.getSearchFactory().buildQueryBuilder().forEntity(Product.class).get();
-		org.apache.lucene.search.Query lQuery = q.keyword().fuzzy().withThreshold(0.8f).withPrefixLength(1).onFields(Product.searchableFields).matching(term).createQuery();
-
-		Query query = ftSession.createFullTextQuery(lQuery, Product.class)
-				.setResultTransformer(new Summarizer());
-		if(maxResults != -1) {
-			query.setMaxResults(maxResults);
-		}
-		return query.list();
+	public Product getProductWithPics(long productId) {
+		Product product = (Product) sessions.getCurrentSession().get(Product.class, productId);
+		Hibernate.initialize(product.getPics());
+		return product;
 	}
 }

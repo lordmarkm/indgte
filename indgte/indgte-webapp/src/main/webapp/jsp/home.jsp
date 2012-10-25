@@ -14,18 +14,28 @@
 
 <section class="newpost">
 	<form id="form-newpost">
-		<div class="status-title-container">
-			<input name="title" class="status-title ui-state-active hide" type="text" placeholder="title" />
-		</div>
-		<textarea name="text" class="status-textarea noattachment" maxlength="140" rows="1" placeholder="<spring:message code="home.status.textarea" />"></textarea>	
-	
-		<div class="attach-input-container">
-			<input class="posterId" type="hidden" value="${user.id }" />
-			<input class="posterType" type="hidden" value="user" />
-			<input class="iptType" type="hidden" value="none"/>
-			<input class="iptFile" type="file" />
-			<input class="iptUrl" type="text" placeholder="Paste URL"/>
-			<input class="iptEntity" type="text" placeholder="Enter Entity name" />
+		<div class="border-provider ui-state-active inline-block">
+			<div class="status-title-container">
+				<input name="title" class="status-title ui-state-active hide" maxlength="45" type="text" placeholder="title" />
+			</div>
+			<textarea name="text" class="status-textarea noattachment" maxlength="140" rows="1" placeholder="<spring:message code="home.status.textarea" />"></textarea>	
+			<div class="attach-input-container">
+				<!-- Hidden -->
+				<input class="posterId" type="hidden" value="${user.id }" />
+				<input class="posterType" type="hidden" value="user" />
+				<input class="iptType" type="hidden" value="none"/>
+				
+				<!-- Image -->
+				<input class="iptFile" type="file" />
+				
+				<!-- Video and link -->
+				<input class="iptUrl" type="text" placeholder="Paste URL"/>
+				
+				<!-- Entity -->
+				<input class="iptEntity" type="text" placeholder="Enter Entity name" />
+				<div class="entity-preview hide"></div> 
+				<div class="entity-suggestions ui-state-default"></div>
+			</div>
 		</div>
 		
 		<div class="newpost-errors"></div>
@@ -49,7 +59,14 @@
 					</div>
 					<c:forEach items="${businesses }" var="business">
 					<div class="post-as-option" posterId="${business.id }" posterType="business">
-						<img src="${business.profilepic.smallSquare }" />
+						<c:choose>
+						<c:when test="${not empty business.profilepic }">
+							<img src="${business.profilepic.smallSquare }" />
+						</c:when>
+						<c:otherwise>
+							<img src="http://i.imgur.com/Y0NTes.jpg" />
+						</c:otherwise>
+						</c:choose>
 						<div class="name">${business.fullName }</div>
 						<div class="post-as-category">${business.category.name }</div>
 					</div>
@@ -86,6 +103,9 @@
 
 <section class="feedcontainer">
 	<ul class="posts"></ul>
+	<div class="loadmoreContainer" style="text-align: center; height: 100px; position: relative;">
+		<button class="loadmore" style="width: 50%; margin-top: 50px;">Load 10 more</button>
+	</div>
 </section>
 
 </div>
@@ -99,10 +119,17 @@ window.urls = {
 	status : '<spring:url value="/i/newstatus.json" />',
 	subposts : '<spring:url value="/i/subposts.json" />',
 	postdetails : '<spring:url value="/i/posts/" />',
+	linkpreview : '<spring:url value="/i/linkpreview/" />',
 	user : '<spring:url value="/p/user/" />',
 	business : '<spring:url value="/p/" />',
+	category: '<spring:url value="/b/categories/" />',
+	categoryWithProducts: '<spring:url value="/b/categories/" />',
+	getproducts: '<spring:url value="/b/products/" />',
+	product: '<spring:url value="/b/products/" />',
+	productwithpics: '<spring:url value="/b/products/withpics/" />',
 	imgur : 'http://i.imgur.com/',
-	imgurPage : 'http://imgur.com/'
+	imgurPage : 'http://imgur.com/',
+	searchOwn: '<spring:url value="/s/own/" />'
 }
 
 $(function(){
@@ -119,6 +146,8 @@ $(function(){
 		$iptFile = $('.iptFile').hide(),
 		$iptUrl = $('.iptUrl').hide(),
 		$iptEntity = $('.iptEntity').hide(),
+		$entityPreview = $('.entity-preview'),
+		$entitySuggestions = $('.entity-suggestions').hide(),
 		$statusCounter = $('.status-counter'),
 		$statusOptions = $('.status-options'),
 		$menubutton = $('.menubutton'),
@@ -128,7 +157,9 @@ $(function(){
 		$attach = $('.attach'),
 		$attachVisibles = $('.attach-visibles'),
 		$attachMenu = $('.attach-menu').hide(),
-		$btnPost = $('.btn-post');
+		$btnPost = $('.btn-post'),
+		$loadmoreContainer = $('.loadmoreContainer'),
+		$loadmore = $('.loadmore');
 	
 	//posts
 	var $feedcontainer = $('.feedcontainer'),
@@ -141,7 +172,21 @@ $(function(){
 			.removeClass('ui-state-active')
 			.addClass('ui-state-default');	
 		$newpost.removeClass('active');
+		
+		//hide stuff
+		$title.hide();
 		$statusOptions.hide();
+		$errors.hide();
+		hideAttachInputs();
+		$attachInputContainer.hide();
+		
+		//clear inputs
+		$attachType.val('none');
+		$newpost.find('input:not(.posterId):not(.posterType),textarea').val('');
+		
+		//entity
+		$iptEntity.removeAttr('entitytype').removeAttr('entityid');
+		$entityPreview.html('');
 	}
 	
 	function matchWidths() {
@@ -159,8 +204,9 @@ $(function(){
 		$statusOptions.show();
 		$title.show();
 		$errors.show();
-		matchWidths();
 		checkActiveAttachment();
+		checkPoster();
+		matchWidths();
 	}
 	
 	function checkStatus() {
@@ -266,6 +312,7 @@ $(function(){
 	
 	function hideAttachInputs() {
 		$attachInputContainer.find('input').hide();
+		$entityPreview.hide();
 	}
 	
 	$('.attach-option').click(function(){
@@ -278,6 +325,7 @@ $(function(){
 		$attachType.val('image');
 		$status.removeClass('noattachment');
 		$iptFile.show();
+		matchWidths();
 	});
 	
 	$('.attach-option.video').click(function(){
@@ -285,7 +333,8 @@ $(function(){
 		hideAttachInputs();
 		$attachType.val('video');
 		$status.removeClass('noattachment');
-		$iptUrl.attr('placeholder', 'Paste video URL').show();
+		$iptUrl.attr('placeholder', 'Paste video embed code').show();
+		matchWidths();
 	});
 
 	$('.attach-option.link').click(function(){
@@ -294,6 +343,7 @@ $(function(){
 		$attachType.val('link');
 		$status.removeClass('noattachment');
 		$iptUrl.attr('placeholder', 'Paste link URL').show();
+		matchWidths();
 	});
 	
 	$('.attach-option.entity').click(function(){
@@ -301,7 +351,8 @@ $(function(){
 		hideAttachInputs();
 		$attachType.val('entity');
 		$status.removeClass('noattachment');
-		$iptEntity.show();
+		$iptEntity.show().blur();
+		matchWidths();
 	});
 	
 	$('.attach-option.none').click(function(){
@@ -323,18 +374,27 @@ $(function(){
 				$iptFile.show();
 				break;
 			case 'video':
-				$iptUrl.attr('placeholder', 'Paste video URL').show();
+				$iptUrl.attr('placeholder', 'Paste video embed code').show();
 				break;
 			case 'link':
 				$iptUrl.attr('placeholder', 'Paste link URL').show();
 				break;
 			case 'entity':
-				$iptEntity.show();
+				$iptEntity.show().blur();
 				break;
 			}
 		}
 	}
 	checkActiveAttachment();
+	
+	//same thing for poster if poster has been changed
+	function checkPoster() {
+		var posterId = $posterId.val();
+		var posterType = $posterType.val();
+		if(posterType === 'user') return; //default
+		$('.post-as-option[posterid="' + posterId + '"]').click();
+	}
+	checkPoster();
 	
 	$attachMenu.on({
 		mouseenter: function(event){
@@ -350,6 +410,119 @@ $(function(){
 		},
 	}, '.attach-option');
 	
+	//link
+	$iptUrl.change(function(){
+		if($attachType.val() != 'link') return;
+		
+		$.get(urls.linkpreview, {uri:$iptUrl.val()}, function(response) {
+			debug(response);
+		});
+	});
+	
+	//entity
+	var searchtimeout;
+	$iptEntity.bind({
+		keyup: startTimeout,
+		paste: startTimeout,
+		focus: startTimeout
+	});
+	
+	function startTimeout() {
+		if(searchtimeout) {
+			clearTimeout(searchtimeout);
+		}
+		searchtimeout = setTimeout(autocompleteOwn, 500);
+	}
+	
+	function autocompleteOwn() {
+		if(!$iptEntity.is(':visible')) return;
+		var term = $iptEntity.val();
+		if(term.length < dgte.search.autocompleteMinlength) return;
+		$.get(urls.searchOwn + term + '.json', function(response){
+			switch(response.status) {
+			case '200':
+				$entitySuggestions.html('');
+				var visibleResults = 0;
+				function makeAutocompleteResult(result, urlRoot) {
+					var $auto = $('<div class="autocomplete-container entity-suggestion">')
+						.attr('entitytype', result.type)
+						.attr('entityid', result.id)
+						.appendTo($entitySuggestions);
+					
+					$('<img class="autocomplete-img">').attr('src', result.thumbnailHash ? urls.imgur + result.thumbnailHash + 's.jpg' : dgte.urls.blackSquareSmall).appendTo($auto);
+					$('<div class="autocomplete-title">').text(result.title).appendTo($auto);
+					
+					if(result.description.length < 80) {
+						$('<div class="autocomplete-description">').text(result.description).appendTo($auto);
+					} else {
+						$('<div class="autocomplete-description">').text(result.description.substring(0, 80) + '... ').appendTo($auto);
+					}
+					++visibleResults;
+				}
+				
+				if(response.business && response.business.length > 0) {
+					$('<div class="ui-widget-header">').text('Businesses').appendTo($entitySuggestions);
+					for(var i = 0, length = response.business.length; i < length; i++) {
+						makeAutocompleteResult(response.business[i], urls.business);
+					}
+				}
+				
+				if(response.category && response.category.length > 0) {
+					$('<div class="ui-widget-header">').text('Categories').appendTo($entitySuggestions);
+					for(var i = 0, length = response.category.length; i < length; i++) {
+						makeAutocompleteResult(response.category[i], urls.category);
+					}
+				}
+				
+				if(response.product && response.product.length > 0) {
+					$('<div class="ui-widget-header">').text('Products').appendTo($entitySuggestions);
+					for(var i = 0, length = response.product.length; i < length; i++) {
+						makeAutocompleteResult(response.product[i], urls.product);
+					}
+				}
+				
+				if(visibleResults) {
+					$entitySuggestions.show();
+				} else {
+					$entitySuggestions.hide();
+				}
+				break;
+			default:
+				debug('Error' + JSON.stringify(response));
+			}
+		});
+	}
+	
+	$entitySuggestions.on({
+		mouseover: function(){$(this).addClass('ui-state-highlight')}, 
+		mouseout:  function(){$(this).removeClass('ui-state-highlight')}
+	}, '.autocomplete-container');
+	
+	$(document).on({
+		click: function(){
+			var $this = $(this);
+			
+			$iptEntity.attr('entityid', $this.attr('entityid'))
+				.attr('entitytype', $this.attr('entitytype'))
+				.unbind('blur')
+				.blur(function(){
+					if($iptEntity.attr('entityid')) {
+						$iptEntity.hide();
+						$entityPreview.show();
+					}
+				})
+				.hide();
+			
+			$entityPreview.html('');
+			$this.clone().appendTo($entityPreview).removeClass('entity-suggestion').addClass('entity-suggestion-clone');
+			$entityPreview.fadeIn(500).click(function(){
+				$entityPreview.hide();
+				$iptEntity.show().focus();
+			});
+		}
+	}, '.entity-suggestion');
+	
+	//submit post
 	$form.validate({
 		rules: {
 			title: {
@@ -405,9 +578,11 @@ $(function(){
 			break;
 		case 'link':
 			data.attachmentType = 'link';
+			data.link = encodeURI($iptUrl.val());
 			break;
 		case 'entity':
-			debug('attaching entity.');
+			data.attachmentType = $iptEntity.attr('entitytype');
+			data.entityId = $iptEntity.attr('entityid');
 			break;
 		case '':
 		default:
@@ -438,7 +613,8 @@ $(function(){
 		$.post(urls.status, data, function(response) {
 			switch(response.status) {
 			case '200':
-				addPost(response.post, true);
+				addPost(response.post, true, true);
+				shrinkStatus();
 				break;
 			default:
 				debug(response);
@@ -449,19 +625,25 @@ $(function(){
 	}
 	
 	//posts
-	$.get(urls.subposts, {start: 0, howmany: dgte.constants.postsPerPage}, function(response){
-		switch(response.status) {
-		case '200':
-			for(var i = 0, length = response.posts.length; i < length; ++i) {
-				addPost(response.posts[i]);
+	var startPostIndex = 0;
+	function getPosts() {
+		$.get(urls.subposts, {start: startPostIndex, howmany: dgte.constants.postsPerPage}, function(response){
+			switch(response.status) {
+			case '200':
+				for(var i = 0, length = response.posts.length; i < length; ++i) {
+					addPost(response.posts[i], false, startPostIndex != 0);
+				}
+				startPostIndex += response.posts.length;
+				break;
+			default:
+				debug(response);
 			}
-			break;
-		default:
-			debug(response);
-		}
-	});
+		});
+		$loadmoreContainer.find('.overlay').delay(800).fadeOut(200, function() { $(this).remove(); });
+	}
+	getPosts();
 	
-	function addPost(post, prepend) {
+	function addPost(post, prepend, fadein) {
 		var posterImgSrc;
 		var link;
 		switch(post.type) {
@@ -481,9 +663,13 @@ $(function(){
 		var $post = $('<li class="post">').attr('postId', post.id);
 		
 		if(prepend) {
-			$post.prependTo($posts).hide().fadeIn(1500);;
+			$post.prependTo($posts).hide();
 		} else {
 			$post.appendTo($posts);
+		}
+		
+		if(fadein) {
+			$post.hide().fadeIn(1500);
 		}
 		
 		if(posterImgSrc) {
@@ -523,6 +709,99 @@ $(function(){
 					$this.button('option', 'label', 'Show video').button({icons: {secondary: 'ui-icon-play'}});
 				}
 			});
+			break;
+		case 'category':
+			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
+			//title
+			var $attachmentA = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
+			$('<h4>').text(post.attachmentTitle).appendTo($attachmentA);
+			//main category pic
+			var $a2 = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
+			$('<img class="category-attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($a2);
+			//product previews			
+			$.get(urls.categoryWithProducts + post.attachmentIdentifier + '/' + dgte.home.productPreviews + '.json', function(response) {
+				switch(response.status) {
+				case '200':
+					var description = response.category.description.length < dgte.home.attchDescLength ? response.category.description : response.category.description.substring(0, dgte.home.attchDescLength) + '...';
+					$('<div class="attachment-description">')
+						.text(description)
+						.insertAfter($attachmentA);
+					
+					if(response.products && response.products.length > 0) {
+						var $products = $('<div>').appendTo($container);
+						var visibleProducts = 0;
+						for(var prodIterator = 0, prodLength = response.products.length; prodIterator < prodLength; ++prodIterator) {
+							var attachedProduct = response.products[prodIterator];
+							if(attachedProduct.mainpic) {
+								var $productA = $('<a>').attr('href', urls.product + attachedProduct.id).appendTo($products);
+								$('<img class="category-attachment-product-img">')
+									.attr('src', attachedProduct.mainpic.smallSquare)
+									.attr('title', attachedProduct.name)
+									.appendTo($productA);
+								if(++visibleProducts >= dgte.home.productPreviews) {
+									break;
+								}								
+							}
+						}
+						
+						var notshown = response.moreproducts > 0 ? response.moreproducts : 0;
+						notshown = notshown + response.products.length - visibleProducts;
+						if(notshown > 0) {
+							var $moreproducts = $('<div class="category-attachment-moreproducts">').appendTo($products);
+							$('<a>').attr('href', urls.category + post.attachmentIdentifier).text(notshown + ' more...').appendTo($moreproducts);
+						}
+					}
+					break;
+				default:
+					debug(response);
+				}
+			});
+			break;
+		case 'product':
+			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
+			
+			//title
+			var $attachmentA = $('<a>').attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
+			$('<h4>').text(post.attachmentTitle).appendTo($attachmentA);
+			//mainpicproduct
+			if(post.attachmentImgurHash) {
+				var $attachmentImgA = $('<a>').attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
+				$('<img class="attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($attachmentImgA);
+			}
+				
+			$.get(urls.productwithpics + post.attachmentIdentifier + '/' + dgte.home.productPreviews + '.json', function(response) {
+				switch(response.status) {
+				case '200':
+					if(response.pics.length > 0) {
+						var description = response.product.description.length < dgte.home.attchDescLength ? response.product.description : response.product.description.substring(0, dgte.home.attchDescLength) + '...';
+						$('<div class="attachment-description">')
+							.text(description)
+							.insertAfter($attachmentA);
+						var $morepics = $('<div>').appendTo($container);
+						var max = response.pics.length > dgte.home.productPreviews ? dgte.home.productPreviews : response.pics.length;
+						for(var i = 0; i < max; ++i) {
+							$('<a>').attr('href', response.pics[i].imgurPage).appendTo($morepics).append(
+							$('<img class="product-attachment-img">')
+								.attr('src', response.pics[i].smallSquare)
+								.attr('title', response.pics[i].title ? response.pics[i].title : response.product.name)
+							);
+						}
+						
+						if(response.morepics > 0) {
+							var $morelink = $('<div class="product-attachment-morepics">').appendTo($morepics);
+							$('<a>').attr('href', urls.product + post.attachmentIdentifier).text(response.morepics + ' more...').appendTo($morelink);
+						}
+					}
+					break;
+				default:
+					debug(response);
+				}
+			});
+			break;
+		case 'link':
+			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
+			$('<a>').attr('href', post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($container);
+			break;
 		case 'none':
 		default:
 			//debug('No attachment.');
@@ -542,9 +821,18 @@ $(function(){
 		}
 	}, '.post');
 	
-	$(document).click(function(){
-		hidePostasMenu();
-		hideAttachMenu();
+	//load more
+	$('.loadmore').click(function(){
+		$('<div class="overlay">').appendTo($loadmoreContainer);
+		getPosts();
+	});
+	
+	$(document).on({
+		click: function(){
+			hidePostasMenu();
+			hideAttachMenu();
+			$entitySuggestions.hide();
+		}
 	});
 	
 	$(window).resize(function(){

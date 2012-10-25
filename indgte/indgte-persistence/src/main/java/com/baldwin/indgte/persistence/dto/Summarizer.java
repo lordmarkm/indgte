@@ -17,33 +17,7 @@ public class Summarizer implements ResultTransformer {
 	 */
 	@Override
 	public Object transformTuple(Object[] tuples, String[] aliases) {
-//		
-//		log.debug("Transforming {}, {}", tuples, aliases);
-//		
-//		SearchResult searchResult = new SearchResult();
-//		for(int i = 0; i < aliases.length; ++i) {
-//			SearchResult result = new SearchResult();
-//			
-//			result.setType(ResultType.business);
-//			
-//			String alias = aliases[i];
-//			String tuple = (String) tuples[i];
-//			
-//			if(alias.equals("domain")) {
-//				result.setIdentifier(tuple);
-//			}
-//			
-//			if(alias.equals("description")) {
-//				result.setDescription(tuple);
-//			}
-//			
-//			if(alias.equals("fullName")) {
-//				result.setTitle(tuple);
-//			}
-//		}
-//		
-//		return searchResult;
-		return null;
+		throw new IllegalStateException("Not used");
 	}
 
 	@Override

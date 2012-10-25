@@ -6,6 +6,7 @@ import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,7 +30,6 @@ import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
-import com.baldwin.indgte.persistence.service.PostsService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.BusinessController;
 import com.baldwin.indgte.webapp.controller.JSON;
@@ -64,6 +64,26 @@ public class BusinessControllerImpl implements BusinessController {
 				.put("category", category)
 				.put("imgurKey", imgurKey)
 				.mav();
+	}
+	
+	@Override
+	public @ResponseBody JSON getCategory(@PathVariable String domain, @PathVariable long categoryId, @PathVariable int howmany) {
+		try {
+			Category category = businesses.getCategoryWithProducts(categoryId);
+			int difference = category.getProducts().size() - howmany;
+			Collection<Product> products;
+			if(difference > 0) {
+				products = new ArrayList<Product>(category.getProducts()).subList(0, howmany);
+			} else {
+				products = category.getProducts();
+			}
+			log.debug("Returning {} and {} products", category.getName(), products.size());
+			return JSON.ok().put("category", category)
+					.put("products", products)
+					.put("moreproducts", difference); //again, @JsonIgnore
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
 	}
 	
 	@Override
@@ -150,6 +170,33 @@ public class BusinessControllerImpl implements BusinessController {
 					.mav();
 	}
 
+	@Override
+	public String viewProduct(@PathVariable long productId) {
+		String domain = businesses.findDomainForProductId(productId);
+		return "redirect:/b/products/" + domain + "/" + productId;
+	}
+	
+	@Override
+	public @ResponseBody JSON getProductWithPics(@PathVariable String domain, @PathVariable long productId, @PathVariable int howmany) {
+		try {
+			Product product = businesses.getProductWithPics(productId);
+			int difference = product.getPics().size() - howmany;
+			
+			List<Imgur> pics;
+			if(difference > 0) {
+				pics = product.getPics().subList(0, howmany);
+			} else {
+				pics = product.getPics();
+			}
+			
+			return JSON.ok().put("product", product)
+					.put("pics", pics) //necessary because of JsonIgnore
+					.put("morepics", difference);
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+	
 	@Override
 	public @ResponseBody JSON getProductPics(@PathVariable String domain, @PathVariable long productId) {
 		try {

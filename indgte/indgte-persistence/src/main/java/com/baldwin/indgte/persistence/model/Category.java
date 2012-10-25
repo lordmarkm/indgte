@@ -19,10 +19,20 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
+import com.baldwin.indgte.persistence.dto.Summarizable;
+import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
+
+@Indexed
 @Entity
 @Table(name="categories")
-public class Category {
+public class Category implements Summarizable {
+	
+	public static final String[] searchableFields = new String[]{"name", "description"};
+	
 	@Id @GeneratedValue @Column(name="categoryId")
 	private long id;
 	
@@ -30,9 +40,11 @@ public class Category {
 	@JoinColumn(name="businessId", nullable=false, updatable=false)
 	private BusinessProfile business;
 	
+	@Field
 	@Column
 	private String name;
 	
+	@Field
 	@Column
 	@Lob @Basic(fetch=FetchType.EAGER)
 	private String description;
@@ -55,6 +67,11 @@ public class Category {
 	@Override
 	public String toString() {
 		return name + ": " + description + " owner: " + business;
+	}
+	
+	@Override
+	public Summary summarize() {
+		return new Summary(SummaryType.category, id, name, description, business.getDomain() + "/" + id, mainpic == null ? null : mainpic.getHash());
 	}
 	
 	public long getId() {

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.User;
@@ -31,10 +32,10 @@ public class ProfileControllerImpl implements ProfileController {
 	static Logger log = LoggerFactory.getLogger(ProfileControllerImpl.class);
 	
 	@Autowired
-	private BusinessService businessService;
+	private BusinessService businesses;
 	
 	@Autowired
-	private UserService userService;
+	private UserService users;
 	
 	@Autowired
 	private PostsService posts;
@@ -46,7 +47,7 @@ public class ProfileControllerImpl implements ProfileController {
 	public ModelAndView profile(Principal principal, WebRequest request) {
 		log.debug("Profile page requested by {}", principal);
 		
-		User user = userService.getFacebook(principal.getName());
+		User user = users.getFacebook(principal.getName());
 		String loadhere = request.getParameter("loadhere");
 		
 		ModelAndView mav = new ModelAndView()
@@ -66,14 +67,14 @@ public class ProfileControllerImpl implements ProfileController {
 	public ModelAndView myBusinesses(Principal principal, WebRequest request) {
 		log.debug("Profile page requested by {}", principal);
 		
-		User fbUser = userService.getFacebook(principal.getName());
-		Collection<BusinessProfile> businesses = businessService.getBusinesses(principal.getName());
+		User fbUser = users.getFacebook(principal.getName());
+		Collection<BusinessProfile> businessez = businesses.getBusinesses(principal.getName());
 		
 		String loadhere = request.getParameter("loadhere");
 		
 		ModelAndView mav = new ModelAndView()
 							.addObject("user", fbUser)
-							.addObject("businesses", businesses);
+							.addObject("businesses", businessez);
 		
 		if(loadhere != null && Boolean.parseBoolean(loadhere)) {
 			mav.setViewName("profile/businesses");
@@ -85,21 +86,28 @@ public class ProfileControllerImpl implements ProfileController {
 	}
 	
 	@Override
-	public ModelAndView userProfile(@PathVariable String userId) {
-		//TODO
-		return null;
+	public ModelAndView userProfile(Principal principal, @PathVariable String userId) {
+		User user = users.getFacebook(principal.getName());
+		User targetFacebook = users.getFacebook(userId);
+		User targetMain = users.getMain(userId);
+		
+		return render(user, "userprofile")
+					.put("subscribed", posts.isSubscribed(principal.getName(), targetFacebook.getId(), PostType.user))
+					.put("targetFacebook", targetFacebook)
+					.put("targetMain", targetMain)
+					.mav();
 	}
 	
 	@Override
 	public ModelAndView businessProfile(Principal principal, WebRequest request, @PathVariable String domain) {
 		log.debug("Profile requested for {}", domain);
 
-		User user = userService.getFacebook(principal.getName());
-		BusinessProfile business = businessService.get(domain);
+		User user = users.getFacebook(principal.getName());
+		BusinessProfile business = businesses.get(domain);
 		
 		ModelAndView mav = render(user)
 				.put("business", business)
-				.put("subscribed", posts.isSubscribed(principal.getName(), business.getId()))
+				.put("subscribed", posts.isSubscribed(principal.getName(), business.getId(), PostType.business))
 				.put("owner", business.getOwner().getUsername().equals(user.getUsername()))
 				.put("imgurKey", imgurKey)
 				.mav();
@@ -115,18 +123,18 @@ public class ProfileControllerImpl implements ProfileController {
 
 	@Override
 	public @ResponseBody Imgur profilepic(@PathVariable String domain) {
-		return businessService.getProfilepic(domain);
+		return businesses.getProfilepic(domain);
 	}
 
 	@Override
 	public @ResponseBody JSON newProfilepic(@PathVariable String domain, Imgur profilepic) {
-		businessService.saveProfilepic(domain, profilepic);
+		businesses.saveProfilepic(domain, profilepic);
 		return JSON.ok();
 	}
 	
 	@Override
 	public @ResponseBody JSON newCoverpic(@PathVariable String domain, Imgur coverpic) {
-		businessService.saveCoverpic(domain, coverpic);
+		businesses.saveCoverpic(domain, coverpic);
 		return JSON.ok();
 	}
 }

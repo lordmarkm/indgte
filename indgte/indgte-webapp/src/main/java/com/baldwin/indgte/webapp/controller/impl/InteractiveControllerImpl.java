@@ -2,6 +2,7 @@ package com.baldwin.indgte.webapp.controller.impl;
 
 import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
 
@@ -19,7 +20,9 @@ import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Post;
+import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.PostsService;
@@ -28,6 +31,7 @@ import com.baldwin.indgte.pers‪istence.dao.PostDao;
 import com.baldwin.indgte.webapp.controller.InteractiveController;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
+import com.baldwin.indgte.webapp.misc.URLScraper;
 
 @Component
 public class InteractiveControllerImpl implements InteractiveController {
@@ -95,6 +99,17 @@ public class InteractiveControllerImpl implements InteractiveController {
 			embed = Jsoup.clean(embed, DgteTagWhitelist.videos());
 			attachment = new Summary(attachmentType, null, null, null, embed, null);
 			break;
+		case product:
+			Product product = businesses.getProduct(Long.parseLong(request.getParameter("entityId")));
+			attachment = product.summarize();
+			break;
+		case category:
+			Category category = businesses.getCategory(Long.parseLong(request.getParameter("entityId")));
+			attachment = category.summarize();
+			break;
+		case link:
+			attachment = new Summary(attachmentType, null, null, null, request.getParameter("link"), null);
+			break;
 		case none:
 			attachment = null;
 			break;
@@ -116,6 +131,15 @@ public class InteractiveControllerImpl implements InteractiveController {
 		log.debug("Post: {} text: {}", post);
 		
 		return JSON.ok().put("post", post);
+	}
+	
+	@Override
+	public @ResponseBody JSON linkpreview(@RequestParam String uri) throws IOException {
+		log.debug("Trying to create preview for {}", uri);
+		
+		URLScraper scraper = new URLScraper(uri);
+		scraper.getMetadata();
+		return JSON.ok();
 	}
 	
 	@Override
@@ -152,5 +176,4 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
-
 }

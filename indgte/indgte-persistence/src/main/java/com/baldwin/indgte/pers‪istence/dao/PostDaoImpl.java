@@ -44,7 +44,7 @@ public class PostDaoImpl implements PostDao {
 	public List<Post> getSubposts(String username, int start, int howmany) {
 		Session session = sessions.getCurrentSession();
 		
-		final PostType[] supportedTypes = new PostType[] {PostType.business};
+		final PostType[] supportedTypes = new PostType[] {PostType.business, PostType.user};
 		
 		Map<PostType, Set<Long>> subscriptions = getSubscriptions(username, supportedTypes);
 		if(null == subscriptions) {
@@ -135,6 +135,18 @@ public class PostDaoImpl implements PostDao {
 	}
 
 	@Override
+	public void subscribeToUser(String username, Long id) {
+		User user = users.getSpring(username);
+		user.getUserSubscriptions().add(id);
+	}
+
+	@Override
+	public void unsubscribeFromUser(String username, Long id) {
+		User user = users.getSpring(username);
+		user.getUserSubscriptions().remove(id);
+	}
+	
+	@Override
 	public void subscribeToBusiness(String name, Long id) {
 		User user = users.getSpring(name);
 		user.getBusinessSubscriptions().add(id);
@@ -172,7 +184,7 @@ public class PostDaoImpl implements PostDao {
 		}
 		
 		Map<PostType, Set<Long>> subscriptions = new HashMap<PostType, Set<Long>>();
-		//subscriptions.put(PostType.user, user.getUserSubscriptions());
+		subscriptions.put(PostType.user, user.getUserSubscriptions());
 		subscriptions.put(PostType.business, user.getBusinessSubscriptions());
 		
 		log.debug("Subscriptions: {}", subscriptions);
@@ -180,8 +192,14 @@ public class PostDaoImpl implements PostDao {
 	}
 
 	@Override
-	public boolean isSubscribed(String username, long businessId) {
-		return users.getSpring(username).getBusinessSubscriptions().contains(businessId);
+	public boolean isSubscribed(String name, long targetId, PostType type) {
+		switch(type) {
+		case user:
+			return users.getSpring(name).getUserSubscriptions().contains(targetId);
+		case business:
+			return users.getSpring(name).getBusinessSubscriptions().contains(targetId);
+		}
+		return false;
 	}
 
 	@Override

@@ -11,7 +11,8 @@ public class Summary {
 		/* types below fall under 'entity' in the front end */
 		user,
 		business,
-		product
+		product, 
+		category
 	}
 	
 	private Long id;

@@ -35,6 +35,9 @@
 	<definition name="ownprofile" extends="default">
 		<put-attribute name="body" value="/jsp/profile/ownprofile.jsp" />
 	</definition>
+	<definition name="userprofile" extends="default">
+		<put-attribute name="body" value="/jsp/profile/userprofile.jsp" />
+	</definition>
 	<definition name="businesses" extends="default">
 		<put-attribute name="body" value="/jsp/profile/businesses.jsp" />
 	</definition>

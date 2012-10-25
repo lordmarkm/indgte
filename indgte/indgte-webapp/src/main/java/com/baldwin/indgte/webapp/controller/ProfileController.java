@@ -31,7 +31,7 @@ public interface ProfileController {
 	public ModelAndView profile(Principal principal, WebRequest request);
 
 	@RequestMapping("/user/{userId}")
-	public ModelAndView userProfile(String userId);
+	public ModelAndView userProfile(Principal principal, String userId);
 	
 	@RequestMapping("/businesses")
 	public ModelAndView myBusinesses(Principal principal, WebRequest request);

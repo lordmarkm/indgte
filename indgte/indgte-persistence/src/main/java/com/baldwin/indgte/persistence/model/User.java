@@ -82,6 +82,15 @@ public class User implements Summarizable {
 	@Column(name="businessId")
 	private Set<Long> businessSubscriptions;
 	
+	@ElementCollection
+	@CollectionTable(
+		name = "userSubs",
+		joinColumns = {@JoinColumn(name = "subscriberId")}
+	)
+	@OrderColumn(name="order")
+	@Column(name="userId")
+	private Set<Long> userSubscriptions;
+	
 	@Override
 	public String toString() {
 		return username;
@@ -208,5 +217,13 @@ public class User implements Summarizable {
 
 	public void setBusinessSubscriptions(Set<Long> businessSubscriptions) {
 		this.businessSubscriptions = businessSubscriptions;
+	}
+
+	public Set<Long> getUserSubscriptions() {
+		return userSubscriptions;
+	}
+
+	public void setUserSubscriptions(Set<Long> userSubscriptions) {
+		this.userSubscriptions = userSubscriptions;
 	}
 }

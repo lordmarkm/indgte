@@ -21,6 +21,9 @@ public interface SearchController {
 	@RequestMapping("/{term}.json")
 	public JSON autocomplete(Principal principal, String term);
 	
+	@RequestMapping("/own/{term}.json")
+	public JSON autocompleteOwn(Principal principal, String term);
+	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping("/index/")
 	public void reindex();

@@ -58,5 +58,20 @@ public class SearchControllerImpl implements SearchController {
 			return JSON.status500(e);
 		}
 	}
-	
+
+	@Override
+	public @ResponseBody JSON autocompleteOwn(Principal principal, @PathVariable String term) {
+		long startTime = System.currentTimeMillis();
+		try {
+			JSON response = JSON.ok();
+			for(Entry<Summary.SummaryType, List<Summary>> result : search.searchOwn(term, -1, principal.getName()).entrySet()) {
+				response.put(String.valueOf(result.getKey()), result.getValue());
+			}
+			response.put("searchtime", System.currentTimeMillis() - startTime);
+			return response;
+		} catch (Exception e) {
+			log.error("Exception during search", e);
+			return JSON.status500(e);
+		}
+	}
 }

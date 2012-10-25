@@ -33,6 +33,9 @@ public interface BusinessController {
 	@RequestMapping(value = "/categories/{domain}/{categoryId}", method = RequestMethod.GET)
 	public ModelAndView viewcategory(Principal principal, String domain, long categoryId);
 	
+	@RequestMapping(value = "/categories/{domain}/{categoryId}/{howmany}.json", method = RequestMethod.GET)
+	public JSON getCategory(String domain, long categoryId, int howmany);
+	
 	@RequestMapping(value = "/categories/{domain}/{categoryId}/mainpic/", method = RequestMethod.POST)
 	public JSON uploadCategoryPic(String domain, long categoryId, Imgur mainpic);
 	
@@ -51,6 +54,15 @@ public interface BusinessController {
 	
 	@RequestMapping(value = "/products/{domain}/{productId}", method = RequestMethod.GET)
 	public ModelAndView viewProduct(Principal principal, String domain, long productId);
+	
+	/**
+	 * Redirects to the complete version above
+	 */
+	@RequestMapping(value = "/products/{productId}", method = RequestMethod.GET)
+	public String viewProduct(long productId);
+	
+	@RequestMapping(value = "/products/withpics/{domain}/{productId}/{howmany}.json", method = RequestMethod.GET)
+	public JSON getProductWithPics(String domain, long productId, int howmany);
 	
 	@RequestMapping(value = "/products/{domain}/{productId}/pics.json", method = RequestMethod.GET)
 	public JSON getProductPics(String domain, long productId);

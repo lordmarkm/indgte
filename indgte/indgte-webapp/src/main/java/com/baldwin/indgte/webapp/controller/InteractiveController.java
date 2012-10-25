@@ -1,5 +1,7 @@
 package com.baldwin.indgte.webapp.controller;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.security.Principal;
 
 import org.springframework.stereotype.Controller;
@@ -42,6 +44,9 @@ public interface InteractiveController {
 	 */
 	@RequestMapping(value = "/newstatus.json", method = RequestMethod.POST)
 	public JSON newstatus(Principal principal, WebRequest request);
+	
+	@RequestMapping(value = "/linkpreview/", method = RequestMethod.GET)
+	public JSON linkpreview(String uri) throws IOException;
 	
 	/**
 	 * New entity-specific posts? These don't support attachments and will soon be deprecated

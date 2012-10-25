@@ -23,9 +23,13 @@ public interface PostDao {
 
 	public List<Post> getSubposts(String username, int start, int end);
 
-	public boolean isSubscribed(String username, long businessId);
-
 	public void unsubscribeFromBusiness(String username, Long id);
 
 	public void saveOrUpdate(Post post);
+
+	public void subscribeToUser(String username, Long id);
+
+	public void unsubscribeFromUser(String username, Long id);
+
+	public boolean isSubscribed(String name, long targetId, PostType type);
 }

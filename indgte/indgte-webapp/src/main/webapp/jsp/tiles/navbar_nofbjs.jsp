@@ -56,6 +56,7 @@ window.navbar = {
 		maxDisplay : 5, //god's number plus two!!!
 		url : '<spring:url value="/s/" />',
 		urlBusiness: '<spring:url value="/p/" />',
+		urlCategory: '<spring:url value="/b/categories/" />',
 		urlProduct: '<spring:url value="/b/products/" />',
 		urlImgur: 'http://i.imgur.com/'
 	}
@@ -124,7 +125,7 @@ $(function(){
 				
 				function makeAutocompleteResult(result, urlRoot) {
 					var $auto = $('<div class="autocomplete-container">').appendTo($autocompleteResults);
-					$('<img class="autocomplete-img">').attr('src', navbar.search.urlImgur + result.thumbnailHash + 's.jpg').appendTo($auto);
+					$('<img class="autocomplete-img">').attr('src', result.thumbnailHash ? navbar.search.urlImgur + result.thumbnailHash + 's.jpg' : dgte.urls.blackSquareSmall).appendTo($auto);
 					$('<div class="autocomplete-title">').append($('<a>').attr('href', urlRoot + result.identifier).text(result.title)).appendTo($auto);
 					
 					if(result.description.length < 80) {
@@ -142,6 +143,13 @@ $(function(){
 					$('<div class="ui-widget-header">').text('Businesses').appendTo($autocompleteResults);
 					for(var i = 0, length = response.business.length; i < length; i++) {
 						makeAutocompleteResult(response.business[i], navbar.search.urlBusiness);
+					}
+				}
+				
+				if(response.category && response.category.length > 0) {
+					$('<div class="ui-widget-header">').text('Categories').appendTo($autocompleteResults);
+					for(var i = 0, length = response.category.length; i < length; i++) {
+						makeAutocompleteResult(response.category[i], navbar.search.urlCategory);
 					}
 				}
 				

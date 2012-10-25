@@ -3,9 +3,6 @@ package com.baldwin.indgte.pers‪istence.dao;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.lucene.queryParser.ParseException;
-
-import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
@@ -36,7 +33,7 @@ public interface BusinessDao {
 	void hidePics(List<Long> imgurIds);
 	void unhidePics(List<Long> imgurIds);
 	void deletePics(long productId, List<Long> imgurIds);
-	void reindex();
-	List<Summary> search(String term, int maxResults) throws ParseException;
-	List<Summary> searchProduct(String term, int maxResults);
+	String findDomainForProductId(long productId);
+	Product getProductWithPics(long productId);
+	Category getCategoryWithProducts(long categoryId);
 }

@@ -57,6 +57,9 @@ public class BusinessService {
 	public Category getCategory(long categoryId) {
 		return dao.getCategory(categoryId);
 	}
+	public Category getCategoryWithProducts(long categoryId) {
+		return dao.getCategoryWithProducts(categoryId);
+	}
 	public void saveCategoryMainpic(String domain, long categoryId, Imgur mainpic) {
 		dao.saveCategoryMainpic(domain, categoryId, mainpic);
 	}
@@ -74,7 +77,7 @@ public class BusinessService {
 	}
 	public Collection<Imgur> getProductPics(long productId) {
 		return dao.getProductPics(productId);
-	}
+	}	
 	public Imgur addProductPic(long productId, Imgur pic) {
 		return dao.addProductPic(productId, pic);
 	}
@@ -90,6 +93,12 @@ public class BusinessService {
 	public void deletePics(long productId, List<Long> imgurIds) {
 		dao.deletePics(productId, imgurIds);
 	}
+	public String findDomainForProductId(long productId) {
+		return dao.findDomainForProductId(productId);
+	}
+	public Product getProductWithPics(long productId) {
+		return dao.getProductWithPics(productId);
+	}
 	
 	//category dao ops
 	public BusinessCategory getCategory(String name) {
@@ -98,5 +107,4 @@ public class BusinessService {
 	public String getBusinessCategories(String firstLetter) {
 		return cDao.getCategories(firstLetter);
 	}
-
 }

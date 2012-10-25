@@ -20,6 +20,9 @@ public class PostsService {
 
 	public void subscribe(String username, PostType type, Long id) {
 		switch(type) {
+		case user:
+			dao.subscribeToUser(username, id);
+			break;
 		case business:
 			dao.subscribeToBusiness(username, id);
 			break;
@@ -30,6 +33,9 @@ public class PostsService {
 
 	public void unsubscribe(String username, PostType type, Long id) {
 		switch(type) {
+		case user:
+			dao.unsubscribeFromUser(username, id);
+			break;
 		case business:
 			dao.unsubscribeFromBusiness(username, id);
 			break;
@@ -41,11 +47,10 @@ public class PostsService {
 	public Collection<Post> getSubposts(String username, int start, int end) {
 		return dao.getSubposts(username, start, end);
 	}
-
-	public boolean isSubscribed(String username, long businessId) {
-		return dao.isSubscribed(username, businessId);
+	public boolean isSubscribed(String name, long targetId, PostType type) {
+		return dao.isSubscribed(name, targetId, type);
 	}
-
+	
 	public void saveOrUpdate(Post post) {
 		dao.saveOrUpdate(post);
 	}

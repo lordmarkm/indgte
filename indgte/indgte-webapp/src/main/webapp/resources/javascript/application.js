@@ -1,9 +1,14 @@
 //we give 0 ***** about corrupting the global namespace
 window.dgte = {
+	search: {
+		autocompleteMinlength: 4
+	},
 	home: {
 		postMaxlength: 140,
 		statusColsCollapsed: 30,
-		statusColsExpanded: 60
+		statusColsExpanded: 60,
+		productPreviews: 5,
+		attchDescLength: 240 //max length of category/product description
 	},
 	constants : {
 		postsPerPage : 10

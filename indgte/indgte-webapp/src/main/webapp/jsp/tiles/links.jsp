@@ -1,4 +1,5 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <spring:url var="noimage" value="/resources/images/noimage.jpg" />
 <spring:url var="noimage50" value="/resources/images/noimage50.png" />
