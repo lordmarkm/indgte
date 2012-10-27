@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baldwin.indgte.persistence.model.BusinessCategory;
+import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
@@ -101,7 +101,7 @@ public class BusinessService {
 	}
 	
 	//category dao ops
-	public BusinessCategory getCategory(String name) {
+	public BusinessGroup getCategory(String name) {
 		return cDao.get(name);
 	}
 	public String getBusinessCategories(String firstLetter) {

@@ -2,6 +2,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
 <spring:url var="urlHome" value="/" />
+<spring:url var="urlYellowPages" value="/s/" />
 <spring:url var="urlProfile" value="/p/" />
 <spring:url var="urlMyBusinesses" value="/p/businesses" />
 <spring:url var="urlHelp" value="/etc/help/" />
@@ -44,7 +45,7 @@
 	
 	<div class="navigation-container floatright">
 		<strong class="navigation home"><a href="${urlHome }">Home</a></strong>
-		<strong class="navigation feed">Feed</strong>
+		<strong class="navigation yellowpages"><a href="${urlYellowPages }">Yellow Pages</a></strong>
 		<strong class="navigation chat">Chat</strong>
 	</div>
 </section>

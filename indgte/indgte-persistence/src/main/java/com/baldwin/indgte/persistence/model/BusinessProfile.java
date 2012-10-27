@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
@@ -36,7 +37,7 @@ public class BusinessProfile implements Summarizable {
 	
 	@OneToOne
 	@JoinColumn(name="categoryId")
-	private BusinessCategory category;;
+	private BusinessGroup category;;
 	
 	@Column(nullable=false, unique=true)
 	@Field(store = Store.YES)
@@ -218,11 +219,17 @@ public class BusinessProfile implements Summarizable {
 		this.categories = categories;
 	}
 
-	public BusinessCategory getCategory() {
+	public BusinessGroup getCategory() {
 		return category;
 	}
 
-	public void setCategory(BusinessCategory category) {
+	public void setCategory(BusinessGroup category) {
 		this.category = category;
+	}
+
+	@Override
+	@JsonIgnore
+	public String[] getSearchableFields() {
+		return searchableFields;
 	}
 }

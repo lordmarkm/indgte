@@ -120,13 +120,32 @@
 		<div class="map"></div>
 	</div>
 	
-	<div id="reviews">Reviews</div>
+	<div id="reviews">
+	
+	<c:if test="${not owner }">
+	
+	<div class="review-stars-container"></div>
+	
+	</c:if>
+	
+	</div>
+	
 	<div id="comments">Comments</div>
 </div>
 
 </div>
 
+<style>
+.dgte-icon.dgte-icon-star {
+	background-image: url("<spring:url value='/resources/images/review-stars.png' />");
+}
+</style>
+
 <script>
+window.constants = {
+	owner : '${owner}' === 'true'		
+}
+
 window.business = {
 	latitude: '${business.latitude}',
 	longitude: '${business.longitude}',
@@ -134,9 +153,12 @@ window.business = {
 	fullName: '${business.fullName}',
 	address: '${business.address}'
 }
+
 window.urls = {
 	subscribe : '<spring:url value="/i/subscribe/business/${business.id}.json" />',
 	unsubscribe : '<spring:url value="/i/unsubscribe/business/${business.id}.json" />',
+	getProducts : '<spring:url value="/b/products/" />',
+	product : '<spring:url value="/b/products/" />'
 }
 
 $(function(){
@@ -206,28 +228,44 @@ $(function(){
 	$('.tabs').tabs({
 		select: function(event, ui){
 			onTab(event, ui)
+		},
+		create: function(event, ui) {
+			if(window.location.hash[1]) {
+				setTimeout(function(){
+					$('.tabs').tabs('select', parseInt(window.location.hash[1]));	
+				}, 1000);
+			}
 		}
 	});
 	
 	function onTab(event, ui) {
+		debug('ontab. id: ' + ui.panel.id);
 		switch(ui.panel.id) {
 		case 'feed':
 			reloadPosts();
+			window.location.hash = 0;
 			break;
 		case 'catalog':
 			onCatalog();
+			window.location.hash = 1;
 			break;
 		case 'map':
 			onMap();
+			window.location.hash = 2;
 			break;
 		case 'reviews':
+			window.location.hash = 3;
+			break;
 		case 'comments':
+			window.location.hash = 4;
 			break;
 		}
 	}
 
 	//handle the catalog tab
+	var initialized = false;
 	function onCatalog() {
+		if(initialized) return;
 		var $overlay = $('<div class="overlay">').appendTo($catalogContainer);
 		$categories.html('');
 		$.get(urlCategories + domain + '.json', function(response) {
@@ -247,6 +285,7 @@ $(function(){
 			
 			$overlay.remove();
 		});
+		initialized = true;
 	}
 	
 	function addCategory(category) {
@@ -262,6 +301,25 @@ $(function(){
 		var $name = $('<strong class="category-name">').appendTo($dataContainer);
 		$('<a>').attr('href', urlCategories + domain + '/' + category.id).html(category.name).appendTo($name);
 		$('<div class="category-description italic">').text(category.description).appendTo($dataContainer);
+		
+		var $productsContainer = $('<div class="products-container">').appendTo($category);
+		$.get(urls.getProducts + business.domain + '/' + category.id + '.json', function(response) {
+			switch(response.status) {
+			case '200':
+				for(var i = 0, length = response.products.length; i < length; ++i) {
+					var product = response.products[i];
+					var $productContainer = $('<div class="product-container">').appendTo($productsContainer);
+					var $a = $('<a>').attr('href', urls.product + product.id).appendTo($productContainer);
+					$('<img class="product-preview-img shadow">').attr('src', product.mainpic ? product.mainpic.smallSquare : dgte.urls.blackSquareSmall)
+						.attr('title', product.name)
+						.appendTo($a);
+					$('<div class="product-preview-name">').attr('title', product.name).text(product.name).appendTo($productContainer);
+				}
+				break;
+			default:
+				debug(response);
+			}
+		})
 	}
 	
 	//load the last 10 posts by this business
@@ -348,6 +406,16 @@ $(function(){
 			content: '<p><strong style="font-size: 1.1em;">' + business.fullName + '</strong></p>' + business.address
 		});
 		infowindow.open(map, marker);
+	}
+	
+	
+	//review
+	var $starContainer = $('.review-star-container');
+	
+	if(constants.owner === false) {
+		for(var i = 0; i < 5; ++i) {
+			$('<div class="dgte-icon dgte-icon-star">').text(' ').appendTo($starContainer);
+		}
 	}
 });
 </script>

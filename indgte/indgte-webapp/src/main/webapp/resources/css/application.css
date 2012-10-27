@@ -1,7 +1,7 @@
 /* general styles and jquery-ui overrides */
 body {
-	font-family: helvetica, arial, serif;
-	font-size: 11pt;
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", helvetica, arial, serif;
+	font-size: 10pt;
 }
 
 .ui-button .ui-button-text {
@@ -23,6 +23,11 @@ body {
 	/* fonts */
 .italic {font-style: italic;}
 .capitalize {text-transform: capitalize;}
+.shadow {
+ 	box-shadow: -6px 4px 1px grey;
+  	-webkit-box-shadow:  -6px 4px 1px grey;
+  	-moz-box-shadow:  -6px 4px 1px grey;
+}
 
 /* special classes */
 .overlay {

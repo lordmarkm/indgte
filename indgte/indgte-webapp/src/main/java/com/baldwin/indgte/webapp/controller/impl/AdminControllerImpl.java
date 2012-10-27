@@ -21,6 +21,7 @@ import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.pers‪istence.dao.PostDao;
+import com.baldwin.indgte.pers‪istence.dao.SearchDao;
 import com.baldwin.indgte.webapp.controller.AdminController;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.misc.DaoTesterConstants;
@@ -38,6 +39,9 @@ public class AdminControllerImpl implements AdminController {
 	
 	@Autowired
 	private BusinessService businesses;
+	
+	@Autowired
+	private SearchDao search;
 	
 	@Override
 	public ModelAndView daoTester(Principal principal) {
@@ -73,6 +77,9 @@ public class AdminControllerImpl implements AdminController {
 				} catch (Exception e) {
 					return JSON.status500(e);
 				}
+			case test:
+				search.test();
+				return JSON.ok();
 			default:
 				return JSON.status404();
 			}

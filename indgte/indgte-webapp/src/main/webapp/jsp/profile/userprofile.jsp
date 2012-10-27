@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<title>${targetMain.username }</title>
+<title>Yellow Pages | InDumaguete</title>
 
 <div class="grid_12">
 
@@ -9,12 +9,20 @@
 	<button class="btn-subscribe-toggle">Subscribe to ${targetMain.username }</button>
 </section>
 
+<section class="wishlist"></section>
+
+<section class="feed">
+</section>
+
+<section class="businesses">
+</section>
+
 </div>
 
 <script>
 window.urls = {
-	subscribe: '<spring:url value="/i/subscribe/user/" />',
-	unsubscribe: '<spring:url value="/i/unsubscribe/user/" />'
+	subscribe: '<spring:url value="/i/subscribe/user/${targetFacebook.id}.json" />',
+	unsubscribe: '<spring:url value="/i/unsubscribe/user/${targetFacebook.id}.json" />'
 }
 
 window.target = {

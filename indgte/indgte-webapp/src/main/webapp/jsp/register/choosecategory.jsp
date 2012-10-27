@@ -76,8 +76,6 @@ window.urls = {
 }
 
 $(function(){
-	var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-	
 	var $regform = $('#regform'),
 		$fieldCategory = $('#category'),
 		$tabs = $('.tabs'),
@@ -89,6 +87,7 @@ $(function(){
 		$btnNewCategory = $('button.newcategory'),
 		$btnUncategorized = $('button.uncategorized');
 	
+	var letters = dgte.search.letters;
 	for(var i = 0; i < 26; ++i) {
 		//construct header
 		var $li = $('<li>').appendTo($tabsHeads);
@@ -211,3 +210,5 @@ $(function(){
 	}, '.category')
 });
 </script>
+
+<script type="text/javascript" src="${jsApplication }"></script>

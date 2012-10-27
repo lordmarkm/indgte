@@ -125,4 +125,9 @@ public class Product implements Summarizable {
 		this.pics = pics;
 	}
 
+	@Override
+	@JsonIgnore
+	public String[] getSearchableFields() {
+		return searchableFields;
+	}
 }

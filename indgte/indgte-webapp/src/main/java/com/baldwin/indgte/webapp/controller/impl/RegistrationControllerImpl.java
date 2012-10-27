@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.baldwin.indgte.persistence.model.BusinessCategory;
+import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
@@ -87,7 +87,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 		log.debug("Registration flow, Page 2 save request form domain {}. Category is now [{}]", regform.getDomain(), regform.getCategory());
 		//User user = userService.getFacebook(principal.getName());
 		String name = clean(regform.getRegformCategory(), false);
-		BusinessCategory category = businesses.getCategory(name);
+		BusinessGroup category = businesses.getCategory(name);
 		regform.getBusinessProfile().setCategory(category);
 		
 		return render(user, "pinpointlocation")

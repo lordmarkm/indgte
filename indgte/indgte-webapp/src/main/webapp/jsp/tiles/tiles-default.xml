@@ -63,6 +63,15 @@
 		<put-attribute name="body" value="/jsp/businessops/editproduct.jsp" />
 	</definition>
 	
+	<!-- Search and Yellow Pages -->
+	<definition name="yellowpages" extends="default">
+		<put-attribute name="body" value="/jsp/search/yellowpages.jsp" />
+	</definition>
+	
+	<definition name="yellowpage" extends="default">
+		<put-attribute name="body" value="/jsp/search/yellowpage.jsp" />
+	</definition>
+	
 	<!-- Misc -->
 	<definition name="help" extends="default">
 		<put-attribute name="body" value="/jsp/help/help.jsp" />

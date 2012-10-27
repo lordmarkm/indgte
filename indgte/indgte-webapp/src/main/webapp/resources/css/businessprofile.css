@@ -130,6 +130,32 @@
 	list-style-type: none;
 }
 
+.products-container {
+	margin: 0 0 0 60px;s
+}
+
+.product-container {
+	display: inline-block;
+	margin: 5px;
+	padding: 5px;
+	border: 1px dotted lightskyblue;
+	width: 140px;
+	height: 120px;
+	text-align: center;
+}
+
+.product-preview-img {
+	width: 90px;
+	height: 90px;
+}
+
+.product-preview-name {
+	width: 130px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .map {
 	width: 100%;
 	height: 400px;	

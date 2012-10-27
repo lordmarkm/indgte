@@ -137,4 +137,10 @@ public class Category implements Summarizable {
 	public void setProducts(Set<Product> products) {
 		this.products = products;
 	}
+	
+	@Override
+	@JsonIgnore
+	public String[] getSearchableFields() {
+		return searchableFields;
+	}
 }

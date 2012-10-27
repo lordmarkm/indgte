@@ -32,6 +32,10 @@
 			<input type="text" class="postsGetSubposts-username" value="${user.username }"/>
 			<button class="postsGetSubposts-get">Get</button>
 		</li>
+		<li>
+			Search dao test
+			<button class="test">Test</button>
+		</li>
 	</ul>
 </section>
 
@@ -81,6 +85,14 @@ $(function(){
 	$2get.click(function(){
 		$.get(urlDaoTester + 'postsGetSubposts', {'username' : $2username.val()}, function(response) {
 			console.debug(response);
+		});
+	});
+	
+	//3. Test
+	var $3test = $('.test');
+	$3test.click(function(){
+		$.get(urlDaoTester + 'test', function(response) {
+			debug(response);
 		});
 	});
 });

@@ -1,5 +1,6 @@
 package com.baldwin.indgte.persistence.dto;
 
+
 public class Summary {
 	public enum SummaryType {
 		none,

@@ -1,5 +1,9 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.business;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.category;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.product;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.user;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
@@ -10,12 +14,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
+import com.baldwin.indgte.persistence.dto.YellowPagesEntry;
+import com.baldwin.indgte.persistence.model.BusinessGroup;
+import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.SearchService;
+import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.SearchController;
 
@@ -23,6 +33,9 @@ import com.baldwin.indgte.webapp.controller.SearchController;
 public class SearchControllerImpl implements SearchController {
 	
 	static Logger log = LoggerFactory.getLogger(SearchControllerImpl.class);
+	
+	@Autowired
+	private UserService users;
 	
 	@Autowired
 	private SearchService search;
@@ -33,9 +46,18 @@ public class SearchControllerImpl implements SearchController {
 	}
 
 	@Override
-	public ModelAndView searchpage() {
-		return render("search/test").mav();
+	public ModelAndView searchpage(Principal principal) {
+		User user = users.getFacebook(principal.getName());
+		MultiValueMap<String, Number> count = search.getYellowPagesIndex();
+		log.debug("Business count: {}", count);
+		return render(user, "yellowpages")
+				.put("businesses", count)
+				.mav();
 	}
+	
+	/*
+	 * Search
+	 */
 
 	@Override
 	public ModelAndView search(Principal principal, String term) {
@@ -46,32 +68,77 @@ public class SearchControllerImpl implements SearchController {
 	@Override
 	public @ResponseBody JSON autocomplete(Principal principal, @PathVariable String term) {
 		long startTime = System.currentTimeMillis();
+		int maxresults = -1;
+		SummaryType[] supportedTypes = new SummaryType[] {business, category, product};
+
+		JSON results = search(principal, term, supportedTypes, maxresults, null);
+		return results.put("searchtime", System.currentTimeMillis() - startTime);
+	}
+
+	@Override
+	public @ResponseBody JSON autocompleteOwn(Principal principal, @PathVariable String term) {
+		long startTime = System.currentTimeMillis();
+		int maxresults = -1;
+		SummaryType[] supportedTypes = new SummaryType[] {business, category, product};
+		
+		JSON results = search(principal, term, supportedTypes, maxresults, principal.getName());
+		return results.put("searchtime", System.currentTimeMillis() - startTime);
+	}
+
+	@Override
+	public @ResponseBody JSON autocompleteAll(Principal principal, @PathVariable String term) {
+		long startTime = System.currentTimeMillis();
+		int maxresults = -1;
+		SummaryType[] supportedTypes = new SummaryType[] {user, business, category, product};
+		
+		JSON results = search(principal, term, supportedTypes, maxresults, null);
+		return results.put("searchtime", System.currentTimeMillis() - startTime);
+	}
+	
+	private JSON search(Principal principal, String term, SummaryType[] supportedTypes, int maxresults, String ownername) {
 		try {
 			JSON response = JSON.ok();
-			for(Entry<Summary.SummaryType, List<Summary>> result : search.searchAll(term, 5).entrySet()) {
+			for(Entry<Summary.SummaryType, List<Summary>> result : search.search(term, maxresults, supportedTypes, ownername).entrySet()) {
 				response.put(String.valueOf(result.getKey()), result.getValue());
 			}
-			response.put("searchtime", System.currentTimeMillis() - startTime);
 			return response;
 		} catch (Exception e) {
 			log.error("Exception during search", e);
 			return JSON.status500(e);
 		}
 	}
-
+	
+	/*
+	 * Yellow Pages
+	 */
 	@Override
-	public @ResponseBody JSON autocompleteOwn(Principal principal, @PathVariable String term) {
-		long startTime = System.currentTimeMillis();
+	public @ResponseBody JSON getYellowPagesIndex() {
 		try {
-			JSON response = JSON.ok();
-			for(Entry<Summary.SummaryType, List<Summary>> result : search.searchOwn(term, -1, principal.getName()).entrySet()) {
-				response.put(String.valueOf(result.getKey()), result.getValue());
-			}
-			response.put("searchtime", System.currentTimeMillis() - startTime);
-			return response;
+			return JSON.ok().put("businesses", search.getYellowPagesIndex());
 		} catch (Exception e) {
-			log.error("Exception during search", e);
+			log.error("Error getting Yellow Pages index.", e);
 			return JSON.status500(e);
 		}
+	}
+
+	@Override
+	public @ResponseBody JSON getBusinessesForCategory(@PathVariable long categoryId, @PathVariable int howmany) {
+		try {
+			return JSON.ok().put("businesses", search.getBusinesses(categoryId, howmany));
+		} catch (Exception e) {
+			log.error("Error getting businesses for category id " + categoryId, e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public ModelAndView viewCategory(Principal principal, @PathVariable long groupId) {
+		User user = users.getFacebook(principal.getName());
+		BusinessGroup group = search.getBusinessGroup(groupId);
+		List<YellowPagesEntry> businesses = search.getYellowPagesEntries(groupId);
+		return render(user, "yellowpage")
+				.put("group", group)
+				.put("businesses", businesses)
+				.mav();
 	}
 }

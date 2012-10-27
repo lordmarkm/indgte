@@ -15,18 +15,27 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+
 import com.baldwin.indgte.persistence.dto.Summarizable;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 
+@Indexed
 @Entity
 @Table(name="UserConnection")
 public class User implements Summarizable {
+	
+	public static final String[] searchableFields = new String[]{"username"};
+	
 	@Id 
 	@GeneratedValue 
 	@Column(name="connection_id")
 	private long id;
 	
+	@Field
 	@Column(
 		nullable=false,
 		unique=false,
@@ -225,5 +234,11 @@ public class User implements Summarizable {
 
 	public void setUserSubscriptions(Set<Long> userSubscriptions) {
 		this.userSubscriptions = userSubscriptions;
+	}
+	
+	@Override
+	@JsonIgnore
+	public String[] getSearchableFields() {
+		return searchableFields;
 	}
 }

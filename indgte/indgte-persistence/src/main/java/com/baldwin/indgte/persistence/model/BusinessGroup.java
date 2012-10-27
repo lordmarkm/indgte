@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "businessCategories")
-public class BusinessCategory {
+public class BusinessGroup {
 	@Id
 	@GeneratedValue
 	@Column(name = "categoryId")
@@ -20,11 +20,11 @@ public class BusinessCategory {
 	@Column
 	private String description;
 
-	public BusinessCategory() {
+	public BusinessGroup() {
 		//
 	}
 	
-	public BusinessCategory(String name) {
+	public BusinessGroup(String name) {
 		this.name = name;
 	}
 

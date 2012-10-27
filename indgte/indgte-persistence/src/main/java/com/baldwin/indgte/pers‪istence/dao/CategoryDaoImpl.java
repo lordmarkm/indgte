@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baldwin.indgte.persistence.constants.BusinessCategoryList;
-import com.baldwin.indgte.persistence.model.BusinessCategory;
+import com.baldwin.indgte.persistence.model.BusinessGroup;
 
 @Repository
 @Transactional
@@ -42,19 +42,19 @@ public class CategoryDaoImpl implements CategoryDao {
 	}
 	
 	@Override
-	public BusinessCategory get(long id) {
-		return (BusinessCategory) sessions.getCurrentSession().get(BusinessCategory.class, id);
+	public BusinessGroup get(long id) {
+		return (BusinessGroup) sessions.getCurrentSession().get(BusinessGroup.class, id);
 	}
 
 	@Override
-	public BusinessCategory get(String name) {
+	public BusinessGroup get(String name) {
 		Session session = sessions.getCurrentSession();
-		BusinessCategory category = (BusinessCategory) session.createCriteria(BusinessCategory.class)
+		BusinessGroup category = (BusinessGroup) session.createCriteria(BusinessGroup.class)
 			.add(Restrictions.eq(TableConstants.BIZCATEGORY_NAME, name))
 			.uniqueResult();
 		
 		if(null == category) {
-			category = new BusinessCategory(name);
+			category = new BusinessGroup(name);
 			session.save(category);
 		}
 		
@@ -64,13 +64,13 @@ public class CategoryDaoImpl implements CategoryDao {
 	@Override
 	@SuppressWarnings("unchecked")
 	public String getCategories(String firstLetter) {
-		List<BusinessCategory> categories = sessions.getCurrentSession().createCriteria(BusinessCategory.class)
+		List<BusinessGroup> categories = sessions.getCurrentSession().createCriteria(BusinessGroup.class)
 				.add(Restrictions.like(TableConstants.BIZCATEGORY_NAME, firstLetter + "%"))
 				.addOrder(Order.asc(TableConstants.BIZCATEGORY_NAME))
 				.list();
 		
 		StringBuilder string = new StringBuilder();
-		for(Iterator<BusinessCategory> i = categories.iterator(); i.hasNext();) {
+		for(Iterator<BusinessGroup> i = categories.iterator(); i.hasNext();) {
 			string.append(i.next().getName());
 			if(i.hasNext()) string.append(",");
 		}

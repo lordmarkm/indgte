@@ -1,7 +1,8 @@
 //we give 0 ***** about corrupting the global namespace
 window.dgte = {
 	search: {
-		autocompleteMinlength: 4
+		autocompleteMinlength: 4,
+		letters: letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 	},
 	home: {
 		postMaxlength: 140,
@@ -9,6 +10,9 @@ window.dgte = {
 		statusColsExpanded: 60,
 		productPreviews: 5,
 		attchDescLength: 240 //max length of category/product description
+	},
+	yellowpages: {
+		preview: 4
 	},
 	constants : {
 		postsPerPage : 10
