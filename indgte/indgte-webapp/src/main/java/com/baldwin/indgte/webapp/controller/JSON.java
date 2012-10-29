@@ -17,6 +17,10 @@ public class JSON extends HashMap<String, Object> {
 		return new JSON().status("500").message(e.getClass() + ": " + e.getMessage());
 	}
 	
+	public static JSON teapot() {
+		return new JSON().status("418");
+	}
+	
 	public JSON status(String status) {
 		super.put("status", status);
 		return this;

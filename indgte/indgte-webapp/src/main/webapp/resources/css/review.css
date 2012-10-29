@@ -1,0 +1,68 @@
+.review-container {
+	position: relative;
+	min-height: 215px;
+}
+
+.review-container.ui-state-active {
+	margin-bottom: 20px;
+	padding: 10px;
+}
+.review-container:not(.ui-state-active) {
+	overflow: hidden;
+	float: left;
+}
+
+.reviewer-img {
+	width: 90px;
+	height: 90px;
+	max-width: 45px;
+	max-height: 45px;
+}
+.reviewer-name {
+	margin-left: 5px;
+	font-weight: bold;
+}
+.review-details-container {
+	width: 300px;
+	padding: 30px 10px 0 10px;
+	background: url("../images/quote-bubble.png");
+	background-repeat: no-repeat;
+	color: black;
+}
+
+.dgte-icon {
+	background-image: url("../images/icons/review-stars.png");
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	margin: 2px;
+}
+.user-review .dgte-icon {
+	cursor: pointer;
+}
+.dgte-icon-star {
+	background-position: 0;
+}
+.dgte-icon-nullstar {
+	background-position: -20px 0;
+}
+.dgte-icon-halfstar {
+	background-position: -40px 0;
+}
+.review-footer {
+    background-image: url("../images/quote-bubble.png");
+    background-position: 0 -240px;
+    background-repeat: no-repeat;
+    font-size: 0.8em;
+    min-height: 30px;
+    width: 100%;
+    padding: 10px 0 10px 10px;
+}
+.review-footer a {
+	color: black;
+}
+.review-date {
+	float: right;
+	color: darkgrey;
+	margin-right: 50px;
+}

@@ -1,9 +1,11 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
 import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Date;
 
 import org.jsoup.Jsoup;
@@ -15,19 +17,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
-import com.baldwin.indgte.persistence.service.PostsService;
+import com.baldwin.indgte.persistence.service.InteractiveService;
 import com.baldwin.indgte.persistence.service.UserService;
-import com.baldwin.indgte.pers‪istence.dao.PostDao;
+import com.baldwin.indgte.pers‪istence.dao.InteractiveDao;
 import com.baldwin.indgte.webapp.controller.InteractiveController;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
@@ -39,7 +44,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 	static Logger log = LoggerFactory.getLogger(InteractiveControllerImpl.class);
 	
 	@Autowired
-	private PostsService posts;
+	private InteractiveService interact;
 	
 	@Autowired 
 	private UserService users;
@@ -48,12 +53,12 @@ public class InteractiveControllerImpl implements InteractiveController {
 	private BusinessService businesses;
 	
 	@Autowired
-	private PostDao postDao;
+	private InteractiveDao postDao;
 	
 	@Override
 	public @ResponseBody JSON subposts(Principal principal, @RequestParam int start, @RequestParam int howmany) {
 		try {
-			return JSON.ok().put("posts", posts.getSubposts(principal.getName(), start, howmany));
+			return JSON.ok().put("posts", interact.getSubposts(principal.getName(), start, howmany));
 		} catch (Exception e) {
 			log.error("Exception getting subposts", e);
 			return JSON.status500(e);
@@ -127,7 +132,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 		post.setTitle(title);
 		post.setText(text);
 		
-		posts.saveOrUpdate(post);
+		interact.saveOrUpdate(post);
 		log.debug("Post: {} text: {}", post);
 		
 		return JSON.ok().put("post", post);
@@ -158,7 +163,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public @ResponseBody JSON subscribe(Principal principal, @PathVariable PostType type, @PathVariable Long id) {
 		try {
-			posts.subscribe(principal.getName(), type, id);
+			interact.subscribe(principal.getName(), type, id);
 			return JSON.ok();
 		} catch (Exception e) {
 			log.error("Error", e);
@@ -169,10 +174,89 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public @ResponseBody JSON unsubscribe(Principal principal, @PathVariable PostType type, @PathVariable Long id) {
 		try {
-			posts.unsubscribe(principal.getName(), type, id);
+			interact.unsubscribe(principal.getName(), type, id);
 			return JSON.ok();
 		} catch (Exception e) {
 			log.error("Error", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON getReview(Principal principal, @PathVariable long businessId) {
+		try {
+			BusinessReview review = interact.getReview(principal.getName(), businessId); 
+			if(null == review) {
+				return JSON.teapot();
+			} else {
+				return JSON.ok().put("review", review);
+			} 
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON review(Principal principal, @PathVariable long businessId, 
+				@RequestParam int score, @RequestParam String justification) {
+		try {
+			BusinessReview review = interact.review(principal.getName(), businessId, score, Jsoup.clean(clean(justification), DgteTagWhitelist.simpleText()));
+			return JSON.ok().put("review", review);
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON getAllReviews(Principal principal, @PathVariable long businessId) {
+		try {
+			Collection<BusinessReview> reviews = interact.getReviews(businessId);
+			return JSON.ok().put("reviews", reviews);
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public ModelAndView toptens(Principal principal) {
+		User user = users.getFacebook(principal.getName());
+		Collection<TopTenList> recentLists = interact.getRecentToptens(0, 5);
+		Collection<TopTenList> popularLists = interact.getPopularToptens(0, 5);
+		Collection<TopTenList> userLists = interact.getUserToptens(principal.getName());
+		
+		return render(user, "toptenlists")
+				.put("recentLists", recentLists)
+				.put("popularLists", popularLists)
+				.put("userLists", userLists)
+				.mav();
+	}
+
+	@Override
+	public ModelAndView topten(Principal principal, @PathVariable long toptenId) {
+		User user = users.getFacebook(principal.getName());
+		TopTenList topten = interact.getTopten(toptenId);
+		
+		return render(user, "toptenlist")
+				.put("topten", topten)
+				.mav();
+	}
+
+	@Override
+	public @ResponseBody JSON createTopten(Principal principal, @PathVariable String title) {
+		try {
+			TopTenList topten = interact.createTopTenList(principal.getName(), title);
+			return JSON.ok().put("topten", topten);
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public JSON vote(Principal principal, long toptenId, long candidateId) {
+		try {
+			interact.topTenVote(principal.getName(), toptenId);
+			return JSON.ok();
+		} catch (Exception e) {
 			return JSON.status500(e);
 		}
 	}

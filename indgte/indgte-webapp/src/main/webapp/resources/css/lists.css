@@ -3,9 +3,9 @@
 }
 
 .post, .category {
-	border-color: #d2d2d2;
-	border-style: solid;
-	border-width: 1px 0 0;
+	border-color: #d2d2d2 !important;
+	border-style: solid !important;
+	border-width: 1px 0 0 !important;
 	min-height: 65px;
 	padding: 5px;
 }

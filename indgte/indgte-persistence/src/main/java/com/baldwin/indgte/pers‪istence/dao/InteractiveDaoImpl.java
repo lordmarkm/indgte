@@ -1,16 +1,17 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
@@ -24,20 +25,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Post;
+import com.baldwin.indgte.persistence.model.TopTenCandidate;
+import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
 
 @Repository
 @Transactional
-public class PostDaoImpl implements PostDao {
+public class InteractiveDaoImpl implements InteractiveDao {
 
-	static Logger log = LoggerFactory.getLogger(PostDaoImpl.class);
+	static Logger log = LoggerFactory.getLogger(InteractiveDaoImpl.class);
 	
 	@Autowired
 	private SessionFactory sessions;
 	
 	@Autowired
 	private UserDao users;
+	
+	@Autowired
+	private BusinessDao businesses;
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -79,14 +86,15 @@ public class PostDaoImpl implements PostDao {
 	}
 	
 	@Override
-	public Set<Post> getById(long posterId, PostType type, int start, int howmany) {
-		@SuppressWarnings("unchecked")
-		List<Post> posts = sessions.getCurrentSession().createCriteria(Post.class)
+	@SuppressWarnings("unchecked")
+	public Collection<Post> getById(long posterId, PostType type, int start, int howmany) {
+		return sessions.getCurrentSession().createCriteria(Post.class)
 				.add(Restrictions.eq("posterId", posterId))
 				.add(Restrictions.eq("type", type))
+				.setFirstResult(start)
+				.setMaxResults(howmany)
+				.addOrder(Order.desc(TableConstants.POST_TIME))
 				.list();
-		
-		return new LinkedHashSet<Post>(posts);
 	}
 	
 	/**
@@ -205,5 +213,119 @@ public class PostDaoImpl implements PostDao {
 	@Override
 	public void saveOrUpdate(Post post) {
 		sessions.getCurrentSession().saveOrUpdate(post);
+	}
+
+	@Override
+	public BusinessReview getReview(String name, long businessId) {
+		return (BusinessReview) sessions.getCurrentSession().createCriteria(BusinessReview.class)
+			.createAlias("reviewer", "reviewer")
+			.createAlias("reviewed", "reviewed")
+			.add(Restrictions.eq("reviewer.username", name))
+			.add(Restrictions.eq("reviewed.id", businessId))
+			.uniqueResult();
+	}
+
+	@Override
+	public BusinessReview review(String name, long businessId, int score, String justification) {
+		Session session = sessions.getCurrentSession();
+		
+		BusinessReview review = (BusinessReview) session.createCriteria(BusinessReview.class)
+				.createAlias("reviewer", "reviewer")
+				.createAlias("reviewed", "reviewed")
+				.add(Restrictions.eq("reviewer.username", name))
+				.add(Restrictions.eq("reviewed.id", businessId))
+				.uniqueResult();
+		
+		if(null == review) {
+			review = new BusinessReview();
+			
+			User user = users.getFacebook(name);
+			Hibernate.initialize(user.getBusinessReviews());
+			
+			BusinessProfile business = businesses.get(businessId);
+			Hibernate.initialize(business.getReviews());
+			
+			review.setReviewer(user);
+			review.setReviewed(business);
+			user.getBusinessReviews().add(review);
+			business.getReviews().add(review);
+		}
+		
+		review.setScore(score);
+		review.setJustification(justification);
+		review.setTime(new Date()); //last updated
+		
+		session.saveOrUpdate(review);
+		
+		return review;
+	}
+
+	@Override
+	public Collection<BusinessReview> getReviews(long businessId) {
+		BusinessProfile business = (BusinessProfile) sessions.getCurrentSession().get(BusinessProfile.class, businessId);
+		Hibernate.initialize(business.getReviews());
+		return business.getReviews();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection<TopTenList> getToptens(int start, int howmany, String orderColumn) {
+		Session session = sessions.getCurrentSession();
+		Criteria criteria = session.createCriteria(TopTenList.class);
+		
+		if(null != orderColumn) {
+			criteria.addOrder(Order.desc(orderColumn));
+		}
+		
+		if(start > 0 && howmany > 0) {
+			criteria.setFirstResult(start);
+			criteria.setMaxResults(howmany);
+		}
+		
+		return criteria.list();
+	}
+
+	@Override
+	public Collection<TopTenList> getUserToptens(String name) {
+		User user = users.getFacebook(name);
+		Hibernate.initialize(user.getCreatedToptens());
+		return user.getCreatedToptens();
+	}
+
+	@Override
+	public TopTenList getTopten(long toptenId) {
+		return (TopTenList) sessions.getCurrentSession().get(TopTenList.class, toptenId);
+	}
+
+	@Override
+	public TopTenList createTopTenList(String name, String title) {
+		User user = users.getFacebook(name);
+		
+		TopTenList newlist = new TopTenList();
+		newlist.setCreator(user);
+		newlist.setTime(new Date());
+		newlist.setTitle(title);
+
+		user.getCreatedToptens().add(newlist);
+		
+		sessions.getCurrentSession().save(newlist);
+		
+		return newlist;
+	}
+
+	@Override
+	public void toptenVote(String name, long candidateId) {
+		User user = users.getFacebook(name);
+		TopTenCandidate candidate = (TopTenCandidate) sessions.getCurrentSession().get(TopTenCandidate.class, candidateId);
+		
+		TopTenList parent = candidate.getList();
+		for(TopTenCandidate competitor : parent.getCandidates()) {
+			if(!competitor.getVoters().remove(user)) { //fresh vote, increment parent total vote count
+				parent.setTotalVotes(parent.getTotalVotes() + 1);
+			}
+		}
+		
+		candidate.getVoters().add(user);
+		user.getVotes().add(candidate);
 	}
 }

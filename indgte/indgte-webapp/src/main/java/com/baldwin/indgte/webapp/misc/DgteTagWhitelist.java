@@ -9,4 +9,8 @@ public class DgteTagWhitelist extends Whitelist {
 				.addAttributes("iframe", "width", "height", "src", "frameborder", "allowfullscreen", "webkitAllowFullScreen", "mozallofullscreen")
 				.addProtocols("iframe", "src", "http", "https");
 	}
+	
+	public static Whitelist simpleText() {
+		return Whitelist.simpleText().addTags("br");
+	}
 }

@@ -1,0 +1,174 @@
+.newpost {
+	margin: 10px 0 10px 0;
+	border: 1px solid transparent;
+	width: 500px;
+	position: relative;
+	font-size: 10pt !important;
+}
+
+.newpost input, .newpost textarea {
+	outline: none;
+}
+
+.newpost.active {
+	border: 1px dotted lightskyblue;
+	padding: 10px;
+}
+
+.status-title-container {
+	margin-bottom: -1px;	
+}
+
+.status-title {
+	width: 97% !important;
+	border-width: 0 0 1px 0 !important;
+	border-bottom-style: dashed !important;
+	padding: 4px;
+}
+
+.status-textarea {
+	resize: none;
+	line-height: 1.8;
+	overflow-y: hidden;
+	font-weight: normal !important;
+	padding: 4px;
+	border: 0 !important;
+}
+
+.status-textarea:-moz-placeholder, .status-title:-moz-placeholder{
+	color: grey;
+}
+.status-textarea:-webkit-input-placeholder, .status-title:-webkit-input-placeholder  {
+	color: grey
+}
+
+.attach-input-container {
+	border-top-style: dashed !important;
+	border-width: 1px 0 0 0 !important;
+	padding: 2px;	
+}
+
+.newpost-errors {
+	margin: 2px 0 2px 0;
+	padding: 2px;
+	font-weight: bold;
+	color: red;
+}
+
+.status-options {
+	margin-top: 5px;
+	width: 500px;
+}
+
+.floatright {
+	display: table;
+}
+
+.floatright div {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.status-counter {
+	margin-right: 5px;
+}
+
+.post-as {
+	position: relative;
+	margin: 0 5px 0 0;
+}
+
+.attach {
+	cursor: pointer;
+	position: relative;
+	margin: 0 5px 0 0;
+}
+
+.attach-visibles:not(.ui-state-highlight):not(.ui-state-active) {
+	border: 1px dotted lightskyblue;
+}
+
+.attach-visibles {
+	height: 25px;
+	padding: 0 0 0 5px;
+}
+
+.attach-visibles img {
+	margin: 5px 0 0 2px;
+}
+
+.post-as img {
+	max-height: 25px;
+	max-width: 25px;
+	vertical-align: middle;
+}
+
+.attach img {
+	vertical-align: middle;
+}
+
+.post-as-menu, .attach-menu {
+	width: 300px;
+	max-height: 200px;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow-y: auto;
+	position: absolute;
+    right: 0px;
+    position: absolute;
+    z-index: 1;
+}
+
+.attach-menu {
+	width: 140px;
+}
+
+.post-as-menu div, .attach-menu div {
+	display: block;
+}
+
+.attach-triangle {
+	margin-top: 6px;
+}
+
+.post-as-option:not(.ui-state-highlight), .attach-option:not(.ui-state-highlight) {
+	border: 1px solid transparent;
+}
+.post-as-option, .attach-option {
+	padding: 3px;
+}
+.post-as-option img, .attach-option img {
+	float: left;
+	margin-right: 5px;
+}
+.post-as-option .name {
+	margin: -2px 0 0 30px;
+}
+.attach-option .name {
+	margin: -2px 0 0 0;
+}
+
+.post-as-category {
+	margin-top: -3px;
+	font-size: 0.7em;
+	opacity: 0.7;
+	text-transform: capitalize;
+}
+
+.entity-suggestions {
+	position: absolute;
+	width: 400px;
+	max-width: 400px;
+	min-width: 400px;
+	max-height: 250px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	z-index: 1;
+	padding: 5px;	
+}
+
+.entity-suggestion, .entity-suggestion-clone {
+	cursor: pointer;
+}

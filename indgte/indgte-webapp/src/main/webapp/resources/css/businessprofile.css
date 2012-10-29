@@ -1,3 +1,5 @@
+@import url("businessprofile/feed.css");
+
 .cover {
 	height: 200px;
 	background-color: black;
@@ -60,64 +62,6 @@
 .tabs {
 	margin: 10px 0; 
 	padding: 0;
-}
-
-.feed-owner-container {
-	min-height: 150px;
-}
-
-.feed-posts {
-	font-size: 0.9em;
-}
-
-.newpost {
-	padding: 3px;
-	width: 450px;
-	position: absolute;
-	z-index: 1;
-	font-size: 0.7em;
-}
-
-.newpost-poster-pic {
-	position: absolute;
-	float: left;
-	max-width: 30px;
-	max-height: 30px;
-	margin: 2px 5px 2px 2px;
-}
-.newpost-poster {
-	margin: 7px 0 0 35px;
-}
-.newpost-action {
-	margin-top: 3px;
-	height: 110px;
-}
-.newpost-title-label {
-	display: inline-block;
-	width: 44px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-}
-.newpost-title {
-	width: 390px;;
-}
-.newpost-text {
-	height: 55px;
-	width: 444px;
-}
-.newpost-submit {
-	float: right;
-}
-
-.feed-container {
-	position: relative;
-	min-height: 300px;
-}
-
-.feed-posts-container {
-	margin: 10px 0 0 0;
 }
 
 .catalog-container {

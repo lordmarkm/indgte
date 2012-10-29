@@ -39,6 +39,9 @@
 				<value>com.baldwin.indgte.persistence.model.User</value>
 				<value>com.baldwin.indgte.persistence.model.Imgur</value>
 				<value>com.baldwin.indgte.persistence.model.Post</value>
+				<value>com.baldwin.indgte.persistence.model.BusinessReview</value>
+				<value>com.baldwin.indgte.persistence.model.TopTenList</value>
+				<value>com.baldwin.indgte.persistence.model.TopTenCandidate</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

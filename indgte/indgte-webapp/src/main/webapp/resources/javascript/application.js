@@ -4,6 +4,10 @@ window.dgte = {
 		autocompleteMinlength: 4,
 		letters: letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 	},
+	review : {
+		max: 5,
+		previewChars: 140
+	},
 	home: {
 		postMaxlength: 140,
 		statusColsCollapsed: 30,
@@ -32,7 +36,17 @@ window.unescapeBrs = function(target) {
 		var newtext = oldtext.replace(/\<br\s*\>/g, '\n');
 		target.val(newtext);
 	} else if(typeof target == 'string' || target instanceof String) {
-		return target.replace(/\<br\s*\>/g, '\n');
+		return target.replace(/\<br\s*\>/g, '\n').replace(/\<br\s*\/\>/g, '\n');
+	}
+}
+
+window.removeBrs = function(target) {
+	if(target instanceof jQuery) {
+		var oldtext = target.val();
+		var newtext = oldtext.replace(/\<br\s*\>/g, '').replace(/\<br\s*\/\>/g, '');
+		target.val(newtext);
+	} else if(typeof target == 'string' || target instanceof String) {
+		return target.replace(/\<br\s*\>/g, '').replace(/\<br\s*\/\>/g, '');
 	}
 }
 

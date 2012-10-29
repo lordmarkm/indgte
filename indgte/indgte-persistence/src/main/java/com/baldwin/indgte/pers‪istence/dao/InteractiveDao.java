@@ -1,12 +1,15 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import com.baldwin.indgte.persistence.constants.PostType;
+import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Post;
+import com.baldwin.indgte.persistence.model.TopTenList;
 
-public interface PostDao {
+public interface InteractiveDao {
 
 	/**
 	 * Will only ever find posts by businesses
@@ -15,7 +18,7 @@ public interface PostDao {
 	@Deprecated
 	public Set<Post> getByDomain(String domain, int start, int howmany);
 
-	public Set<Post> getById(long posterId, PostType type, int start, int howmany);
+	public Collection<Post> getById(long posterId, PostType type, int start, int howmany);
 
 	public Post newPost(long posterId, PostType type, String title, String text);
 
@@ -32,4 +35,20 @@ public interface PostDao {
 	public void unsubscribeFromUser(String username, Long id);
 
 	public boolean isSubscribed(String name, long targetId, PostType type);
+
+	public BusinessReview getReview(String name, long businessId);
+
+	public BusinessReview review(String name, long businessId, int score,	String justification);
+
+	public Collection<BusinessReview> getReviews(long businessId);
+
+	public Collection<TopTenList> getToptens(int start, int howmany, String orderColumn);
+
+	public Collection<TopTenList> getUserToptens(String name);
+
+	public TopTenList getTopten(long toptenId);
+
+	public TopTenList createTopTenList(String name, String title);
+
+	public void toptenVote(String name, long toptenId);
 }

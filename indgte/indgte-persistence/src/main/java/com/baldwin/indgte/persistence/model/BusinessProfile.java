@@ -89,6 +89,9 @@ public class BusinessProfile implements Summarizable {
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="business")
 	private Set<Category> categories;
 	
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="reviewed")
+	private Set<BusinessReview> reviews;
+	
 	@Override
 	public String toString() {
 		return domain + ":" + fullName;
@@ -208,6 +211,7 @@ public class BusinessProfile implements Summarizable {
 		this.coverpic = coverpic;
 	}
 
+	@JsonIgnore
 	public Set<Category> getCategories() {
 		if(null == categories) {
 			categories = new HashSet<Category>();
@@ -231,5 +235,17 @@ public class BusinessProfile implements Summarizable {
 	@JsonIgnore
 	public String[] getSearchableFields() {
 		return searchableFields;
+	}
+
+	@JsonIgnore
+	public Set<BusinessReview> getReviews() {
+		if(null == reviews) {
+			reviews = new HashSet<BusinessReview>();
+		}
+		return reviews;
+	}
+
+	public void setReviews(Set<BusinessReview> reviews) {
+		this.reviews = reviews;
 	}
 }

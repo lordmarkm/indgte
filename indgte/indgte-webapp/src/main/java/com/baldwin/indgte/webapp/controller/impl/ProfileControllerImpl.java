@@ -22,7 +22,7 @@ import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
-import com.baldwin.indgte.persistence.service.PostsService;
+import com.baldwin.indgte.persistence.service.InteractiveService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.ProfileController;
@@ -38,7 +38,7 @@ public class ProfileControllerImpl implements ProfileController {
 	private UserService users;
 	
 	@Autowired
-	private PostsService posts;
+	private InteractiveService posts;
 	
 	@Value("${imgur.devkey}")
 	private String imgurKey;

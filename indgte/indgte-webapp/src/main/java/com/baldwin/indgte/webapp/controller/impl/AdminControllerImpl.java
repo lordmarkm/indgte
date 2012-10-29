@@ -20,7 +20,7 @@ import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.UserService;
-import com.baldwin.indgte.pers‪istence.dao.PostDao;
+import com.baldwin.indgte.pers‪istence.dao.InteractiveDao;
 import com.baldwin.indgte.pers‪istence.dao.SearchDao;
 import com.baldwin.indgte.webapp.controller.AdminController;
 import com.baldwin.indgte.webapp.controller.JSON;
@@ -35,7 +35,7 @@ public class AdminControllerImpl implements AdminController {
 	private UserService users;
 	
 	@Autowired 
-	private PostDao postDao;
+	private InteractiveDao postDao;
 	
 	@Autowired
 	private BusinessService businesses;

@@ -1,13 +1,13 @@
 package com.baldwin.indgte.webapp.controller;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.security.Principal;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.constants.PostType;
 
@@ -65,4 +65,35 @@ public interface InteractiveController {
 	
 	@RequestMapping(value = "/unsubscribe/{type}/{id}.json", method = RequestMethod.POST)
 	public JSON unsubscribe(Principal principal, PostType type, Long id);
+	
+	/**
+	 * Review
+	 */
+	@RequestMapping(value = "/review/{businessId}.json", method = RequestMethod.GET)
+	public JSON getReview(Principal principal, long businessId);
+
+	@RequestMapping(value = "/review/{businessId}.json", method = RequestMethod.POST)
+	public JSON review(Principal principal, long businessId, int score, String justification);
+	
+	@RequestMapping(value = "/allreviews/{businessId}.json", method = RequestMethod.GET)
+	public JSON getAllReviews(Principal principal, long businessId);
+	
+	/*
+	 * Top tens
+	 */
+	
+	/**
+	 * Show 5 popular and 5 recent?
+	 */
+	@RequestMapping(value = "/toptens/", method = RequestMethod.GET)
+	public ModelAndView toptens(Principal principal);
+	
+	@RequestMapping(value = "/toptens/{toptenId}", method = RequestMethod.GET)
+	public ModelAndView topten(Principal principal, long toptenId);
+	
+	@RequestMapping(value = "/toptens.json", method = RequestMethod.POST)
+	public JSON createTopten(Principal principal, String title);
+	
+	@RequestMapping(value = "/toptens/{toptenId}/{candidateId}.json")
+	public JSON vote(Principal principal, long toptenId, long candidateId);
 }
