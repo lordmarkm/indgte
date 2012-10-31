@@ -271,13 +271,14 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	@SuppressWarnings("unchecked")
 	public Collection<TopTenList> getToptens(int start, int howmany, String orderColumn) {
 		Session session = sessions.getCurrentSession();
-		Criteria criteria = session.createCriteria(TopTenList.class);
+		Criteria criteria = session.createCriteria(TopTenList.class)
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
 		if(null != orderColumn) {
 			criteria.addOrder(Order.desc(orderColumn));
 		}
 		
-		if(start > 0 && howmany > 0) {
+		if(start > -1 && howmany > 0) {
 			criteria.setFirstResult(start);
 			criteria.setMaxResults(howmany);
 		}
@@ -293,8 +294,8 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	}
 
 	@Override
-	public TopTenList getTopten(long toptenId) {
-		return (TopTenList) sessions.getCurrentSession().get(TopTenList.class, toptenId);
+	public TopTenList getTopTenList(long topTenId) {
+		return (TopTenList) sessions.getCurrentSession().get(TopTenList.class, topTenId);
 	}
 
 	@Override
@@ -314,18 +315,50 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	}
 
 	@Override
+	public TopTenCandidate createTopTenCandidate(String name, long topTenId, String title) {
+		User user = users.getFacebook(name);
+		TopTenList list = getTopTenList(topTenId);
+		
+		TopTenCandidate candidate = new TopTenCandidate();
+		candidate.setCreator(user);
+		candidate.setList(list);
+		candidate.setTitle(title);
+		
+		list.getCandidates().add(candidate);
+		
+		sessions.getCurrentSession().save(candidate);
+		
+		return candidate;
+	}
+	
+	@Override
 	public void toptenVote(String name, long candidateId) {
+		log.debug("Peristing vote from {} for candidate with id {}", name, candidateId);
+		
 		User user = users.getFacebook(name);
 		TopTenCandidate candidate = (TopTenCandidate) sessions.getCurrentSession().get(TopTenCandidate.class, candidateId);
 		
+		log.debug("Found {} and {}", user, candidate);
+		
 		TopTenList parent = candidate.getList();
+		boolean fresh = true;
 		for(TopTenCandidate competitor : parent.getCandidates()) {
-			if(!competitor.getVoters().remove(user)) { //fresh vote, increment parent total vote count
-				parent.setTotalVotes(parent.getTotalVotes() + 1);
+			if(competitor.getVoters().remove(user)) { //transfer vote
+				competitor.setVotes(competitor.getVoters().size());
+				fresh = false;
+				break;
 			}
+		}
+		if(fresh) {
+			log.debug("Fresh vote, incrementing list total votes. Before increment: {}", parent.getTotalVotes());
+			parent.setTotalVotes(parent.getTotalVotes() + 1);
+			log.debug("After increment: {}", parent.getTotalVotes());
+		} else {
+			log.debug("Transfer vote, no increment");
 		}
 		
 		candidate.getVoters().add(user);
+		candidate.setVotes(candidate.getVoters().size());
 		user.getVotes().add(candidate);
 	}
 }

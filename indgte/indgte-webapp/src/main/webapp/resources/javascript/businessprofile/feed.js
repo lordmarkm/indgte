@@ -73,7 +73,7 @@ $(function(){
 	
 	function checkStatus() {
 		var status = $status.val();
-		if(!status.trim()) {
+		if(!status || !status.trim()) {
 			shrinkStatus();
 		} else {
 			expandStatus();

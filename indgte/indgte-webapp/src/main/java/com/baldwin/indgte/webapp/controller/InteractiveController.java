@@ -83,17 +83,23 @@ public interface InteractiveController {
 	 */
 	
 	/**
-	 * Show 5 popular and 5 recent?
+	 * Show 5 popular, 5 recent + all the ones user created?
 	 */
 	@RequestMapping(value = "/toptens/", method = RequestMethod.GET)
 	public ModelAndView toptens(Principal principal);
 	
+	@RequestMapping(value = "/toptens.json", method = RequestMethod.GET)
+	public JSON getTopTens(Principal principal);
+	
+	@RequestMapping(value = "/toptens.json", method = RequestMethod.POST)
+	public JSON newTopTenList(Principal principal, String title);
+	
 	@RequestMapping(value = "/toptens/{toptenId}", method = RequestMethod.GET)
 	public ModelAndView topten(Principal principal, long toptenId);
 	
-	@RequestMapping(value = "/toptens.json", method = RequestMethod.POST)
-	public JSON createTopten(Principal principal, String title);
+	@RequestMapping(value = "/toptens/{topTenId}.json", method = RequestMethod.POST)
+	public JSON newTopTenCandidate(Principal principal, long topTenId, String title);
 	
-	@RequestMapping(value = "/toptens/{toptenId}/{candidateId}.json")
-	public JSON vote(Principal principal, long toptenId, long candidateId);
+	@RequestMapping(value = "/toptens/{topTenId}/{candidateId}.json")
+	public JSON vote(Principal principal, long topTenId, long candidateId);
 }

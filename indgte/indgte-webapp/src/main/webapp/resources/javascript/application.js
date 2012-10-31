@@ -21,6 +21,9 @@ window.dgte = {
 	constants : {
 		postsPerPage : 10
 	},
+	toptens: {
+		genericTen : 'http://i.imgur.com/bJ2hx.png'
+	},
 	urls : {
 		blackSquareSmall : 'http://i.imgur.com/Y0NTes.jpg'
 	}

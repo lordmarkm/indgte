@@ -7,6 +7,7 @@ import java.util.Set;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Post;
+import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
 
 public interface InteractiveDao {
@@ -46,9 +47,11 @@ public interface InteractiveDao {
 
 	public Collection<TopTenList> getUserToptens(String name);
 
-	public TopTenList getTopten(long toptenId);
+	public TopTenList getTopTenList(long toptenId);
 
 	public TopTenList createTopTenList(String name, String title);
 
-	public void toptenVote(String name, long toptenId);
+	public void toptenVote(String name, long topTenId);
+
+	public TopTenCandidate createTopTenCandidate(String name, long topTenId, String title);
 }

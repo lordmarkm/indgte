@@ -20,3 +20,8 @@
 <spring:url var="urlHidePics" value="/b/hidepics/" />
 <spring:url var="urlShowPics" value="/b/showpics/" />
 <spring:url var="urlDeletePics" value="/b/deletepics/" />
+
+<spring:url var="urlToptenList" value="/i/toptens/" />
+
+<spring:url var="jsApplication" value="/resources/javascript/application.js" />
+<spring:url var="jsTopTens" value="/resources/javascript/grids/toptens.js" />

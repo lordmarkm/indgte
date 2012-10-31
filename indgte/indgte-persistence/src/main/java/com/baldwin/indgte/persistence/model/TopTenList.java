@@ -1,6 +1,7 @@
 package com.baldwin.indgte.persistence.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,6 +16,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 @Entity
 @Table(name="toptenlists")
@@ -45,6 +49,9 @@ public class TopTenList {
 	@Column
 	private int totalVotes;
 	
+	@Transient
+	private TopTenCandidate leader;
+	
 	public String getTitle() {
 		return title;
 	}
@@ -53,7 +60,11 @@ public class TopTenList {
 		this.title = title;
 	}
 
+	@JsonIgnore
 	public Set<TopTenCandidate> getCandidates() {
+		if(null == candidates) {
+			candidates = new HashSet<TopTenCandidate>();
+		}
 		return candidates;
 	}
 
@@ -85,11 +96,20 @@ public class TopTenList {
 		this.totalVotes = totalVotes;
 	}
 
+	@JsonIgnore
 	public User getCreator() {
 		return creator;
 	}
 
 	public void setCreator(User creator) {
 		this.creator = creator;
+	}
+
+	public TopTenCandidate getLeader() {
+		return leader;
+	}
+
+	public void setLeader(TopTenCandidate leader) {
+		this.leader = leader;
 	}
 }

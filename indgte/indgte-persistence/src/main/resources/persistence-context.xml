@@ -42,6 +42,9 @@
 				<value>com.baldwin.indgte.persistence.model.BusinessReview</value>
 				<value>com.baldwin.indgte.persistence.model.TopTenList</value>
 				<value>com.baldwin.indgte.persistence.model.TopTenCandidate</value>
+				<value>com.baldwin.indgte.persistence.model.FixedPriceItem</value>
+				<value>com.baldwin.indgte.persistence.model.BiddingItem</value>
+				<value>com.baldwin.indgte.persistence.model.TradeItem</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

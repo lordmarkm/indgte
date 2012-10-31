@@ -1,0 +1,26 @@
+.toptens-header {
+	padding-left: 5px;	
+}
+
+.toptens {
+	font-size: 0.9em !important;
+	padding: 5px;
+}
+
+.toptens ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 5px 0 5px 0;
+}
+
+.topten {
+	min-height: 30px;
+	margin-bottom: 2px;
+}
+
+.topten-list-img {
+	float: left;
+	width: 30px;
+	height: 30px;
+	margin: 0 5px 0 0;
+}

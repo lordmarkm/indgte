@@ -3,21 +3,24 @@ package com.baldwin.indgte.persistence.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.baldwin.indgte.persistence.dto.Summary;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 @Entity
 @Table(name="toptencandidates")
-public class TopTenCandidate {
+public class TopTenCandidate implements Comparable<TopTenCandidate> {
 	@Id
 	@GeneratedValue
 	@Column(name = "itemId")
@@ -31,7 +34,18 @@ public class TopTenCandidate {
 	)
 	private TopTenList list;
 	
-	@ManyToMany
+	@ManyToOne
+	@JoinColumn(
+		name = "creatorId", 
+		nullable=false, 
+		updatable=false
+	)
+	private User creator;
+	
+	@Column
+	private int votes;
+	
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 		name="toptenvotes",
 		joinColumns = {@JoinColumn(name = "userId")},
@@ -39,12 +53,21 @@ public class TopTenCandidate {
 	)
 	private Set<User> voters;
 	
+	@Column
 	private String title;
 	
+	@Column
+	private String link;
+	
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="imgurId")
 	private Imgur imgur;
 	
-	private Summary attachment;
-
+	@Override
+	public int compareTo(TopTenCandidate competition) {
+		return competition.votes - this.votes;
+	}
+	
 	public long getId() {
 		return id;
 	}
@@ -61,6 +84,7 @@ public class TopTenCandidate {
 		this.list = list;
 	}
 
+	@JsonIgnore
 	public Set<User> getVoters() {
 		if(null == voters) {
 			voters = new HashSet<User>();
@@ -88,11 +112,27 @@ public class TopTenCandidate {
 		this.imgur = imgur;
 	}
 
-	public Summary getAttachment() {
-		return attachment;
+	public String getLink() {
+		return link;
 	}
 
-	public void setAttachment(Summary attachment) {
-		this.attachment = attachment;
+	public void setLink(String link) {
+		this.link = link;
+	}
+
+	public User getCreator() {
+		return creator;
+	}
+
+	public void setCreator(User creator) {
+		this.creator = creator;
+	}
+
+	public int getVotes() {
+		return votes;
+	}
+
+	public void setVotes(int votes) {
+		this.votes = votes;
 	}
 }

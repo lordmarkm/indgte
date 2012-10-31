@@ -111,6 +111,9 @@ public class User implements Summarizable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "creator", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<TopTenList> createdToptens;
 	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<BuyAndSellItem> buyAndSellItems;
+	
 	@Override
 	public String toString() {
 		return username;
@@ -290,5 +293,17 @@ public class User implements Summarizable {
 
 	public void setCreatedToptens(Set<TopTenList> createdToptens) {
 		this.createdToptens = createdToptens;
+	}
+
+	@JsonIgnore
+	public Set<BuyAndSellItem> getBuyAndSellItems() {
+		if(null == buyAndSellItems) {
+			this.buyAndSellItems = new HashSet<BuyAndSellItem>();
+		}
+		return buyAndSellItems;
+	}
+
+	public void setBuyAndSellItems(Set<BuyAndSellItem> buyAndSellItems) {
+		this.buyAndSellItems = buyAndSellItems;
 	}
 }

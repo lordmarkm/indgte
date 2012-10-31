@@ -23,6 +23,10 @@ body {
 	/* fonts */
 .italic {font-style: italic;}
 .capitalize {text-transform: capitalize;}
+.subtitle {
+	font-size: 0.8em;
+	color: grey;
+}
 .shadow {
  	box-shadow: -6px 4px 1px grey;
   	-webkit-box-shadow:  -6px 4px 1px grey;

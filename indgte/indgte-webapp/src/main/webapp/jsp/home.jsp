@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@include file="tiles/links.jsp" %>
 
 <spring:url var="paperclip" value="/resources/images/icons/paperclip.png" />
 
@@ -10,7 +11,7 @@
 
 <script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 
-<div class="grid_7">
+<div class="grid_8">
 
 <section class="newpost">
 	<form id="form-newpost">
@@ -110,6 +111,28 @@
 
 </div>
 
+<div class="toptens-container grid_4 ui-widget">
+<div class="toptens-header ui-widget-header">Top Tens</div>
+<div class="toptens">
+	Popular:
+	<ul class="popular"></ul>
+	Recent:
+	<ul class="recent"></ul>
+	
+	<a href="<spring:url value='/i/toptens/' />">View all...</a>
+</div>
+</div>
+
+<div class="reviews grid_4">
+	goodbye world
+</div>
+
+<style>
+.reviews {
+	background-color: blue;
+}
+</style>
+
 <script type="text/javascript" src="${jsApplication }"></script>
 <script>
 window.constants = {
@@ -129,7 +152,10 @@ window.urls = {
 	productwithpics: '<spring:url value="/b/products/withpics/" />',
 	imgur : 'http://i.imgur.com/',
 	imgurPage : 'http://imgur.com/',
-	searchOwn: '<spring:url value="/s/own/" />'
+	searchOwn: '<spring:url value="/s/own/" />',
+	topTens: '<spring:url value="/i/toptens.json" />',
+	topTenLeader: '<spring:url value="/i/toptens/leader/" />',
+	topTensPage: '<spring:url value="/i/toptens/" />'
 }
 
 $(function(){
@@ -840,3 +866,7 @@ $(function(){
 	});
 });
 </script>
+
+<!-- Top Tens -->
+<link rel="stylesheet" href="<spring:url value='/resources/css/grids/toptens.css' />" />
+<script src="${jsTopTens }"></script>

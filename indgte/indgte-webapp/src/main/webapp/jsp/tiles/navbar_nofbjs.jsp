@@ -4,6 +4,7 @@
 <spring:url var="urlHome" value="/" />
 <spring:url var="urlYellowPages" value="/s/" />
 <spring:url var="urlProfile" value="/p/" />
+<spring:url var="urlBuySell" value="/t/" />
 <spring:url var="urlMyBusinesses" value="/p/businesses" />
 <spring:url var="urlHelp" value="/etc/help/" />
 <spring:url var="urlLogout" value="/j_spring_security_logout" />
@@ -46,6 +47,7 @@
 	<div class="navigation-container floatright">
 		<strong class="navigation home"><a href="${urlHome }">Home</a></strong>
 		<strong class="navigation yellowpages"><a href="${urlYellowPages }">Yellow Pages</a></strong>
+		<strong class="navigation buysell"><a href="${urlBuySell }">Buy&Sell</a></strong>
 		<strong class="navigation chat">Chat</strong>
 	</div>
 </section>

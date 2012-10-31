@@ -27,6 +27,7 @@ import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.BusinessService;
@@ -192,6 +193,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 				return JSON.ok().put("review", review);
 			} 
 		} catch (Exception e) {
+			log.error("Exception getting review", e);
 			return JSON.status500(e);
 		}
 	}
@@ -203,6 +205,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			BusinessReview review = interact.review(principal.getName(), businessId, score, Jsoup.clean(clean(justification), DgteTagWhitelist.simpleText()));
 			return JSON.ok().put("review", review);
 		} catch (Exception e) {
+			log.error("Exception posting review", e);
 			return JSON.status500(e);
 		}
 	}
@@ -213,6 +216,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			Collection<BusinessReview> reviews = interact.getReviews(businessId);
 			return JSON.ok().put("reviews", reviews);
 		} catch (Exception e) {
+			log.error("Exception getting reviews", e);
 			return JSON.status500(e);
 		}
 	}
@@ -232,6 +236,16 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 
 	@Override
+	public @ResponseBody JSON getTopTens(Principal principal) {
+		Collection<TopTenList> recentLists = interact.getRecentToptens(0, 3);
+		Collection<TopTenList> popularLists = interact.getPopularToptens(0, 3);
+		
+		return JSON.ok()
+				.put("recent", recentLists)
+				.put("popular", popularLists);
+	}
+	
+	@Override
 	public ModelAndView topten(Principal principal, @PathVariable long toptenId) {
 		User user = users.getFacebook(principal.getName());
 		TopTenList topten = interact.getTopten(toptenId);
@@ -242,21 +256,36 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 
 	@Override
-	public @ResponseBody JSON createTopten(Principal principal, @PathVariable String title) {
+	public @ResponseBody JSON newTopTenList(Principal principal, @RequestParam String title) {
 		try {
-			TopTenList topten = interact.createTopTenList(principal.getName(), title);
+			TopTenList topten = interact.createTopTenList(principal.getName(), Jsoup.clean(title, DgteTagWhitelist.none()));
 			return JSON.ok().put("topten", topten);
 		} catch (Exception e) {
+			log.error("Exception creating list", e);
 			return JSON.status500(e);
 		}
 	}
 
 	@Override
-	public JSON vote(Principal principal, long toptenId, long candidateId) {
+	public @ResponseBody JSON newTopTenCandidate(Principal principal, @PathVariable long topTenId, @RequestParam String title) {
 		try {
-			interact.topTenVote(principal.getName(), toptenId);
+			String cleanTitle = Jsoup.clean(title, DgteTagWhitelist.none());
+			TopTenCandidate candidate = interact.createTopTenCandidate(principal.getName(), topTenId, cleanTitle);
+			return JSON.ok().put("candidate", candidate);
+		} catch (Exception e) {
+			log.error("Exception creating candidate", e);
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON vote(Principal principal, @PathVariable long topTenId, @PathVariable long candidateId) {
+		log.debug("User {} voting for candidate with id {}", principal.getName(), candidateId);
+		try {
+			interact.topTenVote(principal.getName(), candidateId);
 			return JSON.ok();
 		} catch (Exception e) {
+			log.error("Exception voting", e);
 			return JSON.status500(e);
 		}
 	}

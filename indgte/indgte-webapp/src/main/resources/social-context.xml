@@ -55,26 +55,16 @@
     	<constructor-arg ref="textEncryptor" />
 	</bean>
 
+	<!--  
 	<bean id="connectionRepository" factory-method="createConnectionRepository" factory-bean="usersConnectionRepository" scope="request">
 	    <constructor-arg value="#{request.userPrincipal.name}" />
 	    <aop:scoped-proxy proxy-target-class="false" />
 	</bean>
+	-->
 	
 	<bean class="org.springframework.social.connect.web.ConnectController">
 		<!-- Specify callback url if needed 
 		<property name="applicationUrl" value="${application.url}" />
 		-->
 	</bean>
-	
-	<!--  
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost/springsocial" />
-		<property name="username" value="root" />
-		<property name="password" value="1qazxsw2" />
-		<property name="maxActive" value="20" />
-		<property name="maxIdle" value="10" />
-		<property name="maxWait" value="10000" />
-	</bean>
-	-->
 </beans>

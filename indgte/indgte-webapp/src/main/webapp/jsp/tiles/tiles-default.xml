@@ -54,11 +54,9 @@
 	<definition name="viewproduct" extends="default">
 		<put-attribute name="body" value="/jsp/businessops/viewproduct.jsp" />
  	</definition>
- 	
 	<definition name="createcategory" extends="default">
 		<put-attribute name="body" value="/jsp/businessops/createcategory.jsp" />
 	</definition>
-
 	<definition name="editproduct" extends="default">
 		<put-attribute name="body" value="/jsp/businessops/editproduct.jsp" />
 	</definition>
@@ -67,9 +65,16 @@
 	<definition name="yellowpages" extends="default">
 		<put-attribute name="body" value="/jsp/search/yellowpages.jsp" />
 	</definition>
-	
 	<definition name="yellowpage" extends="default">
 		<put-attribute name="body" value="/jsp/search/yellowpage.jsp" />
+	</definition>
+	
+	<!-- Top Ten Lists -->
+	<definition name="toptenlists" extends="default">
+		<put-attribute name="body" value="/jsp/toptenlists/toptenlists.jsp" />
+	</definition>
+	<definition name="toptenlist" extends="default">
+		<put-attribute name="body" value="/jsp/toptenlists/toptenlist.jsp" />
 	</definition>
 	
 	<!-- Misc -->
