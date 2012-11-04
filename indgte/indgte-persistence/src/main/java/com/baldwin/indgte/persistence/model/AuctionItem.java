@@ -10,10 +10,13 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="buyandsell_bidding")
-public class BiddingItem extends BuyAndSellItem {
+public class AuctionItem extends BuyAndSellItem {
 	/**
 	 * Bidding mode buyout
 	 */
+	@Column
+	private Double start;
+	
 	@Column
 	private Double buyout;
 	
@@ -50,5 +53,13 @@ public class BiddingItem extends BuyAndSellItem {
 
 	public Double getBuyout() {
 		return buyout;
+	}
+
+	public Double getStart() {
+		return start;
+	}
+
+	public void setStart(Double start) {
+		this.start = start;
 	}
 }

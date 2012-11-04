@@ -19,13 +19,37 @@ window.dgte = {
 		preview: 4
 	},
 	constants : {
-		postsPerPage : 10
+		postsPerPage : 10,
+		imgurKey: '1fbac05d6fce25d6a06a7a715b1cb2d8'
 	},
 	toptens: {
 		genericTen : 'http://i.imgur.com/bJ2hx.png'
 	},
 	urls : {
-		blackSquareSmall : 'http://i.imgur.com/Y0NTes.jpg'
+		blackSquareSmall : 'http://i.imgur.com/Y0NTes.jpg',
+		imgurUpload : 'http://api.imgur.com/2/upload.json'
+	},
+	
+	upload: function(file, onComplete) {
+	    if (!file || !file.type.match(/image.*/)) return;
+
+	    var fd = new FormData();
+	    fd.append("image", file);
+	    fd.append("key", dgte.constants.imgurKey);
+	    
+	    var xhr = new XMLHttpRequest();
+	    xhr.open("POST", dgte.urls.imgurUpload);
+	    xhr.onload = function() {
+	    	if(xhr.status != 200) {
+	    		return xhr.onerror();
+	    	}
+	    	var response = JSON.parse(xhr.responseText);
+	    	onComplete(response);
+	    }
+	    xhr.onerror = function() {
+	    	debud('lol upload error');
+	    }
+		xhr.send(fd);		
 	}
 }
 

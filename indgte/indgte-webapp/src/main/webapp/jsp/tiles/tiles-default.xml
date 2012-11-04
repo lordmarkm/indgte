@@ -77,6 +77,14 @@
 		<put-attribute name="body" value="/jsp/toptenlists/toptenlist.jsp" />
 	</definition>
 	
+	<!-- Buy and Sell -->
+	<definition name="buyandsell" extends="default">
+		<put-attribute name="body" value="/jsp/buyandsell/buyandsell.jsp" />
+	</definition>
+	<definition name="buyandsellitem" extends="default">
+		<put-attribute name="body" value="/jsp/buyandsell/buyandsellitem.jsp" />
+	</definition>
+	
 	<!-- Misc -->
 	<definition name="help" extends="default">
 		<put-attribute name="body" value="/jsp/help/help.jsp" />

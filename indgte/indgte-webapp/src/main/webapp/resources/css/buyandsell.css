@@ -1,0 +1,71 @@
+ul {
+	list-style-type: none;
+}
+
+.trade-item {
+	float: left;
+	width: 30%;
+	height: 130px;
+	padding: 5px;
+	margin: 5px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.trade-item:not(.ui-state-highlight) {
+	border: 1px solid transparent;
+}
+.trade-img {
+	float: left;
+	max-width: 200px;
+	max-height: 200px;
+}
+.trade-item a {
+	text-decoration: none;
+}
+
+.trade-item-details {
+	padding: 0;
+	margin: 0 0 0 95px;
+}
+
+
+.newitem-form-errors {
+	margin-left: 100px;
+	text-align: center;
+	color: red;
+}
+.newitem-formfields {
+	list-style-type: none;
+	padding: 0;
+	margin: 0 0 0 110px;
+}
+.newitem-formfields li:nth-child(even):not(.li-sellmode) {
+	margin: 0 0 5px 0;
+}
+.newitem-formfields input, .newitem-formfields textarea {
+	width: 100%;
+	resize: none;
+}
+.newitem-img-container {
+	float: left;
+	width: 90px;
+	height: 90px;
+	text-align: center;
+	cursor: pointer;
+	position: relative;
+	padding: 5px;
+}
+.newitem-img-container.hungry {
+	border-color: green !important;
+}
+.newitem-img-container .newitem-img-message {
+	margin-top: 25%;
+}
+.newitem-img-container.noimage {
+	border: 2px dashed lightskyblue;
+}
+.li-sellmode.auction, .li-sellmode.fixedprice {
+	margin-right: 5px;
+	display:inline-block;
+	width: 30%;
+}

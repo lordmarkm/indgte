@@ -194,7 +194,7 @@ div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
 	position: relative;
 }
 .image-upload-dropbox.hungry {
-	border-color: red;
+	border-color: green !important;
 }
 
 .dropbox-message {

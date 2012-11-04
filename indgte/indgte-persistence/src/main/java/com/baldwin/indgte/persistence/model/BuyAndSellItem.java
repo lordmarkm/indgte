@@ -1,5 +1,7 @@
 package com.baldwin.indgte.persistence.model;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +16,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.baldwin.indgte.persistence.constants.BuyAndSellMode;
 
@@ -44,6 +48,13 @@ public class BuyAndSellItem {
 	@Column(name="mode")
 	private BuyAndSellMode buyAndSellMode;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column
+	private Date time;
+	
+	@Column
+	private long views;
+	
 	public User getOwner() {
 		return owner;
 	}
@@ -90,5 +101,21 @@ public class BuyAndSellItem {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
+	}
+
+	public long getViews() {
+		return views;
+	}
+
+	public void setViews(long views) {
+		this.views = views;
 	}
 }
