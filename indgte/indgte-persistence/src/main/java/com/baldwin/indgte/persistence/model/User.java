@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
@@ -113,6 +114,9 @@ public class User implements Summarizable {
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<BuyAndSellItem> buyAndSellItems;
+	
+	@OneToOne(mappedBy="user")
+	private UserExtension extension;
 	
 	@Override
 	public String toString() {
@@ -305,5 +309,13 @@ public class User implements Summarizable {
 
 	public void setBuyAndSellItems(Set<BuyAndSellItem> buyAndSellItems) {
 		this.buyAndSellItems = buyAndSellItems;
+	}
+
+	public UserExtension getExtension() {
+		return extension;
+	}
+
+	public void setExtension(UserExtension extension) {
+		this.extension = extension;
 	}
 }

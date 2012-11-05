@@ -8,51 +8,153 @@
 <script type="text/javascript" src="${jsApplication }"></script>
 <script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 
+<c:if test="${item.buyAndSellMode eq 'auction' }">
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-countdown/1.6.0/jquery.countdown.min.js"></script>
+<link rel="stylesheet" href="<spring:url value='/resources/css/jquery-countdown.css' />" />
+</c:if>
+
 <div class="grid_8">
 
-<a href="${urlImgur }${item.imgur.hash }" target="_blank"><img class="trade-img" src="${item.imgur.largeThumbnail }" /></a>
-<ul class="trade-item-details">
-	<li>
-		<strong><a href="${urlTrade}${item.id}">${item.name }
-		<c:if test="${item.buyAndSellMode eq 'auction' }">(Auction)</c:if>
-		<c:if test="${item.buyAndSellMode eq 'trade' }">(Trade)</c:if>
-		</a></strong>
-	</li>
-	<li class="italic">${item.description }</li>
-	
-	<!-- bidding -->
-	<c:if test="${item.buyAndSellMode eq 'auction' }">
-	<li>current: &#8369;${item.start }</li>
-	<li>buyout: &#8369;${item.buyout }</li>
-	<li>end date: <span class="time">${item.biddingEnds.time }</span></li>
-	</c:if>
+<h1 class="ui-widget-header">${item.name }</h1>
 
-	<!-- trade -->
-	<c:if test="${item.buyAndSellMode eq 'trade' }">
-	<li>trade for: ${item.tradefor }</li>
-	</c:if>
+<section class="item-details">
+	<h2>Item</h2>
+	<a href="${urlImgur }${item.imgur.hash }" target="_blank"><img class="trade-img" src="${item.imgur.largeThumbnail }" /></a>
+	<ul class="trade-item-details">
+		<li>
+			<strong><a href="${urlTrade}${item.id}">${item.name }
+			<c:if test="${item.buyAndSellMode eq 'auction' }">(Auction)</c:if>
+			<c:if test="${item.buyAndSellMode eq 'trade' }">(Trade)</c:if>
+			</a></strong>
+		</li>
+		<li class="italic">${item.description }</li>
 		
-	<!-- fixed -->
-	<c:if test="${item.buyAndSellMode eq 'fixed' }">
-	<li>&#8369; ${item.price } <c:if test="${item.negotiable }">(negotiable)</c:if></li>
-	</c:if>
+		<!-- bidding -->
+		<c:if test="${item.buyAndSellMode eq 'auction' }">
+		<li>Start: &#8369;${item.start }</li>
+		<li>Buyout: &#8369;${item.buyout }</li>
+		<li>Auction ends: <span class="time">${item.biddingEnds.time }</span></li>
+		</c:if>
+	
+		<!-- trade -->
+		<c:if test="${item.buyAndSellMode eq 'trade' }">
+		<li>trade for: ${item.tradefor }</li>
+		</c:if>
 			
-	<li class="subtitle">Posted <span class="time">${item.time.time }</span> by <a href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>
-	<li class="subtitle">${item.views } views</li>
-</ul>
+		<!-- fixed -->
+		<c:if test="${item.buyAndSellMode eq 'fixed' }">
+		<li>&#8369; ${item.price } <c:if test="${item.negotiable }">(negotiable)</c:if></li>
+		</c:if>
+				
+		<li class="subtitle">Posted <span class="time">${item.time.time }</span> by <a href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>
+		<li class="subtitle">${item.views } views</li>
+	</ul>
+</section>
+
+<c:if test="${item.buyAndSellMode eq 'auction' }">
+<div class="clear"></div>
+<section class="auction">
+	<h2>Auction</h2>
+	
+	<c:if test="${not empty item.winning }">
+	<div class="auction-winning">
+		Winning:  <span class="auction-winning-amount">&#8369;${item.winning.amount } <c:if test="${item.winning.bidder.username eq user.username }">(You)</c:if></span>
+	</div>
+	</c:if>
+	
+	<c:if test="${empty item.winning }">
+		<div class="auction-winning">
+			Winning:  <span class="auction-winning-amount">No bids yet</span>
+		</div>
+	</c:if>
+	
+	<c:if test="${!finished }">
+		<div class="auction-countdown-container">
+			Time left:
+			<div class="auction-countdown"></div>
+		</div>
+	
+		<div class="clear"></div>
+	
+		<c:if test="${not owner}">
+			<input type="number" class="auction-bid-amount" />
+			<button class="auction-bid">Bid</button>
+		</c:if>
+	</c:if>
+	
+	<c:if test="${owner }">
+		<div class="auction-bids-list-container">
+		Bids:
+		<ol class="auction-bids-list">
+			<c:forEach items="${item.reversedBids }" var="bid">
+			<li><a href="${urlUserProfile }${bid.bidder.username}">${bid.bidder.username }</a> - ${bid.amount } (<span class="time">${bid.time.time }</span>)</li>
+			</c:forEach>	
+		</ol>
+		</div>
+	</c:if>
+</section>
+</c:if>
+
+<div class="clear"></div>
+
+<section class="seller-details">
+	<h2>Seller</h2>
+	<a href="${urlUserProfile }${item.owner.username}"><img class="seller-img" src="${item.owner.imageUrl }" /></a>
+	<ul class="trade-seller-details">
+		<li><a href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>
+		<li>Reputation: Scoundrel</li>
+		<li><a href="${item.owner.profileUrl }">View Facebook profile</a></li>
+	</ul>
+</section>
 
 </div>
 
-<!-- only for overrides of buyandsell.css -->
 <style>
+/*buyandsell.css overrides */
 .trade-item-details {
 	margin: 0 0 0 205px;
+}
+
+/*page unique styles*/
+.seller-img {
+	float: left;
+}
+
+.auction-winning {
+	font-weight: bold;
+}
+.auction-winning-amount {
+	font-size: 1.5em;
+	color: green;
+}
+
+.auction-countdown-container {
+	font-weight: bold;
+	width: 200px;
+}
+.auction-countdown {
+	color: red;
+}
+
+.auction-bids-list-container {
+	margin: 15px 0 0 0;
+}
+.auction-bids-list {
+	margin-top: 0;
 }
 </style>
 
 <script>
-window.urls = {
+window.constants = {
+	bidIncrement: '${bidIncrement}'
+}
 
+window.urls = {
+	bid: '<spring:url value="/t/bid/" />'
+}
+
+window.item = {
+	id: '${item.id}'
 }
 
 $(function(){
@@ -61,4 +163,87 @@ $(function(){
 		$(div).text(fromnow);
 	});
 });
+
+<c:if test="${item.buyAndSellMode eq 'auction' }">
+<c:set var="winning" value="${item.winning.amount}" />
+
+item.start = '${item.start}';
+item.biddingEnds = '${item.biddingEnds.time}';
+
+$(function(){
+	//auction
+	var winning = '${winning}';
+	
+	var $winningAmount = $('.auction-winning-amount'),
+		$countdown = $('.auction-countdown'),
+		$iptBidAmount = $('.auction-bid-amount'),
+		$btnBid = $('.auction-bid');
+	
+	function setBidAmount(amount) {
+		if(!amount && winning) {
+			var minBid = Math.ceil(parseFloat(winning) + (constants.bidIncrement * item.start));
+			$iptBidAmount.val(minBid);
+		} else if(!amount) {
+			$iptBidAmount.val(item.start);
+		} else {
+			$iptBidAmount.val(amount);
+		}
+	}
+	setBidAmount();
+	
+	$btnBid.click(function(){
+		var amount = $iptBidAmount.val();
+		//TODO validate amount
+		$btnBid.button('disable');
+		$.post(urls.bid + item.id + '/' + amount + '.json', function(response) {
+			switch(response.status) {
+			case '200':
+				alert('You are now winning this auction.');
+				$winningAmount.html('&#8369;' + amount + ' (You)');
+				winning = amount;
+				setBidAmount();
+				break;
+			case '418':
+				debug(response);
+				alert('You must bid at least ' + response.minimum);
+				setBidAmount(response.minimum);
+				break;
+			default:
+				debug('Bid failed.');
+				debug(response);
+			}
+		})
+		.error(function(){
+			alert('wat');
+		})
+		.complete(function(){
+			$btnBid.button('enable');
+		});
+	});
+	
+	$countdown.countdown({until: new Date(parseInt(item.biddingEnds))});
+});
+</c:if>
+
 </script>
+
+
+<!-- Top Tens -->
+<div class="toptens-container grid_4 ui-widget">
+<div class="toptens-header ui-widget-header">Top Tens</div>
+<div class="toptens">
+	Popular:
+	<ul class="popular"></ul>
+	Recent:
+	<ul class="recent"></ul>
+	
+	<a href="<spring:url value='/i/toptens/' />">View all...</a>
+</div>
+</div>
+<link rel="stylesheet" href="<spring:url value='/resources/css/grids/toptens.css' />" />
+<script>
+window.urls.topTens = '<spring:url value="/i/toptens.json" />',
+window.urls.topTenLeader = '<spring:url value="/i/toptens/leader/" />',
+window.urls.topTensPage = '<spring:url value="/i/toptens/" />'
+</script>
+<script src="${jsTopTens }"></script>

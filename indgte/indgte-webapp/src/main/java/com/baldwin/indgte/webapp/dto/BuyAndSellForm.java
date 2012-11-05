@@ -26,12 +26,12 @@ public class BuyAndSellForm {
 	private String tradefor;
 
 	//fixedprice item
-	private Double fixedprice;
+	private Double fixedprice = 0d;
 	private Boolean negotiable = Boolean.FALSE;
 	
 	//auction item
-	private Double startingprice;
-	private Double buyout;
+	private Double startingprice = 0d;
+	private Double buyout = 0d;
 	private String enddate;
 	
 	@Override
@@ -121,7 +121,7 @@ public class BuyAndSellForm {
 		return fixedprice;
 	}
 	public void setFixedprice(Double fixedprice) {
-		this.fixedprice = fixedprice;
+		this.fixedprice = Math.ceil(fixedprice);
 	}
 	public Boolean isNegotiable() {
 		return negotiable;
@@ -133,13 +133,13 @@ public class BuyAndSellForm {
 		return startingprice;
 	}
 	public void setStartingprice(Double startingprice) {
-		this.startingprice = startingprice;
+		this.startingprice = Math.ceil(startingprice);
 	}
 	public Double getBuyout() {
 		return buyout;
 	}
 	public void setBuyout(Double buyout) {
-		this.buyout = buyout;
+		this.buyout = Math.ceil(buyout);
 	}
 	public String getEnddate() {
 		return enddate;

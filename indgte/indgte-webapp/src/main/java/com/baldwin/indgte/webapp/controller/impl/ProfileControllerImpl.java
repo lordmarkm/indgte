@@ -21,6 +21,7 @@ import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.InteractiveService;
 import com.baldwin.indgte.persistence.service.UserService;
@@ -44,23 +45,14 @@ public class ProfileControllerImpl implements ProfileController {
 	private String imgurKey;
 	
 	@Override
-	public ModelAndView profile(Principal principal, WebRequest request) {
+	public ModelAndView profile(Principal principal) {
 		log.debug("Profile page requested by {}", principal);
 		
 		User user = users.getFacebook(principal.getName());
-		String loadhere = request.getParameter("loadhere");
 		
-		ModelAndView mav = new ModelAndView()
-							.addObject("user", user)
-							.addObject("authorities", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-		
-		if(loadhere != null && Boolean.parseBoolean(loadhere)) {
-			mav.setViewName("profile/ownprofile");
-		} else {
-			mav.setViewName("ownprofile");
-		}
-		
-		return mav;
+		return render(user, "ownprofile")
+				.put("authorities", SecurityContextHolder.getContext().getAuthentication().getAuthorities())
+				.mav();
 	}
 	
 	@Override
@@ -86,15 +78,13 @@ public class ProfileControllerImpl implements ProfileController {
 	}
 	
 	@Override
-	public ModelAndView userProfile(Principal principal, @PathVariable String userId) {
+	public ModelAndView userProfile(Principal principal, @PathVariable String targetUsername) {
 		User user = users.getFacebook(principal.getName());
-		User targetFacebook = users.getFacebook(userId);
-		User targetMain = users.getMain(userId);
+		
+		UserExtension target = users.getExtended(targetUsername);
 		
 		return render(user, "userprofile")
-					.put("subscribed", posts.isSubscribed(principal.getName(), targetFacebook.getId(), PostType.user))
-					.put("targetFacebook", targetFacebook)
-					.put("targetMain", targetMain)
+					.put("subscribed", posts.isSubscribed(principal.getName(), target.getUser().getId(), PostType.user))
 					.mav();
 	}
 	

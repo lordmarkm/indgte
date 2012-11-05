@@ -28,10 +28,10 @@ public interface ProfileController {
 	 * Current U=user's profile
 	 */
 	@RequestMapping("/")
-	public ModelAndView profile(Principal principal, WebRequest request);
+	public ModelAndView profile(Principal principal);
 
-	@RequestMapping("/user/{userId}")
-	public ModelAndView userProfile(Principal principal, String userId);
+	@RequestMapping("/user/{targetUsername}")
+	public ModelAndView userProfile(Principal principal, String targetUsername);
 	
 	@RequestMapping("/businesses")
 	public ModelAndView myBusinesses(Principal principal, WebRequest request);

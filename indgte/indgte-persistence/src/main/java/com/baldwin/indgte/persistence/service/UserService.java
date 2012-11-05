@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.pers‪istence.dao.UserDao;
 
 @Service
@@ -22,5 +23,9 @@ public class UserService {
 
 	public User getFacebook(String userId) {
 		return dao.getFacebook(userId);
+	}
+
+	public UserExtension getExtended(String targetUsername) {
+		return dao.getExtended(targetUsername);
 	}
 }

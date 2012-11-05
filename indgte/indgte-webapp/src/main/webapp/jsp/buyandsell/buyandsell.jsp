@@ -29,14 +29,18 @@
 					</select>
 				</li>
 				
-				<li class="li-sellmode fixedprice">Price<br/><input type="number" class="newitem-fixedprice" name="fixedprice"/></li>
+				<li>
+					<span class="active-tags"></span><input type="text" name="tags" />
+				</li>
+				
+				<li class="li-sellmode fixedprice">Price<br/><input type="number" value="0" class="newitem-fixedprice" name="fixedprice"/></li>
 				<li class="li-sellmode fixedprice">
 					<input type="checkbox" name="negotiable" id="fixedprice-negotiable" class="newitem-fixedprice-negotiable" />
 					<label for="fixedprice-negotiable">Negotiable?</label>
 				</li>
 				
-				<li class="li-sellmode auction">Starting Price<br/><input type="number" class="newitem-bidding-startingprice" name="startingprice"/></li>
-				<li class="li-sellmode auction">Buyout<br/><input type="number" class="newitem-bidding-buyout" name="buyout"/></li>
+				<li class="li-sellmode auction">Starting Price<br/><input type="number" value="0" class="newitem-bidding-startingprice" name="startingprice"/></li>
+				<li class="li-sellmode auction">Buyout<br/><input type="number" value="0" class="newitem-bidding-buyout" name="buyout"/></li>
 				<li class="li-sellmode auction">End date<br/><input type="text" class="newitem-bidding-enddate" readonly="readonly" name="enddate"/></li>
 				
 				<li class="li-sellmode trade">Will trade for</li>

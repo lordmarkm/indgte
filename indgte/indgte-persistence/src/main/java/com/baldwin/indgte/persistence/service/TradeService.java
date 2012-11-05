@@ -3,6 +3,7 @@ package com.baldwin.indgte.persistence.service;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
@@ -13,6 +14,9 @@ import com.baldwin.indgte.pers‪istence.dao.TradeDao;
 @Service
 public class TradeService {
 
+	@Value("${auction.minimum.increment}")
+	private double bidIncrement;
+	
 	@Autowired
 	private TradeDao dao;
 	
@@ -37,5 +41,13 @@ public class TradeService {
 	 */
 	public BuyAndSellItem get(String name, long itemId) {
 		return dao.get(name, itemId);
+	}
+
+	public double bid(User user, long itemId, double amount) {
+		return dao.bid(user, itemId, amount, bidIncrement);
+	}
+	
+	public double getBidIncrement() {
+		return bidIncrement;
 	}
 }

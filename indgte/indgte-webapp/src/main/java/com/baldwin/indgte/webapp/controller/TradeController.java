@@ -30,6 +30,9 @@ public interface TradeController {
 	@RequestMapping(value = "/{itemId}", method = RequestMethod.GET)
 	public ModelAndView viewItem(Principal principal, long itemId);
 	
+	@RequestMapping(value = "/bid/{itemId}/{amount}.json", method = RequestMethod.POST)
+	public JSON bid(User user, long itemId, double amount);
+	
 	@RequestMapping(value = "/sold/{itemId}.json", method = RequestMethod.POST)
 	public JSON sold(User user, long itemId);
 	

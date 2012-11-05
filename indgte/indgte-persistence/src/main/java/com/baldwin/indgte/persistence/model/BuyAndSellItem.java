@@ -21,6 +21,11 @@ import javax.persistence.TemporalType;
 
 import com.baldwin.indgte.persistence.constants.BuyAndSellMode;
 
+/**
+ * An item on the buy-and-sell market
+ * @author mbmartinez
+ */
+
 @Entity
 @Table(name="buyandsell")
 @Inheritance(strategy = InheritanceType.JOINED)

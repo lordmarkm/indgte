@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.baldwin.indgte.persistence.model.AuctionItem;
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.TradeService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
+import com.baldwin.indgte.webapp.controller.MavBuilder;
 import com.baldwin.indgte.webapp.controller.TradeController;
 import com.baldwin.indgte.webapp.dto.BuyAndSellForm;
 
@@ -70,18 +72,39 @@ public class TradeControllerImpl implements TradeController {
 		User user = users.getFacebook(principal.getName());
 		BuyAndSellItem item = trade.get(principal.getName(), itemId);
 		
-		return render(user, "buyandsellitem")
+		MavBuilder builder = render(user, "buyandsellitem")
 					.put("item", item)
-					.put("owner", item.getOwner().getUsername().equals(principal.getName()))
-					.mav();
+					.put("owner", item.getOwner().getUsername().equals(principal.getName()));
+		
+		if(item instanceof AuctionItem) {
+			AuctionItem auctionItem = (AuctionItem)item;
+			builder.put("bidIncrement", trade.getBidIncrement());
+			builder.put("finished", System.currentTimeMillis() - auctionItem.getBiddingEnds().getTime() > 0);
+		}
+		
+		return builder.mav();
 	}
-
+	
+	@Override
+	public @ResponseBody JSON bid(@ModelAttribute User user, @PathVariable long itemId, @PathVariable double amount) {
+		try {
+			double minimum = trade.bid(user, itemId, amount);
+			
+			if(minimum == -1) { //auction has finished
+				return JSON.status404().message("auction is finished");
+			} else if(minimum == 0) { //last bid is winning
+				return JSON.ok();
+			} else {
+				return JSON.teapot().put("minimum", minimum);
+			}
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
 
 	@Override
 	public JSON sold(User user, long itemId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
 }

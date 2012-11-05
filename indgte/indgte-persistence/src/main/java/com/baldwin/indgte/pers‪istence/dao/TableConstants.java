@@ -29,4 +29,6 @@ public class TableConstants {
 	
 	public static final String BUYANDSELL_VIEWS = "views";
 	public static final String BUYANDSELL_TIME = "time";
+	
+	public static final String USEREXTENSION_USER = "user";
 }

@@ -27,6 +27,11 @@ import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summarizable;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 
+/**
+ * An item offered by a Business
+ * @author mbmartinez
+ */
+
 @Indexed
 @Entity
 @Table(name="products")

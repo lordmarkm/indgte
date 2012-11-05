@@ -9,9 +9,12 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baldwin.indgte.persistence.model.AuctionItem;
+import com.baldwin.indgte.persistence.model.Bid;
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.User;
 
@@ -29,6 +32,10 @@ public class TradeDaoImpl implements TradeDao {
 		//do not increment if it's the owner viewing his own item
 		if(!item.getOwner().getUsername().equals(name)) {
 			item.setViews(item.getViews() + 1);
+		}
+		
+		if(item instanceof AuctionItem) {
+			Hibernate.initialize(((AuctionItem)item).getBids());
 		}
 		
 		return item;
@@ -64,5 +71,39 @@ public class TradeDaoImpl implements TradeDao {
 		user.getBuyAndSellItems().add(item);
 		
 		sessions.getCurrentSession().save(item);
+	}
+
+	@Override
+	public double bid(User user, long itemId, double amount, double minIncrementPercent) {
+		Session session = sessions.getCurrentSession();
+		
+		AuctionItem item = (AuctionItem) session.get(AuctionItem.class, itemId);
+		
+		//if auction is finished, return -1
+		if(System.currentTimeMillis() - item.getBiddingEnds().getTime() > 0) return -1d;
+		
+		//if bid is less than current winning bid, return that info to user
+		Bid winning = item.getWinning();
+		if(null != winning) {
+			double minBid = minIncrementPercent * item.getStart() + winning.getAmount();
+			minBid = Math.ceil(minBid);
+			if(minBid > amount) {
+				return Math.ceil(minBid);
+			}
+		} else if(amount < item.getStart()) {
+			//no other bids, but bid is less than the starting price of the item
+			return item.getStart();
+		}
+		
+		Bid bid = new Bid();
+		bid.setAmount(amount);
+		bid.setBidder(user);
+		bid.setItem(item);
+		bid.setTime(new Date());
+		
+		item.getBids().add(bid);
+		
+		session.save(bid);
+		return 0;
 	}
 }
