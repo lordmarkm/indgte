@@ -10,6 +10,7 @@ public class TableConstants {
 	
 	public static final String BIZCATEGORY_NAME = "name";
 	
+	public static final String BUSINESS_ID = "id";
 	public final static String BUSINESS_DOMAIN = "domain";
 	public static final String BUSINESS_CATEGORIES = "categories";
 	

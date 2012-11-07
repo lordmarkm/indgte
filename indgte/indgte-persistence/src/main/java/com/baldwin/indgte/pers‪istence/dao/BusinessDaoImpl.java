@@ -15,14 +15,17 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 
 @Repository 
 @Transactional
@@ -32,6 +35,12 @@ public class BusinessDaoImpl implements BusinessDao {
 	
 	@Autowired 
 	private SessionFactory sessions;
+	
+	@Autowired
+	private UserDao users;
+	
+	@Value("${review.queue.maxsize}")
+	private int forReviewQueueMaxSize;
 	
 	@Override
 	public BusinessProfile get(String domain) {
@@ -50,6 +59,33 @@ public class BusinessDaoImpl implements BusinessDao {
 	@Override
 	public BusinessProfile get(long businessId) {
 		return (BusinessProfile) sessions.getCurrentSession().get(BusinessProfile.class, businessId);
+	}
+	
+	@Override
+	public Object[] getForViewProfile(String username, String domain) { 
+		BusinessProfile business = get(domain);
+		UserExtension userExtension = users.getExtended(username);
+		
+		boolean unreviewed = true;
+		for(BusinessReview businessReview : userExtension.getBusinessReviews()) {
+			if(businessReview.getReviewed().equals(business)) {
+				unreviewed = false;
+				break;
+			}
+		}
+		
+		if(!business.getOwner().equals(userExtension.getUser()) //owner can't review his own businesses
+				&& unreviewed									//don't notify if user has already reviewed the business
+				&& !userExtension.getNeverReview().contains(business.getId())) { //don't notify if user has indicated he never wants to review the business
+			List<BusinessProfile> forReview = userExtension.getForReview();
+			forReview.remove(business);
+			forReview.add(0, business);
+			if(forReview.size() > forReviewQueueMaxSize) {
+				forReview.remove(forReview.size() - 1);
+			}
+		}
+		sessions.getCurrentSession().update(userExtension);
+		return new Object[] {userExtension, business};
 	}
 	
 	@Override

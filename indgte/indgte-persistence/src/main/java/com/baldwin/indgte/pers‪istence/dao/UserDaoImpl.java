@@ -1,5 +1,6 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -9,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
-import com.baldwin.indgte.persistence.model.Wishlist;
 
 @Repository
 @Transactional
@@ -71,13 +72,38 @@ public class UserDaoImpl implements UserDao {
 			userExtension = new UserExtension(user);
 			user.setExtension(userExtension);
 			
-			Wishlist wishlist = new Wishlist();
-			userExtension.setWishlist(wishlist);
-			wishlist.setWisher(userExtension);
-			
 			session.save(userExtension);
 		}
 		
+		return userExtension;
+	}
+	
+	@Override 
+	public UserExtension getExtended(long userId, Initializable... initializables) {
+		UserExtension userExtension = (UserExtension) sessions.getCurrentSession().get(UserExtension.class, userId);
+		return initialize(userExtension, initializables);
+	}
+
+	@Override
+	public UserExtension getExtended(String username, Initializable... initializables) {
+		UserExtension userExtension = getExtended(username);
+		return initialize(userExtension, initializables);
+	}
+	
+	private UserExtension initialize(UserExtension userExtension, Initializable... initializables) {
+		for(Initializable initializable : initializables) {
+			switch(initializable) {
+			case wishlist:
+				Hibernate.initialize(userExtension.getWishlist());
+				break;
+			case reviewqueue:
+				Hibernate.initialize(userExtension.getForReview());
+				break;
+			case reviewsreceived:
+				Hibernate.initialize(userExtension.getReviewsReceived());
+				break;
+			}
+		}
 		return userExtension;
 	}
 }

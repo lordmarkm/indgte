@@ -16,17 +16,18 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.ReviewerType;
 
 @Entity
 @Table(name="businessReviews")
-public class BusinessReview {
+public class BusinessReview implements Review {
 	@Id
 	@GeneratedValue
 	private long id;
 
 	@ManyToOne(optional=false)
 	@JoinColumn(name="reviewerId", nullable=false, updatable=false)
-	private User reviewer;
+	private UserExtension reviewer;
 	
 	@ManyToOne(optional=false)
 	@JoinColumn(name="reviewedId", nullable=false, updatable=false)
@@ -41,11 +42,16 @@ public class BusinessReview {
 	
 	@Column
 	@Enumerated
-	private ReviewType type = ReviewType.user;
+	private ReviewerType type = ReviewerType.user;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column
 	private Date time;
+	
+	@Override
+	public ReviewType getReviewType() {
+		return ReviewType.business;
+	}
 	
 	public long getId() {
 		return id;
@@ -63,11 +69,11 @@ public class BusinessReview {
 		this.score = score;
 	}
 
-	public User getReviewer() {
+	public UserExtension getReviewer() {
 		return reviewer;
 	}
 
-	public void setReviewer(User reviewer) {
+	public void setReviewer(UserExtension reviewer) {
 		this.reviewer = reviewer;
 	}
 
@@ -87,11 +93,11 @@ public class BusinessReview {
 		this.justification = justification;
 	}
 
-	public ReviewType getType() {
+	public ReviewerType getType() {
 		return type;
 	}
 
-	public void setType(ReviewType type) {
+	public void setType(ReviewerType type) {
 		this.type = type;
 	}
 

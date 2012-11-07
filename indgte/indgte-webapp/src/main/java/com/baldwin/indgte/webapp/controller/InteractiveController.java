@@ -10,6 +10,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.constants.PostType;
+import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.WishType;
 
 /**
  * For things like likes, posts and other stuff
@@ -69,14 +71,27 @@ public interface InteractiveController {
 	/**
 	 * Review
 	 */
-	@RequestMapping(value = "/review/{businessId}.json", method = RequestMethod.GET)
-	public JSON getReview(Principal principal, long businessId);
+	@RequestMapping(value = "/review/{type}/{targetId}.json", method = RequestMethod.GET)
+	public JSON getReview(Principal principal, ReviewType type, long targetId);
 
-	@RequestMapping(value = "/review/{businessId}.json", method = RequestMethod.POST)
-	public JSON review(Principal principal, long businessId, int score, String justification);
+	@RequestMapping(value = "/review/{type}/{targetId}.json", method = RequestMethod.POST)
+	public JSON review(Principal principal, ReviewType type, long targetId, int score, String justification);
 	
-	@RequestMapping(value = "/allreviews/{businessId}.json", method = RequestMethod.GET)
-	public JSON getAllReviews(Principal principal, long businessId);
+	@RequestMapping(value = "/allreviews/{type}/{targetId}.json", method = RequestMethod.GET)
+	public JSON getAllReviews(Principal principal, ReviewType type, long targetId);
+	
+	@RequestMapping(value = "/reviewqueue.json", method = RequestMethod.GET)
+	public JSON getReviewQueue(Principal principal);
+	
+	/**
+	 * <b>Temporarily</b> remove the please review notif from the sidebar. If user views the business
+	 * again the notif will return. TODO: should "never review" be supported? update: yes
+	 */
+	@RequestMapping(value = "/noreview/{businessId}.json", method = RequestMethod.POST)
+	public JSON noReview(Principal principal, long businessId);
+	
+	@RequestMapping(value = "/neverreview/{businessId}.json", method = RequestMethod.POST)
+	public JSON neverReview(Principal principal, long businessId);
 	
 	/*
 	 * Top tens
@@ -102,4 +117,10 @@ public interface InteractiveController {
 	
 	@RequestMapping(value = "/toptens/{topTenId}/{candidateId}.json")
 	public JSON vote(Principal principal, long topTenId, long candidateId);
+	
+	/*
+	 * Wishlists
+	 */
+	@RequestMapping(value = "/wishlist/{type}/{id}.json", method = RequestMethod.POST)
+	public JSON addToWishlist(Principal principal, WishType type, long id);
 }

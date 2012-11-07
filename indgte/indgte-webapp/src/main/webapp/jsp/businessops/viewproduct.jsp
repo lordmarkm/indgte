@@ -10,7 +10,7 @@
 
 <title><spring:message code="product.title" arguments="${product.name },${business.domain }"/></title>
 
-<div class="viewproduct grid_12">
+<div class="viewproduct grid_8">
 	<section class="product-welcome">
 		<div class="product-welcome-product">
 			<div class="product-welcome-image-container">
@@ -19,13 +19,6 @@
 			<h3>${product.name }</h3>
 			<div class="product-welcome-description italic">${product.description }</div>
 		</div>
-		<c:if test="${owner }">
-		<div class="product-owner-operations">
-			<a href="${urlEditProduct}${business.domain}/${product.id}" class="button btn-edit-product"><spring:message code="generics.edit" /></a>
-			<button class="btn-product-add-photo"><spring:message code="product.addphotos.button" /></button>
-			<button class="btn-product-promote"><spring:message code="generics.promote" /></button>
-		</div>
-		</c:if>
 		<div class="product-welcome-divider">&nbsp;</div>
 		<div class="product-welcome-category">
 			<a href="${urlCategories }${business.domain}/${product.category.id}"><img class="product-category-image" /></a>
@@ -52,11 +45,50 @@
 	</section>
 </div>
 
+<!-- product owner controls -->
+<c:if test="${owner }">
+<div class="viewproduct-controls grid_4 ui-widget sidebar-section">
+	<div class="sidebar-section-header">Product Owner Controls</div>
+	<div class="product-owner-operations">
+		<a href="${urlEditProduct}${business.domain}/${product.id}" class="button btn-edit-product"><spring:message code="generics.edit" /></a>
+		<button class="btn-product-add-photo"><spring:message code="product.addphotos.button" /></button>
+		<button class="btn-product-promote"><spring:message code="generics.promote" /></button>
+	</div>
+	<div class="sidebar-divider"></div>
+</div>
+<style>
+.product-owner-operations .button, .product-owner-operations button {
+	margin-top: 5px;
+	width: 100%;
+}
+</style>
+</c:if>
+<!-- end product owner controls -->
+
+<!-- product generic controls -->
+<div class="viewproduct-controls grid_4 ui-widget sidebar-section">
+	<div class="sidebar-section-header">Product Actions</div>
+	<div class="product-actions">
+		<button class="btn-wishlist-add">Add to Wishlist</button>
+		<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+	</div>
+	<div class="sidebar-divider"></div>
+</div>
+
 <style>
 #galleria {
 	height: 500px;
 	width: 500px;
 	margin: 20px auto 20px;
+}
+
+.product-actions .button, .product-actions button {
+	margin-top: 5px;
+	width: 100%;
+}
+
+.fb-like {
+	margin-top: 5px;
 }
 </style>
 
@@ -77,7 +109,8 @@ window.urls = {
 	products : '${urlProducts}',
 	profile : '${urlProfile}',
 	noImage : '${noimage}',
-	noImage50 : '${noimage50}'
+	noImage50 : '${noimage50}',
+	wishlist: '<spring:url value="/i/wishlist/product/" />'
 }
 
 window.constants = {
@@ -90,6 +123,20 @@ window.constants = {
 	imgurKey : '${imgurKey}'
 }
 
+window.product = {
+	id: '${product.id}',
+	name: '${product.name}',
+	categoryId: '${product.category.id}',
+	imgur: {
+		hash: '${product.mainpic.hash}',
+		image: '${product.mainpic.largeThumbnail}',
+		thumb: '${product.mainpic.smallSquare}',
+		big: '${product.mainpic.original}',
+		title: '${product.name}',
+		link: '${product.mainpic.imgurPage}'
+	}
+}
+
 $(function(){
 	var	productPic = '${productPic}',
 		productPicImgur = '${productPicImgur}',
@@ -100,7 +147,8 @@ $(function(){
 	
 	var $productPic = $('.product-welcome-image'),
 		$categoryPic = $('.product-category-image'),
-		$businessPic = $('.product-provider-image');
+		$businessPic = $('.product-provider-image'),
+		$btnWishlistAdd = $('.btn-wishlist-add');
 	
 	$productPic.attr('src', productPic ? productPic : urls.noImage);
 	$categoryPic.attr('src', categoryPic ? categoryPic : urls.noImage50);
@@ -110,6 +158,7 @@ $(function(){
 		switch(response.status){
 		case '200':
 			var images = [];
+			images.push(product.imgur);
 			for(var i = 0, length = response.imgurs.length; i < length; i++) {
 				var imgur = response.imgurs[i];
 				images.push({
@@ -145,6 +194,13 @@ $(function(){
 	$('.galleria-fullscreen').click(function(){
 		Galleria.get(0).enterFullscreen();
 	});
+	
+	//wishlist
+	$btnWishlistAdd.click(function(){
+		$.post(urls.wishlist + product.id + '.json', function(response) {
+			debug(response);
+		});
+	})
 });
 </script>
 
@@ -177,10 +233,6 @@ div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
 .ui-button .ui-button-text {
 	font-size: 10pt;
 	line-height: 1.0;
-}
-
-.product-owner-operations {
-	margin: 10px 0 5px 178px;	
 }
 
 .image-upload-dropbox {
@@ -383,5 +435,34 @@ $(function(){
 </script>
 </c:if>
 
+<!-- Top Tens -->
+<div class="toptens-container grid_4 ui-widget sidebar-section">
+<div class="sidebar-section-header">Top Tens</div>
+<div class="toptens">
+	Popular:
+	<ul class="popular"></ul>
+	Recent:
+	<ul class="recent"></ul>
+	
+	<a href="<spring:url value='/i/toptens/' />">View all...</a>
+</div>
+</div>
+<link rel="stylesheet" href="<spring:url value='/resources/css/grids/toptens.css' />" />
+<script>
+window.urls.topTens = '<spring:url value="/i/toptens.json" />',
+window.urls.topTenLeader = '<spring:url value="/i/toptens/leader/" />',
+window.urls.topTensPage = '<spring:url value="/i/toptens/" />'
+</script>
+<script src="${jsTopTens }"></script>
+
 <spring:url var="jsApplication" value="/resources/javascript/application.js" />
 <script type="text/javascript" src="${jsApplication }"></script>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>

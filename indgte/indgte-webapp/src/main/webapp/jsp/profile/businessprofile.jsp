@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@include file="../tiles/links.jsp" %>
 
 <spring:url var="noimage" value="/resources/images/noimage.jpg" />
 <spring:url var="noimage50" value="/resources/images/noimage50.png" />
@@ -186,17 +187,18 @@
 	<div id="reviews">
 	<div class="reviews-container">
 		<div class="review-header">
-			<div class="review-average"></div>
-			<div class="review-count"></div>
+			<div class="review-header-message"></div>
+			<span class="review-count"></span>
+			<span class="review-average-score"></span>
 		</div>
 		
 		<c:if test="${not owner }">
-		<div class="review-container user-review ui-state-active">
+		<div class="review-container user-review ui-state-highlight">
 			<div class="reviewer-container">
 				<img class="reviewer-img" src="${user.imageUrl }" />
 				<span class="reviewer-name">${user.username }</span>
+				<div class="review-star-container"></div>
 			</div>
-			<div class="review-star-container"></div>
 			<div class="review-justification"></div>
 			
 			<div class="review-form-container">
@@ -231,8 +233,8 @@ window.urls = {
 	unsubscribe : '<spring:url value="/i/unsubscribe/business/${business.id}.json" />',
 	getProducts : '<spring:url value="/b/products/" />',
 	product : '<spring:url value="/b/products/" />',
-	review: '<spring:url value="/i/review/" />',
-	allReviews: '<spring:url value="/i/allreviews/" />',
+	review: '<spring:url value="/i/review/business/" />',
+	allReviews: '<spring:url value="/i/allreviews/business/" />',
 	status : '<spring:url value="/i/newstatus.json" />',
 	subposts : '<spring:url value="/i/subposts.json" />',
 	postdetails : '<spring:url value="/i/posts/" />',
@@ -252,7 +254,9 @@ window.urls = {
 }
 
 window.user = {
-	username : '${user.username}'
+	id: '${user.id}',
+	username: '${user.username}',
+	rank: '${user.rank}'
 }
 
 window.business = {
@@ -262,6 +266,13 @@ window.business = {
 	domain: '${business.domain}',
 	fullName: '${business.fullName}',
 	address: '${business.address}'
+}
+
+window.reviewconstants = {
+	target: {
+		id: '${business.id}',
+		name: '${business.fullName}'
+	}
 }
 
 $(function(){
@@ -357,7 +368,7 @@ $(function(){
 			window.location.hash = 2;
 			break;
 		case 'reviews':
-			onReview();
+			//onReview();
 			window.location.hash = 3;
 			break;
 		case 'comments':
@@ -466,174 +477,6 @@ $(function(){
 		});
 		infowindow.open(map, marker);
 	}
-	
-	
-	//review
-	var $reviews = $('.reviews-container'),
-		$starContainer = $('.user-review .review-star-container'),
-		$reviewJustification = $('.user-review .review-justification'),
-		$reviewFormContainer = $('.review-form-container').hide(),
-		$reviewForm = $('#review-form'),
-		$iptJustification = $('textarea.justification'),
-		$iptScore = $('.review-score'),
-		$linkSubmit = $('.review-submit'),
-		$reviewsList = $('.reviews-list');
-	
-	function makestars($container, score, preview) {
-		$container.html('');
-		if(typeof(score) == 'undefined') score = $container.attr('score');
-		
-		var stars =  Math.floor(score);
-		var halfstar = Math.ceil(score - stars);
-		var nullstars = dgte.review.max - (stars + halfstar);
-		debug(stars + ',' + halfstar + ',' + nullstars);
-
-		for(var i = 0; i < stars; ++i) {
-			$('<div class="review-star dgte-icon dgte-icon-star">').text(' ').appendTo($container);
-		}
-		
-		if(halfstar) {
-			$('<div class="review-star dgte-icon dgte-icon-halfstar">').text(' ').appendTo($container);
-		}
-	
-		for(var i = 0; i < nullstars; ++i) {
-			$('<div class="review-star dgte-icon dgte-icon-nullstar">').text(' ').appendTo($container);
-		}
-		
-		if(!preview) {
-			$container.attr('score', score);
-		}
-	}
-	
-	//all reviews of this business
-	function addReview(review) {
-		var $container = $('<div class="review-container user">').appendTo($reviewsList);
-		//reviewer
-		var $reviewerContainer = $('<div class="reviewer-container">').appendTo($container);
-		$('<img class="reviewer-img">').attr('src', review.reviewer.imageUrl).appendTo($reviewerContainer);
-		$('<span class="reviewer-name">').text(review.reviewer.username).appendTo($reviewerContainer);
-		//data
-		$detailsContainer = $('<div class="review-details-container">').appendTo($container)
-		//stars
-		var $stars = $('<div class="review-star-container">').appendTo($detailsContainer);
-		makestars($stars, review.score);
-		//justification
-		$('<div class="review-justification">')
-			.html(review.justification.length > dgte.review.previewChars ? 
-					review.justification.substring(0, dgte.review.previewChars) + '...' 
-					: review.justification).appendTo($detailsContainer);
-		
-		var $footer = $('<div class="review-footer">').appendTo($container)
-		$('<a>').attr('href', urls.review + review.id).text('Full review and comments').appendTo($footer);
-		$('<div class="review-date">').text(moment(review.time).format('LL')).appendTo($footer);
-	}
-	
-	var userReviewed = false;
-	function addUserReview(review) {
-		makestars($starContainer, review.score);
-		$reviewJustification.html(review.justification);
-		$iptJustification.val(removeBrs(review.justification));
-	}
-	
-	function processReviewSuccess(response) {
-		$reviewsList.html('');
-		var reviews = response.reviews;
-		for(var i = 0, len = reviews.length; i < len; ++i) {
-			if(reviews[i].reviewer.username != user.username) {
-				addReview(reviews[i]);
-			} else {
-				addUserReview(reviews[i]);
-				userReviewed = true;
-			}
-		}
-		if(!userReviewed) {
-			makestars($starContainer, 0);
-			$reviewJustification.text('Click on the stars to review ' + business.fullName);
-		}
-		
-		$reviews.find('.overlay').delay(800).fadeOut(200, function() { $(this).remove(); });
-	}
-	
-	var reviewsLoaded = false;
-	function getAllRatings() {
-		if(reviewsLoaded) return;
-		var $overlay = $('<div class="overlay">').appendTo($reviews);
-
-		$.get(urls.allReviews + business.id + '.json', function(response) {
-			switch(response.status) {
-			case '200':
-				reviewsLoaded = true;
-				processReviewSuccess(response);
-				break;
-			default:
-				debug(response);
-				$overlay.delay(800).fadeOut(200, function() { $(this).remove(); });
-			}
-		});
-	}
-	
-	function reviewMode() {
-		$reviewJustification.hide();
-		$reviewFormContainer.show();
-		$iptJustification.focus();
-	}
-	
-	function reviewDone() {
-		$reviewJustification.show();
-		$reviewFormContainer.hide();
-	}
-	
-	$('.user-review').on({
-		mouseenter: function(){
-			var $this = $(this);
-			$this.removeClass('dgte-icon-nullstar').removeClass('dgte-icon-halfstar').addClass('dgte-icon-star');
-			$this.prevAll().removeClass('dgte-icon-nullstar').removeClass('dgte-icon-halfstar').addClass('dgte-icon-star');
-			$this.nextAll().removeClass('dgte-icon-star').addClass('dgte-icon-nullstar');
-		},
-		mouseleave: function(){
-			makestars($starContainer);
-		},
-		click: function() {
-			var score = $(this).index() + 1;
-			makestars($starContainer, score);
-			$iptScore.val(score);
-			reviewMode();
-		}
-	}, '.review-star');
-	
-	$reviewForm.validate({
-		rules: {
-			justification : {
-				required: true
-			},
-			score : {
-				required: true
-			}
-		}
-	});
-	
-	$linkSubmit.click(function(){
-		if(!$reviewForm.valid()) return;
-		$.post(urls.review + business.id + '.json', 
-			
-			{score: $iptScore.val(), justification: $iptJustification.val()}, 
-			
-			function(response) {
-				switch(response.status) {
-				case '200':
-					$reviewJustification.html(response.review.justification);
-					reviewDone();
-					break;
-				default:
-					debug(response);
-				}
-			}		
-		);
-	});
-	
-	function onReview() {
-		getAllRatings();
-	}
 });
 </script>
 
@@ -716,6 +559,37 @@ $(function(){
 		});
 		return false;
 	});
+	
+	function upload(file, notifyUrl) {
+	    if (!file || !file.type.match(/image.*/)) return;
+
+	    var fd = new FormData();
+	    fd.append("image", file);
+	    fd.append("key", "${imgurKey}");
+	    
+	    var xhr = new XMLHttpRequest();
+	    xhr.open("POST", "http://api.imgur.com/2/upload.json");
+	    xhr.onload = function() {
+	    	var response = JSON.parse(xhr.responseText);
+	        
+	        //notify indgte that profilepic has changed
+	        $.get(response.upload.links.small_square);
+	        setTimeout(function(){
+	        	$.post(notifyUrl, 
+		        		{
+		        			hash: response.upload.image.hash,
+		        			deletehash: response.upload.image.deletehash
+		        		}
+		        		, function(){
+		        	//only now do we update the user's profile pic
+	        		window.location.replace(urlProfileRoot + domain);
+		        });
+	        }, 2000);
+	    }
+		xhr.send(fd);
+	}
 });
 </script>
 </c:if>
+
+<script src="${jsReviews }"></script>

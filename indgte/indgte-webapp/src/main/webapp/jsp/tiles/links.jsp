@@ -30,3 +30,5 @@
 
 <spring:url var="jsApplication" value="/resources/javascript/application.js" />
 <spring:url var="jsTopTens" value="/resources/javascript/grids/toptens.js" />
+<spring:url var="jsReviewQueue" value="/resources/javascript/grids/reviewqueue.js" />
+<spring:url var="jsReviews" value="/resources/javascript/reviews.js" />

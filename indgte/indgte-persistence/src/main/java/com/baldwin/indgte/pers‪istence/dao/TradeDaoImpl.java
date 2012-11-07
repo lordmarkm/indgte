@@ -9,7 +9,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +23,11 @@ public class TradeDaoImpl implements TradeDao {
 
 	@Autowired
 	private SessionFactory sessions;
+	
+	@Override
+	public BuyAndSellItem get(long itemId) {
+		return (BuyAndSellItem) sessions.getCurrentSession().get(BuyAndSellItem.class, itemId);
+	}
 	
 	@Override
 	public BuyAndSellItem get(String name, long itemId) {

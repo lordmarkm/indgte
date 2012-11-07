@@ -1,10 +1,12 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,20 +18,31 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
+import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
+import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Post;
+import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
+import com.baldwin.indgte.persistence.model.UserReview;
+import com.baldwin.indgte.persistence.model.Wish;
 
 @Repository
 @Transactional
@@ -45,6 +58,12 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	
 	@Autowired
 	private BusinessDao businesses;
+	
+	@Autowired
+	private TradeDao trade;
+	
+	@Value("${wishlist.maxitems}")
+	private int wishlistMaxItems;
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -216,39 +235,44 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	}
 
 	@Override
-	public BusinessReview getReview(String name, long businessId) {
+	public BusinessReview getBusinessReview(String name, long businessId) {
 		return (BusinessReview) sessions.getCurrentSession().createCriteria(BusinessReview.class)
-			.createAlias("reviewer", "reviewer")
+			.createAlias("reviewer.user", "reviewer") //user.username needed
 			.createAlias("reviewed", "reviewed")
 			.add(Restrictions.eq("reviewer.username", name))
 			.add(Restrictions.eq("reviewed.id", businessId))
 			.uniqueResult();
 	}
+	
 
 	@Override
-	public BusinessReview review(String name, long businessId, int score, String justification) {
+	public UserReview getUserReview(String name, long userId) {
+		return (UserReview) sessions.getCurrentSession().createCriteria(UserReview.class)
+				.createAlias("reviewer.user", "reviewer") //user.username needed Update: trying delegate method
+				.createAlias("reviewee", "reviewee") //userExtension.id needed
+				.add(Restrictions.eq("reviewer.username", name))
+				.add(Restrictions.eq("reviewee.id", userId))
+				.uniqueResult();
+	}
+
+	@Override
+	public BusinessReview businessReview(String name, long businessId, int score, String justification) {
 		Session session = sessions.getCurrentSession();
 		
-		BusinessReview review = (BusinessReview) session.createCriteria(BusinessReview.class)
-				.createAlias("reviewer", "reviewer")
-				.createAlias("reviewed", "reviewed")
-				.add(Restrictions.eq("reviewer.username", name))
-				.add(Restrictions.eq("reviewed.id", businessId))
-				.uniqueResult();
-		
+		BusinessReview review = getBusinessReview(name, businessId);
 		if(null == review) {
 			review = new BusinessReview();
 			
-			User user = users.getFacebook(name);
-			Hibernate.initialize(user.getBusinessReviews());
+			UserExtension reviewer = users.getExtended(name);
+			reviewer.getBusinessReviews().add(review);
 			
 			BusinessProfile business = businesses.get(businessId);
-			Hibernate.initialize(business.getReviews());
-			
-			review.setReviewer(user);
-			review.setReviewed(business);
-			user.getBusinessReviews().add(review);
 			business.getReviews().add(review);
+			
+			review.setReviewer(reviewer);
+			review.setReviewed(business);
+			
+			reviewer.getForReview().remove(business);
 		}
 		
 		review.setScore(score);
@@ -261,12 +285,69 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	}
 
 	@Override
-	public Collection<BusinessReview> getReviews(long businessId) {
+	public UserReview userReview(String name, long targetId, int score, String clean) {
+		Session session = sessions.getCurrentSession();
+		
+		UserReview review = getUserReview(name, targetId);
+		if(null == review) {
+			review = new UserReview();
+			
+			UserExtension reviewer = users.getExtended(name);
+			reviewer.getReviewsWritten().add(review);
+			review.setReviewer(reviewer);
+			
+			UserExtension reviewee = users.getExtended(targetId);
+			reviewee.getReviewsReceived().add(review);
+			review.setReviewee(reviewee);
+			
+			//TODO reviewer.getUsersForReview().remove(reviewee);
+		}
+		
+		review.setScore(score);
+		review.setJustification(clean);
+		review.setTime(new Date());
+		
+		session.saveOrUpdate(review);
+		
+		return review;
+	}
+	
+	@Override
+	public Collection<BusinessReview> getBusinessReviews(long businessId) {
 		BusinessProfile business = (BusinessProfile) sessions.getCurrentSession().get(BusinessProfile.class, businessId);
 		Hibernate.initialize(business.getReviews());
 		return business.getReviews();
 	}
+	
+	@Override
+	public Collection<UserReview> getUserReviews(long userId) {
+		UserExtension user = users.getExtended(userId, Initializable.reviewsreceived);
+		return user.getReviewsReceived();
+	}
 
+	@Override
+	public void noReview(String username, long businessId) {
+		UserExtension user = users.getExtended(username);
+		for(Iterator<BusinessProfile> i = user.getForReview().iterator(); i.hasNext();) {
+			BusinessProfile business = i.next();
+			if(businessId == business.getId()) {
+				i.remove();
+			}
+		}
+	}
+
+	@Override
+	public void neverReview(String username, long businessId) {
+		UserExtension user = users.getExtended(username);
+		user.getNeverReview().add(businessId);
+		for(Iterator<BusinessProfile> i = user.getForReview().iterator(); i.hasNext();) {
+			BusinessProfile business = i.next();
+			if(businessId == business.getId()) {
+				i.remove();
+			}
+		}
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<TopTenList> getToptens(int start, int howmany, String orderColumn) {
@@ -360,5 +441,78 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		candidate.getVoters().add(user);
 		candidate.setVotes(candidate.getVoters().size());
 		user.getVotes().add(candidate);
+	}
+
+	@Override
+	public boolean addToWishlist(String name, WishType type, long id) {
+		log.debug("Adding item of type {} to {}'s wishlist id: {}", type, name, id);
+		
+		UserExtension user = users.getExtended(name);
+		if(user.getWishlist().size() >= wishlistMaxItems) {
+			return false;
+		}
+		
+		Wish wish = new Wish();
+		switch(type) {
+		case product:
+			Product product = businesses.getProduct(id);
+			wish.setProduct(product);
+			break;
+		case buyandsell:
+			BuyAndSellItem tradeItem = trade.get(id);
+			wish.setBuyAndSellItem(tradeItem);
+			break;
+		default:
+			throw new IllegalStateException("Unknown type: " + type);
+		}
+		
+		wish.setTime(new Date());
+		wish.setType(type);
+		wish.setWisher(user);
+		
+		List<Wish> wishlist = user.getWishlist();
+		
+		wishlist.remove(wish);
+		wishlist.add(wish);
+		for(int i = 0; i < wishlist.size(); i++) {
+			wishlist.get(i).setWishOrder(i);
+		}
+		
+		sessions.getCurrentSession().save(wish);
+		return true;
+	}
+
+	@Override
+	public Object[] getBusinessReviewStats(long targetId, ReviewType type) {
+		ProjectionList projections = Projections.projectionList()
+				.add(Projections.rowCount())
+				.add(Projections.avg("score"));
+		
+		Object[] results = (Object[]) sessions.getCurrentSession().createCriteria(BusinessReview.class)
+			.createAlias("reviewed", "business")
+			.add(Restrictions.eq("business.id", targetId))
+			.setProjection(projections)
+			.uniqueResult();
+		
+		log.debug("Requested business review stats for id {}, got {}", targetId, Arrays.asList(results));
+		
+		return results;
+	}
+
+	@Override
+	public Object[] getUserReviewStats(long targetId, ReviewType type) {
+		ProjectionList projections = Projections.projectionList()
+				.add(Projections.rowCount())
+				.add(Projections.avg("score"));
+		
+		Object[] results = (Object[]) sessions.getCurrentSession().createCriteria(UserReview.class)
+			.createAlias("reviewee", "reviewee")
+			.add(Restrictions.eq("reviewee.id", targetId))
+			.setProjection(projections)
+			.uniqueResult();
+		
+		log.debug("Requested user review stats for id {}, got {}", targetId, Arrays.asList(results));
+		
+		return results;
 	}
 }

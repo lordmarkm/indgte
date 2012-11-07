@@ -24,6 +24,12 @@ public class BusinessService {
 	public BusinessProfile get(long businessId) {
 		return dao.get(businessId);
 	}
+	/**
+	 * @see BusinessDao#getForViewProfile(String, String)
+	 */
+	public Object[] getForViewProfile(String username, String domain) {
+		return dao.getForViewProfile(username, domain);
+	}
 	public void save(BusinessProfile bizProfile, String owner) {
 		dao.create(bizProfile, owner);
 	}

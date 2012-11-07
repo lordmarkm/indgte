@@ -103,9 +103,6 @@ public class User implements Summarizable {
 	@Column(name="userId")
 	private Set<Long> userSubscriptions;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "reviewer")
-	private Set<BusinessReview> businessReviews;
-	
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "voters")
 	private Set<TopTenCandidate> votes;
 	
@@ -127,7 +124,7 @@ public class User implements Summarizable {
 	public Summary summarize() {
 		return new Summary(SummaryType.user, id, username, null, username, imageUrl);
 	}
-	
+
 	public String getUsername() {
 		return username;
 	}
@@ -264,18 +261,6 @@ public class User implements Summarizable {
 	}
 
 	@JsonIgnore
-	public Set<BusinessReview> getBusinessReviews() {
-		if(null == businessReviews) {
-			businessReviews = new HashSet<BusinessReview>();
-		}
-		return businessReviews;
-	}
-
-	public void setBusinessReviews(Set<BusinessReview> businessReviews) {
-		this.businessReviews = businessReviews;
-	}
-
-	@JsonIgnore
 	public Set<TopTenCandidate> getVotes() {
 		if(null == votes) {
 			votes = new HashSet<TopTenCandidate>();
@@ -311,11 +296,38 @@ public class User implements Summarizable {
 		this.buyAndSellItems = buyAndSellItems;
 	}
 
+	@JsonIgnore
 	public UserExtension getExtension() {
 		return extension;
 	}
 
 	public void setExtension(UserExtension extension) {
 		this.extension = extension;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
+		return true;
 	}
 }

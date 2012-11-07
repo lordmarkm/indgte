@@ -11,6 +11,13 @@ import com.baldwin.indgte.persistence.model.Product;
 public interface BusinessDao {
 	BusinessProfile get(String bizName);
 	BusinessProfile get(long businessId);
+	
+	/**
+	 * Awful return type to save DB queries
+	 * @return [UserExtension, BusinessProfile]
+	 */
+	Object[] getForViewProfile(String username, String domain);
+	
 	void create(BusinessProfile bizProfile, String owner);
 	Object update(Object dirtyObject);
 	void saveOrUpdate(BusinessProfile businessProfile, String owner);

@@ -5,8 +5,10 @@ import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
@@ -20,6 +22,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.constants.PostType;
+import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
@@ -27,9 +31,11 @@ import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.Review;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserReview;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.InteractiveService;
 import com.baldwin.indgte.persistence.service.UserService;
@@ -184,14 +190,23 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 
 	@Override
-	public @ResponseBody JSON getReview(Principal principal, @PathVariable long businessId) {
+	public @ResponseBody JSON getReview(Principal principal, @PathVariable ReviewType type, @PathVariable long targetId) {
 		try {
-			BusinessReview review = interact.getReview(principal.getName(), businessId); 
-			if(null == review) {
-				return JSON.teapot();
-			} else {
+			Review review = null;
+			switch(type) {
+			case business:
+				review = interact.getBusinessReview(principal.getName(), targetId);
+				break;
+			case user:
+				review = interact.getUserReview(principal.getName(), targetId);
+				break;
+			}
+			
+			if(null != review) {
 				return JSON.ok().put("review", review);
-			} 
+			} else {
+				return JSON.teapot();
+			}
 		} catch (Exception e) {
 			log.error("Exception getting review", e);
 			return JSON.status500(e);
@@ -199,10 +214,17 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 	
 	@Override
-	public @ResponseBody JSON review(Principal principal, @PathVariable long businessId, 
-				@RequestParam int score, @RequestParam String justification) {
+	public @ResponseBody JSON review(Principal principal, @PathVariable ReviewType type, 
+			@PathVariable long targetId,	@RequestParam int score, @RequestParam String justification) {
 		try {
-			BusinessReview review = interact.review(principal.getName(), businessId, score, Jsoup.clean(clean(justification), DgteTagWhitelist.simpleText()));
+			Review review = null;
+			switch(type) {
+			case business:
+				review = interact.businessReview(principal.getName(), targetId, score, Jsoup.clean(clean(justification), DgteTagWhitelist.simpleText()));
+				break;
+			case user:
+				review = interact.userReview(principal.getName(), targetId, score, Jsoup.clean(justification, DgteTagWhitelist.simpleText()));
+			}
 			return JSON.ok().put("review", review);
 		} catch (Exception e) {
 			log.error("Exception posting review", e);
@@ -211,16 +233,56 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 
 	@Override
-	public @ResponseBody JSON getAllReviews(Principal principal, @PathVariable long businessId) {
+	public @ResponseBody JSON getAllReviews(Principal principal, @PathVariable ReviewType type, @PathVariable long targetId) {
+		log.debug("Getting all reviews for type {}, id {}", type, targetId);
 		try {
-			Collection<BusinessReview> reviews = interact.getReviews(businessId);
-			return JSON.ok().put("reviews", reviews);
+			Collection<? extends Review> reviews = interact.getReviews(targetId, type);
+			Object[] reviewStats = interact.getReviewStats(targetId, type);
+			
+			if(log.isDebugEnabled()) {
+				log.debug("Found {} reviews. Review stats: {}", reviews.size(), Arrays.asList(reviewStats));
+			}
+			
+			return JSON.ok()
+					.put("reviews", reviews)
+					.put("reviewCount", reviewStats[0])
+					.put("averageScore", reviewStats[1]);
 		} catch (Exception e) {
 			log.error("Exception getting reviews", e);
 			return JSON.status500(e);
 		}
 	}
 
+	@Override
+	public @ResponseBody JSON getReviewQueue(Principal principal) {
+		try {
+			List<Summary> reviewRequests = interact.getReviewRequests(principal.getName());
+			return JSON.ok().put("reviewqueue", reviewRequests);
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON noReview(Principal principal, @PathVariable long businessId) {
+		try {
+			interact.noReview(principal.getName(), businessId);
+			return JSON.ok();
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON neverReview(Principal principal, @PathVariable long businessId) {
+		try {
+			interact.neverReview(principal.getName(), businessId);
+			return JSON.ok();
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+	
 	@Override
 	public ModelAndView toptens(Principal principal) {
 		User user = users.getFacebook(principal.getName());
@@ -286,6 +348,17 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.ok();
 		} catch (Exception e) {
 			log.error("Exception voting", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON addToWishlist(Principal principal, @PathVariable WishType type, @PathVariable long id) {
+		try {
+			interact.addToWishlist(principal.getName(), type, id);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Exception adding to wishlist", e);
 			return JSON.status500(e);
 		}
 	}

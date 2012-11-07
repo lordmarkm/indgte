@@ -1,6 +1,6 @@
 package com.baldwin.indgte.persistence.constants;
 
-public enum ReviewType {
-	business,
-	user
+public enum ReviewerType {
+	user,
+	critic
 }

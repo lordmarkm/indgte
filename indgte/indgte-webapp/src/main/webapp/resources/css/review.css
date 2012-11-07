@@ -1,25 +1,40 @@
-.review-container {
-	position: relative;
-	min-height: 215px;
+.reviews-container {
+	position:relative;
 }
 
-.review-container.ui-state-active {
+.review-header {
+	margin: 0 0 5px 0;	
+}
+
+.user-review {
 	margin-bottom: 20px;
 	padding: 10px;
 }
-.review-container:not(.ui-state-active) {
+.user-review img {
+	margin-left: 0 !important;
+}
+.user-review .review-justification {
+	margin-left: 50px;
+}
+
+.review-container:not(.ui-state-highlight) {
 	overflow: hidden;
 	float: left;
 }
 
+.reviewer-container {
+	min-height: 45px;
+	margin-bottom: 2px;
+}
 .reviewer-img {
 	width: 90px;
 	height: 90px;
 	max-width: 45px;
 	max-height: 45px;
+	float:left;
+	margin: 0 5px 0 20px;
 }
 .reviewer-name {
-	margin-left: 5px;
 	font-weight: bold;
 }
 .review-details-container {

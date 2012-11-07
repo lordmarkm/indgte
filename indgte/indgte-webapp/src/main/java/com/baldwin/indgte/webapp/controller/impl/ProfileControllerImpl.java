@@ -1,6 +1,6 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.webapp.controller.MavBuilder.isAjax;
+import static com.baldwin.indgte.persistence.constants.Initializable.wishlist;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
@@ -80,10 +80,10 @@ public class ProfileControllerImpl implements ProfileController {
 	@Override
 	public ModelAndView userProfile(Principal principal, @PathVariable String targetUsername) {
 		User user = users.getFacebook(principal.getName());
-		
-		UserExtension target = users.getExtended(targetUsername);
-		
+		UserExtension target = users.getExtended(targetUsername, wishlist);
+
 		return render(user, "userprofile")
+					.put("target", target)
 					.put("subscribed", posts.isSubscribed(principal.getName(), target.getUser().getId(), PostType.user))
 					.mav();
 	}
@@ -92,23 +92,17 @@ public class ProfileControllerImpl implements ProfileController {
 	public ModelAndView businessProfile(Principal principal, WebRequest request, @PathVariable String domain) {
 		log.debug("Profile requested for {}", domain);
 
-		User user = users.getFacebook(principal.getName());
-		BusinessProfile business = businesses.get(domain);
+		Object[] profileObjects = businesses.getForViewProfile(principal.getName(), domain);
+		UserExtension userExtension = (UserExtension) profileObjects[0];
+		User user = userExtension.getUser();
+		BusinessProfile business = (BusinessProfile) profileObjects[1];
 		
-		ModelAndView mav = render(user)
+		return render(user, "businessprofile")
 				.put("business", business)
 				.put("subscribed", posts.isSubscribed(principal.getName(), business.getId(), PostType.business))
-				.put("owner", business.getOwner().getUsername().equals(user.getUsername()))
+				.put("owner", business.getOwner().equals(user))
 				.put("imgurKey", imgurKey)
 				.mav();
-		
-		if(isAjax(request)) {
-			mav.setViewName("profile/businessprofile");
-		} else {
-			mav.setViewName("businessprofile");
-		}
-		
-		return mav;
 	}
 
 	@Override

@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Set;
 
 import com.baldwin.indgte.persistence.constants.PostType;
+import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
+import com.baldwin.indgte.persistence.model.UserReview;
 
 public interface InteractiveDao {
 
@@ -37,12 +40,18 @@ public interface InteractiveDao {
 
 	public boolean isSubscribed(String name, long targetId, PostType type);
 
-	public BusinessReview getReview(String name, long businessId);
+	public BusinessReview getBusinessReview(String name, long businessId);
 
-	public BusinessReview review(String name, long businessId, int score,	String justification);
+	public UserReview getUserReview(String name, long userId);
+	
+	public BusinessReview businessReview(String name, long businessId, int score,	String justification);
 
-	public Collection<BusinessReview> getReviews(long businessId);
+	public UserReview userReview(String name, long targetId, int score, String clean);
+	
+	public Collection<BusinessReview> getBusinessReviews(long businessId);
 
+	public Collection<UserReview> getUserReviews(long targetId);
+	
 	public Collection<TopTenList> getToptens(int start, int howmany, String orderColumn);
 
 	public Collection<TopTenList> getUserToptens(String name);
@@ -54,4 +63,14 @@ public interface InteractiveDao {
 	public void toptenVote(String name, long topTenId);
 
 	public TopTenCandidate createTopTenCandidate(String name, long topTenId, String title);
+
+	public boolean addToWishlist(String name, WishType type, long id);
+
+	public void noReview(String name, long businessId);
+
+	public void neverReview(String name, long businessId);
+
+	public Object[] getBusinessReviewStats(long targetId, ReviewType type);
+
+	public Object[] getUserReviewStats(long targetId, ReviewType type);
 }

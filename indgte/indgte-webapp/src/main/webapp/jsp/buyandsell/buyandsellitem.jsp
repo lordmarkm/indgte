@@ -15,7 +15,7 @@
 
 <div class="grid_8">
 
-<h1 class="ui-widget-header">${item.name }</h1>
+<h3 class="ui-widget-header">${item.name }</h3>
 
 <section class="item-details">
 	<h2>Item</h2>
@@ -68,20 +68,6 @@
 		</div>
 	</c:if>
 	
-	<c:if test="${!finished }">
-		<div class="auction-countdown-container">
-			Time left:
-			<div class="auction-countdown"></div>
-		</div>
-	
-		<div class="clear"></div>
-	
-		<c:if test="${not owner}">
-			<input type="number" class="auction-bid-amount" />
-			<button class="auction-bid">Bid</button>
-		</c:if>
-	</c:if>
-	
 	<c:if test="${owner }">
 		<div class="auction-bids-list-container">
 		Bids:
@@ -107,6 +93,34 @@
 	</ul>
 </section>
 
+</div>
+
+<div class="buyandsell-controls grid_4 ui-widget sidebar-section">
+	<div class="sidebar-section-header">Buy&Sell Item Actions</div>
+	
+	<div class="item-controls-container">
+		<c:if test="${item.buyAndSellMode eq 'auction' && !finished }">
+			<div class="auction-countdown-container">
+				Time left:
+				<div class="auction-countdown"></div>
+			</div>
+		
+			<div class="clear"></div>
+		
+			<c:if test="${not owner}">
+				<div class="bid-container">
+					<input type="number" class="auction-bid-amount" />
+					<button class="auction-bid">Bid</button>
+				</div>
+			</c:if>
+		</c:if>
+	
+		<div class="item-actions">
+			<button class="btn-wishlist-add">Add to Wishlist</button>
+			<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+		</div>
+	</div>	
+	<div class="sidebar-divider"></div>
 </div>
 
 <style>
@@ -142,6 +156,21 @@
 .auction-bids-list {
 	margin-top: 0;
 }
+
+.item-controls-container {
+	padding: 5px;
+}
+.auction-bid-amount {
+	width: 65%;
+}
+.auction-bid {
+	width: 31%;
+}
+
+.item-actions button {
+	margin-top: 5px;
+	width: 100%;
+}
 </style>
 
 <script>
@@ -150,7 +179,8 @@ window.constants = {
 }
 
 window.urls = {
-	bid: '<spring:url value="/t/bid/" />'
+	bid: '<spring:url value="/t/bid/" />',
+	wishlist: '<spring:url value="/i/wishlist/buyandsell/" />'
 }
 
 window.item = {
@@ -158,6 +188,26 @@ window.item = {
 }
 
 $(function(){
+	//wishlist
+	
+	$btnWishlistAdd = $('.btn-wishlist-add');
+	
+	$btnWishlistAdd.click(function(){
+		$.post(urls.wishlist + item.id + '.json', function(response) {
+			switch(response.status) {
+			case '200':
+				alert('Wish noted!');
+				break;
+			default:
+				debug('Error making wish.');
+				debug(response);
+			}
+		}).error(function(){
+			if(confirm('Error! Your session may be expired. Reload page?'))
+			window.location.reload();
+		});
+	});
+	
 	$('.time').each(function(i, div) {
 		var fromnow = moment(parseInt($(div).text())).fromNow();
 		$(div).text(fromnow);
@@ -171,7 +221,7 @@ item.start = '${item.start}';
 item.biddingEnds = '${item.biddingEnds.time}';
 
 $(function(){
-	//auction
+	//auction only script!
 	var winning = '${winning}';
 	
 	var $winningAmount = $('.auction-winning-amount'),
@@ -229,8 +279,8 @@ $(function(){
 
 
 <!-- Top Tens -->
-<div class="toptens-container grid_4 ui-widget">
-<div class="toptens-header ui-widget-header">Top Tens</div>
+<div class="toptens-container grid_4 ui-widget sidebar-section">
+<div class="sidebar-section-header">Top Tens</div>
 <div class="toptens">
 	Popular:
 	<ul class="popular"></ul>

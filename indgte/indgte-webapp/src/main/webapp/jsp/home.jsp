@@ -111,28 +111,6 @@
 
 </div>
 
-<div class="toptens-container grid_4 ui-widget">
-<div class="toptens-header ui-widget-header">Top Tens</div>
-<div class="toptens">
-	Popular:
-	<ul class="popular"></ul>
-	Recent:
-	<ul class="recent"></ul>
-	
-	<a href="<spring:url value='/i/toptens/' />">View all...</a>
-</div>
-</div>
-
-<div class="reviews grid_4">
-	goodbye world
-</div>
-
-<style>
-.reviews {
-	background-color: blue;
-}
-</style>
-
 <script type="text/javascript" src="${jsApplication }"></script>
 <script>
 window.constants = {
@@ -152,10 +130,7 @@ window.urls = {
 	productwithpics: '<spring:url value="/b/products/withpics/" />',
 	imgur : 'http://i.imgur.com/',
 	imgurPage : 'http://imgur.com/',
-	searchOwn: '<spring:url value="/s/own/" />',
-	topTens: '<spring:url value="/i/toptens.json" />',
-	topTenLeader: '<spring:url value="/i/toptens/leader/" />',
-	topTensPage: '<spring:url value="/i/toptens/" />'
+	searchOwn: '<spring:url value="/s/own/" />'
 }
 
 $(function(){
@@ -867,6 +842,74 @@ $(function(){
 });
 </script>
 
+<!-- Reviews -->
+<div class="reviewqueue grid_4 sidebar-section">
+	<div class="sidebar-section-header">Recently Viewed Business for Review</div>
+	<div class="review-container">
+		<div>Please take some time to review the businesses below if you have completed any transactions with them or have knowledge of their operations.</div>
+		<ul class="reviewlist"></ul>
+	</div>
+	<div class="sidebar-divider"></div>
+</div>
+<script>
+window.urls.reviewqueue = '<spring:url value="/i/reviewqueue.json" />',
+window.urls.noreview = '<spring:url value="/i/noreview/" />',
+window.urls.neverreview = '<spring:url value="/i/neverreview/" />'
+</script>
+<script src="${jsReviewQueue }"></script>
+<style>
+.review-container {
+	padding: 5px;
+}
+.reviewqueue .reviewlist {
+	list-style-type: none;
+	padding-left: 15px;
+}
+.review-request {
+	min-height: 35px;
+	margin: 0 0 5px 0;
+	padding: 2px;
+}
+.review-request:not(.ui-state-highlight) {
+	border: 1px solid transparent;
+}
+.review-request-img {
+	float: left;
+	width: 35px;
+	height: 35px;
+}
+.review-request-info {
+	margin-left: 40px;
+}
+.review-decline, .review-accede {
+	margin: 5px 2px 0 2px;
+	font-size: 0.9em;
+}
+a.review-decline:hover {
+	color: red;
+}
+a.review-accede:hover {
+	color: green;
+}
+</style>
+<!-- End Reviews -->
+
 <!-- Top Tens -->
+<div class="toptens-container grid_4 sidebar-section">
+<div class="sidebar-section-header">Top Tens</div>
+<div class="toptens">
+	Popular:
+	<ul class="popular"></ul>
+	Recent:
+	<ul class="recent"></ul>
+	
+	<a href="<spring:url value='/i/toptens/' />">View all...</a>
+</div>
+</div>
 <link rel="stylesheet" href="<spring:url value='/resources/css/grids/toptens.css' />" />
+<script>
+window.urls.topTens = '<spring:url value="/i/toptens.json" />',
+window.urls.topTenLeader = '<spring:url value="/i/toptens/leader/" />',
+window.urls.topTensPage = '<spring:url value="/i/toptens/" />'
+</script>
 <script src="${jsTopTens }"></script>

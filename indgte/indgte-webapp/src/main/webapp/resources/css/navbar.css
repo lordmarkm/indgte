@@ -24,6 +24,9 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+.user-username a {
+	text-decoration: none;
+}
 
 .menu-container {
 	vertical-align: bottom;

@@ -1,6 +1,10 @@
 package com.baldwin.indgte.persistence.service;
 
+import static com.baldwin.indgte.persistence.constants.Initializable.reviewqueue;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,12 +12,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baldwin.indgte.persistence.constants.PostType;
+import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.WishType;
+import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Post;
+import com.baldwin.indgte.persistence.model.Review;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
+import com.baldwin.indgte.persistence.model.UserExtension;
+import com.baldwin.indgte.persistence.model.UserReview;
 import com.baldwin.indgte.pers‪istence.dao.InteractiveDao;
 import com.baldwin.indgte.pers‪istence.dao.TableConstants;
+import com.baldwin.indgte.pers‪istence.dao.UserDao;
 
 @Service
 public class InteractiveService {
@@ -22,6 +34,9 @@ public class InteractiveService {
 	@Autowired
 	private InteractiveDao dao;
 
+	@Autowired
+	private UserDao users;
+	
 	public void subscribe(String username, PostType type, Long id) {
 		switch(type) {
 		case user:
@@ -58,17 +73,32 @@ public class InteractiveService {
 	public void saveOrUpdate(Post post) {
 		dao.saveOrUpdate(post);
 	}
-
-	public BusinessReview getReview(String name, long businessId) {
-		return dao.getReview(name, businessId);
+	
+	public BusinessReview getBusinessReview(String name, long targetId) {
+		return dao.getBusinessReview(name, targetId);
+	}
+	
+	public UserReview getUserReview(String name, long targetId) {
+		return dao.getUserReview(name, targetId);
 	}
 
-	public BusinessReview review(String name, long businessId, int score, String justification) {
-		return dao.review(name, businessId, score, justification);
+	public Review businessReview(String name, long businessId, int score, String justification) {
+		return dao.businessReview(name, businessId, score, justification);
 	}
 
-	public Collection<BusinessReview> getReviews(long businessId) {
-		return dao.getReviews(businessId);
+	public Review userReview(String name, long targetId, int score, String clean) {
+		return dao.userReview(name, targetId, score, clean);
+	}
+	
+	public Collection<? extends Review> getReviews(long targetId, ReviewType type) {
+		switch(type) {
+		case business:
+			return dao.getBusinessReviews(targetId);
+		case user:
+			return dao.getUserReviews(targetId);
+		default:
+			throw new IllegalStateException("Unknown type: " + type);
+		}
 	}
 
 	/*
@@ -101,5 +131,37 @@ public class InteractiveService {
 	
 	public void topTenVote(String name, long topTenId) {
 		dao.toptenVote(name, topTenId);
+	}
+
+	public void addToWishlist(String name, WishType type, long id) {
+		dao.addToWishlist(name, type, id);
+	}
+	
+	public List<Summary> getReviewRequests(String username) {
+		UserExtension user = users.getExtended(username, reviewqueue);
+		List<Summary> reviewRequests = new ArrayList<Summary>();
+		for(BusinessProfile business : user.getForReview()) {
+			reviewRequests.add(business.summarize());
+		}
+		return reviewRequests;
+	}
+
+	public void noReview(String name, long businessId) {
+		dao.noReview(name, businessId);
+	}
+
+	public void neverReview(String name, long businessId) {
+		dao.neverReview(name, businessId);
+	}
+
+	public Object[] getReviewStats(long targetId, ReviewType type) {
+		switch(type) {
+		case business:
+			return dao.getBusinessReviewStats(targetId, type);
+		case user:
+			return dao.getUserReviewStats(targetId, type);
+		default:
+			throw new IllegalStateException("Unknown type: " + type);
+		}
 	}
 }

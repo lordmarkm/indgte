@@ -51,3 +51,17 @@ body {
 	text-align: center;
 	font-size: 14pt !important;
 }
+
+.sidebar-section {
+	font-size: 0.9em !important;
+}
+.sidebar-section-header {
+	padding-left: 5px;	
+	font-weight: bolder;
+}
+.sidebar-divider {
+	border-bottom: 1px solid #E9E9E9;
+    border-top: 1px solid #CCCCCC;
+    width: 80%;
+    margin: 10px auto;
+}

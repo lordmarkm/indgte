@@ -4,6 +4,7 @@
 <spring:url var="urlHome" value="/" />
 <spring:url var="urlYellowPages" value="/s/" />
 <spring:url var="urlProfile" value="/p/" />
+<spring:url var="urlUserProfile" value="/p/user/" />
 <spring:url var="urlBuySell" value="/t/" />
 <spring:url var="urlMyBusinesses" value="/p/businesses" />
 <spring:url var="urlHelp" value="/etc/help/" />
@@ -14,8 +15,8 @@
 
 <section class="grid_12 navbar ui-widget-header">
 	<div class="user-container">
-		<img class="user-image" src="${user.imageUrl }" />
-		<strong class="user-username">${user.username }</strong>
+		<a href="${urlUserProfile}${user.username}"><img class="user-image" src="${user.imageUrl }" /></a>
+		<strong class="user-username"><a href="${urlUserProfile}${user.username}">${user.username }</a></strong>
 	</div>
 	
 	<div class="menu-container">

@@ -27,7 +27,8 @@ window.dgte = {
 	},
 	urls : {
 		blackSquareSmall : 'http://i.imgur.com/Y0NTes.jpg',
-		imgurUpload : 'http://api.imgur.com/2/upload.json'
+		imgurUpload : 'http://api.imgur.com/2/upload.json',
+		imgur : 'http://i.imgur.com/'
 	},
 	
 	upload: function(file, onComplete) {

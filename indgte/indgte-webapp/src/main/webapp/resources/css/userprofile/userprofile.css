@@ -1,0 +1,49 @@
+#body section {
+	min-height: 100px;
+}
+.container {
+	padding: 5px;
+}
+
+/*userinfo*/
+.userinfo-container {
+	padding: 5px;
+}
+.userinfo img {
+	float: left;
+}
+.userinfo ul {
+	padding: 0;
+	margin: 0 0 0 55px;
+	list-style-type: none;
+}
+.userinfo-username {
+	font-weight: bold;
+	font-size: 1.2em;
+}
+.userinfo-providername {
+	text-transform: capitalize;
+}
+
+/*wishlist*/
+.wishlist ol {
+	list-style-type: none;
+	padding: 0;
+}
+.wishlist li.wish {
+	min-height: 60px;
+	margin-top: 5px;
+}
+.wishlist .index {
+	display: inline-block;
+	vertical-align: top;
+}
+li.wish img {
+	width: 60px;
+	height: 60px;
+}
+.wish-info {
+	margin-left: 5px;
+	display: inline-block;
+	vertical-align: top;
+}
