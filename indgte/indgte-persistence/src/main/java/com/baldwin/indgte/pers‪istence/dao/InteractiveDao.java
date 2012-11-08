@@ -73,4 +73,6 @@ public interface InteractiveDao {
 	public Object[] getBusinessReviewStats(long targetId, ReviewType type);
 
 	public Object[] getUserReviewStats(long targetId, ReviewType type);
+
+	public long getBusinessTopTenListId(long groupId);
 }

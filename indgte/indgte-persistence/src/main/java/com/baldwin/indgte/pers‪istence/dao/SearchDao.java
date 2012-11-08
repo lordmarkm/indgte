@@ -30,4 +30,6 @@ public interface SearchDao {
 	List<YellowPagesEntry> getYellowPagesEntries(long categoryId);
 
 	BusinessGroup getBusinessGroup(long groupId);
+
+	MultiValueMap<String, Number> getListableGroups();
 }

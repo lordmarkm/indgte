@@ -1,13 +1,15 @@
 package com.baldwin.indgte.persistence.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -16,20 +18,23 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name="toptenlists")
 public class TopTenList {
+	static Logger log = LoggerFactory.getLogger(TopTenList.class);
+	
 	@Id 
 	@GeneratedValue
 	private long id;
 	
 	@ManyToOne
 	@JoinColumn(name = "creatorId")
-	private User creator;
+	private UserExtension creator;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column
@@ -41,16 +46,12 @@ public class TopTenList {
 	@OneToMany(
 		cascade = CascadeType.ALL,
 		mappedBy = "list",
-		orphanRemoval = true,
-		fetch = FetchType.EAGER
+		orphanRemoval = true
 	)
 	private Set<TopTenCandidate> candidates;
 
 	@Column
 	private int totalVotes;
-	
-	@Transient
-	private TopTenCandidate leader;
 	
 	public String getTitle() {
 		return title;
@@ -97,19 +98,29 @@ public class TopTenList {
 	}
 
 	@JsonIgnore
-	public User getCreator() {
+	public UserExtension getCreator() {
 		return creator;
 	}
 
-	public void setCreator(User creator) {
+	public void setCreator(UserExtension creator) {
 		this.creator = creator;
 	}
 
-	public TopTenCandidate getLeader() {
-		return leader;
+	@JsonIgnore
+	public List<TopTenCandidate> getOrdered() {
+		List<TopTenCandidate> ordered = new ArrayList<TopTenCandidate>(candidates);
+		Collections.sort(ordered);
+		return ordered;
 	}
-
-	public void setLeader(TopTenCandidate leader) {
-		this.leader = leader;
+	
+	public TopTenCandidate getLeader() {
+		List<TopTenCandidate> ordered = getOrdered();
+		TopTenCandidate leader = ordered.size() > 0 ? ordered.get(0) : null;
+		
+		if(log.isDebugEnabled()) {
+			log.debug("Returning leader {} out of {}", leader, ordered);
+		}
+		
+		return leader;
 	}
 }

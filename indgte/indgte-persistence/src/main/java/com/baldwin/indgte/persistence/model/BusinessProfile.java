@@ -22,22 +22,24 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
+import com.baldwin.indgte.persistence.constants.AttachmentType;
+import com.baldwin.indgte.persistence.dto.Attachable;
+import com.baldwin.indgte.persistence.dto.Searchable;
 import com.baldwin.indgte.persistence.dto.Summary;
-import com.baldwin.indgte.persistence.dto.Summarizable;
 
 @Indexed
 @Entity
 @Table(name="businesses")
-public class BusinessProfile implements Summarizable {
+public class BusinessProfile implements Searchable, Attachable {
 	
 	public static final String[] searchableFields = new String[]{"domain", "fullName", "description"};
 	
 	@Id @GeneratedValue @Column(name="business_id")
 	private long id;
 	
-	@OneToOne
-	@JoinColumn(name="categoryId")
-	private BusinessGroup category;;
+	@ManyToOne
+	@JoinColumn(name="groupId")
+	private BusinessGroup businessGroup;;
 	
 	@Column(nullable=false, unique=true)
 	@Field(store = Store.YES)
@@ -224,11 +226,11 @@ public class BusinessProfile implements Summarizable {
 	}
 
 	public BusinessGroup getCategory() {
-		return category;
+		return businessGroup;
 	}
 
 	public void setCategory(BusinessGroup category) {
-		this.category = category;
+		this.businessGroup = category;
 	}
 
 	@Override
@@ -269,5 +271,20 @@ public class BusinessProfile implements Summarizable {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+
+	@Override
+	public String getName() {
+		return fullName;
+	}
+
+	@Override
+	public Imgur getImgur() {
+		return profilepic;
+	}
+
+	@Override
+	public AttachmentType getAttachmentType() {
+		return AttachmentType.business;
 	}
 }

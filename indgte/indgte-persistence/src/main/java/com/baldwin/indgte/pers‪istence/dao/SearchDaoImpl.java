@@ -103,25 +103,28 @@ public class SearchDaoImpl implements SearchDao {
 	@Override
 	public void test() {
 		Object results = sessions.getCurrentSession().createCriteria(BusinessProfile.class)
-			.setProjection(Projections.countDistinct("category"))
+			.setProjection(Projections.countDistinct("businessGroup"))
 			.list();
 		
 		log.debug("Results: [{}]", results);
 	}
 	
+
+	private final String countQuery = "select c.name,b.groupId,count(b.groupId) as count from businesses b, businessCategories c " +
+			 "where b.groupId = c.groupId group by b.groupId order by c.name asc";
 	/**
-	 * select c.name,b.categoryId,count(b.categoryId) as count from businesses b, businessCategories c 
-	 * where b.categoryId = c.categoryId group by b.categoryId order by c.name asc;
+	 * <p>WARNING: Functionally equivalent to {@link #getListableGroups()} but crappy.</p> 
 	 * 
-	 * cat name			| catId | businesses
-	 * abortion clinics | 1809  | 4
-	 * drug den			| 1544  | 2
+	 * <p>select c.name,b.categoryId,count(b.categoryId) as count from businesses b, businessCategories c 
+	 * where b.categoryId = c.categoryId group by b.categoryId order by c.name asc;</p>
 	 * 
-	 * @return LinkedHashMap to preserve (alphabetical) order
-	 * TODO: how do we do this with JPA?
+	 * <p>cat name		| catId | businesses<br>
+	 * abortion clinics | 1809  | 4<br>
+	 * drug den			| 1544  | 2<br>
+	 * 
+	 * Question: how do we do this with JPA? Answer: use {@link #getListableGroups()}
 	 */
-	private final String countQuery = "select c.name,b.categoryId,count(b.categoryId) as count from businesses b, businessCategories c " +
-			 "where b.categoryId = c.categoryId group by b.categoryId order by c.name asc";
+	@Deprecated
 	@Override
 	@SuppressWarnings("unchecked")
 	public MultiValueMap<String, Number> countBusinesses() {
@@ -146,7 +149,7 @@ public class SearchDaoImpl implements SearchDao {
 	public List<Summary> getBusinesses(Long categoryId, int howmany) {
 		List<BusinessProfile> businesses = sessions.getCurrentSession().createCriteria(BusinessProfile.class)
 			.setMaxResults(howmany)
-			.add(Restrictions.eq("category.id", categoryId))
+			.add(Restrictions.eq("businessGroup.id", categoryId))
 			.list();
 		
 		List<Summary> summarized = new ArrayList<Summary>();
@@ -163,7 +166,7 @@ public class SearchDaoImpl implements SearchDao {
 	@SuppressWarnings("unchecked")
 	public List<YellowPagesEntry> getYellowPagesEntries(long categoryId) {
 		List<BusinessProfile> businesses = sessions.getCurrentSession().createCriteria(BusinessProfile.class)
-				.add(Restrictions.eq("category.id", categoryId))
+				.add(Restrictions.eq("businessGroup.id", categoryId))
 				.addOrder(Order.asc("fullName"))
 				.list();
 		List<YellowPagesEntry> yellowPagesEntries = new ArrayList<YellowPagesEntry>();
@@ -176,5 +179,31 @@ public class SearchDaoImpl implements SearchDao {
 	@Override
 	public BusinessGroup getBusinessGroup(long groupId) {
 		return (BusinessGroup) sessions.getCurrentSession().get(BusinessGroup.class, groupId);
+	}
+
+	/**
+	 * Functionally equivalent to {@link #countBusinesses()}, but better
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public MultiValueMap<String, Number> getListableGroups() {
+		List<Object[]> results = sessions.getCurrentSession().createCriteria(BusinessProfile.class)
+			.createAlias("businessGroup", "businessGroup")
+			.setProjection(
+				Projections.projectionList()
+					.add(Projections.groupProperty("businessGroup.name"))
+					.add(Projections.property("businessGroup.id"))
+					.add(Projections.count("businessGroup.name"))	
+			)
+			.addOrder(Order.asc("businessGroup.name"))
+			.list();
+		
+		MultiValueMap<String, Number> businesses = new LinkedMultiValueMap<String, Number>();
+		for(Object[] result : results) {
+			log.debug("{}", Arrays.asList(result));
+			businesses.put((String)result[0], Arrays.asList(new Number[]{(Number)result[1], (Number)result[2]}));
+		}
+		
+		return businesses;
 	}
 }

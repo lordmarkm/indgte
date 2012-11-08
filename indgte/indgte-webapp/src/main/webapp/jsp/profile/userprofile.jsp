@@ -26,7 +26,7 @@
 	<div class="ui-widget-header">Wishlist</div>
 	<div class="container wishlist-container">
 		<ol>
-			<c:forEach items="${target.wishlist.wishes }" var="wish" varStatus="status">
+			<c:forEach items="${target.wishlist }" var="wish" varStatus="status">
 				<li class="wish">
 					<div class="index">${status.index + 1	}.</div>
 					<div style="display: inline-block;">

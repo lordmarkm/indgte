@@ -9,13 +9,13 @@
 }
 
 .topten {
-	min-height: 30px;
+	min-height: 35px;
 	margin-bottom: 2px;
 }
 
 .topten-list-img {
 	float: left;
-	width: 30px;
-	height: 30px;
+	width: 35px;
+	height: 35px;
 	margin: 0 5px 0 0;
 }

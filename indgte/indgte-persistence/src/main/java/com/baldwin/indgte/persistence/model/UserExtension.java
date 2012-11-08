@@ -10,6 +10,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -70,6 +71,26 @@ public class UserExtension {
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="wisher")
 	@IndexColumn(name="wishOrder")
 	private List<Wish> wishlist;
+	
+	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "voters")
+	private Set<TopTenCandidate> votes;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "creator", orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<TopTenList> createdToptens;
+	
+	public boolean inWishlist(Product product) {
+		for(Wish wish : wishlist) {
+			if(product.equals(wish.getProduct())) return true;
+		}
+		return false;
+	}
+	
+	public boolean inWishlist(BuyAndSellItem item) {
+		for(Wish wish : wishlist) {
+			if(item.equals(wish.getBuyAndSellItem())) return true;
+		}
+		return false;
+	}
 	
 	public UserExtension(){
 		//
@@ -179,5 +200,29 @@ public class UserExtension {
 
 	public void setBusinessReviews(Set<BusinessReview> businessReviews) {
 		this.businessReviews = businessReviews;
+	}
+	
+	@JsonIgnore
+	public Set<TopTenCandidate> getVotes() {
+		if(null == votes) {
+			votes = new HashSet<TopTenCandidate>();
+		}
+		return votes;
+	}
+
+	public void setVotes(Set<TopTenCandidate> votes) {
+		this.votes = votes;
+	}
+
+	@JsonIgnore
+	public Set<TopTenList> getCreatedToptens() {
+		if(null == createdToptens) {
+			createdToptens = new HashSet<TopTenList>();
+		}
+		return createdToptens;
+	}
+
+	public void setCreatedToptens(Set<TopTenList> createdToptens) {
+		this.createdToptens = createdToptens;
 	}
 }

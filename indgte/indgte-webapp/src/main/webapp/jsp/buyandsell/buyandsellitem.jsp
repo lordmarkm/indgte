@@ -116,7 +116,9 @@
 		</c:if>
 	
 		<div class="item-actions">
+			<c:if test="${!inwishlist }">
 			<button class="btn-wishlist-add">Add to Wishlist</button>
+			</c:if>
 			<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
 		</div>
 	</div>	

@@ -168,7 +168,7 @@ public class BusinessControllerImpl implements BusinessController {
 					.put("business", business)
 					.put("product", product)
 					.put("owner", business.getOwner().equals(user.getUser()))
-					.put("inwishlist", user.getWishlist().contains(product))
+					.put("inwishlist", user.inWishlist(product))
 					.put("imgurKey", imgurKey)
 					.mav();
 	}

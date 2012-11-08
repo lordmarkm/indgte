@@ -37,4 +37,10 @@ public interface SearchController {
 	
 	@RequestMapping(value = "/categories/{groupId}", method = RequestMethod.GET)
 	public ModelAndView viewCategory(Principal principal, long groupId);
+	
+	/**
+	 * Returns a list of Object[String groupName, Number groupMembers]
+	 */
+	@RequestMapping(value = "/listablegroups.json")
+	public JSON getListableGroups();
 }

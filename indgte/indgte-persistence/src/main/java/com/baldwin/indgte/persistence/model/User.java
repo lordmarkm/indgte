@@ -12,7 +12,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
@@ -22,14 +21,14 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
-import com.baldwin.indgte.persistence.dto.Summarizable;
+import com.baldwin.indgte.persistence.dto.Searchable;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 
 @Indexed
 @Entity
 @Table(name="UserConnection")
-public class User implements Summarizable {
+public class User implements Searchable {
 	
 	public static final String[] searchableFields = new String[]{"username"};
 	
@@ -102,12 +101,6 @@ public class User implements Summarizable {
 	@OrderColumn(name="order")
 	@Column(name="userId")
 	private Set<Long> userSubscriptions;
-	
-	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "voters")
-	private Set<TopTenCandidate> votes;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "creator", orphanRemoval = true, fetch = FetchType.LAZY)
-	private Set<TopTenList> createdToptens;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<BuyAndSellItem> buyAndSellItems;
@@ -258,30 +251,6 @@ public class User implements Summarizable {
 	@JsonIgnore
 	public String[] getSearchableFields() {
 		return searchableFields;
-	}
-
-	@JsonIgnore
-	public Set<TopTenCandidate> getVotes() {
-		if(null == votes) {
-			votes = new HashSet<TopTenCandidate>();
-		}
-		return votes;
-	}
-
-	public void setVotes(Set<TopTenCandidate> votes) {
-		this.votes = votes;
-	}
-
-	@JsonIgnore
-	public Set<TopTenList> getCreatedToptens() {
-		if(null == createdToptens) {
-			createdToptens = new HashSet<TopTenList>();
-		}
-		return createdToptens;
-	}
-
-	public void setCreatedToptens(Set<TopTenList> createdToptens) {
-		this.createdToptens = createdToptens;
 	}
 
 	@JsonIgnore

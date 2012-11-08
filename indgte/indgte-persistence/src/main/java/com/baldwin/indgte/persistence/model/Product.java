@@ -23,8 +23,8 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
+import com.baldwin.indgte.persistence.dto.Searchable;
 import com.baldwin.indgte.persistence.dto.Summary;
-import com.baldwin.indgte.persistence.dto.Summarizable;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 
 /**
@@ -35,7 +35,7 @@ import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 @Indexed
 @Entity
 @Table(name="products")
-public class Product implements Summarizable {
+public class Product implements Searchable {
 	
 	public static final String[] searchableFields = new String[]{"name", "description"};
 	

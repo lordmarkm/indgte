@@ -141,4 +141,10 @@ public class SearchControllerImpl implements SearchController {
 				.put("businesses", businesses)
 				.mav();
 	}
+
+	@Override
+	public JSON getListableGroups() {
+		search.getListableGroups();
+		return JSON.ok();
+	}
 }

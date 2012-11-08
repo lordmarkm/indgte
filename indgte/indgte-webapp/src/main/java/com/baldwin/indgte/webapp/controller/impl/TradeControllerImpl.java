@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.model.AuctionItem;
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.TradeService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
@@ -69,12 +71,13 @@ public class TradeControllerImpl implements TradeController {
 	@Override
 	public ModelAndView viewItem(Principal principal, @PathVariable long itemId) {
 		log.debug("{} viewing item with id {}", principal.getName(), itemId);
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist);
 		BuyAndSellItem item = trade.get(principal.getName(), itemId);
 		
-		MavBuilder builder = render(user, "buyandsellitem")
+		MavBuilder builder = render(user.getUser(), "buyandsellitem")
 					.put("item", item)
-					.put("owner", item.getOwner().getUsername().equals(principal.getName()));
+					.put("inwishlist", user.inWishlist(item))
+					.put("owner", item.getOwner().equals(user.getUser()));
 		
 		if(item instanceof AuctionItem) {
 			AuctionItem auctionItem = (AuctionItem)item;

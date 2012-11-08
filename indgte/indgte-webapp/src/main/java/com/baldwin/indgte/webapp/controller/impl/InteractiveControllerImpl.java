@@ -1,6 +1,7 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
 import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.io.IOException;
@@ -27,7 +28,6 @@ import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
-import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
@@ -35,7 +35,6 @@ import com.baldwin.indgte.persistence.model.Review;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
-import com.baldwin.indgte.persistence.model.UserReview;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.InteractiveService;
 import com.baldwin.indgte.persistence.service.UserService;
@@ -103,7 +102,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 		Summary attachment;
 		SummaryType attachmentType = SummaryType.valueOf(request.getParameter("attachmentType"));
 		switch(attachmentType) {
-		case image:
+		case imgur:
 			attachment = new Summary(attachmentType, null, null, null, null, request.getParameter("hash"));
 			break;
 		case video:
@@ -299,12 +298,17 @@ public class InteractiveControllerImpl implements InteractiveController {
 
 	@Override
 	public @ResponseBody JSON getTopTens(Principal principal) {
-		Collection<TopTenList> recentLists = interact.getRecentToptens(0, 3);
-		Collection<TopTenList> popularLists = interact.getPopularToptens(0, 3);
-		
-		return JSON.ok()
-				.put("recent", recentLists)
-				.put("popular", popularLists);
+		try{
+			Collection<TopTenList> recentLists = interact.getRecentToptens(0, 3);
+			Collection<TopTenList> popularLists = interact.getPopularToptens(0, 3);
+			
+			return JSON.ok()
+					.put("recent", recentLists)
+					.put("popular", popularLists);
+		} catch (Exception e) {
+			log.error("Exception getting toptens", e);
+			return JSON.status500(e);
+		}
 	}
 	
 	@Override
@@ -315,6 +319,12 @@ public class InteractiveControllerImpl implements InteractiveController {
 		return render(user, "toptenlist")
 				.put("topten", topten)
 				.mav();
+	}
+	
+	@Override
+	public ModelAndView toptenBusiness(Principal principal, @PathVariable long groupId) {
+		long toptenId = interact.getBusinessTopTenListId(groupId);
+		return redirect("/i/toptens/" + toptenId).mav();
 	}
 
 	@Override
@@ -333,6 +343,9 @@ public class InteractiveControllerImpl implements InteractiveController {
 		try {
 			String cleanTitle = Jsoup.clean(title, DgteTagWhitelist.none());
 			TopTenCandidate candidate = interact.createTopTenCandidate(principal.getName(), topTenId, cleanTitle);
+			if(null == candidate) {
+				return JSON.status409("Attachment already exists in this list.");
+			}
 			return JSON.ok().put("candidate", candidate);
 		} catch (Exception e) {
 			log.error("Exception creating candidate", e);

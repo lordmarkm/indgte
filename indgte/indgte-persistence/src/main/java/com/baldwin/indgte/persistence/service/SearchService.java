@@ -69,7 +69,7 @@ public class SearchService {
 	}
 
 	public MultiValueMap<String, Number> getYellowPagesIndex() {
-		return dao.countBusinesses();
+		return dao.getListableGroups();
 	}
 
 	public List<Summary> getBusinesses(Long categoryId, int howmany) {
@@ -82,5 +82,10 @@ public class SearchService {
 
 	public BusinessGroup getBusinessGroup(long groupId) {
 		return dao.getBusinessGroup(groupId);
+	}
+
+	@Deprecated
+	public List<Object[]> getListableGroups() {
+		return null;
 	}
 }

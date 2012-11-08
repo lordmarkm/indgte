@@ -6,10 +6,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.baldwin.indgte.persistence.constants.AttachmentType;
+import com.baldwin.indgte.persistence.dto.Attachable;
+import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 
 /**
  * This is the imgur upload response:
@@ -23,7 +27,7 @@ import javax.persistence.TemporalType;
  * 			 "datetime":"2012-10-09 09:16:40",
  * 			 "type":"image\/jpeg",
  * 			 "animated":"false",
- * 			 "width":688,
+ * 			 http://testfb.com:8080/indgte-webapp/"width":688,
  * 			 "height":725,
  * 			 "size":77257,
  * 			 "views":0,
@@ -41,7 +45,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="imgurs")
-public class Imgur {
+public class Imgur implements Attachable {
 	public static String urlOriginal = "http://i.imgur.com/";
 	public static String urlSmallSquare = "http://i.imgur.com/";
 	public static String urlLargeThumbnail = "http://i.imgur.com/";
@@ -76,11 +80,6 @@ public class Imgur {
 	@Override
 	public String toString() {
 		return hash;
-	}
-	
-	@PrePersist
-	protected void onCreate() {
-		uploaded = new Date();
 	}
 	
 	public String getOriginal() {
@@ -157,5 +156,35 @@ public class Imgur {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	@Override
+	public Summary summarize() {
+		Summary summary = new Summary();
+		summary.setDescription(description);
+		summary.setThumbnailHash(hash);
+		summary.setTitle(title);
+		summary.setType(SummaryType.imgur);
+		return summary;
+	}
+
+	@Override
+	public long getId() {
+		return imageId;
+	}
+
+	@Override
+	public AttachmentType getAttachmentType() {
+		return AttachmentType.imgur;
+	}
+
+	@Override
+	public String getName() {
+		return title;
+	}
+
+	@Override
+	public Imgur getImgur() {
+		return this;
 	}
 }

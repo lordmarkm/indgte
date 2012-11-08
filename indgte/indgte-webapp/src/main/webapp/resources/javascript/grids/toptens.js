@@ -24,19 +24,14 @@ $(function(){
 	var $popular = $('.toptens ul.popular');
 	var $recent = $('.toptens ul.recent');
 	
-	var listed = {};
 	function loadTopTens() {
 		$.get(urls.topTens, function(response) {
 			switch(response.status) {
 			case '200':
 				for(var i = 0, len = response.popular.length; i < len; ++i) {
-					if(listed[response.popular[i].title]) continue;
-					listed[response.popular[i].title] = true;
 					addTopTenList($popular, response.popular[i]);
 				}
 				for(var i = 0, len = response.recent.length; i < len; ++i) {
-					if(listed[response.recent[i].title]) continue;
-					listed[response.recent[i].title] = true;
 					addTopTenList($recent, response.recent[i]);
 				}
 				break;
@@ -49,7 +44,14 @@ $(function(){
 	
 	function addTopTenList($container, topten) {
 		var $topten = $('<li class="topten">').appendTo($container);
-		var imgSrc = topten.leader && topten.leader.imgur ? topten.leader.imgur.smallSquare : dgte.toptens.genericTen;
+		var imgSrc = dgte.toptens.genericTen;
+		try {
+			imgSrc = topten.leader.attachmentSummary.thumbnailHash ? 
+					dgte.urls.imgur + topten.leader.attachmentSummary.thumbnailHash + 's.jpg' :
+						dgte.toptens.genericTen;
+		} catch(e) {
+			debug('Error setting leader imgur');
+		}
 		$('<img class="topten-list-img">').attr('src', imgSrc).appendTo($topten);
 		$('<a>').attr('href', urls.topTensPage + topten.id).text(topten.title).appendTo($topten);
 		$('<div class="subtitle">').text(topten.totalVotes + ' votes cast, created ' + moment(topten.time).fromNow()).appendTo($topten);

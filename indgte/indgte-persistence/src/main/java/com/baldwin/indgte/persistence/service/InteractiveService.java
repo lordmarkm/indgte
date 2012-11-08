@@ -164,4 +164,8 @@ public class InteractiveService {
 			throw new IllegalStateException("Unknown type: " + type);
 		}
 	}
+
+	public long getBusinessTopTenListId(long groupId) {
+		return dao.getBusinessTopTenListId(groupId);
+	}
 }

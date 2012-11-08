@@ -22,14 +22,14 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
-import com.baldwin.indgte.persistence.dto.Summarizable;
+import com.baldwin.indgte.persistence.dto.Searchable;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 
 @Indexed
 @Entity
 @Table(name="categories")
-public class Category implements Summarizable {
+public class Category implements Searchable {
 	
 	public static final String[] searchableFields = new String[]{"name", "description"};
 	

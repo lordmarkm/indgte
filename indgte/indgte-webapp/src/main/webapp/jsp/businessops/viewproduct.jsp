@@ -69,7 +69,9 @@
 <div class="viewproduct-controls grid_4 ui-widget sidebar-section">
 	<div class="sidebar-section-header">Product Actions</div>
 	<div class="product-actions">
+		<c:if test="${!inwishlist }">
 		<button class="btn-wishlist-add">Add to Wishlist</button>
+		</c:if>
 		<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
 	</div>
 	<div class="sidebar-divider"></div>

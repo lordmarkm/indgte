@@ -19,8 +19,12 @@
 
 <section class="candidates">
 	<ul>
-		<c:forEach items="${topten.candidates }" var="candidate">
+		<c:forEach items="${topten.ordered }" var="candidate">
 		<li class="candidate-container">
+			<c:if test="${not empty candidate.attachment }">
+				<img src="${candidate.attachment.imgur.smallSquare }" />
+				<div class="candidate-attachment-name">${candidate.attachment.name }</div>
+			</c:if>
 			<div class="candidate-title">Title: ${candidate.title }</div>
 			<div class="candidate-votes">Votes: ${fn:length(candidate.voters) }</div>
 			<div class="link-vote-container"><a href="javascript:;" candidateId="${candidate.id }" class="link-vote">Vote</a></div>

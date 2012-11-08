@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
@@ -28,10 +29,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.WishType;
+import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
@@ -364,24 +367,37 @@ public class InteractiveDaoImpl implements InteractiveDao {
 			criteria.setMaxResults(howmany);
 		}
 		
-		return criteria.list();
+		//we only need to initialize the attachment of the winning candidate, really, since this is for the sidebar
+		Collection<TopTenList> toptens = criteria.list();
+		for(TopTenList list : toptens) {
+			if(list.getLeader().getAttachmentType() != AttachmentType.none) {
+				initializeAttachment(list.getLeader());
+			}
+			
+			if(log.isDebugEnabled()) {
+				log.debug("List id: {}, title: {}, candidates: {}, leader: {}", list.getId(), list.getTitle(), list.getCandidates(), list.getLeader());
+			}
+		}
+		return toptens;
 	}
 
 	@Override
 	public Collection<TopTenList> getUserToptens(String name) {
-		User user = users.getFacebook(name);
-		Hibernate.initialize(user.getCreatedToptens());
-		return user.getCreatedToptens();
+		return users.getExtended(name).getCreatedToptens();
 	}
 
 	@Override
 	public TopTenList getTopTenList(long topTenId) {
-		return (TopTenList) sessions.getCurrentSession().get(TopTenList.class, topTenId);
+		TopTenList list = (TopTenList) sessions.getCurrentSession().get(TopTenList.class, topTenId);
+		for(TopTenCandidate candidate : list.getCandidates()) {
+			initializeAttachment(candidate);
+		}
+		return list;
 	}
 
 	@Override
 	public TopTenList createTopTenList(String name, String title) {
-		User user = users.getFacebook(name);
+		UserExtension user = users.getExtended(name);
 		
 		TopTenList newlist = new TopTenList();
 		newlist.setCreator(user);
@@ -397,7 +413,7 @@ public class InteractiveDaoImpl implements InteractiveDao {
 
 	@Override
 	public TopTenCandidate createTopTenCandidate(String name, long topTenId, String title) {
-		User user = users.getFacebook(name);
+		UserExtension user = users.getExtended(name);
 		TopTenList list = getTopTenList(topTenId);
 		
 		TopTenCandidate candidate = new TopTenCandidate();
@@ -405,6 +421,10 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		candidate.setList(list);
 		candidate.setTitle(title);
 		
+		if(list.getCandidates().contains(candidate)) {
+			return null;
+		}
+		list.getCandidates().remove(candidate);
 		list.getCandidates().add(candidate);
 		
 		sessions.getCurrentSession().save(candidate);
@@ -416,7 +436,7 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	public void toptenVote(String name, long candidateId) {
 		log.debug("Peristing vote from {} for candidate with id {}", name, candidateId);
 		
-		User user = users.getFacebook(name);
+		UserExtension user = users.getExtended(name);
 		TopTenCandidate candidate = (TopTenCandidate) sessions.getCurrentSession().get(TopTenCandidate.class, candidateId);
 		
 		log.debug("Found {} and {}", user, candidate);
@@ -443,6 +463,18 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		user.getVotes().add(candidate);
 	}
 
+	private void initializeAttachment(TopTenCandidate candidate) {
+		if(null == candidate.getAttachmentType()) {
+			return;
+		}
+		
+		switch(candidate.getAttachmentType()) {
+		case business:
+			candidate.setAttachment(businesses.get(candidate.getAttachmentId()));
+			break;
+		}
+	}
+	
 	@Override
 	public boolean addToWishlist(String name, WishType type, long id) {
 		log.debug("Adding item of type {} to {}'s wishlist id: {}", type, name, id);
@@ -514,5 +546,33 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		log.debug("Requested user review stats for id {}, got {}", targetId, Arrays.asList(results));
 		
 		return results;
+	}
+
+	@Override
+	public long getBusinessTopTenListId(long groupId) {
+		Session session = sessions.getCurrentSession();
+		BusinessGroup businessGroup = (BusinessGroup) session.get(BusinessGroup.class, groupId);
+		if(null == businessGroup.getTopTenList()) {
+			UserExtension user = users.getDefault();
+
+			TopTenList newlist = new TopTenList();
+			newlist.setCreator(user);
+			newlist.setTime(new Date());
+			newlist.setTitle("Top " + StringUtils.capitalize(businessGroup.getName()));
+			
+			for(BusinessProfile business : businessGroup.getBusinesses()) {
+				TopTenCandidate candidate = new TopTenCandidate(business);
+				candidate.setList(newlist);
+				candidate.setCreator(user);
+				newlist.getCandidates().add(candidate);
+			}
+			
+			user.getCreatedToptens().add(newlist);
+			businessGroup.setTopTenList(newlist);
+			
+			session.save(newlist);
+		}
+		
+		return businessGroup.getTopTenList().getId();
 	}
 }

@@ -5,7 +5,7 @@ public class Summary {
 	public enum SummaryType {
 		none,
 		
-		image,
+		imgur,
 		video,
 		link,
 		

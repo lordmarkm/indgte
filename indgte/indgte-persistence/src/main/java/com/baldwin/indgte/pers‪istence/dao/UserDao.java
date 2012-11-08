@@ -19,4 +19,5 @@ public interface UserDao {
 	UserExtension getExtended(String targetUsername);
 	UserExtension getExtended(long userId, Initializable... initialize);
 	UserExtension getExtended(String username, Initializable... initialize);
+	UserExtension getDefault(Initializable... initializables);
 }

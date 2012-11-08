@@ -50,7 +50,8 @@ Recent top ten lists:
 
 <script>
 window.urls = {
-	newlist : '<spring:url value="/i/toptens.json" />'
+	newlist : '<spring:url value="/i/toptens.json" />',
+	listablegroups : '<spring:url value="/s/listablegroups.json" />'
 }
 
 $(function(){
@@ -66,6 +67,14 @@ $(function(){
 			case '200':
 				window.location.reload();
 				break;
+			default:
+				debug(response);
+			}
+		});
+		
+		$.get(urls.listablegroups, function(response) {
+			switch(response.status) {
+			case '200':
 			default:
 				debug(response);
 			}

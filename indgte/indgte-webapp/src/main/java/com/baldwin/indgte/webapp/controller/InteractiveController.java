@@ -112,6 +112,9 @@ public interface InteractiveController {
 	@RequestMapping(value = "/toptens/{toptenId}", method = RequestMethod.GET)
 	public ModelAndView topten(Principal principal, long toptenId);
 	
+	@RequestMapping(value = "/toptens/businessgroup/{groupId}", method = RequestMethod.GET)
+	public ModelAndView toptenBusiness(Principal principal, long groupId);
+	
 	@RequestMapping(value = "/toptens/{topTenId}.json", method = RequestMethod.POST)
 	public JSON newTopTenCandidate(Principal principal, long topTenId, String title);
 	

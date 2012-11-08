@@ -8,7 +8,8 @@
 
 <div class="yellowpages-content grid_9 ui-corner-all">
 	<h1>${group.name }</h1>
-
+	<a href="<spring:url value='/i/toptens/businessgroup/${group.id }' />">View Ranking</a>
+	
 	<ul class="businesses">
 		<c:forEach items="${businesses }" var="business" varStatus="i">
 		<li class="business ui-widget">
