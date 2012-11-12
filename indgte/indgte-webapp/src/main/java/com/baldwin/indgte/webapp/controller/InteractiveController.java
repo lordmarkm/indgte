@@ -12,6 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.WishType;
+import com.baldwin.indgte.persistence.model.Imgur;
+import com.baldwin.indgte.webapp.dto.TopTenForm;
 
 /**
  * For things like likes, posts and other stuff
@@ -103,11 +105,11 @@ public interface InteractiveController {
 	@RequestMapping(value = "/toptens/", method = RequestMethod.GET)
 	public ModelAndView toptens(Principal principal);
 	
+	@RequestMapping(value = "/toptens/", method = RequestMethod.POST)
+	public ModelAndView newTopTenList(Principal principal, TopTenForm form);
+	
 	@RequestMapping(value = "/toptens.json", method = RequestMethod.GET)
 	public JSON getTopTens(Principal principal);
-	
-	@RequestMapping(value = "/toptens.json", method = RequestMethod.POST)
-	public JSON newTopTenList(Principal principal, String title);
 	
 	@RequestMapping(value = "/toptens/{toptenId}", method = RequestMethod.GET)
 	public ModelAndView topten(Principal principal, long toptenId);
@@ -120,6 +122,15 @@ public interface InteractiveController {
 	
 	@RequestMapping(value = "/toptens/{topTenId}/{candidateId}.json")
 	public JSON vote(Principal principal, long topTenId, long candidateId);
+	
+	@RequestMapping(value = "/toptens/attach/{candidateId}.json", method = RequestMethod.POST)
+	public JSON attachImageToCandidate(Principal principal, long candidateId, Imgur imgur);
+	
+	@RequestMapping(value = "/toptens/description/{candidateId}.json", method = RequestMethod.POST)
+	public JSON addDescriptionToCandidate(Principal principal, long candidateId, String description);
+	
+	@RequestMapping(value = "/toptens/listdescription/{listId}.json", method = RequestMethod.POST)
+	public JSON addDescriptionToList(Principal principal, long listId, String description);
 	
 	/*
 	 * Wishlists

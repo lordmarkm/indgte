@@ -19,6 +19,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.dto.Attachable;
@@ -27,6 +29,8 @@ import com.baldwin.indgte.persistence.dto.Summary;
 @Entity
 @Table(name="toptencandidates")
 public class TopTenCandidate implements Comparable<TopTenCandidate> {
+	static Logger log = LoggerFactory.getLogger(TopTenCandidate.class);
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "itemId")
@@ -49,7 +53,7 @@ public class TopTenCandidate implements Comparable<TopTenCandidate> {
 	private UserExtension creator;
 	
 	@Column
-	private int votes;
+	private int votes = 0;
 	
 	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
@@ -205,8 +209,10 @@ public class TopTenCandidate implements Comparable<TopTenCandidate> {
 		//added this, different Candidate.id, same attachment returns true. Prevent double adding of entity to 
 		//same topten list
 		if(this.attachmentType != none) {
-			if(this.attachmentId == other.attachmentId && this.attachmentType == other.attachmentType)
+			if(this.attachmentId == other.attachmentId && this.attachmentType == other.attachmentType) {
+				log.debug("Same attachment. Equal.");
 				return true;
+			}
 		}
 		
 		if (attachmentId == null) {
@@ -218,6 +224,16 @@ public class TopTenCandidate implements Comparable<TopTenCandidate> {
 			return false;
 		if (id != other.id)
 			return false;
+		
+		if(title != null) {
+			if(other.title == null) return false;
+			if(!title.equals(other.title)) return false;
+		} else {
+			if(other.title != null) return false;
+		}
+		
+		log.debug("All inequality tests passed. Equal.");
+		
 		return true;
 	}
 	

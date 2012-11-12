@@ -38,6 +38,7 @@ import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
+import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
@@ -353,7 +354,7 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public Collection<TopTenList> getToptens(int start, int howmany, String orderColumn) {
+	public Collection<TopTenList> getToptens(int start, int howmany, String orderColumn, int initialize) {
 		Session session = sessions.getCurrentSession();
 		Criteria criteria = session.createCriteria(TopTenList.class)
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -370,20 +371,28 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		//we only need to initialize the attachment of the winning candidate, really, since this is for the sidebar
 		Collection<TopTenList> toptens = criteria.list();
 		for(TopTenList list : toptens) {
-			if(list.getLeader().getAttachmentType() != AttachmentType.none) {
-				initializeAttachment(list.getLeader());
-			}
-			
-			if(log.isDebugEnabled()) {
-				log.debug("List id: {}, title: {}, candidates: {}, leader: {}", list.getId(), list.getTitle(), list.getCandidates(), list.getLeader());
+			for(int i = 0; i < initialize && i < list.getCandidates().size(); ++i) {
+				TopTenCandidate candidate = list.getOrdered().get(i);
+				if(candidate.getAttachmentType() != AttachmentType.none) {
+					initializeAttachment(candidate);
+				}	
 			}
 		}
 		return toptens;
 	}
 
 	@Override
-	public Collection<TopTenList> getUserToptens(String name) {
-		return users.getExtended(name).getCreatedToptens();
+	public Collection<TopTenList> getUserToptens(String name, int initialize) {
+		Collection<TopTenList> toptens = users.getExtended(name).getCreatedToptens();
+		for(TopTenList list : toptens) {
+			for(int i = 0; i < initialize && i < list.getCandidates().size(); ++i) {
+				TopTenCandidate candidate = list.getOrdered().get(i);
+				if(candidate.getAttachmentType() != AttachmentType.none) {
+					initializeAttachment(candidate);
+				}	
+			}
+		}
+		return toptens;
 	}
 
 	@Override
@@ -396,19 +405,30 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	}
 
 	@Override
-	public TopTenList createTopTenList(String name, String title) {
+	public void saveTopTenList(String name, TopTenList list) {
+		log.debug("Saving top ten list with title: {}, # of candidates: {}, creator: {}", list.getTitle(), list.getCandidates().size(), name);
+
 		UserExtension user = users.getExtended(name);
 		
-		TopTenList newlist = new TopTenList();
-		newlist.setCreator(user);
-		newlist.setTime(new Date());
-		newlist.setTitle(title);
-
-		user.getCreatedToptens().add(newlist);
+		log.debug("Before filter: " + list.getCandidates().size());
+		for(Iterator<TopTenCandidate> i = list.getCandidates().iterator(); i.hasNext();) {
+			TopTenCandidate candidate = i.next();
+			candidate.setList(list);
+			candidate.setCreator(user);
+			if(candidate.getTitle() == null && candidate.getAttachmentType() == AttachmentType.none) {
+				//Workaround for when first candidate is removed in frontend
+				log.debug("Invalid entry. Removing.");
+				i.remove();
+				continue;
+			} 
+		}
+		log.debug("After filter: " + list.getCandidates().size());
 		
-		sessions.getCurrentSession().save(newlist);
+		list.setTime(new Date());
+		list.setCreator(user);
+		user.getCreatedToptens().add(list);
 		
-		return newlist;
+		sessions.getCurrentSession().save(list);
 	}
 
 	@Override
@@ -472,7 +492,22 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		case business:
 			candidate.setAttachment(businesses.get(candidate.getAttachmentId()));
 			break;
+		case category:
+			candidate.setAttachment(businesses.getCategory(candidate.getAttachmentId()));
+			break;
+		case product:
+			candidate.setAttachment(businesses.getProduct(candidate.getAttachmentId()));
+			break;
+		case imgur:
+			candidate.setAttachment(getImgur(candidate.getAttachmentId()));
+			break;
 		}
+	}
+	
+	private Imgur getImgur(long id) {
+		return (Imgur) sessions.getCurrentSession().createCriteria(Imgur.class)
+				.add(Restrictions.eq(TableConstants.IMGUR_ID, id))
+				.uniqueResult();
 	}
 	
 	@Override
@@ -574,5 +609,40 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		}
 		
 		return businessGroup.getTopTenList().getId();
+	}
+
+	@Override
+	public void attachImageToCandidate(String name, long candidateId,	Imgur imgur) {
+		log.debug("Imgur {} will be attached to TopTenCandidate with id {}, requested by {}", imgur, candidateId, name);
+		Session session = sessions.getCurrentSession();
+		
+		imgur.setUploaded(new Date());
+		session.save(imgur);
+		
+		TopTenCandidate candidate = (TopTenCandidate) session.createCriteria(TopTenCandidate.class)
+				.add(Restrictions.eq(TableConstants.TOPTEN_CANDIDATE_ID, candidateId))
+				.uniqueResult();
+		
+		candidate.setAttachmentId(imgur.getId());
+		candidate.setAttachmentType(AttachmentType.imgur);
+	}
+
+	@Override
+	public Imgur addDescriptionToCandidate(long candidateId, String description) {
+		TopTenCandidate candidate = (TopTenCandidate) sessions.getCurrentSession().get(TopTenCandidate.class, candidateId);
+		if(candidate.getAttachmentType() != AttachmentType.imgur) {
+			throw new IllegalStateException("Trying to attach description to non-imgur attachment.");
+		}
+		initializeAttachment(candidate);
+		Imgur imgur = (Imgur) candidate.getAttachment();
+		imgur.setDescription(description);
+		return imgur;
+	}
+
+	@Override
+	public String addDescriptionToList(long listId, String description) {
+		TopTenList list = (TopTenList) sessions.getCurrentSession().get(TopTenList.class, listId);
+		list.setDescription(description);
+		return description;
 	}
 }

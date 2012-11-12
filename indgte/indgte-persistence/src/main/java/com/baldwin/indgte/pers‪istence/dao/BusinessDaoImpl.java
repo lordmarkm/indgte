@@ -11,6 +11,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,10 @@ public class BusinessDaoImpl implements BusinessDao {
 	public Object[] getForViewProfile(String username, String domain) { 
 		BusinessProfile business = get(domain);
 		UserExtension userExtension = users.getExtended(username);
+		
+		if(null == business) {
+			return null;
+		}
 		
 		boolean unreviewed = true;
 		for(BusinessReview businessReview : userExtension.getBusinessReviews()) {
@@ -341,5 +346,13 @@ public class BusinessDaoImpl implements BusinessDao {
 		Product product = (Product) sessions.getCurrentSession().get(Product.class, productId);
 		Hibernate.initialize(product.getPics());
 		return product;
+	}
+
+	@Override
+	public String getDomain(long id) {
+		return (String) sessions.getCurrentSession().createCriteria(BusinessProfile.class)
+			.setProjection(Projections.property("domain"))
+			.add(Restrictions.eq("id", id))
+			.uniqueResult();
 	}
 }

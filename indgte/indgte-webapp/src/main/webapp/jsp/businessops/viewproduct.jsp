@@ -359,7 +359,10 @@ $(function(){
 	    			setTimeout(function(){$('.galleria-image:last').click()}, 250);
 	    			break;
 	    		default:
-	    			debug('Error: ' + dgteResponse);
+	    			debug('Error: .dropbox-message {
+	    					display: table-cell;
+	    		    vertical-align: middle;
+	    		}' + dgteResponse);
     		}
     		
     		//remove overlay if all files are done processing

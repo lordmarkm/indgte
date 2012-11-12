@@ -43,4 +43,5 @@ public interface BusinessDao {
 	String findDomainForProductId(long productId);
 	Product getProductWithPics(long productId);
 	Category getCategoryWithProducts(long categoryId);
+	String getDomain(long id);
 }

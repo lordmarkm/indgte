@@ -1,0 +1,33 @@
+.review-container {
+	padding: 5px;
+}
+.reviewqueue .reviewlist {
+	list-style-type: none;
+	padding-left: 15px;
+}
+.review-request {
+	min-height: 35px;
+	margin: 0 0 5px 0;
+	padding: 2px;
+}
+.review-request:not(.ui-state-highlight) {
+	border: 1px solid transparent;
+}
+.review-request-img {
+	float: left;
+	width: 35px;
+	height: 35px;
+}
+.review-request-info {
+	margin-left: 40px;
+}
+.review-decline, .review-accede {
+	margin: 5px 2px 0 2px;
+	font-size: 0.9em;
+}
+a.review-decline:hover {
+	color: red;
+}
+a.review-accede:hover {
+	color: green;
+}

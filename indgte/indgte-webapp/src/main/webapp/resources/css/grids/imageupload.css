@@ -1,0 +1,23 @@
+.image-upload-dropbox {
+	width: 150px;
+	height: 150px;
+	text-align: center;
+	border: 3px dashed grey;
+	display: table;
+	margin: auto;
+	margin-bottom: 5px;
+	position: relative;
+}
+
+.image-upload-dropbox:not(.waiting) {
+	cursor: pointer;
+}
+
+.image-upload-dropbox.hungry {
+	border-color: green !important;
+}
+
+.dropbox-message {
+	display: table-cell;
+    vertical-align: middle;
+}

@@ -8,6 +8,7 @@ import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.model.BusinessReview;
+import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
@@ -52,13 +53,11 @@ public interface InteractiveDao {
 
 	public Collection<UserReview> getUserReviews(long targetId);
 	
-	public Collection<TopTenList> getToptens(int start, int howmany, String orderColumn);
+	public Collection<TopTenList> getToptens(int start, int howmany, String orderColumn, int initialize);
 
-	public Collection<TopTenList> getUserToptens(String name);
+	public Collection<TopTenList> getUserToptens(String name, int initialize);
 
 	public TopTenList getTopTenList(long toptenId);
-
-	public TopTenList createTopTenList(String name, String title);
 
 	public void toptenVote(String name, long topTenId);
 
@@ -75,4 +74,12 @@ public interface InteractiveDao {
 	public Object[] getUserReviewStats(long targetId, ReviewType type);
 
 	public long getBusinessTopTenListId(long groupId);
+
+	public void saveTopTenList(String name, TopTenList topten);
+
+	public void attachImageToCandidate(String name, long candidateId,	Imgur imgur);
+
+	public Imgur addDescriptionToCandidate(long candidateId, String description);
+
+	public String addDescriptionToList(long listId, String description);
 }

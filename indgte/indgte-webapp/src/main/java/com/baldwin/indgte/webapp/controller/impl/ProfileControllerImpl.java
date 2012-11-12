@@ -1,7 +1,7 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
 import static com.baldwin.indgte.persistence.constants.Initializable.wishlist;
-import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.*;
 
 import java.security.Principal;
 import java.util.Collection;
@@ -68,11 +68,7 @@ public class ProfileControllerImpl implements ProfileController {
 							.addObject("user", fbUser)
 							.addObject("businesses", businessez);
 		
-		if(loadhere != null && Boolean.parseBoolean(loadhere)) {
-			mav.setViewName("profile/businesses");
-		} else {
-			mav.setViewName("businesses");
-		}
+		mav.setViewName("businesses");
 		
 		return mav;
 	}
@@ -93,6 +89,21 @@ public class ProfileControllerImpl implements ProfileController {
 		log.debug("Profile requested for {}", domain);
 
 		Object[] profileObjects = businesses.getForViewProfile(principal.getName(), domain);
+		if(null == profileObjects) {
+			log.debug("No business profile found for domain {}. Trying as an Id", domain);
+			try {
+				long id = Long.parseLong(domain);
+				String queriedDomain = businesses.getDomain(id);
+				if(null == queriedDomain) {
+					throw new IllegalArgumentException("Unknown domain " + domain);
+				}
+				return redirect("/p/" + queriedDomain).mav();
+			} catch (Exception e) {
+				log.error("Failed to find anything.", e);
+				throw new IllegalArgumentException("Unknown domain " + domain);
+			}
+		}
+		
 		UserExtension userExtension = (UserExtension) profileObjects[0];
 		User user = userExtension.getUser();
 		BusinessProfile business = (BusinessProfile) profileObjects[1];

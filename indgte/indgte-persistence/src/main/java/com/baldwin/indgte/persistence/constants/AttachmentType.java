@@ -4,6 +4,7 @@ public enum AttachmentType {
 	none,
 	user,
 	business,
+	category,
 	product,
 	buyandsellitem,
 	imgur

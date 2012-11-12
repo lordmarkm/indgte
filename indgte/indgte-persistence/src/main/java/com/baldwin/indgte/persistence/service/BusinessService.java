@@ -113,4 +113,7 @@ public class BusinessService {
 	public String getBusinessCategories(String firstLetter) {
 		return cDao.getCategories(firstLetter);
 	}
+	public String getDomain(long id) {
+		return dao.getDomain(id);
+	}
 }

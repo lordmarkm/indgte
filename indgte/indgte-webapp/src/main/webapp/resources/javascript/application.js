@@ -31,12 +31,19 @@ window.dgte = {
 		imgur : 'http://i.imgur.com/'
 	},
 	
-	upload: function(file, onComplete) {
+	upload: function(file, onComplete, title, caption) {
 	    if (!file || !file.type.match(/image.*/)) return;
-
+	    
+	    debug('file: ' + file);
+	    debug('callback: ' + onComplete);
+	    debug('title: ' + title);
+	    debug('caption: ' + caption);
+	    
 	    var fd = new FormData();
 	    fd.append("image", file);
 	    fd.append("key", dgte.constants.imgurKey);
+	    if(title) fd.append("title", title);
+	    if(caption) fd.append("caption", caption);
 	    
 	    var xhr = new XMLHttpRequest();
 	    xhr.open("POST", dgte.urls.imgurUpload);
@@ -47,8 +54,9 @@ window.dgte = {
 	    	var response = JSON.parse(xhr.responseText);
 	    	onComplete(response);
 	    }
-	    xhr.onerror = function() {
-	    	debud('lol upload error');
+	    xhr.onerror = function(e) {
+	    	debug('lol upload error');
+	    	debug(e);
 	    }
 		xhr.send(fd);		
 	}
@@ -56,6 +64,10 @@ window.dgte = {
 
 window.debug = function(m) {
 	console.debug(m);
+}
+
+window.unescapeBrs2 = function(string) {
+	return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\<br\s*\>/g, '').replace(/\<br\s*\/\>/g, '');
 }
 
 window.unescapeBrs = function(target) {

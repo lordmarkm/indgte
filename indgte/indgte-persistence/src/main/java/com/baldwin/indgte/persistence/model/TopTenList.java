@@ -3,16 +3,19 @@ package com.baldwin.indgte.persistence.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -43,6 +46,10 @@ public class TopTenList {
 	@Column
 	private String title;
 	
+	@Column
+	@Lob @Basic(fetch=FetchType.EAGER)
+	private String description;
+	
 	@OneToMany(
 		cascade = CascadeType.ALL,
 		mappedBy = "list",
@@ -64,7 +71,7 @@ public class TopTenList {
 	@JsonIgnore
 	public Set<TopTenCandidate> getCandidates() {
 		if(null == candidates) {
-			candidates = new HashSet<TopTenCandidate>();
+			candidates = new LinkedHashSet<TopTenCandidate>();
 		}
 		return candidates;
 	}
@@ -122,5 +129,13 @@ public class TopTenList {
 		}
 		
 		return leader;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

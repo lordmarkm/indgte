@@ -22,6 +22,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
+import com.baldwin.indgte.persistence.constants.AttachmentType;
+import com.baldwin.indgte.persistence.dto.Attachable;
 import com.baldwin.indgte.persistence.dto.Searchable;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
@@ -29,7 +31,7 @@ import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 @Indexed
 @Entity
 @Table(name="categories")
-public class Category implements Searchable {
+public class Category implements Searchable, Attachable {
 	
 	public static final String[] searchableFields = new String[]{"name", "description"};
 	
@@ -142,5 +144,15 @@ public class Category implements Searchable {
 	@JsonIgnore
 	public String[] getSearchableFields() {
 		return searchableFields;
+	}
+
+	@Override
+	public AttachmentType getAttachmentType() {
+		return AttachmentType.category;
+	}
+
+	@Override
+	public Imgur getImgur() {
+		return mainpic;
 	}
 }

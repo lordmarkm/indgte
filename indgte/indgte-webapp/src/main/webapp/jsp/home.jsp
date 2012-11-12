@@ -323,7 +323,7 @@ $(function(){
 	$('.attach-option.image').click(function(){
 		$attachInputContainer.show();
 		hideAttachInputs();
-		$attachType.val('image');
+		$attachType.val('imgur');
 		$status.removeClass('noattachment');
 		$iptFile.show();
 		matchWidths();
@@ -371,7 +371,7 @@ $(function(){
 			$status.removeClass('noattachment');
 			hideAttachInputs();
 			switch($attachType.val()) {
-			case 'image':
+			case 'imgur':
 				$iptFile.show();
 				break;
 			case 'video':
@@ -421,13 +421,13 @@ $(function(){
 	});
 	
 	//entity
-	var searchtimeout;
 	$iptEntity.bind({
 		keyup: startTimeout,
 		paste: startTimeout,
 		focus: startTimeout
 	});
 	
+	var searchtimeout;
 	function startTimeout() {
 		if(searchtimeout) {
 			clearTimeout(searchtimeout);
@@ -566,8 +566,8 @@ $(function(){
 		}
 		
 		switch(attachType) {
-		case 'image':
-			data.attachmentType = 'image';
+		case 'imgur':
+			data.attachmentType = 'imgur';
 			upload($iptFile[0].files[0], function(imgurResponse) {
 				data.hash = imgurResponse.upload.image.hash;
 				postStatus(data);
@@ -686,7 +686,7 @@ $(function(){
 		
 		//attachment, if any
 		switch(post.attachmentType) {
-		case 'image':
+		case 'imgur':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
 			var $attachmentImgA = $('<a>').attr('href', urls.imgurPage + post.attachmentImgurHash).appendTo($container);
 			$('<img class="attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($attachmentImgA);
@@ -857,41 +857,7 @@ window.urls.noreview = '<spring:url value="/i/noreview/" />',
 window.urls.neverreview = '<spring:url value="/i/neverreview/" />'
 </script>
 <script src="${jsReviewQueue }"></script>
-<style>
-.review-container {
-	padding: 5px;
-}
-.reviewqueue .reviewlist {
-	list-style-type: none;
-	padding-left: 15px;
-}
-.review-request {
-	min-height: 35px;
-	margin: 0 0 5px 0;
-	padding: 2px;
-}
-.review-request:not(.ui-state-highlight) {
-	border: 1px solid transparent;
-}
-.review-request-img {
-	float: left;
-	width: 35px;
-	height: 35px;
-}
-.review-request-info {
-	margin-left: 40px;
-}
-.review-decline, .review-accede {
-	margin: 5px 2px 0 2px;
-	font-size: 0.9em;
-}
-a.review-decline:hover {
-	color: red;
-}
-a.review-accede:hover {
-	color: green;
-}
-</style>
+<link rel="stylesheet" href="<spring:url value='/resources/css/grids/reviewqueue.css' />" />
 <!-- End Reviews -->
 
 <!-- Top Tens -->

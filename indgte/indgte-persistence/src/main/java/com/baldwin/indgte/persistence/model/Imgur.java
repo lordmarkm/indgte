@@ -2,13 +2,17 @@ package com.baldwin.indgte.persistence.model;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.dto.Attachable;
@@ -68,10 +72,11 @@ public class Imgur implements Attachable {
 	@Column
 	private Date uploaded;
 
-	@Column(length=25)
+	@Column
 	private String title;
 	
-	@Column(length=140)
+	@Column
+	@Lob @Basic
 	private String description;
 
 	@Column
@@ -184,6 +189,7 @@ public class Imgur implements Attachable {
 	}
 
 	@Override
+	@JsonIgnore
 	public Imgur getImgur() {
 		return this;
 	}

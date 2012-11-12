@@ -20,6 +20,7 @@ public class TableConstants {
 	public static final String PRODUCT_PICS = "pics";
 	public static final String PRODUCT_ID = "id";
 	
+	public static final String IMGUR_ID = "imageId";
 	public static final String IMGUR_UPLOADED = "uploaded";
 	
 	public static final String POST_TIME = "postTime";
@@ -27,6 +28,7 @@ public class TableConstants {
 	public static final String TOPTEN_DATECREATED= "time";
 	public static final String TOPTEN_TOTALVOTES = "totalVotes";
 	public static final String TOPTEN_CREATOR = "creator";
+	public static final String TOPTEN_CANDIDATE_ID = "id";
 	
 	public static final String BUYANDSELL_VIEWS = "views";
 	public static final String BUYANDSELL_TIME = "time";

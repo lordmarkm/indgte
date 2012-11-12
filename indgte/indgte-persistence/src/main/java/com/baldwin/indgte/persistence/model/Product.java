@@ -23,6 +23,8 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
+import com.baldwin.indgte.persistence.constants.AttachmentType;
+import com.baldwin.indgte.persistence.dto.Attachable;
 import com.baldwin.indgte.persistence.dto.Searchable;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
@@ -35,7 +37,7 @@ import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 @Indexed
 @Entity
 @Table(name="products")
-public class Product implements Searchable {
+public class Product implements Searchable, Attachable {
 	
 	public static final String[] searchableFields = new String[]{"name", "description"};
 	
@@ -156,5 +158,16 @@ public class Product implements Searchable {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+
+	@Override
+	public AttachmentType getAttachmentType() {
+		return AttachmentType.product;
+	}
+
+	@Override
+	@JsonIgnore
+	public Imgur getImgur() {
+		return mainpic;
 	}
 }

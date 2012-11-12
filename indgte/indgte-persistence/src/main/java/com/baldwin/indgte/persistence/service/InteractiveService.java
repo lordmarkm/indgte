@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.baldwin.indgte.persistence.constants.PostType;
@@ -17,6 +18,7 @@ import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
+import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Review;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
@@ -36,6 +38,9 @@ public class InteractiveService {
 
 	@Autowired
 	private UserDao users;
+	
+	@Value("${toptens.candidate.preview}")
+	private int toptensCandidatePreview;
 	
 	public void subscribe(String username, PostType type, Long id) {
 		switch(type) {
@@ -106,23 +111,19 @@ public class InteractiveService {
 	 */
 	
 	public Collection<TopTenList> getRecentToptens(int start, int howmany) {
-		return dao.getToptens(start, howmany, TableConstants.TOPTEN_DATECREATED);
+		return dao.getToptens(start, howmany, TableConstants.TOPTEN_DATECREATED, toptensCandidatePreview);
 	}
 
 	public Collection<TopTenList> getPopularToptens(int start, int howmany) {
-		return dao.getToptens(start, howmany, TableConstants.TOPTEN_TOTALVOTES);
+		return dao.getToptens(start, howmany, TableConstants.TOPTEN_TOTALVOTES, toptensCandidatePreview);
 	}
 
 	public Collection<TopTenList> getUserToptens(String name) {
-		return dao.getUserToptens(name);
+		return dao.getUserToptens(name, toptensCandidatePreview);
 	}
 
 	public TopTenList getTopten(long toptenId) {
 		return dao.getTopTenList(toptenId);
-	}
-
-	public TopTenList createTopTenList(String name, String title) {
-		return dao.createTopTenList(name, title);
 	}
 
 	public TopTenCandidate createTopTenCandidate(String name, long topTenId, String title) {
@@ -167,5 +168,21 @@ public class InteractiveService {
 
 	public long getBusinessTopTenListId(long groupId) {
 		return dao.getBusinessTopTenListId(groupId);
+	}
+
+	public void saveTopTenList(String name, TopTenList list) {
+		dao.saveTopTenList(name, list);
+	}
+
+	public void attachImageToCandidate(String name, long candidateId,	Imgur imgur) {
+		dao.attachImageToCandidate(name, candidateId, imgur);
+	}
+
+	public Imgur addDescriptionToCandidate(long candidateId, String description) {
+		return dao.addDescriptionToCandidate(candidateId, description);
+	}
+
+	public String addDescriptionToList(long listId, String description) {
+		return dao.addDescriptionToList(listId, description);
 	}
 }

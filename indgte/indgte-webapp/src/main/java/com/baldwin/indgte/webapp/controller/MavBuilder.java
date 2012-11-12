@@ -1,11 +1,13 @@
 package com.baldwin.indgte.webapp.controller;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.jsoup.Jsoup;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 
 public class MavBuilder {
 	ModelAndView mav;
@@ -64,6 +66,13 @@ public class MavBuilder {
 		if(loadhere != null && Boolean.parseBoolean(loadhere)) return true;
 		if(dialog != null && Boolean.parseBoolean(dialog)) return true;
 		return false;
+	}
+	
+	/**
+	 * For descriptions
+	 */
+	public static String basicWithImages(String dirty) {
+		return Jsoup.clean(dirty.replaceAll("(\r\n|\n\r|\r|\n)", "<br>"), DgteTagWhitelist.basicWithImages());
 	}
 	
 	/**

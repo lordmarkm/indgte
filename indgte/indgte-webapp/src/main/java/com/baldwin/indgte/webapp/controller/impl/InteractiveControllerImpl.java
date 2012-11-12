@@ -1,8 +1,6 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
-import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
-import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.*;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.WishType;
@@ -29,18 +28,21 @@ import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
+import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.Review;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.InteractiveService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.pers‪istence.dao.InteractiveDao;
 import com.baldwin.indgte.webapp.controller.InteractiveController;
 import com.baldwin.indgte.webapp.controller.JSON;
+import com.baldwin.indgte.webapp.dto.TopTenForm;
 import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 import com.baldwin.indgte.webapp.misc.URLScraper;
 
@@ -48,19 +50,19 @@ import com.baldwin.indgte.webapp.misc.URLScraper;
 public class InteractiveControllerImpl implements InteractiveController {
 
 	static Logger log = LoggerFactory.getLogger(InteractiveControllerImpl.class);
-	
+
 	@Autowired
 	private InteractiveService interact;
-	
+
 	@Autowired 
 	private UserService users;
-	
+
 	@Autowired
 	private BusinessService businesses;
-	
+
 	@Autowired
 	private InteractiveDao postDao;
-	
+
 	@Override
 	public @ResponseBody JSON subposts(Principal principal, @RequestParam int start, @RequestParam int howmany) {
 		try {
@@ -70,7 +72,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
-	
+
 	@Override
 	public @ResponseBody JSON lastPosts(long posterId, PostType type, int start, int howmany) {
 		return JSON.ok().put("posts", postDao.getById(posterId, type, start, howmany));
@@ -81,9 +83,9 @@ public class InteractiveControllerImpl implements InteractiveController {
 		log.debug("Poster id: [{}]", request.getParameter("posterId"));
 		log.debug("Poster type: [{}]", request.getParameter("posterType"));
 		log.debug("Text: [{}]", request.getParameter("text"));
-		
+
 		log.debug("Attachment? {}", request.getParameter("attachmentType"));
-		
+
 		Summary poster;
 		PostType postType = PostType.valueOf(request.getParameter("posterType"));
 		switch(postType) {
@@ -98,7 +100,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 		default:
 			throw new IllegalArgumentException("Illegal post type " + postType);
 		}
-		
+
 		Summary attachment;
 		SummaryType attachmentType = SummaryType.valueOf(request.getParameter("attachmentType"));
 		switch(attachmentType) {
@@ -127,32 +129,32 @@ public class InteractiveControllerImpl implements InteractiveController {
 		default:
 			throw new IllegalArgumentException("Illegal attachment type " + attachmentType);
 		}
-		
+
 		Post post = new Post(poster, attachment);
-		
+
 		String title = clean(request.getParameter("title"));
 		String text = clean(request.getParameter("text"));
-		
+
 		post.setType(postType);
 		post.setPostTime(new Date());
 		post.setTitle(title);
 		post.setText(text);
-		
+
 		interact.saveOrUpdate(post);
 		log.debug("Post: {} text: {}", post);
-		
+
 		return JSON.ok().put("post", post);
 	}
-	
+
 	@Override
 	public @ResponseBody JSON linkpreview(@RequestParam String uri) throws IOException {
 		log.debug("Trying to create preview for {}", uri);
-		
+
 		URLScraper scraper = new URLScraper(uri);
 		scraper.getMetadata();
 		return JSON.ok();
 	}
-	
+
 	@Override
 	public @ResponseBody JSON post(long posterId, PostType type, String title, String text) {
 		title = clean(title);
@@ -200,7 +202,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 				review = interact.getUserReview(principal.getName(), targetId);
 				break;
 			}
-			
+
 			if(null != review) {
 				return JSON.ok().put("review", review);
 			} else {
@@ -211,7 +213,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
-	
+
 	@Override
 	public @ResponseBody JSON review(Principal principal, @PathVariable ReviewType type, 
 			@PathVariable long targetId,	@RequestParam int score, @RequestParam String justification) {
@@ -237,11 +239,11 @@ public class InteractiveControllerImpl implements InteractiveController {
 		try {
 			Collection<? extends Review> reviews = interact.getReviews(targetId, type);
 			Object[] reviewStats = interact.getReviewStats(targetId, type);
-			
+
 			if(log.isDebugEnabled()) {
 				log.debug("Found {} reviews. Review stats: {}", reviews.size(), Arrays.asList(reviewStats));
 			}
-			
+
 			return JSON.ok()
 					.put("reviews", reviews)
 					.put("reviewCount", reviewStats[0])
@@ -261,7 +263,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
-	
+
 	@Override
 	public @ResponseBody JSON noReview(Principal principal, @PathVariable long businessId) {
 		try {
@@ -271,7 +273,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
-	
+
 	@Override
 	public @ResponseBody JSON neverReview(Principal principal, @PathVariable long businessId) {
 		try {
@@ -281,18 +283,19 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
-	
+
 	@Override
 	public ModelAndView toptens(Principal principal) {
 		User user = users.getFacebook(principal.getName());
 		Collection<TopTenList> recentLists = interact.getRecentToptens(0, 5);
 		Collection<TopTenList> popularLists = interact.getPopularToptens(0, 5);
 		Collection<TopTenList> userLists = interact.getUserToptens(principal.getName());
-		
+
 		return render(user, "toptenlists")
 				.put("recentLists", recentLists)
 				.put("popularLists", popularLists)
 				.put("userLists", userLists)
+				.put("form", new TopTenForm())
 				.mav();
 	}
 
@@ -301,7 +304,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 		try{
 			Collection<TopTenList> recentLists = interact.getRecentToptens(0, 3);
 			Collection<TopTenList> popularLists = interact.getPopularToptens(0, 3);
-			
+
 			return JSON.ok()
 					.put("recent", recentLists)
 					.put("popular", popularLists);
@@ -310,17 +313,26 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
-	
+
 	@Override
 	public ModelAndView topten(Principal principal, @PathVariable long toptenId) {
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName(), Initializable.toptenvotes);
 		TopTenList topten = interact.getTopten(toptenId);
+		TopTenCandidate userVoted = null;
 		
-		return render(user, "toptenlist")
+		for(TopTenCandidate candidate : topten.getCandidates()) {
+			if(user.getVotes().contains(candidate)) {
+				userVoted = candidate;
+				break;
+			}
+		}
+		
+		return render(user.getUser(), "toptenlist")
 				.put("topten", topten)
+				.put("userVoted", userVoted == null ? 0 : userVoted.getId())
 				.mav();
 	}
-	
+
 	@Override
 	public ModelAndView toptenBusiness(Principal principal, @PathVariable long groupId) {
 		long toptenId = interact.getBusinessTopTenListId(groupId);
@@ -328,14 +340,13 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 
 	@Override
-	public @ResponseBody JSON newTopTenList(Principal principal, @RequestParam String title) {
-		try {
-			TopTenList topten = interact.createTopTenList(principal.getName(), Jsoup.clean(title, DgteTagWhitelist.none()));
-			return JSON.ok().put("topten", topten);
-		} catch (Exception e) {
-			log.error("Exception creating list", e);
-			return JSON.status500(e);
-		}
+	public ModelAndView newTopTenList(Principal principal, TopTenForm form) {
+		//TopTenList topten = interact.createTopTenList(principal.getName(), Jsoup.clean(title, DgteTagWhitelist.none()));
+
+		TopTenList topten = form.getList();
+		interact.saveTopTenList(principal.getName(), topten);
+
+		return redirect("/i/toptens/" + topten.getId()).mav();
 	}
 
 	@Override
@@ -352,7 +363,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
-	
+
 	@Override
 	public @ResponseBody JSON vote(Principal principal, @PathVariable long topTenId, @PathVariable long candidateId) {
 		log.debug("User {} voting for candidate with id {}", principal.getName(), candidateId);
@@ -365,6 +376,37 @@ public class InteractiveControllerImpl implements InteractiveController {
 		}
 	}
 
+	@Override
+	public @ResponseBody JSON attachImageToCandidate(Principal principal, @PathVariable long candidateId, Imgur imgur) {
+		try {
+			interact.attachImageToCandidate(principal.getName(), candidateId, imgur);
+			return JSON.ok();
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON addDescriptionToCandidate(Principal principal, @PathVariable long candidateId, @RequestParam("description") String description) {
+		try {
+			description = basicWithImages(description);
+			return JSON.ok().put("imgur", interact.addDescriptionToCandidate(candidateId, description));
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON addDescriptionToList(Principal principal, @PathVariable long listId, @RequestParam("description") String description) {
+		log.debug("Adding description {} to list with id {}", description, listId);
+		try {
+			description = basicWithImages(description);
+			return JSON.ok().put("description", interact.addDescriptionToList(listId, description));
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+	
 	@Override
 	public @ResponseBody JSON addToWishlist(Principal principal, @PathVariable WishType type, @PathVariable long id) {
 		try {
