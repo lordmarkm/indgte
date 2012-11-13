@@ -483,8 +483,9 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		user.getVotes().add(candidate);
 	}
 
-	private void initializeAttachment(TopTenCandidate candidate) {
-		if(null == candidate.getAttachmentType()) {
+	@Override
+	public void initializeAttachment(TopTenCandidate candidate) {
+		if(null == candidate || null == candidate.getAttachmentType()) {
 			return;
 		}
 		
@@ -644,5 +645,40 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		TopTenList list = (TopTenList) sessions.getCurrentSession().get(TopTenList.class, listId);
 		list.setDescription(description);
 		return description;
+	}
+
+	/**
+	 * Optional operation, if entity already exists in TopTen list, candidate set remains unchanged.
+	 * <p>See {@link Set#add(Object)}
+	 */
+	@Override
+	public void addEntityToList(String name, long listId, AttachmentType type,	long attachmentId) {
+		log.debug("Attaching candidate of type {} with id {} to list with id {}, requested by {}",
+				type, attachmentId, listId, name);
+		
+		UserExtension creator = users.getExtended(name);
+		TopTenList list = (TopTenList) sessions.getCurrentSession().get(TopTenList.class, listId);
+		TopTenCandidate candidate = new TopTenCandidate();
+		candidate.setList(list);
+		candidate.setAttachmentType(type);
+		candidate.setAttachmentId(attachmentId);
+		candidate.setCreator(creator);
+		
+		boolean fresh = list.getCandidates().add(candidate);
+		if(fresh) {
+			log.debug("New entity added to topten list");
+		} else {
+			log.debug("Entity already existed in list. No action taken.");
+		}
+		
+		sessions.getCurrentSession().save(candidate);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection<TopTenList> getAllLists() {
+		return sessions.getCurrentSession().createCriteria(TopTenList.class)
+					.addOrder(Order.asc(TableConstants.TOPTEN_TITLE))
+					.list();
 	}
 }

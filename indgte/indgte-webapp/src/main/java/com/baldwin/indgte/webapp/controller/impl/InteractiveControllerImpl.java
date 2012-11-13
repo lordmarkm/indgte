@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
@@ -287,14 +288,15 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public ModelAndView toptens(Principal principal) {
 		User user = users.getFacebook(principal.getName());
-		Collection<TopTenList> recentLists = interact.getRecentToptens(0, 5);
-		Collection<TopTenList> popularLists = interact.getPopularToptens(0, 5);
-		Collection<TopTenList> userLists = interact.getUserToptens(principal.getName());
-
+		Collection<TopTenList> recentLists = interact.getRecentToptens(0, 8);
+		Collection<TopTenList> popularLists = interact.getPopularToptens(0, 8);
+		//Collection<TopTenList> userLists = interact.getUserToptens(principal.getName());
+		Collection<TopTenList> allLists = interact.getAllLists();
+		
 		return render(user, "toptenlists")
 				.put("recentLists", recentLists)
 				.put("popularLists", popularLists)
-				.put("userLists", userLists)
+				.put("allLists", allLists)
 				.put("form", new TopTenForm())
 				.mav();
 	}
@@ -320,11 +322,32 @@ public class InteractiveControllerImpl implements InteractiveController {
 		TopTenList topten = interact.getTopten(toptenId);
 		TopTenCandidate userVoted = null;
 		
-		for(TopTenCandidate candidate : topten.getCandidates()) {
-			if(user.getVotes().contains(candidate)) {
-				userVoted = candidate;
+		if(log.isDebugEnabled()) {
+			StringBuilder candidateIds = new StringBuilder();
+			for(TopTenCandidate candidate : topten.getCandidates()) {
+				candidateIds.append(candidate.getId() + ",");
+			}
+		
+			StringBuilder votedIds = new StringBuilder();
+			for(TopTenCandidate candidate : user.getVotes()) {
+				votedIds.append(candidate.getId() + ",");
+			}
+			
+			log.debug("List candidate ids: {}", candidateIds);
+			log.debug("User voted ids: {}", votedIds);
+		}
+
+		for(TopTenCandidate voted : user.getVotes()) {
+			if(voted.getList().getId() == toptenId) {
+				userVoted = voted;
 				break;
 			}
+		}
+		
+		if(null != userVoted) {
+			log.debug("User has voted for candidate with id {}", userVoted.getId());
+		} else {
+			log.debug("User has Not voted for a candidate in this list.");
 		}
 		
 		return render(user.getUser(), "toptenlist")
@@ -405,6 +428,12 @@ public class InteractiveControllerImpl implements InteractiveController {
 		} catch (Exception e) {
 			return JSON.status500(e);
 		}
+	}
+	
+	@Override
+	public ModelAndView attachCandidate(Principal principal, @PathVariable long listId, @PathVariable AttachmentType type, @PathVariable long attachmentId) {
+		interact.addEntityToList(principal.getName(), listId, type, attachmentId);
+		return redirect("/i/toptens/" + listId).mav();
 	}
 	
 	@Override

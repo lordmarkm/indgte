@@ -67,6 +67,7 @@ window.useful = {
 		debug('desclength: ' + descLength);
 		$container.addClass('summary-container')
 			.attr('attachmentId', summary.id)
+			.attr('attachmentTitle', summary.title)
 			.attr('attachmentType', summary.type);
 		
 		//img

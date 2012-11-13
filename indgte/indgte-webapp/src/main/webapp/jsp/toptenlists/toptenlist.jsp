@@ -4,7 +4,10 @@
 <%@include file="../tiles/links.jsp" %>
 
 <title>Top Ten Lists In Dumaguete</title>
+<link rel="stylesheet" href="<spring:url value='/resources/css/topten/toptenlist.css' />" />
 <script type="text/javascript" src="${jsApplication }"></script>
+<link rel="stylesheet" href="<spring:url value='/resources/css/autocomplete.css' />" />
+<script type="text/javascript" src="${jsAutocomplete }"></script>
 
 <div class="grid_8">
 
@@ -26,14 +29,17 @@
 <section class="candidates">
 	<ul>
 		<c:forEach items="${topten.ordered }" var="candidate" varStatus="index">
-		<c:if test="${index.index <= 9 }">
-		<li class="candidate-container" candidateId="${candidate.id }">
+		<li class="candidate-container<c:if test="${index.index >= 10  }"> honorable-mention</c:if>" candidateId="${candidate.id }">
 			<div class="rank ui-widget-header ui-corner-all">${index.index + 1}</div>
 			<c:if test="${not empty candidate.attachment }">
 				<div class="candidate-title">${candidate.attachment.name }</div>
 				<div class="link-vote" candidateId="${candidate.id }"></div>
+				<c:if test="${index.index <= 9  }">
 				<div class="clear"></div>
-				<img class="candidate-img" src="${candidate.attachment.imgur.largeThumbnail }" />
+				<div class="centercontent">
+					<img class="candidate-img" src="${candidate.attachment.imgur.largeThumbnail }" />
+				</div>
+				</c:if>
 				<div class="candidate-description embedded-images-200">${candidate.attachment.description }</div>
 			</c:if>
 			<c:if test="${empty candidate.attachment}">
@@ -71,26 +77,24 @@
 				</div>
 			</c:if>
 		</li>
-		</c:if>
 		</c:forEach>
 	</ul>
 </section>
 
-<section class="list-details-foot">
-	<div class="list-totalVotes">${topten.totalVotes } Total votes</div>
-	<div class="list-creator">
-		<div class="list-creator-img"><img src="${topten.creator.imageUrl }" /></div>
-		<div class="list-creator-name">${topten.creator.username }</div>
-	</div>
+<section class="list-details-foot ui-state-highlight">
+	<h1 class="list-title">${topten.title }</h1>
+	<div>Created by <img class="tiny" src="${topten.creator.imageUrl }" /> ${topten.creator.username } on <span class="timeme">${topten.time.time }</span>, ${topten.totalVotes } total votes</div>
+	<p><a href="${urlToptenList }">Back to lists</a>
 </section>
 
-<section class="newcandidate">
-Add a new option
+<section class="newcandidate ui-state-highlight">
+	<h1>Add a new option</h1>
 	<div class="newcandidate-form-container">
 		<form id="newcandidate-form">
-			List title: <input type="text" class="newcandidate-title" />
-			<input type="submit" />
+			Add option: <input type="text" class="newcandidate-title" />
+			<button>Add option</button>
 		</form>
+		<div class="newcandidate-autocomplete-results ui-state-active" style="display: none;"></div>
 	</div>
 </section>
 
@@ -110,85 +114,6 @@ Add a new option
 <link rel="stylesheet" href="<spring:url value='/resources/css/grids/imageupload.css' />" />
 <script src="<spring:url value='/resources/javascript/grids/imageupload.js' />"></script>
 
-<style>
-.list-title {
-	text-transform: capitalize;
-	font-size: 2em;
-}
-.list-message {
-	margin: 10px 0 0 0;
-}
-.candidates ul {
-	list-style-type: none;
-}
-.candidates li {
-	margin: 0 0 15px 0;
-	padding: 10px;
-	position: relative;
-}
-.candidates li:not(.ui-state-active) {
-	border-bottom: 1px solid #e9e9e9;
-}
-.candidates li.ui-state-active {
-	background-image: none;
-	background-color: white;
-}
-.candidates li.ui-state-active a {
-	text-decoration: underline;
-	margin: 0 3px;
-}
-.rank.ui-widget-header {
-	font-size: 1.4em;
-	width: 20px;
-	height: 20px;
-	display: inline-block;
-	padding: 10px;
-	text-align: center;
-}
-.candidate-title {
-	display: inline-block;
-	font-size: 1.4em;
-	font-weight: bold;
-	text-transform: capitalize;
-}
-.link-vote {
-	position: absolute;
-	right: 10px;
-	top: 10px;
-	height: 53px;
-	width: 40px;
-	cursor: pointer;
-	background-image: url("<spring:url value='/resources/images/icons/vote-icon.jpg' />");
-}
-.link-vote:hover {
-	background-position: 40px 0;
-}
-.candidate-img {
-	margin: 10px;
-	max-height: 300px;
-	max-width: 90%;
-    /*max-width: 400px; allow panoramic pics */
-}
-.candidate-description {
-	margin-left: 10px;
-}
-
-.candidate-votes {
-	font-weight: bolder;
-	font-size: 1.1em;
-	margin: 5px;
-}
-	
-.candidate-newdescription {
-	overflow: hidden;
-	resize: none;
-}
-
-.candidate-footer {
-	margin-left: 10px;
-}
-</style>
-
 <script>
 window.urls = {
 	toptens : '<spring:url value="/i/toptens/" />',
@@ -206,6 +131,17 @@ window.topten = {
 }
 
 $(function(){
+	//insert list-details-footer after 10th item and add 'The Also-rans' (or equivalent) before 11th item
+	var $sctFooterDetails = $('.list-details-foot'),
+		$sctNewcandidate = $('section.newcandidate');
+	
+	$sctFooterDetails.insertAfter('li.candidate-container:nth-child(10)');
+	$sctNewcandidate.insertAfter($sctFooterDetails);
+	if($('.candidate-container').length > 10) {
+		$('<h1>').css('font-size', '2em').text('The Also-rans').insertAfter($sctNewcandidate);
+	}
+	
+	//add new candidate
 	var $newcandidateform = $('#newcandidate-form'),
 		$iptNewcandidateTitle = $('.newcandidate-title'),
 		$upload = $('#image-upload'),
@@ -282,6 +218,49 @@ $(function(){
 			}
 		});
 	});
+	
+	//attach entity
+	var $iptNewcandidate = $('.newcandidate-title'),
+		$autocompleteResults = $('.newcandidate-autocomplete-results');
+	
+	$(document).on({
+		keyup: function(){
+			startTimeout(this);
+		},
+		paste: function(){
+			startTimeout(this);
+		},
+		focus: function(){
+			startTimeout(this);
+		}
+	}, '.newcandidate-title');
+	
+	var searchtimeout;
+	function startTimeout(input) {
+		if(searchtimeout) {
+			clearTimeout(searchtimeout);
+		}
+		searchtimeout = setTimeout(function(){
+			debug('wat');
+			useful.autocomplete({
+				parent				: $(input),
+				minlength			: 4,
+				url					: '<spring:url value="/s/" />',
+				resultsContainer	: $autocompleteResults,
+				descLength			: 80,
+				onClick				: function(){
+						var $this = $(this);
+						
+						if(!confirm('Add ' + $this.attr('attachmentTitle') + ' to this top ten list?')) {
+							return;
+						}
+						
+						window.location.href = '<spring:url value="/i/toptens/attachcandidate/${topten.id}/" />' + 
+							$this.attr('attachmentType') + '/' + $this.attr('attachmentId');
+					}
+			});
+		}, 500);
+	}
 	
 	//attach image
 	var $activeLi, 
@@ -419,6 +398,11 @@ $(function(){
 		if(linecount < 4) linecount = 4;
 		box.attr('rows', linecount);
 	}
+	
+	//time
+	var $t = $('.timeme');
+	var f = moment(new Date(parseInt($t.html()))).format('MMM Do YYYY');
+	$t.html(f);
 });
 </script>
 

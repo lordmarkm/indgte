@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.WishType;
@@ -82,4 +83,11 @@ public interface InteractiveDao {
 	public Imgur addDescriptionToCandidate(long candidateId, String description);
 
 	public String addDescriptionToList(long listId, String description);
+
+	public void addEntityToList(String name, long listId, AttachmentType type,	long attachmentId);
+
+	public void initializeAttachment(TopTenCandidate candidate);
+
+	public Collection<TopTenList> getAllLists();
+
 }

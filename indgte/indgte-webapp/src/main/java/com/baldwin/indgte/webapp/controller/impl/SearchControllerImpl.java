@@ -147,4 +147,14 @@ public class SearchControllerImpl implements SearchController {
 		search.getListableGroups();
 		return JSON.ok();
 	}
+
+	@Override
+	public @ResponseBody JSON searchTopTens(Principal principal, @PathVariable String term, @PathVariable int start, @PathVariable int howmany) {
+		try {
+			return JSON.ok().put("lists", search.searchTopTenLists(term, start, howmany));
+		} catch (Exception e) {
+			log.error("Exception while searching toptens", e);
+			return JSON.status500(e);
+		}
+	}
 }

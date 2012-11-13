@@ -2,6 +2,7 @@ package com.baldwin.indgte.persistence.service;
 
 import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.pers‪istence.dao.SearchDao;
 
@@ -87,5 +89,9 @@ public class SearchService {
 	@Deprecated
 	public List<Object[]> getListableGroups() {
 		return null;
+	}
+
+	public Collection<TopTenList> searchTopTenLists(String term, int start, int howmany) {
+		return dao.searchTopTenLists(term, start, howmany);
 	}
 }

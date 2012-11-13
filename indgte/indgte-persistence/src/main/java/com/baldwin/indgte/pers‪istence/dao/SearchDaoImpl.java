@@ -2,6 +2,7 @@ package com.baldwin.indgte.pers‪istence.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -30,6 +31,7 @@ import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
 
 @Repository
@@ -40,6 +42,9 @@ public class SearchDaoImpl implements SearchDao {
 	
 	@Autowired
 	private SessionFactory sessions;
+	
+	@Autowired
+	private InteractiveDao interact;
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -59,6 +64,9 @@ public class SearchDaoImpl implements SearchDao {
 		}
 		for(User user : (List<User>)session.createQuery("from User").list()) {
 			ftSession.index(user);
+		}
+		for(TopTenList list : (List<TopTenList>)session.createQuery("from TopTenList").list()) {
+			ftSession.index(list);
 		}
 	}
 
@@ -205,5 +213,44 @@ public class SearchDaoImpl implements SearchDao {
 		}
 		
 		return businesses;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection<TopTenList> searchTopTenLists(String term, int start, int howmany) {
+		log.debug("Searching for [{}] in class TopTenLists", term);
+		log.debug("Starting with {}, Limiting results to {}", start, howmany == -1 ? "No limit" : howmany);
+		
+		Session session = sessions.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		
+		QueryBuilder q = ftSession.getSearchFactory().buildQueryBuilder().forEntity(TopTenList.class).get();
+		org.apache.lucene.search.Query lQuery;
+		try {
+			lQuery = q.keyword()
+					.fuzzy().withThreshold(0.5f).withPrefixLength(1)
+					.onFields(TableConstants.TOPTEN_TITLE, TableConstants.TOPTEN_DESCRIPTION)
+					.matching(term).createQuery();
+		} catch (Exception e) {
+			log.error("Error creating query", e);
+			e.printStackTrace();
+			return null;
+		} 
+
+		Query query = ftSession.createFullTextQuery(lQuery, TopTenList.class);
+		if(start != -1) {
+			query.setFirstResult(start);
+		}
+		if(howmany != -1) {
+			query.setMaxResults(howmany);
+		}
+		
+		Collection<TopTenList> results = query.list();
+		for(TopTenList list : results) {
+			interact.initializeAttachment(list.getLeader());
+		}
+		
+		log.debug("Returning {} results", results.size());
+		return results;
 	}
 }

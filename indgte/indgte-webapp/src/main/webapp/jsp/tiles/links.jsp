@@ -28,6 +28,9 @@
 
 <spring:url var="urlTrade" value="/t/" />
 
+<spring:url var="jsEasyPaginate" value="/resources/easypaginate/easypaginate.js" />
+<spring:url var="cssEasyPaginate" value="/resources/easypaginate/easypaginate.css" />
+
 <spring:url var="jsApplication" value="/resources/javascript/application.js" />
 <spring:url var="jsTopTens" value="/resources/javascript/grids/toptens.js" />
 <spring:url var="jsReviewQueue" value="/resources/javascript/grids/reviewqueue.js" />

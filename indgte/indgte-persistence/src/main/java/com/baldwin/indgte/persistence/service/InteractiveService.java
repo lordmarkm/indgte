@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.WishType;
@@ -184,5 +185,13 @@ public class InteractiveService {
 
 	public String addDescriptionToList(long listId, String description) {
 		return dao.addDescriptionToList(listId, description);
+	}
+
+	public void addEntityToList(String name, long listId, AttachmentType type,	long attachmentId) {
+		dao.addEntityToList(name, listId, type, attachmentId);
+	}
+
+	public Collection<TopTenList> getAllLists() {
+		return dao.getAllLists();
 	}
 }

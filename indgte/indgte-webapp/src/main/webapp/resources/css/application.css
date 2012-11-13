@@ -62,6 +62,7 @@ body {
 .sidebar-section-header {
 	padding-left: 5px;	
 	font-weight: bolder;
+	margin: 0 0 5px 0;
 }
 .sidebar-divider {
 	border-bottom: 1px solid #E9E9E9;

@@ -29,6 +29,8 @@ public class TableConstants {
 	public static final String TOPTEN_TOTALVOTES = "totalVotes";
 	public static final String TOPTEN_CREATOR = "creator";
 	public static final String TOPTEN_CANDIDATE_ID = "id";
+	public static final String TOPTEN_TITLE = "title";
+	public static final String TOPTEN_DESCRIPTION = "description";
 	
 	public static final String BUYANDSELL_VIEWS = "views";
 	public static final String BUYANDSELL_TIME = "time";

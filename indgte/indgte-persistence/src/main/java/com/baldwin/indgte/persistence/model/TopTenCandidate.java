@@ -90,7 +90,7 @@ public class TopTenCandidate implements Comparable<TopTenCandidate> {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(id + ": ");
 		if(null != attachment) {
 			sb.append(attachment.getName());
 		} else {
@@ -183,15 +183,15 @@ public class TopTenCandidate implements Comparable<TopTenCandidate> {
 	public void setAttachment(Attachable attachment) {
 		this.attachment = attachment;
 	}
+	
+	public Summary getAttachmentSummary() {
+		return null == attachment ? null : attachment.summarize();
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((attachmentId == null) ? 0 : attachmentId.hashCode());
-		result = prime * result
-				+ ((attachmentType == null) ? 0 : attachmentType.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		return result;
 	}
@@ -205,39 +205,8 @@ public class TopTenCandidate implements Comparable<TopTenCandidate> {
 		if (getClass() != obj.getClass())
 			return false;
 		TopTenCandidate other = (TopTenCandidate) obj;
-
-		//added this, different Candidate.id, same attachment returns true. Prevent double adding of entity to 
-		//same topten list
-		if(this.attachmentType != none) {
-			if(this.attachmentId == other.attachmentId && this.attachmentType == other.attachmentType) {
-				log.debug("Same attachment. Equal.");
-				return true;
-			}
-		}
-		
-		if (attachmentId == null) {
-			if (other.attachmentId != null)
-				return false;
-		} else if (!attachmentId.equals(other.attachmentId))
-			return false;
-		if (attachmentType != other.attachmentType)
-			return false;
 		if (id != other.id)
 			return false;
-		
-		if(title != null) {
-			if(other.title == null) return false;
-			if(!title.equals(other.title)) return false;
-		} else {
-			if(other.title != null) return false;
-		}
-		
-		log.debug("All inequality tests passed. Equal.");
-		
 		return true;
-	}
-	
-	public Summary getAttachmentSummary() {
-		return null == attachment ? null : attachment.summarize();
 	}
 }

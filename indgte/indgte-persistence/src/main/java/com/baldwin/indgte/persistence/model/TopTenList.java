@@ -23,9 +23,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Boost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Indexed
 @Entity
 @Table(name="toptenlists")
 public class TopTenList {
@@ -43,9 +47,11 @@ public class TopTenList {
 	@Column
 	private Date time;
 	
+	@Field(boost=@Boost(value=2f))
 	@Column
 	private String title;
 	
+	@Field
 	@Column
 	@Lob @Basic(fetch=FetchType.EAGER)
 	private String description;

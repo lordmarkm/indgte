@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.WishType;
@@ -131,6 +132,9 @@ public interface InteractiveController {
 	
 	@RequestMapping(value = "/toptens/listdescription/{listId}.json", method = RequestMethod.POST)
 	public JSON addDescriptionToList(Principal principal, long listId, String description);
+	
+	@RequestMapping(value = "/toptens/attachcandidate/{listId}/{type}/{attachmentId}", method = RequestMethod.GET)
+	public ModelAndView attachCandidate(Principal principal, long listId, AttachmentType type, long attachmentId);
 	
 	/*
 	 * Wishlists

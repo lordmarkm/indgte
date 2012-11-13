@@ -2,10 +2,18 @@
 	padding: 5px;
 }
 
-.toptens ul {
+.toptens ul, .toptens-search-results {
 	list-style-type: none;
 	padding: 0;
 	margin: 5px 0 5px 0;
+}
+
+.toptens-search-results {
+	padding-left: 10px;
+}
+
+.toptens-search-more {
+	font-size: 0.8em;
 }
 
 .topten {
@@ -18,4 +26,8 @@
 	width: 35px;
 	height: 35px;
 	margin: 0 5px 0 0;
+}
+
+dd.saved:not(.ui-state-highlight) {
+	border: 1px solid transparent;
 }

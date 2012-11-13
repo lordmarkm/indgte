@@ -43,4 +43,10 @@ public interface SearchController {
 	 */
 	@RequestMapping(value = "/listablegroups.json")
 	public JSON getListableGroups();
+	
+	/**
+	 * Toptens search
+	 */
+	@RequestMapping(value = "/toptens/{term}/{start}/{howmany}.json", method = RequestMethod.GET)
+	public JSON searchTopTens(Principal principal, String term, int start, int howmany);
 }

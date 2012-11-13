@@ -1,0 +1,6 @@
+.summary-container {
+	cursor: pointer;
+}
+.summary-container:hover {
+	border: 1px dashed lightskyblue;
+}

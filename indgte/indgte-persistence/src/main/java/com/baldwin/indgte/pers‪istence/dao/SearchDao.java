@@ -1,5 +1,6 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.util.MultiValueMap;
@@ -8,6 +9,7 @@ import com.baldwin.indgte.persistence.dto.Summarizable;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.YellowPagesEntry;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
+import com.baldwin.indgte.persistence.model.TopTenList;
 
 public interface SearchDao {
 	void reindex();
@@ -32,4 +34,6 @@ public interface SearchDao {
 	BusinessGroup getBusinessGroup(long groupId);
 
 	MultiValueMap<String, Number> getListableGroups();
+
+	Collection<TopTenList> searchTopTenLists(String term, int start, int howmany);
 }
