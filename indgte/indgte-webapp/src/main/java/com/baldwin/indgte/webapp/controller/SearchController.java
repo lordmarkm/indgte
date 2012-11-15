@@ -49,4 +49,10 @@ public interface SearchController {
 	 */
 	@RequestMapping(value = "/toptens/{term}/{start}/{howmany}.json", method = RequestMethod.GET)
 	public JSON searchTopTens(Principal principal, String term, int start, int howmany);
+	
+	/**
+	 * Tagcloud
+	 */
+	@RequestMapping(value = "/tags.json")
+	public JSON getTags(Principal principal);
 }

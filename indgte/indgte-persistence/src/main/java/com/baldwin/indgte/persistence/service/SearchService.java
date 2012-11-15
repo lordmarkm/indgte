@@ -1,6 +1,9 @@
 package com.baldwin.indgte.persistence.service;
 
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.*;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.business;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.category;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.product;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.user;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,6 +24,7 @@ import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.pers‪istence.dao.SearchDao;
@@ -93,5 +97,9 @@ public class SearchService {
 
 	public Collection<TopTenList> searchTopTenLists(String term, int start, int howmany) {
 		return dao.searchTopTenLists(term, start, howmany);
+	}
+
+	public Collection<Tag> getTags(Tag.SortColumn sortColumn, int howmany) {
+		return dao.getTags(sortColumn, howmany);
 	}
 }

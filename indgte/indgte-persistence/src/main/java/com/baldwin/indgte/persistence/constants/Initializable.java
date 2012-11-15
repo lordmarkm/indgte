@@ -4,5 +4,6 @@ public enum Initializable {
 	wishlist,
 	reviewqueue,
 	reviewsreceived, 
-	toptenvotes
+	toptenvotes,
+	watchedtags
 }

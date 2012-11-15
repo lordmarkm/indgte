@@ -38,4 +38,14 @@ public interface TradeController {
 	
 	@RequestMapping(value = "/sidebar.json", method = RequestMethod.GET)
 	public JSON getSidebarContent(User user);
+	
+	/* Tags */
+	@RequestMapping(value = "/tags/{tag}")
+	public ModelAndView tags(Principal principal, String tag);
+	
+	@RequestMapping(value = "/tags/{tag}/{start}/{howmany}.json")
+	public JSON getTagItems(Principal principal, String tag, int start, int howmany);
+	
+	@RequestMapping(value = "/watchedtags.json")
+	public JSON getAllWatchedTagItems(Principal principal);
 }

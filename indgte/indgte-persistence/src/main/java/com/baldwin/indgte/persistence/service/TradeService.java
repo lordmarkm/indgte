@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
+import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.pers‪istence.dao.TableConstants;
 import com.baldwin.indgte.pers‪istence.dao.TradeDao;
@@ -49,5 +50,17 @@ public class TradeService {
 	
 	public double getBidIncrement() {
 		return bidIncrement;
+	}
+
+	public Collection<BuyAndSellItem> getItemsWithTag(String tag, int start, int howmany) {
+		return dao.getItemsWithTag(tag, start, howmany);
+	}
+
+	public Tag getTag(String tag) {
+		return dao.getTag(tag, false);
+	}
+
+	public Collection<BuyAndSellItem> getWatchedTagItems(String name, int start, int howmany) {
+		return dao.getWatchedTagItems(name, start, howmany);
 	}
 }

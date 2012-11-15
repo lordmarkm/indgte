@@ -8,9 +8,96 @@
 <script type="text/javascript" src="${jsApplication }"></script>
 <script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 
-<div class="grid_12">
+<div class="grid_8">
 
-<section class="newitem">
+<section class="owned">
+</section>
+
+<section class="popular">
+	Popular
+	<ul>
+		<c:forEach items="${popular }" var="item" varStatus="index">
+		<li class="trade-item">
+			<a href="${urlTrade }${item.id }"><img class="trade-img thumbnail" src="${item.imgur.smallSquare }" /></a>
+			<ul class="trade-item-details">
+				<li>
+					<strong><a href="${urlTrade}${item.id}">${item.name }
+					<c:if test="${item.buyAndSellMode eq 'auction' }">(Auction)</c:if>
+					<c:if test="${item.buyAndSellMode eq 'trade' }">(Trade)</c:if>
+					</a></strong>
+				</li>
+			
+				<!-- bidding -->
+				<c:if test="${item.buyAndSellMode eq 'auction' }">
+				<li>Winning: ${item.start }</li>
+				<li>Buyout: ${item.buyout }</li>
+				<li>Ends: <span class="time">${item.biddingEnds.time }</span></li>
+				</c:if>
+			
+				<!-- trade -->
+				<c:if test="${item.buyAndSellMode eq 'trade' }">
+				<li>trade for: ${item.tradefor }</li>
+				</c:if>
+			
+				<!-- fixed -->
+				<c:if test="${item.buyAndSellMode eq 'fixed' }">
+				<li>&#8369; ${item.price } <c:if test="${item.negotiable }">(negotiable)</c:if></li>
+				</c:if>
+				
+				<li class="subtitle">Posted <span class="time">${item.time.time }</span> by <a href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>
+				<li class="subtitle">${item.views } views</li>
+			</ul>
+		</li>
+		<c:if test="${(index.index+1)%3 == 0 && index.index != 0}"><div class="clear"></div></c:if>
+		</c:forEach>
+	</ul>
+</section>
+
+<div style="clear: both;">&nbsp;</div>
+
+<section class="recent">
+	Recent
+	<ul>
+		<c:forEach items="${recent }" var="item" varStatus="index">
+		<li class="trade-item">
+			<a href="${urlTrade }${item.id }"><img class="trade-img thumbnail" src="${item.imgur.smallSquare }" /></a>
+			<ul class="trade-item-details">
+				<li>
+					<strong><a href="${urlTrade}${item.id}">${item.name }
+					<c:if test="${item.buyAndSellMode eq 'auction' }">(Auction)</c:if>
+					<c:if test="${item.buyAndSellMode eq 'trade' }">(Trade)</c:if>
+					</a></strong>
+				</li>
+			
+				<!-- bidding -->
+				<c:if test="${item.buyAndSellMode eq 'auction' }">
+				<li>Winning: ${item.start }</li>
+				<li>Buyout: ${item.buyout }</li>
+				<li>Ends: <span class="time">${item.biddingEnds.time }</span></li>
+				</c:if>
+			
+				<!-- trade -->
+				<c:if test="${item.buyAndSellMode eq 'trade' }">
+				<li>trade for: ${item.tradefor }</li>
+				</c:if>
+			
+				<!-- fixed -->
+				<c:if test="${item.buyAndSellMode eq 'fixed' }">
+				<li>&#8369; ${item.price } <c:if test="${item.negotiable }">(negotiable)</c:if></li>
+				</c:if>
+				
+				<li class="subtitle"><span class="time">${item.time.time }</span> by <a href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>
+				<li class="subtitle">${item.views } views</li>
+			</ul>
+		</li>
+		<c:if test="${(index.index+1)%3 == 0 && index.index != 0}"><div class="clear"></div></c:if>
+		</c:forEach>
+	</ul>
+</section>
+
+</div>
+
+<div class="newitem sidebar-section grid_4">
 	<button class="btn-newitem">Sell your possessions</button>
 	<div class="newitem-form-container hide" title="Sell your possessions">
 		<div class="newitem-img-container noimage"><div class="newitem-img-message">Drop picture here (or click)</div></div>
@@ -20,6 +107,10 @@
 				<li><input type="text" class="newitem-name" name="name" /></li>
 				<li>Description</li> 
 				<li><textarea class="newitem-description" rows="5" name="description"></textarea></li>
+				<li>Tags (maximum of 5)</li>
+				<li>
+					<span class="active-tags"></span><input type="text" name="tags" placeholder="space-delimited e.g. 'shoes mens-sports-shoes kalenji'"/>
+				</li>
 				<li>Sell mode</li>
 				<li> 
 					<select class="sellmode" name="sellMode">
@@ -28,11 +119,6 @@
 						<option value="trade">Trade</option>
 					</select>
 				</li>
-				
-				<li>
-					<span class="active-tags"></span><input type="text" name="tags" />
-				</li>
-				
 				<li class="li-sellmode fixedprice">Price<br/><input type="number" value="0" class="newitem-fixedprice" name="fixedprice"/></li>
 				<li class="li-sellmode fixedprice">
 					<input type="checkbox" name="negotiable" id="fixedprice-negotiable" class="newitem-fixedprice-negotiable" />
@@ -52,96 +138,14 @@
 		</form>
 		<div class="newitem-form-errors"></div>
 	</div>
-</section>
-
-<section class="owned">
-</section>
-
-<section class="popular">
-	Popular
-	<ul>
-		<c:forEach items="${popular }" var="item">
-		<li class="trade-item">
-			<a href="${urlTrade }${item.id }"><img class="trade-img" src="${item.imgur.smallSquare }" /></a>
-			<ul class="trade-item-details">
-				<li>
-					<strong><a href="${urlTrade}${item.id}">${item.name }
-					<c:if test="${item.buyAndSellMode eq 'auction' }">(Auction)</c:if>
-					<c:if test="${item.buyAndSellMode eq 'trade' }">(Trade)</c:if>
-					</a></strong>
-				</li>
-			
-				<!-- bidding -->
-				<c:if test="${item.buyAndSellMode eq 'auction' }">
-				<li>current: &#8369;${item.start }</li>
-				<li>buyout: &#8369;${item.buyout }</li>
-				<li>end date: <span class="time">${item.biddingEnds.time }</span></li>
-				</c:if>
-			
-				<!-- trade -->
-				<c:if test="${item.buyAndSellMode eq 'trade' }">
-				<li>trade for: ${item.tradefor }</li>
-				</c:if>
-			
-				<!-- fixed -->
-				<c:if test="${item.buyAndSellMode eq 'fixed' }">
-				<li>&#8369; ${item.price } <c:if test="${item.negotiable }">(negotiable)</c:if></li>
-				</c:if>
-				
-				<li class="subtitle">Posted <span class="time">${item.time.time }</span> by <a href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>
-				<li class="subtitle">${item.views } views</li>
-			</ul>
-		</li>
-		</c:forEach>
-	</ul>
-</section>
-
-<div style="clear: both;">&nbsp;</div>
-
-<section class="recent">
-	Recent
-	<ul>
-		<c:forEach items="${recent }" var="item">
-		<li class="trade-item">
-			<a href="${urlTrade }${item.id }"><img class="trade-img" src="${item.imgur.smallSquare }" /></a>
-			<ul class="trade-item-details">
-				<li>
-					<strong><a href="${urlTrade}${item.id}">${item.name }
-					<c:if test="${item.buyAndSellMode eq 'auction' }">(Auction)</c:if>
-					<c:if test="${item.buyAndSellMode eq 'trade' }">(Trade)</c:if>
-					</a></strong>
-				</li>
-			
-				<!-- bidding -->
-				<c:if test="${item.buyAndSellMode eq 'auction' }">
-				<li>current: ${item.start }</li>
-				<li>buyout: ${item.buyout }</li>
-				<li>end date: <span class="time">${item.biddingEnds.time }</span></li>
-				</c:if>
-			
-				<!-- trade -->
-				<c:if test="${item.buyAndSellMode eq 'trade' }">
-				<li>trade for: ${item.tradefor }</li>
-				</c:if>
-			
-				<!-- fixed -->
-				<c:if test="${item.buyAndSellMode eq 'fixed' }">
-				<li>&#8369; ${item.price } <c:if test="${item.negotiable }">(negotiable)</c:if></li>
-				</c:if>
-				
-				<li class="subtitle"><span class="time">${item.time.time }</span> by <a href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>
-				<li class="subtitle">${item.views } views</li>
-			</ul>
-		</li>
-		</c:forEach>
-	</ul>
-</section>
-
+	<div class="sidebar-divider"></div>
 </div>
 
 <script>
 window.urls = {
-
+	//grids
+	tagweights: '<spring:url value="/s/tags.json" />',
+	tag: '<spring:url value="/t/tags/" />' //also used by page js here
 }
 
 $(function(){
@@ -296,3 +300,13 @@ $(function(){
 	});
 });
 </script>
+
+<!-- Tagcloud -->
+<div class="tagcloud-container sidebar-section grid_4">
+	<div class="sidebar-section-header">Popular tags</div>
+	<div class="tagcloud"></div>
+</div>
+<script src="${jsTagcloud }"></script>
+<script src="${jsDgteTagCloud }"></script>
+<link rel="stylesheet" href="<spring:url value='/resources/css/grids/tagcloud.css' />" />
+<!-- End tagcloud -->

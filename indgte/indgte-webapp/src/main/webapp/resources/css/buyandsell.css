@@ -1,11 +1,11 @@
 ul {
 	list-style-type: none;
+	padding: 0;
 }
 
 .trade-item {
 	float: left;
-	width: 30%;
-	height: 130px;
+	width: 180px;
 	padding: 5px;
 	margin: 5px;
 	overflow: hidden;
@@ -14,10 +14,18 @@ ul {
 .trade-item:not(.ui-state-highlight) {
 	border: 1px solid transparent;
 }
+.trade-item.trade-item-bytag {
+	width: 280px;	
+}
+
 .trade-img {
 	float: left;
 	max-width: 200px;
 	max-height: 200px;
+}
+.trade-img.thumbnail {
+	max-width: 60px;
+	max-height: 60px;
 }
 .trade-item a {
 	text-decoration: none;
@@ -25,10 +33,12 @@ ul {
 
 .trade-item-details {
 	padding: 0;
-	margin: 0 0 0 95px;
+	margin: 0 0 0 65px;
 }
 
-
+.btn-newitem {
+	width: 100%;
+}
 .newitem-form-errors {
 	margin-left: 100px;
 	text-align: center;

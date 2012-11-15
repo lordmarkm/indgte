@@ -62,8 +62,6 @@ public class ProfileControllerImpl implements ProfileController {
 		User fbUser = users.getFacebook(principal.getName());
 		Collection<BusinessProfile> businessez = businesses.getBusinesses(principal.getName());
 		
-		String loadhere = request.getParameter("loadhere");
-		
 		ModelAndView mav = new ModelAndView()
 							.addObject("user", fbUser)
 							.addObject("businesses", businessez);

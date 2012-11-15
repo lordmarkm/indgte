@@ -7,8 +7,11 @@ import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.user;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +26,7 @@ import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.dto.YellowPagesEntry;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
+import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.service.SearchService;
 import com.baldwin.indgte.persistence.service.UserService;
@@ -144,7 +148,6 @@ public class SearchControllerImpl implements SearchController {
 
 	@Override
 	public JSON getListableGroups() {
-		search.getListableGroups();
 		return JSON.ok();
 	}
 
@@ -154,6 +157,26 @@ public class SearchControllerImpl implements SearchController {
 			return JSON.ok().put("lists", search.searchTopTenLists(term, start, howmany));
 		} catch (Exception e) {
 			log.error("Exception while searching toptens", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON getTags(Principal principal) {
+		try {
+			Collection<Tag> tags = search.getTags(Tag.SortColumn.numberofitems, 20);
+//			int i = 0;
+//			for(String thag : new String[] {"mountain-dew","coke","drugs","prostitues","malls","tupperware","world","hello-world"
+//					,"spring-social-security","bottle-caps","lock-and-lock","tissue-papers","toenail-clippings"}) {
+//				
+//				Tag tag = new Tag(thag);
+//				tag.setItems((long) ++i);
+//				tags.add(tag);
+//			}
+			Collections.shuffle((List<Tag>) tags, new Random());
+			return JSON.ok().put("tags", tags);
+		} catch (Exception e) {
+			log.error("Error getting weighted tags", e);
 			return JSON.status500(e);
 		}
 	}

@@ -109,6 +109,9 @@ public class UserDaoImpl implements UserDao {
 			case toptenvotes:
 				Hibernate.initialize(userExtension.getVotes());
 				break;
+			case watchedtags:
+				Hibernate.initialize(userExtension.getWatchedTags());
+				break;
 			}
 		}
 		return userExtension;

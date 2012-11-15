@@ -78,6 +78,14 @@ public class UserExtension {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "creator", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<TopTenList> createdToptens;
 	
+	@ManyToMany
+	@JoinTable(
+		name="watchedTags",
+		joinColumns = @JoinColumn(name="userId"),
+		inverseJoinColumns = @JoinColumn(name="tagId")
+	)
+	private Set<Tag> watchedTags;
+	
 	public boolean inWishlist(Product product) {
 		for(Wish wish : wishlist) {
 			if(product.equals(wish.getProduct())) return true;
@@ -224,5 +232,17 @@ public class UserExtension {
 
 	public void setCreatedToptens(Set<TopTenList> createdToptens) {
 		this.createdToptens = createdToptens;
+	}
+
+	@JsonIgnore
+	public Set<Tag> getWatchedTags() {
+		if(null == watchedTags) {
+			watchedTags = new HashSet<Tag>();
+		}
+		return watchedTags;
+	}
+
+	public void setWatchedTags(Set<Tag> watchedTags) {
+		this.watchedTags = watchedTags;
 	}
 }

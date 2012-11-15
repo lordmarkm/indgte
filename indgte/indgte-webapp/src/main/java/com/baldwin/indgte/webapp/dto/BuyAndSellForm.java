@@ -2,6 +2,10 @@ package com.baldwin.indgte.webapp.dto;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +25,7 @@ public class BuyAndSellForm {
 	private BuyAndSellMode sellMode;
 	private String hash;
 	private String deletehash;
+	private String tags;
 	
 	//trade item
 	private String tradefor;
@@ -78,6 +83,18 @@ public class BuyAndSellForm {
 		item.setName(name);
 		item.setDescription(description);
 		item.setBuyAndSellMode(sellMode);
+		
+		String[] tagArray = tags.trim().toLowerCase().split("\\s+");
+		if(tagArray.length > 5) {
+			tagArray = Arrays.copyOfRange(tagArray, 0, 5);
+		}
+		Set<String> tagset = new HashSet<String>(Arrays.asList(tagArray));
+		StringBuilder tagBuilder = new StringBuilder();
+		for(Iterator<String> i = tagset.iterator(); i.hasNext();) {
+			tagBuilder.append(i.next());
+			if(i.hasNext()) tagBuilder.append(' ');
+		}
+		item.setTags(tagBuilder.toString());
 		
 		Imgur imgur = new Imgur();
 		imgur.setHash(hash);
@@ -154,5 +171,17 @@ public class BuyAndSellForm {
 
 	public void setDeletehash(String deletehash) {
 		this.deletehash = deletehash;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
+	public Boolean getNegotiable() {
+		return negotiable;
 	}
 }

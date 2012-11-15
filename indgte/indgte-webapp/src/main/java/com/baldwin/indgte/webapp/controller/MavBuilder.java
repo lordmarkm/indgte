@@ -7,6 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 
 public class MavBuilder {
@@ -25,6 +26,13 @@ public class MavBuilder {
 	 * @param user - must always be 3rd party provider (like Facebook)!
 	 */
 	public static MavBuilder render(User user, String viewname) {
+		return new MavBuilder(viewname).put("user", user);
+	}
+	
+	/**
+	 * TODO migrate this {@link #render(User, String)} to this.
+	 */
+	public static MavBuilder render(UserExtension user, String viewname) {
 		return new MavBuilder(viewname).put("user", user);
 	}
 	

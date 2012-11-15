@@ -1,0 +1,11 @@
+.tagcloud {
+	text-align: justify;
+}
+.taglink {
+	text-decoration: none;
+	padding: 2px;
+	display: inline-block;
+}
+.taglink:not(.ui-state-highlight) {
+	border: 1px solid transparent;
+}

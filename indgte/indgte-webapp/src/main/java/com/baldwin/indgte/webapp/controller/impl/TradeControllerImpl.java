@@ -3,6 +3,7 @@ package com.baldwin.indgte.webapp.controller.impl;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.model.AuctionItem;
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
+import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.TradeService;
@@ -106,8 +108,46 @@ public class TradeControllerImpl implements TradeController {
 	}
 
 	@Override
-	public JSON sold(User user, long itemId) {
+	public @ResponseBody JSON sold(User user, long itemId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ModelAndView tags(Principal principal, @PathVariable String tag) {
+		UserExtension user = users.getExtended(principal.getName(), Initializable.watchedtags);
+		Tag actualTag = trade.getTag(tag);
+		Collection<BuyAndSellItem> items; 
+		if(null != actualTag) { // don't bother loading if tag is not found
+			items = trade.getItemsWithTag(tag, 0, 10);
+		} else {
+			items = new ArrayList<BuyAndSellItem>();
+		}
+		
+		return render(user, "buyandselltag")
+					.put("items", items)
+					.put("tag", actualTag)
+					.put("tagString", tag)
+					.mav();
+	}
+
+	@Override
+	public @ResponseBody JSON getTagItems(Principal principal, @PathVariable String tag, @PathVariable int start, @PathVariable int howmany) {
+		try {
+			return JSON.ok().put("items", trade.getItemsWithTag(tag, start, howmany));
+		} catch (Exception e) {
+			log.error("Error loading more items for tag.", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public JSON getAllWatchedTagItems(Principal principal) {
+		try {
+			return JSON.ok().put("items", trade.getWatchedTagItems(principal.getName(), 0, 5));
+		} catch (Exception e) {
+			log.error("Error getting watched tag items.", e);
+			return JSON.status500(e);
+		}
 	}
 }

@@ -15,7 +15,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.search.annotations.Indexed;
 
+@Indexed
 @Entity
 @Table(name="buyandsell_bidding")
 public class AuctionItem extends BuyAndSellItem {
@@ -35,6 +37,7 @@ public class AuctionItem extends BuyAndSellItem {
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="item")
 	private List<Bid> bids;
 
+	@JsonIgnore
 	public Bid getWinning() {
 		if(getBids().size() == 0) {
 			return null;
@@ -42,6 +45,7 @@ public class AuctionItem extends BuyAndSellItem {
 		return bids.get(bids.size() - 1);
 	}
 	
+	@JsonIgnore
 	public List<Bid> getReversedBids() {
 		List<Bid> reversed = new ArrayList<Bid>(bids);
 		Collections.reverse(reversed);

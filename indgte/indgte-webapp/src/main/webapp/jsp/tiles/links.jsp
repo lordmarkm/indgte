@@ -31,8 +31,13 @@
 <spring:url var="jsEasyPaginate" value="/resources/easypaginate/easypaginate.js" />
 <spring:url var="cssEasyPaginate" value="/resources/easypaginate/easypaginate.css" />
 
+<spring:url var="jsAwesomecloud" value="/resources/awesomecloud/jquery.awesomeCloud-0.2.min.js" />
+<spring:url var="jsTagcloud" value="/resources/tagcloud/tagcloud.js" />
+<spring:url var="jsDgteTagCloud" value="/resources/javascript/grids/tagcloud.js" />
+
 <spring:url var="jsApplication" value="/resources/javascript/application.js" />
 <spring:url var="jsTopTens" value="/resources/javascript/grids/toptens.js" />
 <spring:url var="jsReviewQueue" value="/resources/javascript/grids/reviewqueue.js" />
 <spring:url var="jsReviews" value="/resources/javascript/reviews.js" />
 <spring:url var="jsAutocomplete" value="/resources/javascript/autocomplete.js" />
+<spring:url var="jsWatchedTags" value="/resources/javascript/grids/watchedtags.js" />

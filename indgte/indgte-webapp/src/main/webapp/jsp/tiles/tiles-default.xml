@@ -84,6 +84,9 @@
 	<definition name="buyandsellitem" extends="default">
 		<put-attribute name="body" value="/jsp/buyandsell/buyandsellitem.jsp" />
 	</definition>
+	<definition name="buyandselltag" extends="default">
+		<put-attribute name="body" value="/jsp/buyandsell/buyandselltag.jsp" />
+	</definition>
 	
 	<!-- Misc -->
 	<definition name="help" extends="default">

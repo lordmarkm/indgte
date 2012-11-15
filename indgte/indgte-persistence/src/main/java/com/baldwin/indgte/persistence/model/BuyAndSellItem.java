@@ -19,13 +19,21 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+
 import com.baldwin.indgte.persistence.constants.BuyAndSellMode;
+import com.baldwin.indgte.persistence.dto.Summary;
 
 /**
  * An item on the buy-and-sell market
  * @author mbmartinez
  */
 
+@Indexed
 @Entity
 @Table(name="buyandsell")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -38,12 +46,18 @@ public class BuyAndSellItem {
 	@JoinColumn(name="ownerId", nullable=false, updatable=false)
 	private User owner;
 	
+	@Field
 	@Column
 	private String name;
 	
+	@Field
 	@Lob @Basic
 	@Column
 	private String description;
+
+	@Field(analyzer=@Analyzer(impl = WhitespaceAnalyzer.class)) //prevent tokenization on hyphens
+	@Column
+	private String tags;
 	
 	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
 	@JoinColumn(name="imgurId")
@@ -53,15 +67,21 @@ public class BuyAndSellItem {
 	@Column(name="mode")
 	private BuyAndSellMode buyAndSellMode;
 
+	@Field
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column
 	private Date time;
 	
 	@Column
 	private long views;
-	
+
+	@JsonIgnore
 	public User getOwner() {
 		return owner;
+	}
+	
+	public Summary getOwnerSummary() {
+		return owner.summarize();
 	}
 
 	public void setOwner(User owner) {
@@ -144,5 +164,13 @@ public class BuyAndSellItem {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 }

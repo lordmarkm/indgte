@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -29,8 +30,10 @@ import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.YellowPagesEntry;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
 
@@ -67,6 +70,9 @@ public class SearchDaoImpl implements SearchDao {
 		}
 		for(TopTenList list : (List<TopTenList>)session.createQuery("from TopTenList").list()) {
 			ftSession.index(list);
+		}
+		for(BuyAndSellItem item : (List<BuyAndSellItem>)session.createQuery("from BuyAndSellItem").list()) {
+			ftSession.index(item);
 		}
 	}
 
@@ -252,5 +258,23 @@ public class SearchDaoImpl implements SearchDao {
 		
 		log.debug("Returning {} results", results.size());
 		return results;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<Tag> getTags(Tag.SortColumn sortColumn, int howmany) {
+		Criteria crit = sessions.getCurrentSession().createCriteria(Tag.class)
+			.setMaxResults(howmany);
+		
+		switch(sortColumn) {
+		case name:
+			crit.addOrder(Order.asc(TableConstants.TAG));
+			break;
+		case numberofitems:
+			crit.addOrder(Order.desc(TableConstants.TAG_ITEMS));
+			break;
+		}
+		
+		return crit.list();
 	}
 }

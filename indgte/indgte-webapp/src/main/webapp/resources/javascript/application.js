@@ -59,6 +59,19 @@ window.dgte = {
 	    	debug(e);
 	    }
 		xhr.send(fd);		
+	},
+	
+	overlay : function(element){
+		$('<div class="overlay">').appendTo(element);
+	},
+	
+	fadeOverlay : function(element, callback, options) {
+		var delay = options && options.delay ? options.delay : 800;
+		var fade = options && options.fade ? optiond.fade : 200;
+		element.find('.overlay').delay(delay).fadeOut(fade, function(){
+			$(this).remove();
+			if(typeof callback == 'function') callback();
+		});
 	}
 }
 
