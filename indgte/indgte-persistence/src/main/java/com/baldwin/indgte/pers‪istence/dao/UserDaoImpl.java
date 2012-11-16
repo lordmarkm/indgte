@@ -1,5 +1,7 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -86,12 +88,56 @@ public class UserDaoImpl implements UserDao {
 	public UserExtension getExtended(long userId, Initializable... initializables) {
 		UserExtension userExtension = (UserExtension) sessions.getCurrentSession().get(UserExtension.class, userId);
 		return initialize(userExtension, initializables);
+		
+//		return getExtended(null, userId, initializables);
 	}
 
 	@Override
 	public UserExtension getExtended(String username, Initializable... initializables) {
 		UserExtension userExtension = getExtended(username);
 		return initialize(userExtension, initializables);
+		
+//		return getExtended(username, 0, initializables);
+	}
+	
+	//TODO
+	@SuppressWarnings("unused")
+	private UserExtension getExtended(String username, long id, Initializable... initializables) {
+		Criteria c = sessions.getCurrentSession().createCriteria(User.class);
+		
+		if(username != null) {
+			c.add(Restrictions.eq(TableConstants.USER_USERNAME, username));
+		} else {
+			c.add(Restrictions.eq(TableConstants.ID, id));
+		}
+		
+		for(Initializable initializable : initializables) {
+			switch(initializable) {
+			case wishlist:
+				c.setFetchMode(TableConstants.USER_WISHLIST, FetchMode.JOIN);
+				break;
+			case reviewqueue:
+				c.setFetchMode(TableConstants.USER_REVIEWQUEUE, FetchMode.JOIN);
+				break;
+			case reviewsreceived:
+				c.setFetchMode(TableConstants.USER_REVIEWSRECEIVED, FetchMode.JOIN);
+				break;
+			case toptenvotes:
+				c.setFetchMode(TableConstants.USER_TOPTENVOTES, FetchMode.JOIN);
+				break;
+			case watchedtags:
+				c.setFetchMode(TableConstants.USER_WATCHEDTAGS, FetchMode.JOIN);
+				break;
+			case buyandsellitems:
+				c.setFetchMode(TableConstants.USER_BUYSELLITEMS, FetchMode.JOIN);
+				break;
+			case businesses:
+				c.setFetchMode(TableConstants.USER_BUSINESSES, FetchMode.JOIN);
+				break;
+			}
+		}
+
+		return (UserExtension) c.uniqueResult();
 	}
 	
 	private UserExtension initialize(UserExtension userExtension, Initializable... initializables) {
@@ -111,6 +157,16 @@ public class UserDaoImpl implements UserDao {
 				break;
 			case watchedtags:
 				Hibernate.initialize(userExtension.getWatchedTags());
+				break;
+			case buyandsellitems:
+				Hibernate.initialize(userExtension.getBuyAndSellItems());
+				break;
+			case businesses:
+				Hibernate.initialize(userExtension.getBusinesses());
+				break;
+			case subscriptions:
+				Hibernate.initialize(userExtension.getUserSubscriptions());
+				Hibernate.initialize(userExtension.getBusinessSubscriptions());
 				break;
 			}
 		}

@@ -5,12 +5,13 @@ import java.util.Collection;
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 
 public interface TradeDao {
 	BuyAndSellItem get(long itemId);
 	Collection<BuyAndSellItem> getItems(int start, int howmany, String orderColumn);
-	Collection<BuyAndSellItem> getItems(User user);
-	void save(User user, BuyAndSellItem item);
+	Collection<BuyAndSellItem> getItems(UserExtension user);
+	void save(String name, BuyAndSellItem item);
 	BuyAndSellItem get(String name, long itemId);
 	
 	/**
@@ -22,5 +23,6 @@ public interface TradeDao {
 	double bid(User user, long itemId, double amount, double minIncrementPercent);
 	Tag getTag(String tagString, boolean createIfAbsent);
 	Collection<BuyAndSellItem> getItemsWithTag(String tag, int start, int howmany);
-	Collection<BuyAndSellItem> getWatchedTagItems(String name, int start, int howmany);
+	Collection<BuyAndSellItem> getWatchedTagItems(String name, String tagString, int start, int howmany);
+	void addToWatchedTags(String name, String tag);
 }

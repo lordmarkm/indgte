@@ -10,11 +10,10 @@
 
 <div class="grid_8">
 
-<section class="owned">
-</section>
+<span class="page-header">Buy & Sell</span>
 
 <section class="popular">
-	Popular
+	<span class="section-header">Popular</span>
 	<ul>
 		<c:forEach items="${popular }" var="item" varStatus="index">
 		<li class="trade-item">
@@ -56,7 +55,7 @@
 <div style="clear: both;">&nbsp;</div>
 
 <section class="recent">
-	Recent
+	<span class="section-header">Recent</span>
 	<ul>
 		<c:forEach items="${recent }" var="item" varStatus="index">
 		<li class="trade-item">
@@ -138,14 +137,28 @@
 		</form>
 		<div class="newitem-form-errors"></div>
 	</div>
+	
+	<div class="buyandsell-search">
+		<form id="buysellsearchform">
+			<input type="text" class="ipt-search" placeholder="<spring:message code='buyandsell.search' />"/>
+			<button class="btn-search">Search</button>
+		</form>
+		<div class="buyandsell-search-results-container">
+			<ul class="buyandsell-search-results"></ul>
+			<a href="javascript:;" class="showmore hide">Show more...</a>
+		</div>
+	</div>
 	<div class="sidebar-divider"></div>
 </div>
 
 <script>
 window.urls = {
+	buysellsearch: '<spring:url value="/s/buysell/" />',
+	buysellitem: '<spring:url value="/t/" />',
 	//grids
 	tagweights: '<spring:url value="/s/tags.json" />',
-	tag: '<spring:url value="/t/tags/" />' //also used by page js here
+	tag: '<spring:url value="/t/tags/" />', //also used by page js here
+	watchedtags: '<spring:url value="/t/watchedtags" />'
 }
 
 $(function(){
@@ -298,8 +311,117 @@ $(function(){
 		var fromnow = moment(parseInt($(div).text())).fromNow();
 		$(div).text(fromnow);
 	});
+	
+	
+	//search 
+	var 
+		$searchform = $('#buysellsearchform'),
+		$iptSearch = $('.ipt-search'),
+		$btnSearch = $('.btn-search'),
+		$results = $('.buyandsell-search-results'),
+		$showmore = $('.showmore');
+	
+	$searchform.submit(function(){
+		return false;
+	});
+
+	$iptSearch.on({
+		focus: function(){
+			this.select();
+		},
+		click: function(){
+			this.select();
+		}
+	});
+	
+	var start = 0, perload = 5, waiting = false, lastTerm;
+	
+	function search(term, clearprevious) {
+		waiting = true;
+		$btnSearch.button('disable');
+		$showmore.hide();
+		dgte.overlay($results.parent(), true);
+		$.get(urls.buysellsearch + term + '/' + start + '/' + perload + '.json', function(response) {
+			switch(response.status) {
+			case '200':
+				if(clearprevious) {
+					$results.html('');
+				}
+				
+				var len = response.items ? response.items.length : 0;
+				if(0 == len) {
+					$results.html('No results for ' + term);
+				}
+				if(len == perload) {
+					$showmore.show();
+				} else {
+					$showmore.hide();
+				}
+				
+				for(var i = 0; i < len; ++i) {
+					dgte.addBuySellItem($results, response.items[i], urls.buysellitem)
+				}
+				break
+			default:
+				debug('error searching buy and sell');
+				debug(response);
+			}
+		}).error(function(){
+			$results.html('There was an error during the search. Please try again.');
+		}).complete(function(){
+			dgte.fadeOverlay($results.parent(), function(){
+				waiting = false;
+				$btnSearch.button('enable');
+			});
+		});
+	}
+	
+	$btnSearch.click(function(){
+		var term = $iptSearch.val();
+		lastTerm = term;
+		if(term.length < 2 || waiting) {
+			return;
+		}
+
+		start = 0;
+		search(term, true);
+	});
+	
+	$showmore.click(function(){
+		if(!lastTerm) return;
+		start += 5;
+		search(lastTerm, false);
+	});
 });
 </script>
+
+<!-- Watched Tags -->
+<div class="watched-tags-container sidebar-section grid_4">
+	<div class="sidebar-section-header">Watched tags</div>
+	<c:choose>
+	<c:when test="${not empty user.watchedTags }">
+	<div class="watched-tag-link-container">
+		<a class="watched-tag selected" href="javascript:;" tag="all">All</a>
+	<c:forEach items="${user.watchedTags }" var="watchedTag">
+		<a class="watched-tag" href="${urlTag }${watchedTag.tag }" tag="${watchedTag.tag }">${watchedTag.tag }</a>
+	</c:forEach>
+	</div>
+	</c:when>
+	<c:otherwise>
+		<spring:url var="urlFaqWatchingTags" value="/h/buy-and-sell#watching-tags" />
+		<p class="no-watched-tags"><spring:message code="watchedtags.empty" arguments="${urlFaqWatchingTags }"/></p>
+	</c:otherwise>
+	</c:choose>
+	<div class="watched-tag-items-container">
+		<ul class="watched-tag-items"></ul>
+	</div>
+	<div class="sidebar-divider"></div>
+</div>
+<c:if test="${not empty user.watchedTags }">
+<script src="${jsWatchedTags }" /></script>
+<link rel="stylesheet" href="<c:url value='/resources/css/grids/watchedtags.css' />" />
+</c:if>
+<!-- End watched tags -->
 
 <!-- Tagcloud -->
 <div class="tagcloud-container sidebar-section grid_4">

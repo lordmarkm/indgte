@@ -6,6 +6,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
@@ -40,8 +41,13 @@ public class MavBuilder {
 		return new MavBuilder(new RedirectView(view, true));
 	}
 	
-	public MavBuilder() {
+	private MavBuilder() {
 		mav = new ModelAndView();
+		loadGlobals(this);
+	}
+	
+	private void loadGlobals(MavBuilder m) {
+		m.put("themes", Theme.values());
 	}
 	
 	public MavBuilder(String viewname) {

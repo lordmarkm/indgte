@@ -30,7 +30,7 @@ import com.baldwin.indgte.webapp.controller.TradeController;
 import com.baldwin.indgte.webapp.dto.BuyAndSellForm;
 
 @Component
-@SessionAttributes(value={"user"}, types={User.class})
+@SessionAttributes(value={"user"})
 public class TradeControllerImpl implements TradeController {
 
 	static Logger log = LoggerFactory.getLogger(TradeControllerImpl.class);
@@ -42,7 +42,7 @@ public class TradeControllerImpl implements TradeController {
 	
 	@Override
 	public ModelAndView landing(Principal principal) {
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName(), Initializable.watchedtags, Initializable.buyandsellitems);
 		
 		Collection<BuyAndSellItem> popular = trade.getPopular(0, 9);
 		Collection<BuyAndSellItem> recent = trade.getRecent(0, 9);
@@ -56,17 +56,18 @@ public class TradeControllerImpl implements TradeController {
 	}
 
 	@Override
-	public ModelAndView newItem(User user, BuyAndSellForm form) {
+	public ModelAndView newItem(Principal principal, BuyAndSellForm form) {
 		BuyAndSellItem item = form.getItem();
+		UserExtension user = users.getExtended(principal.getName());
 		if(null != item) {
-			trade.save(user, item);
+			trade.save(principal.getName(), item);
 			return redirect("/t/" + item.getId()).mav();
 		}
 		return render(user, "error").mav();
 	}
 	
 	@Override
-	public @ResponseBody JSON getSidebarContent(@ModelAttribute User user) {
+	public @ResponseBody JSON getSidebarContent(@ModelAttribute UserExtension user) {
 		return JSON.ok().put("user", user);
 	}
 	
@@ -128,6 +129,7 @@ public class TradeControllerImpl implements TradeController {
 					.put("items", items)
 					.put("tag", actualTag)
 					.put("tagString", tag)
+					.put("watched", user.getWatchedTags().contains(actualTag))
 					.mav();
 	}
 
@@ -142,11 +144,32 @@ public class TradeControllerImpl implements TradeController {
 	}
 
 	@Override
-	public JSON getAllWatchedTagItems(Principal principal) {
+	public @ResponseBody JSON getAllWatchedTagItems(Principal principal) {
 		try {
 			return JSON.ok().put("items", trade.getWatchedTagItems(principal.getName(), 0, 5));
 		} catch (Exception e) {
 			log.error("Error getting watched tag items.", e);
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON getWatchedTagItems(Principal principal, @PathVariable String tag) {
+		try {
+			return JSON.ok().put("items", trade.getWatchedTagItems(principal.getName(), tag, 0, 5));
+		} catch (Exception e) {
+			log.error("Error getting watched tag items.", e);
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON addToWatchedTags(Principal principal, @PathVariable String tag) {
+		try {
+			trade.addToWatchedTags(principal.getName(), tag);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Error adding watched tag", e);
 			return JSON.status500(e);
 		}
 	}

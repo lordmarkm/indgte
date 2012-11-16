@@ -77,10 +77,9 @@ public class BusinessProfile implements Searchable, Attachable {
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(
 		name="owner_id", 
-		referencedColumnName="connection_id", 
 		nullable=false
 	)
-	private User owner;
+	private UserExtension owner;
 	
 	@Column
 	private Double latitude = 0d;
@@ -173,11 +172,11 @@ public class BusinessProfile implements Searchable, Attachable {
 		this.description = description;
 	}
 
-	public User getOwner() {
+	public UserExtension getOwner() {
 		return owner;
 	}
 
-	public void setOwner(User owner) {
+	public void setOwner(UserExtension owner) {
 		this.owner = owner;
 	}
 

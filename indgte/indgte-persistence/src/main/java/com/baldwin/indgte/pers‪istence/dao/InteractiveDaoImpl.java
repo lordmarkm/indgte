@@ -13,7 +13,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -43,7 +42,6 @@ import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.model.UserReview;
 import com.baldwin.indgte.persistence.model.Wish;
@@ -167,48 +165,32 @@ public class InteractiveDaoImpl implements InteractiveDao {
 
 	@Override
 	public void subscribeToUser(String username, Long id) {
-		User user = users.getSpring(username);
+		UserExtension user = users.getExtended(username);
 		user.getUserSubscriptions().add(id);
 	}
 
 	@Override
 	public void unsubscribeFromUser(String username, Long id) {
-		User user = users.getSpring(username);
+		UserExtension user = users.getExtended(username);
 		user.getUserSubscriptions().remove(id);
 	}
 	
 	@Override
-	public void subscribeToBusiness(String name, Long id) {
-		User user = users.getSpring(name);
+	public void subscribeToBusiness(String username, Long id) {
+		UserExtension user = users.getExtended(username);
 		user.getBusinessSubscriptions().add(id);
 	}
 	
 	@Override
 	public void unsubscribeFromBusiness(String username, Long id) {
-		User user = users.getSpring(username);
+		UserExtension user = users.getExtended(username);
 		user.getBusinessSubscriptions().remove(id);
 	}
 	
 	private Map<PostType, Set<Long>> getSubscriptions(String name, PostType[] types) {
 		log.debug("Getting {} subscriptions for {}", types, name);
 		
-		Criteria crit = sessions.getCurrentSession().createCriteria(User.class)
-			.add(Restrictions.eq(TableConstants.USER_USERNAME, name))
-			.add(Restrictions.eq(TableConstants.USER_PROVIDERID, TableConstants.USER_PROVIDERID_SPRINGSOCSEC));
-			
-		for(PostType type : types) {
-			switch(type) {
-			case user:
-				crit.setFetchMode("userSubscriptions", FetchMode.JOIN);
-				break;
-			case business: 
-				crit.setFetchMode("businessSubscriptions", FetchMode.JOIN);
-				break;
-			}
-		}
-		
-		User user = (User) crit.uniqueResult();
-		
+		UserExtension user = users.getExtended(name);
 		if(null == user) {
 			log.debug("User {} not found.", name);
 			return null;
@@ -226,9 +208,9 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	public boolean isSubscribed(String name, long targetId, PostType type) {
 		switch(type) {
 		case user:
-			return users.getSpring(name).getUserSubscriptions().contains(targetId);
+			return users.getExtended(name).getUserSubscriptions().contains(targetId);
 		case business:
-			return users.getSpring(name).getBusinessSubscriptions().contains(targetId);
+			return users.getExtended(name).getBusinessSubscriptions().contains(targetId);
 		}
 		return false;
 	}

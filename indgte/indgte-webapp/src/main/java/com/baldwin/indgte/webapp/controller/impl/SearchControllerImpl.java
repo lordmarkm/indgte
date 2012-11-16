@@ -1,9 +1,6 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.business;
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.category;
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.product;
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.user;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.*;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
@@ -11,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,18 +161,29 @@ public class SearchControllerImpl implements SearchController {
 	public @ResponseBody JSON getTags(Principal principal) {
 		try {
 			Collection<Tag> tags = search.getTags(Tag.SortColumn.numberofitems, 20);
-//			int i = 0;
-//			for(String thag : new String[] {"mountain-dew","coke","drugs","prostitues","malls","tupperware","world","hello-world"
-//					,"spring-social-security","bottle-caps","lock-and-lock","tissue-papers","toenail-clippings"}) {
-//				
-//				Tag tag = new Tag(thag);
-//				tag.setItems((long) ++i);
-//				tags.add(tag);
-//			}
-			Collections.shuffle((List<Tag>) tags, new Random());
+			Collections.sort((List<Tag>) tags);
 			return JSON.ok().put("tags", tags);
 		} catch (Exception e) {
 			log.error("Error getting weighted tags", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON searchBuySell(Principal principal, @PathVariable String term, @PathVariable int start, @PathVariable int howmany) {
+		try {
+			return JSON.ok().put("items", search.searchBuySell(term, start, howmany));
+		} catch (Exception e) {
+			log.error("Exception searching buy and sell items", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON searchTag(Principal principal, @PathVariable String tag, @PathVariable String term, @PathVariable int start, @PathVariable int howmany) {
+		try {
+			return JSON.ok().put("items", search.searchBuySellTag(tag, term, start, howmany));
+		} catch (Exception e) {
 			return JSON.status500(e);
 		}
 	}

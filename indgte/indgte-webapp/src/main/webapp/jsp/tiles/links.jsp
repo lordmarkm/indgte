@@ -27,6 +27,7 @@
 <spring:url var="urlToptenList" value="/i/toptens/" />
 
 <spring:url var="urlTrade" value="/t/" />
+<spring:url var="urlTag" value="/t/tags/" />
 
 <spring:url var="jsEasyPaginate" value="/resources/easypaginate/easypaginate.js" />
 <spring:url var="cssEasyPaginate" value="/resources/easypaginate/easypaginate.css" />
@@ -34,6 +35,8 @@
 <spring:url var="jsAwesomecloud" value="/resources/awesomecloud/jquery.awesomeCloud-0.2.min.js" />
 <spring:url var="jsTagcloud" value="/resources/tagcloud/tagcloud.js" />
 <spring:url var="jsDgteTagCloud" value="/resources/javascript/grids/tagcloud.js" />
+
+<spring:url var="jsColumnize" value="/resources/javascript/libs/columnize/columnize.js" />
 
 <spring:url var="jsApplication" value="/resources/javascript/application.js" />
 <spring:url var="jsTopTens" value="/resources/javascript/grids/toptens.js" />

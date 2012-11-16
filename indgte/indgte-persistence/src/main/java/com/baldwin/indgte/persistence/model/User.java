@@ -3,7 +3,6 @@ package com.baldwin.indgte.persistence.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -77,33 +76,6 @@ public class User implements Searchable {
 	
 	@Column
 	private Long expireTime;
-	
-	@OneToMany(
-		fetch=FetchType.LAZY,
-		mappedBy="owner"
-	)
-	private Set<BusinessProfile> businesses;
-
-	@ElementCollection
-	@CollectionTable(
-		name = "businessSubs",
-		joinColumns = {@JoinColumn(name = "userId")}
-	)
-	@OrderColumn(name="order")
-	@Column(name="businessId")
-	private Set<Long> businessSubscriptions;
-	
-	@ElementCollection
-	@CollectionTable(
-		name = "userSubs",
-		joinColumns = {@JoinColumn(name = "subscriberId")}
-	)
-	@OrderColumn(name="order")
-	@Column(name="userId")
-	private Set<Long> userSubscriptions;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
-	private Set<BuyAndSellItem> buyAndSellItems;
 	
 	@OneToOne(mappedBy="user")
 	private UserExtension extension;
@@ -206,18 +178,6 @@ public class User implements Searchable {
 		this.expireTime = expireTime;
 	}
 
-	@JsonIgnore
-	public Set<BusinessProfile> getBusinesses() {
-		if(null == businesses) {
-			businesses = new HashSet<BusinessProfile>();
-		}
-		return businesses;
-	}
-
-	public void setBusinesses(Set<BusinessProfile> businesses) {
-		this.businesses = businesses;
-	}
-
 	public long getId() {
 		return id;
 	}
@@ -226,43 +186,10 @@ public class User implements Searchable {
 		this.id = id;
 	}
 
-	@JsonIgnore
-	public Set<Long> getBusinessSubscriptions() {
-		if(null == businessSubscriptions) {
-			businessSubscriptions = new HashSet<Long>();
-		}
-		return businessSubscriptions;
-	}
-
-	public void setBusinessSubscriptions(Set<Long> businessSubscriptions) {
-		this.businessSubscriptions = businessSubscriptions;
-	}
-
-	@JsonIgnore
-	public Set<Long> getUserSubscriptions() {
-		return userSubscriptions;
-	}
-
-	public void setUserSubscriptions(Set<Long> userSubscriptions) {
-		this.userSubscriptions = userSubscriptions;
-	}
-	
 	@Override
 	@JsonIgnore
 	public String[] getSearchableFields() {
 		return searchableFields;
-	}
-
-	@JsonIgnore
-	public Set<BuyAndSellItem> getBuyAndSellItems() {
-		if(null == buyAndSellItems) {
-			this.buyAndSellItems = new HashSet<BuyAndSellItem>();
-		}
-		return buyAndSellItems;
-	}
-
-	public void setBuyAndSellItems(Set<BuyAndSellItem> buyAndSellItems) {
-		this.buyAndSellItems = buyAndSellItems;
 	}
 
 	@JsonIgnore

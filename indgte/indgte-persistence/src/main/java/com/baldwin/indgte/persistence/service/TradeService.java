@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.pers‪istence.dao.TableConstants;
 import com.baldwin.indgte.pers‪istence.dao.TradeDao;
 
@@ -29,12 +30,12 @@ public class TradeService {
 		return dao.getItems(start, howmany, TableConstants.BUYANDSELL_TIME);
 	}
 
-	public Collection<BuyAndSellItem> getOwned(User user) {
+	public Collection<BuyAndSellItem> getOwned(UserExtension user) {
 		return dao.getItems(user);
 	}
 
-	public void save(User user, BuyAndSellItem item) {
-		dao.save(user, item);
+	public void save(String name, BuyAndSellItem item) {
+		dao.save(name, item);
 	}
 
 	/**
@@ -59,8 +60,16 @@ public class TradeService {
 	public Tag getTag(String tag) {
 		return dao.getTag(tag, false);
 	}
-
+	
 	public Collection<BuyAndSellItem> getWatchedTagItems(String name, int start, int howmany) {
-		return dao.getWatchedTagItems(name, start, howmany);
+		return dao.getWatchedTagItems(name, null, start, howmany);
+	}
+
+	public Collection<BuyAndSellItem> getWatchedTagItems(String name, String tagString, int start, int howmany) {
+		return dao.getWatchedTagItems(name, tagString, start, howmany);
+	}
+
+	public void addToWatchedTags(String name, String tag) {
+		dao.addToWatchedTags(name, tag);
 	}
 }

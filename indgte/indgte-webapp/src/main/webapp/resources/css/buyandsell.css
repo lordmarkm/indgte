@@ -79,3 +79,17 @@ ul {
 	display:inline-block;
 	width: 30%;
 }
+
+.buyandsell-search {
+	margin-top: 5px;
+	white-space: nowrap;
+}
+.ipt-search {
+	width: 62%;
+}
+.btn-search {
+	width: 35%;
+}
+.buyandsell-search-results-container {
+	position: relative;
+}

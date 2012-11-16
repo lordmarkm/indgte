@@ -25,7 +25,6 @@ import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Product;
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 
 @Repository 
@@ -96,13 +95,9 @@ public class BusinessDaoImpl implements BusinessDao {
 	@Override
 	public void create(BusinessProfile profile, String ownerName) {
 		Session session = sessions.getCurrentSession();
+		UserExtension owner = users.getExtended(ownerName);
 		
-		User owner = (User) session.createCriteria(User.class)
-				.add(Restrictions.eq(TableConstants.USER_PROVIDER_USERID, ownerName))
-				.add(Restrictions.eq(TableConstants.USER_PROVIDERID, TableConstants.USER_PROVIDERID_SPRINGSOCSEC))
-				.uniqueResult();
-		
-		log.info("Creating business {} for owner {}", profile.getDomain(), owner.getDisplayName());
+		log.info("Creating business {} for owner {}", profile.getDomain(), ownerName);
 		
 		owner.getBusinesses().add(profile);
 		profile.setOwner(owner);
@@ -135,14 +130,7 @@ public class BusinessDaoImpl implements BusinessDao {
 
 	@Override
 	public Collection<BusinessProfile> getBusinesses(String userId) {
-		Session session = sessions.getCurrentSession();
-		
-		User owner = (User) session.createCriteria(User.class)
-				.add(Restrictions.eq(TableConstants.USER_PROVIDER_USERID, userId))
-				.add(Restrictions.eq(TableConstants.USER_PROVIDERID, TableConstants.USER_PROVIDERID_SPRINGSOCSEC))
-				.setFetchMode("businesses", FetchMode.JOIN)
-				.uniqueResult();
-		
+		UserExtension owner = users.getExtended(userId);
 		return owner.getBusinesses();
 	}
 

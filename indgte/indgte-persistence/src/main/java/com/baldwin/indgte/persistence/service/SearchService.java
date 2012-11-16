@@ -22,6 +22,7 @@ import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.dto.YellowPagesEntry;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.Tag;
@@ -101,5 +102,13 @@ public class SearchService {
 
 	public Collection<Tag> getTags(Tag.SortColumn sortColumn, int howmany) {
 		return dao.getTags(sortColumn, howmany);
+	}
+
+	public Collection<BuyAndSellItem> searchBuySell(String term, int start, int howmany) {
+		return dao.searchBuySell(term, start, howmany);
+	}
+
+	public Object searchBuySellTag(String tag, String term, int start,	int howmany) {
+		return dao.searchBuySellTag(tag, term, start, howmany);
 	}
 }

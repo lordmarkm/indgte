@@ -51,6 +51,15 @@ public interface SearchController {
 	public JSON searchTopTens(Principal principal, String term, int start, int howmany);
 	
 	/**
+	 * Buy & Sell search
+	 */
+	@RequestMapping(value = "/buysell/{term}/{start}/{howmany}.json", method = RequestMethod.GET)
+	public JSON searchBuySell(Principal principal, String term, int start, int howmany);
+	
+	@RequestMapping(value = "/buysell/{tag}/{term}/{start}/{howmany}.json", method = RequestMethod.GET)
+	public JSON searchTag(Principal principal, String tag, String term, int start, int howmany);
+	
+	/**
 	 * Tagcloud
 	 */
 	@RequestMapping(value = "/tags.json")

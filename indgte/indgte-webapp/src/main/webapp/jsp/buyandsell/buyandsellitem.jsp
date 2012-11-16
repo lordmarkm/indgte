@@ -15,10 +15,10 @@
 
 <div class="grid_8">
 
-<h3 class="ui-widget-header">${item.name }</h3>
+<span class="page-header">${item.name }</span>
 
 <section class="item-details">
-	<h2>Item</h2>
+	<div class="section-header">Item</div>
 	<a href="${urlImgur }${item.imgur.hash }" target="_blank"><img class="trade-img" src="${item.imgur.largeThumbnail }" /></a>
 	<ul class="trade-item-details">
 		<li>
@@ -84,7 +84,7 @@
 <div class="clear"></div>
 
 <section class="seller-details">
-	<h2>Seller</h2>
+	<div class="section-header">Seller</div>
 	<a href="${urlUserProfile }${item.owner.username}"><img class="seller-img" src="${item.owner.imageUrl }" /></a>
 	<ul class="trade-seller-details">
 		<li><a href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>

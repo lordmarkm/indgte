@@ -1,47 +1,42 @@
 $(function(){
 	var $watchedTagItems = $('.watched-tag-items');
 	
-	var desclength = 80;
-	
 	waiting = false;
 	$(document).on({
 		click: function(){
-			if(waiting) return;
+			var $this = $(this);
+			
+			if(waiting || $this.hasClass('selected')) return false;
 			waiting = true;
-			var tag = $(this).attr('tag');
+			var tag = $this.attr('tag');
+			
+			$('a.watched-tag').removeClass('selected');
+			$this.addClass('selected');
 			getTags(tag);
+			
+			return false;
 		}
 	}, 'a.watched-tag');
 	
 	function getTags(tag) {
-		dgte.overlay($watchedTagItems);
-		var url = tag ? urls.tag + '/' + tag + '/0/5.json' : urls.watchedtags + '.json';
+		dgte.overlay($watchedTagItems.parent());
+		var url = (tag && tag != 'all') ? urls.watchedtags + '/' + tag + '.json' : urls.watchedtags + '.json';
 		$.get(url, function(response) {
 			switch(response.status) {
 			case '200':
+				$watchedTagItems.html('');
 				for(var i = 0, len = response.items.length; i < len; ++i) {
-					additem($watchedTagItems, response.items[i]);
+					dgte.addBuySellItem($watchedTagItems, response.items[i], urls.buysellitem);
 				}
 				break;
 			default:
 				debug('exception')
 			}
 		}).complete(function(){
-			dgte.fadeOverlay($watchedTagItems, function(){
+			dgte.fadeOverlay($watchedTagItems.parent(), function(){
 				waiting = false;
 			});
 		});
 	}
 	getTags();
-	
-	function addItem($container, item) {
-		var $li = $('<li class="watched-tag-item">');
-		
-		$('<img class="watched-tag-img">').attr('src', item.imgur.smallSquare).appendTo($li);
-		
-		var $info = $('<div class="watched-tag-item-info">').appendTo($li);
-		$('<div class="watched-tag-item-name">').text(item.name).appendTo($info);
-		var description = item.description.length > desclength ? item.description.substring(0, desclength) + '...' : item.description;
-		$('<div class="subtitle">').text(description).appendTo($info);
-	}
 });

@@ -1,4 +1,5 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
@@ -32,6 +33,15 @@
     vader: Google CDN, Microsoft CDN
  -->
 
-<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/flick/jquery-ui.css" type="text/css" media="all" />
+<c:choose>
+	<c:when test="${not empty user.theme }">
+		<c:set var="theme" value="${user.theme }" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="theme" value="flick" />
+	</c:otherwise>
+</c:choose>
+
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/${theme }/jquery-ui.css" type="text/css" media="all" />
 <link rel="stylesheet" href="//cachedcommons.org/cache/960/0.0.0/stylesheets/960-min.css" type="text/css" media="all" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/application.css' />" />

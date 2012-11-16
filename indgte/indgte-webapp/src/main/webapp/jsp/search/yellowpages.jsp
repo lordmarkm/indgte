@@ -33,7 +33,8 @@
 }
 
 .sublist {
-	list-style-type: circle;
+	list-style-type: none;
+	padding: 0;
 }
 .sublist li {
 	padding: 5px;
@@ -96,7 +97,7 @@ $(function(){
 		if($categories.length > 0) {
 			var $group = $('<li>').appendTo($alphabetized);
 			
-			$('<div class="ui-widget-header"val>').text(letter.toUpperCase()).appendTo($group);
+			$('<div class="section-header">').text(letter.toUpperCase()).appendTo($group);
 			
 			var $sublist = $('<ul class="sublist">').appendTo($group);
 			$categories.appendTo($sublist);

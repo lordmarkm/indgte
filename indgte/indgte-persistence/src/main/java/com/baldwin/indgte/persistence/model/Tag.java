@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="tags")
-public class Tag {
+public class Tag implements Comparable<Tag> {
 	
 	public enum SortColumn {
 		numberofitems,
@@ -80,5 +80,18 @@ public class Tag {
 		} else if (!tag.equals(other.tag))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(Tag other) {
+		if(null == tag && null == other.tag) {
+			return 0;
+		} else if(null != tag && null == other.tag) {
+			return -1;
+		} else if(null == tag && null != other.tag) {
+			return 1;
+		} else {
+			return tag.compareTo(other.tag);
+		}
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.webapp.dto.BuyAndSellForm;
 
 /**
@@ -25,7 +26,7 @@ public interface TradeController {
 	public ModelAndView landing(Principal principal);
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView newItem(User user, BuyAndSellForm form);
+	public ModelAndView newItem(Principal principal, BuyAndSellForm form);
 	
 	@RequestMapping(value = "/{itemId}", method = RequestMethod.GET)
 	public ModelAndView viewItem(Principal principal, long itemId);
@@ -37,7 +38,7 @@ public interface TradeController {
 	public JSON sold(User user, long itemId);
 	
 	@RequestMapping(value = "/sidebar.json", method = RequestMethod.GET)
-	public JSON getSidebarContent(User user);
+	public JSON getSidebarContent(UserExtension user);
 	
 	/* Tags */
 	@RequestMapping(value = "/tags/{tag}")
@@ -46,6 +47,12 @@ public interface TradeController {
 	@RequestMapping(value = "/tags/{tag}/{start}/{howmany}.json")
 	public JSON getTagItems(Principal principal, String tag, int start, int howmany);
 	
-	@RequestMapping(value = "/watchedtags.json")
+	@RequestMapping(value = "/watchedtags.json", method = RequestMethod.GET)
 	public JSON getAllWatchedTagItems(Principal principal);
+	
+	@RequestMapping(value = "/watchedtags/{tag}.json", method = RequestMethod.GET)
+	public JSON getWatchedTagItems(Principal principal, String tag);
+	
+	@RequestMapping(value = "/watchedtags/{tag}.json", method = RequestMethod.POST)
+	public JSON addToWatchedTags(Principal principal, String tag);
 }

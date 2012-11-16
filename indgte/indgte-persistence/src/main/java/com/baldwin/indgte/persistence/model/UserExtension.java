@@ -10,6 +10,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -24,6 +25,10 @@ import javax.persistence.Table;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.IndexColumn;
 
+import com.baldwin.indgte.persistence.constants.Theme;
+import com.baldwin.indgte.persistence.dto.Summarizable;
+import com.baldwin.indgte.persistence.dto.Summary;
+
 /**
  * A class to hold auxiliary user info
  * @author mbmartinez
@@ -31,7 +36,7 @@ import org.hibernate.annotations.IndexColumn;
 
 @Entity
 @Table(name="userextensions")
-public class UserExtension {
+public class UserExtension implements Summarizable {
 	@Id
 	private long id;
 	
@@ -42,6 +47,10 @@ public class UserExtension {
 	
 	@Column
 	private String rank = "Dumagueteño";
+	
+	@Enumerated
+	@Column
+	private Theme theme = Theme.flick;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "reviewer")
 	private Set<BusinessReview> businessReviews;
@@ -78,6 +87,9 @@ public class UserExtension {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "creator", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<TopTenList> createdToptens;
 	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<BuyAndSellItem> buyAndSellItems;
+	
 	@ManyToMany
 	@JoinTable(
 		name="watchedTags",
@@ -85,6 +97,30 @@ public class UserExtension {
 		inverseJoinColumns = @JoinColumn(name="tagId")
 	)
 	private Set<Tag> watchedTags;
+	
+	@OneToMany(
+		fetch=FetchType.LAZY,
+		mappedBy="owner"
+	)
+	private Set<BusinessProfile> businesses;
+	
+	@ElementCollection
+	@CollectionTable(
+		name = "businessSubs",
+		joinColumns = {@JoinColumn(name = "userId")}
+	)
+	@OrderColumn(name="order")
+	@Column(name="businessId")
+	private Set<Long> businessSubscriptions;
+		
+	@ElementCollection
+	@CollectionTable(
+		name = "userSubs",
+		joinColumns = {@JoinColumn(name = "subscriberId")}
+	)
+	@OrderColumn(name="order")
+	@Column(name="userId")
+	private Set<Long> userSubscriptions;	
 	
 	public boolean inWishlist(Product product) {
 		for(Wish wish : wishlist) {
@@ -198,6 +234,10 @@ public class UserExtension {
 		return user.getImageUrl();
 	}
 	
+	public String getProfileUrl() {
+		return user.getProfileUrl();
+	}
+	
 	@JsonIgnore
 	public Set<BusinessReview> getBusinessReviews() {
 		if(null == businessReviews) {
@@ -244,5 +284,55 @@ public class UserExtension {
 
 	public void setWatchedTags(Set<Tag> watchedTags) {
 		this.watchedTags = watchedTags;
+	}
+
+	@Override
+	public Summary summarize() {
+		return user.summarize();
+	}
+	
+	@JsonIgnore
+	public Set<BuyAndSellItem> getBuyAndSellItems() {
+		if(null == buyAndSellItems) {
+			this.buyAndSellItems = new HashSet<BuyAndSellItem>();
+		}
+		return buyAndSellItems;
+	}
+
+	public void setBuyAndSellItems(Set<BuyAndSellItem> buyAndSellItems) {
+		this.buyAndSellItems = buyAndSellItems;
+	}
+	
+	@JsonIgnore
+	public Set<BusinessProfile> getBusinesses() {
+		if(null == businesses) {
+			businesses = new HashSet<BusinessProfile>();
+		}
+		return businesses;
+	}
+
+	public void setBusinesses(Set<BusinessProfile> businesses) {
+		this.businesses = businesses;
+	}
+	
+	@JsonIgnore
+	public Set<Long> getBusinessSubscriptions() {
+		if(null == businessSubscriptions) {
+			businessSubscriptions = new HashSet<Long>();
+		}
+		return businessSubscriptions;
+	}
+
+	public void setBusinessSubscriptions(Set<Long> businessSubscriptions) {
+		this.businessSubscriptions = businessSubscriptions;
+	}
+	
+	@JsonIgnore
+	public Set<Long> getUserSubscriptions() {
+		return userSubscriptions;
+	}
+
+	public void setUserSubscriptions(Set<Long> userSubscriptions) {
+		this.userSubscriptions = userSubscriptions;
 	}
 }

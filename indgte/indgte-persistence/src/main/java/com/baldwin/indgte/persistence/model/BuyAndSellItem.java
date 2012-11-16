@@ -44,7 +44,7 @@ public class BuyAndSellItem {
 	
 	@ManyToOne(optional=false)
 	@JoinColumn(name="ownerId", nullable=false, updatable=false)
-	private User owner;
+	private UserExtension owner;
 	
 	@Field
 	@Column
@@ -76,7 +76,7 @@ public class BuyAndSellItem {
 	private long views;
 
 	@JsonIgnore
-	public User getOwner() {
+	public UserExtension getOwner() {
 		return owner;
 	}
 	
@@ -84,7 +84,7 @@ public class BuyAndSellItem {
 		return owner.summarize();
 	}
 
-	public void setOwner(User owner) {
+	public void setOwner(UserExtension owner) {
 		this.owner = owner;
 	}
 

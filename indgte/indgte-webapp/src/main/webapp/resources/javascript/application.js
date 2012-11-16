@@ -61,7 +61,13 @@ window.dgte = {
 		xhr.send(fd);		
 	},
 	
-	overlay : function(element){
+	overlay : function(element, adjustheight){
+		if(adjustheight) {
+			if(element.height() < 48) {
+				debug('adjusting ' + element.height() + ' to 48');
+				element.css('min-height', '48px'); //set to height of spinner.gif
+			}
+		}
 		$('<div class="overlay">').appendTo(element);
 	},
 	
@@ -72,6 +78,32 @@ window.dgte = {
 			$(this).remove();
 			if(typeof callback == 'function') callback();
 		});
+	},
+	
+	desclength : 80,
+
+	addBuySellItem : function($container, item, url) {
+		var $li = $('<li class="buysell-item">').appendTo($container);
+		
+		var $img = $('<img class="buysell-img">').attr('src', item.imgur.smallSquare);
+		if(url) {
+			$('<a>').attr('href', url + item.id).append($img).appendTo($li)
+		} else {
+			$img.appendTo($li);
+		}
+		
+		var $info = $('<div class="buysell-item-info">').appendTo($li);
+		
+		var $name = $('<div class="buysell-item-name">').text(item.id + ' - ' + item.name);
+		if(url) {
+			$('<a>').attr('href', url + item.id).append($name).appendTo($info);
+		} else {
+			$name.appendTo($info);
+		}
+		
+		var description = item.description.length > dgte.desclength ? item.description.substring(0, dgte.desclength) + '...' : item.description;
+		$('<div class="subtitle">').text(description).appendTo($info);
+		$('<div class="subtitle">').text(moment(item.time).fromNow()).appendTo($info);
 	}
 }
 

@@ -9,6 +9,7 @@ import java.util.Date;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.Criteria;
@@ -82,7 +83,7 @@ public class TradeDaoImpl implements TradeDao {
 	}
 
 	@Override
-	public Collection<BuyAndSellItem> getItems(User user) {
+	public Collection<BuyAndSellItem> getItems(UserExtension user) {
 		Session session = sessions.getCurrentSession();
 		session.refresh(user);
 		Hibernate.initialize(user.getBuyAndSellItems());
@@ -90,7 +91,8 @@ public class TradeDaoImpl implements TradeDao {
 	}
 
 	@Override
-	public void save(User user, BuyAndSellItem item) {
+	public void save(String name, BuyAndSellItem item) {
+		UserExtension user = users.getExtended(name);
 		item.setOwner(user);
 		item.setTime(new Date());
 		
@@ -179,9 +181,11 @@ public class TradeDaoImpl implements TradeDao {
 		return query.list();
 	}
 
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public Collection<BuyAndSellItem> getWatchedTagItems(String name, int start, int howmany) {
+	public Collection<BuyAndSellItem> getWatchedTagItems(String name, String tagString, int start, int howmany) {
 		log.debug("Searching for watched tags of {}", name);
 		UserExtension user = users.getExtended(name);
 		
@@ -190,22 +194,35 @@ public class TradeDaoImpl implements TradeDao {
 			return new ArrayList<BuyAndSellItem>();
 		}
 		
-		StringBuilder queryString = new StringBuilder();
-		for(Tag tag : user.getWatchedTags()) {
-			queryString.append(tag.getTag()).append(" ");
+		String queryString = tagString; //get a particular tag
+		if(null == tagString) { //get all instead
+			StringBuilder queryStringBuilder = new StringBuilder();
+			for(Tag tag : user.getWatchedTags()) {
+				queryStringBuilder.append(tag.getTag()).append(" ");
+			}
+			queryString = queryStringBuilder.toString();
 		}
+		log.debug("Query string: " + queryString);
 		
 		FullTextSession ftSession = Search.getFullTextSession(sessions.getCurrentSession());
 		org.apache.lucene.search.Query lQuery = null;
 		try {
-			lQuery = new QueryParser(luceneVersion, TableConstants.BUYANDSELL_TAGS, new WhitespaceAnalyzer(luceneVersion)).parse(queryString.toString());
+			lQuery = new QueryParser(luceneVersion, TableConstants.BUYANDSELL_TAGS, new WhitespaceAnalyzer(luceneVersion)).parse(queryString);
 		} catch (ParseException e) {
 			log.error("Bad search query", e);
 		}
+		ConstantScoreQuery csq = new ConstantScoreQuery(lQuery); //disable scores so we can sort exclusively by date
 		
-		Query query = ftSession.createFullTextQuery(lQuery,  BuyAndSellItem.class)
-				.setSort(new Sort(new SortField(TableConstants.BUYANDSELL_TIME, SortField.LONG, true)))
+		Query query = ftSession.createFullTextQuery(csq,  BuyAndSellItem.class)
+				.setSort(new Sort(new SortField(TableConstants.ID, SortField.LONG, true)))
 				.setFirstResult(start).setMaxResults(howmany);
 		return query.list();
+	}
+
+	@Override
+	public void addToWatchedTags(String name, String tagString) {
+		UserExtension user = users.getExtended(name);
+		Tag tag = getTag(tagString, false);
+		user.getWatchedTags().add(tag);
 	}
 }

@@ -9,6 +9,7 @@ import com.baldwin.indgte.persistence.dto.Summarizable;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.YellowPagesEntry;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
+import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.TopTenList;
 
@@ -39,4 +40,8 @@ public interface SearchDao {
 	Collection<TopTenList> searchTopTenLists(String term, int start, int howmany);
 
 	Collection<Tag> getTags(Tag.SortColumn sortColumn, int howmany);
+
+	Collection<BuyAndSellItem> searchBuySell(String term, int start, int howmany);
+
+	Collection<BuyAndSellItem> searchBuySellTag(String tag, String term, int start, int howmany);
 }

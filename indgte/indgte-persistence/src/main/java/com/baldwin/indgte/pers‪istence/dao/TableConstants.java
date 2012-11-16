@@ -1,12 +1,25 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
 public class TableConstants {
+	public static final String ID = "id";
+	public static final String NAME = "name";
+	public static final String DESCRIPTION = "description";
+	
 	public final static String USER_USERNAME = "username";
 	public final static String USER_PROVIDER_USERID = "providerUserId";
 	public static final String USER_USERID = "userId";
 	public final static String USER_PROVIDERID = "providerId";
 	public final static String USER_PROVIDERID_SPRINGSOCSEC = "springSocialSecurity";
 	public static final String USER_PROVIDERID_FACEBOOK = "facebook";
+	public static final String USER_BUSINESSES = "businesses";
+
+	//Collections
+	public static final String USER_WISHLIST = "wishlist";
+	public static final String USER_REVIEWQUEUE = "forReview";
+	public static final String USER_REVIEWSRECEIVED = "reviewsReceived";
+	public static final String USER_TOPTENVOTES = "votes";
+	public static final String USER_WATCHEDTAGS = "watchedTags";
+	public static final String USER_BUYSELLITEMS = "buyAndSellItems";
 	
 	public static final String BIZCATEGORY_NAME = "name";
 	

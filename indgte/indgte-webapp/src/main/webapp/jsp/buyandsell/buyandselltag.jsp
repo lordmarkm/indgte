@@ -3,7 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@include file="../tiles/links.jsp" %>
 
-<title>${tagString }</title>
+<title>${fn:toUpperCase(tagString) } In Dumaguete</title>
 <link rel="stylesheet" href="<spring:url value='/resources/css/buyandsell.css' />" />
 <script type="text/javascript" src="${jsApplication }"></script>
 
@@ -45,6 +45,34 @@
 
 </div>
 
+<div class="sidebar-section grid_4">
+	<div class="sidebar-section-header">Search for Items tagged ${tag.tag }</div>
+	<div class="buyandsell-search">
+		<form id="buysellsearchform">
+			<input type="text" class="ipt-search" placeholder="<spring:message code='buyandsell.tag.search' arguments="${tag.tag }" />"/>
+			<button class="btn-search">Search</button>
+		</form>
+		<div class="buyandsell-search-results-container">
+			<ul class="buyandsell-search-results"></ul>
+			<a href="javascript:;" class="showmore hide">Show more...</a>
+		</div>
+	</div>
+</div>
+
+<div class="sidebar-section grid_4">
+	<div class="sidebar-section-header">Watch Tag</div>
+	<c:choose>
+	<c:when test="${watched }">
+		<p>You are watching this tag.</p>
+	</c:when>
+	<c:otherwise>
+		<button class="btn-watch-tag" style="width: 100%;">Watch this Tag for New Items</button>
+	</c:otherwise>
+	</c:choose>
+	
+	<div class="sidebar-divider"></div>
+</div>
+
 <style>
 .header {
 	font-size: 2em;
@@ -68,9 +96,11 @@ window.tagEntity = {
 }
 window.urls = {
 	trade: '<spring:url value="/t/" />',
+	tagsearch: '<spring:url value="/s/buysell/" />',
 	//grids
 	tagweights: '<spring:url value="/s/tags.json" />',
-	tag: '<spring:url value="/t/tags/" />' //also used by page js here
+	tag: '<spring:url value="/t/tags/" />', //also used by page js here
+	watchedtags: '<spring:url value="/t/watchedtags" />' //also used by page js here
 }
 
 $(function(){
@@ -145,6 +175,103 @@ $(function(){
 		});
 	}
 	processTags();
+	
+	//watch tag
+	var $btnWatchTag = $('.btn-watch-tag');
+	
+	$btnWatchTag.click(function(){
+		$btnWatchTag.button('disable');
+		$.post(urls.watchedtags + '/' + tagEntity.tag + '.json', function(response) {
+			switch(response.status) {
+			case '200':
+				window.location.reload();
+				break;
+			default:
+				debug('error adding watch tag');
+				debug(response);
+			}
+		});
+	});
+	
+	//search this tag
+	var 
+		$searchform = $('#buysellsearchform'),
+		$iptSearch = $('.ipt-search'),
+		$btnSearch = $('.btn-search'),
+		$results = $('.buyandsell-search-results'),
+		$showmore = $('.showmore');
+	
+	$searchform.submit(function(){
+		return false;
+	});
+	
+	$iptSearch.on({
+		focus: function(){
+			this.select();
+		},
+		click: function(){
+			this.select();
+		}
+	});
+	
+	var start = 0, perload = 5, waiting = false, lastTerm;
+	
+	function search(term, clearprevious) {
+		waiting = true;
+		$btnSearch.button('disable');
+		$showmore.hide();
+		dgte.overlay($results.parent(), true);
+		$.get(urls.tagsearch + tagEntity.tag + '/' + term + '/' + start + '/' + perload + '.json', function(response) {
+			switch(response.status) {
+			case '200':
+				if(clearprevious) {
+					$results.html('');
+				}
+				
+				var len = response.items ? response.items.length : 0;
+				if(0 == len) {
+					$results.html('No results for ' + term);
+				}
+				if(len == perload) {
+					$showmore.show();
+				} else {
+					$showmore.hide();
+				}
+				
+				for(var i = 0; i < len; ++i) {
+					dgte.addBuySellItem($results, response.items[i], urls.trade)
+				}
+				break
+			default:
+				debug('error searching buy and sell');
+				debug(response);
+			}
+		}).error(function(){
+			$results.html('There was an error during the search. Please try again.');
+		}).complete(function(){
+			dgte.fadeOverlay($results.parent(), function(){
+				waiting = false;
+				$btnSearch.button('enable');
+			});
+		});
+	}
+	
+	$btnSearch.click(function(){
+		var term = $iptSearch.val();
+		lastTerm = term;
+		if(term.length < 2 || waiting) {
+			return;
+		}
+	
+		start = 0;
+		search(term, true);
+	});
+	
+	$showmore.click(function(){
+		if(!lastTerm) return;
+		start += 5;
+		search(lastTerm, false);
+	});
 });
 </script>
 
@@ -153,9 +280,12 @@ $(function(){
 	<div class="sidebar-section-header">Watched tags</div>
 	<c:choose>
 	<c:when test="${not empty user.watchedTags }">
+	<div class="watched-tag-link-container">
+		<a class="watched-tag selected" href="javascript:;" tag="all">All</a>
 	<c:forEach items="${user.watchedTags }" var="watchedTag">
-		<a class="watched-tag" href="javascript:;" tag="${watchedTag }">${watchedTag }</a>
+		<a class="watched-tag" href="javascript:;" tag="${watchedTag.tag }">${watchedTag.tag }</a>
 	</c:forEach>
+	</div>
 	</c:when>
 	<c:otherwise>
 		<spring:url var="urlFaqWatchingTags" value="/h/buy-and-sell#watching-tags" />
@@ -168,10 +298,8 @@ $(function(){
 	<div class="sidebar-divider"></div>
 </div>
 <c:if test="${not empty user.watchedTags }">
-<script>
-urls.watchedtags = '<spring:url value="/t/watchedtags" />'
-</script>
 <script src="${jsWatchedTags }" /></script>
+<link rel="stylesheet" href="<c:url value='/resources/css/grids/watchedtags.css' />" />
 </c:if>
 <!-- End watched tags -->
 

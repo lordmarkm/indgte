@@ -5,5 +5,8 @@ public enum Initializable {
 	reviewqueue,
 	reviewsreceived, 
 	toptenvotes,
-	watchedtags
+	watchedtags, 
+	buyandsellitems, 
+	businesses,
+	subscriptions
 }

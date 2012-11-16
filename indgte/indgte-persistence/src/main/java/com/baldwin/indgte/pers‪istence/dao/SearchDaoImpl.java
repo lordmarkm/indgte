@@ -1,10 +1,16 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
+import static com.baldwin.indgte.persistence.constants.SearchAndSummaryConstants.luceneVersion;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -23,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import com.baldwin.indgte.persistence.constants.SearchAndSummaryConstants;
 import com.baldwin.indgte.persistence.dto.OwnerSummarizer;
 import com.baldwin.indgte.persistence.dto.Summarizable;
 import com.baldwin.indgte.persistence.dto.Summarizer;
@@ -276,5 +283,82 @@ public class SearchDaoImpl implements SearchDao {
 		}
 		
 		return crit.list();
+	}
+
+	@Override
+	public Collection<BuyAndSellItem> searchBuySell(String term, int start, int howmany) {
+		log.debug("Searching for [{}] in class BuyAndSellItem", term);
+		log.debug("Starting with {}, Limiting results to {}", start, howmany == -1 ? "No limit" : howmany);
+		
+		Session session = sessions.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		
+		QueryBuilder q = ftSession.getSearchFactory().buildQueryBuilder().forEntity(BuyAndSellItem.class).get();
+		org.apache.lucene.search.Query lQuery;
+		try {
+			lQuery = q.keyword()
+					.fuzzy().withThreshold(0.5f).withPrefixLength(1)
+					.onFields(TableConstants.BUYANDSELL_TAGS, TableConstants.NAME, TableConstants.DESCRIPTION)
+					.matching(term).createQuery();
+		} catch (Exception e) {
+			log.error("Error creating query", e);
+			e.printStackTrace();
+			return null;
+		} 
+
+		Query query = ftSession.createFullTextQuery(lQuery, BuyAndSellItem.class);
+		if(start != -1) {
+			query.setFirstResult(start);
+		}
+		if(howmany != -1) {
+			query.setMaxResults(howmany);
+		}
+		
+		@SuppressWarnings("unchecked")
+		Collection<BuyAndSellItem> results = query.list();
+		
+		log.debug("Returning {} results", results.size());
+		return results;
+	}
+
+	@Override
+	public Collection<BuyAndSellItem> searchBuySellTag(String tag, String term, int start, int howmany) {
+		log.debug("Searching for [{}] in BuyAndSell tag {}", term, tag);
+		
+		Session session = sessions.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		
+		org.apache.lucene.search.Query termQuery;
+		org.apache.lucene.search.Query tagQuery;
+		try {
+			termQuery = ftSession.getSearchFactory().buildQueryBuilder()
+					.forEntity(BuyAndSellItem.class).get().keyword()
+					.fuzzy().withThreshold(0.5f).withPrefixLength(1)
+					.onFields(TableConstants.BUYANDSELL_TAGS, TableConstants.NAME, TableConstants.DESCRIPTION)
+					.matching(term).createQuery();
+			
+			tagQuery = 	new QueryParser(luceneVersion, TableConstants.BUYANDSELL_TAGS, 
+							new WhitespaceAnalyzer(SearchAndSummaryConstants.luceneVersion))
+							.parse(tag);
+		} catch (Exception e) {
+			log.error("Error creating query", e);
+			e.printStackTrace();
+			return null;
+		} 
+
+		BooleanQuery bQuery = new BooleanQuery();
+		bQuery.add(new BooleanClause(termQuery, BooleanClause.Occur.MUST));
+		bQuery.add(new BooleanClause(tagQuery, BooleanClause.Occur.MUST));
+		
+		log.debug("About to search using query [{}]", bQuery.toString());
+		
+		@SuppressWarnings("unchecked")
+		Collection<BuyAndSellItem> results = ftSession.createFullTextQuery(bQuery, BuyAndSellItem.class)
+				.setFirstResult(start)
+				.setMaxResults(howmany)
+				.list();
+		
+		log.debug("Returning {} results", results.size());
+		return results;
 	}
 }

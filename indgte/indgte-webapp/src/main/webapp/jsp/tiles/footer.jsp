@@ -1,3 +1,5 @@
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+
 <style>
 .footer {
 	min-height: 200px;
@@ -10,5 +12,10 @@
 </style>
 
 <section class="footer grid_12">
-	<div class="footer-container">Made by Mark</div>
+	<div class="footer-container">
+		<div>
+			<form:options items="${themes }" itemLabel="name" />
+		</div>
+		<div>Made by Mark</div>
+	</div>
 </section>

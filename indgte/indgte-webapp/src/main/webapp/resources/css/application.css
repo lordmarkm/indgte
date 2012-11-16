@@ -26,7 +26,7 @@ body {
 .capitalize {text-transform: capitalize;}
 .subtitle {
 	font-size: 0.8em;
-	color: grey;
+	color: #202020;
 }
 	/* mouse */
 .pointer {cursor: pointer;}
@@ -54,6 +54,13 @@ body {
 	/*center the info text, if any*/
 	text-align: center;
 	font-size: 14pt !important;
+}
+
+.page-header {
+	font-size: 2em;
+}
+.section-header {
+	font-size: 1.4em;
 }
 
 .sidebar-section {
