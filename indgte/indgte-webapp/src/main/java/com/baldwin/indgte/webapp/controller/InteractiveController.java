@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.webapp.dto.TopTenForm;
@@ -27,6 +28,12 @@ import com.baldwin.indgte.webapp.dto.TopTenForm;
 @RequestMapping("/i/")
 public interface InteractiveController {
 	/**
+	 * Change themes
+	 */
+	@RequestMapping(value="/themechange/{newtheme}.json", method = RequestMethod.POST)
+	public JSON changetheme(Principal principal, Theme newtheme);
+	
+	/**
 	 * Get most recent posts of entities principal is subscribed to
 	 */
 	@RequestMapping(value = "/subposts.json", method = RequestMethod.GET)
@@ -37,6 +44,9 @@ public interface InteractiveController {
 	 */
 	@RequestMapping(value = "/posts/", method = RequestMethod.GET)
 	public JSON lastPosts(long posterId, PostType type, int start, int howmany);
+	
+	@RequestMapping(value = "/posts/{postId}", method = RequestMethod.GET)
+	public ModelAndView viewpost(Principal principal, long postId);
 	
 	/**
 	 * Post new status - supports attachments
@@ -80,8 +90,14 @@ public interface InteractiveController {
 	@RequestMapping(value = "/review/{type}/{targetId}.json", method = RequestMethod.POST)
 	public JSON review(Principal principal, ReviewType type, long targetId, int score, String justification);
 	
+	@RequestMapping(value = "/review/{type}/{reviewId}", method = RequestMethod.GET)
+	public ModelAndView viewReview(Principal principal, ReviewType type, long reviewId);
+	
 	@RequestMapping(value = "/allreviews/{type}/{targetId}.json", method = RequestMethod.GET)
 	public JSON getAllReviews(Principal principal, ReviewType type, long targetId);
+	
+	@RequestMapping(value = "/reviewreact/{type}/{mode}/{reviewId}.json")
+	public JSON reviewReact(Principal principal, ReviewType type, String mode, long reviewId);
 	
 	@RequestMapping(value = "/reviewqueue.json", method = RequestMethod.GET)
 	public JSON getReviewQueue(Principal principal);

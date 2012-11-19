@@ -20,6 +20,11 @@
 		<put-attribute name="body" value="/jsp/home.jsp" />
 	</definition>
 	
+	<!-- Individual post -->
+	<definition name="viewpost" extends="default">
+		<put-attribute name="body" value="/jsp/posts/post.jsp" />
+	</definition>
+	
 	<!-- Register -->
 	<definition name="regform" extends="default">
 		<put-attribute name="body" value="/jsp/register/regform.jsp" />
@@ -59,6 +64,11 @@
 	</definition>
 	<definition name="editproduct" extends="default">
 		<put-attribute name="body" value="/jsp/businessops/editproduct.jsp" />
+	</definition>
+	
+	<!-- Review -->
+	<definition name="viewreview" extends="default">
+		<put-attribute name="body" value="/jsp/review/viewreview.jsp" />
 	</definition>
 	
 	<!-- Search and Yellow Pages -->

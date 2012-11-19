@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -32,6 +33,7 @@ import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
@@ -40,6 +42,7 @@ import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.Review;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.UserExtension;
@@ -662,5 +665,99 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		return sessions.getCurrentSession().createCriteria(TopTenList.class)
 					.addOrder(Order.asc(TableConstants.TOPTEN_TITLE))
 					.list();
+	}
+
+	@Override
+	public void changetheme(String name, Theme newtheme) {
+		UserExtension user = users.getExtended(name);
+		user.setTheme(newtheme);
+	}
+
+	@Override
+	public Post getPost(long postId) {
+		return (Post) sessions.getCurrentSession().get(Post.class, postId);
+	}
+
+	@Override
+	public Review getReview(ReviewType type, long reviewId, boolean getReactors) {
+		switch(type) {
+		case business:
+			Criteria bCriteria = sessions.getCurrentSession().createCriteria(BusinessReview.class)
+				.add(Restrictions.eq(TableConstants.ID, reviewId));
+			
+			if(getReactors) {
+				bCriteria.setFetchMode(TableConstants.REVIEW_AGREERS, FetchMode.JOIN)
+					.setFetchMode(TableConstants.REVIEW_DISAGREERS, FetchMode.JOIN);
+			}
+			
+			return (Review) bCriteria.uniqueResult();
+		case user:
+			Criteria uCriteria = sessions.getCurrentSession().createCriteria(UserReview.class)
+				.add(Restrictions.eq(TableConstants.ID, reviewId));
+			if(getReactors) {
+				uCriteria.setFetchMode(TableConstants.REVIEW_AGREERS, FetchMode.JOIN)
+					.setFetchMode(TableConstants.REVIEW_DISAGREERS, FetchMode.JOIN);
+			}
+			
+			return (Review) uCriteria.uniqueResult();
+		default:
+			return null;
+		}
+	}
+
+	@Override
+	public Review reviewReact(String name, ReviewType type, String mode, long reviewId) {
+		log.debug("{} {}s with {} review with id {}", name, mode, type, reviewId);
+		
+		UserExtension user = users.getExtended(name);
+		Review review = getReview(type, reviewId, false);
+		
+		switch(type) {
+		case business:
+			BusinessReview bReview = (BusinessReview)review;
+			switch(mode) {
+			case "agree":
+				bReview.getDisagreers().remove(user);
+				bReview.getAgreers().add(user);
+				bReview.setDisagreeCount(bReview.getDisagreers().size());
+				bReview.setAgreeCount(bReview.getAgreers().size());
+				return bReview;
+			case "disagree":
+				bReview.getAgreers().remove(user);
+				bReview.getDisagreers().add(user);
+				bReview.setAgreeCount(bReview.getAgreers().size());
+				bReview.setDisagreeCount(bReview.getDisagreers().size());
+				return bReview;
+			default:
+				return null;
+			}
+		case user:
+			UserReview uReview = (UserReview)review;
+			switch(mode) {
+			case "agree":
+				uReview.getDisagreers().remove(user);
+				uReview.getAgreers().add(user);
+				uReview.setDisagreeCount(uReview.getDisagreers().size());
+				uReview.setAgreeCount(uReview.getAgreers().size());
+				return uReview;
+			case "disagree":
+				uReview.getAgreers().remove(user);
+				uReview.getDisagreers().add(user);
+				uReview.setAgreeCount(uReview.getAgreers().size());
+				uReview.setDisagreeCount(uReview.getDisagreers().size());
+				return uReview;
+			default:
+				return null;
+			}
+		}
+		return null;
+	}
+	
+	public BusinessReview getBusinessReview(long reviewId) {
+		return (BusinessReview) sessions.getCurrentSession().get(BusinessReview.class, reviewId);
+	}
+	
+	public UserReview getUserReview(long reviewId) {
+		return (UserReview) sessions.getCurrentSession().get(UserReview.class, reviewId);
 	}
 }

@@ -1,7 +1,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<c:set var="domain" value="http://testfb.com:8080" />
+
 <spring:url var="urlImgur" value="http://imgur.com/" />
+<spring:url var="urlImgRoot" value="http://i.imgur.com/" />
 
 <spring:url var="noimage" value="/resources/images/noimage.jpg" />
 <spring:url var="noimage50" value="/resources/images/noimage50.png" />
@@ -25,6 +28,8 @@
 <spring:url var="urlDeletePics" value="/b/deletepics/" />
 
 <spring:url var="urlToptenList" value="/i/toptens/" />
+<spring:url var="urlPosts" value="/i/posts/" />
+<spring:url var="urlReview" value="/i/review/" />
 
 <spring:url var="urlTrade" value="/t/" />
 <spring:url var="urlTag" value="/t/tags/" />

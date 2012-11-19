@@ -24,6 +24,7 @@ import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
@@ -79,6 +80,16 @@ public class InteractiveControllerImpl implements InteractiveController {
 		return JSON.ok().put("posts", postDao.getById(posterId, type, start, howmany));
 	}
 
+	@Override
+	public ModelAndView viewpost(Principal principal, @PathVariable long postId) {
+		UserExtension user = users.getExtended(principal.getName());
+		Post post = interact.getPost(postId);
+		
+		return render(user, "viewpost")
+				.put("post", post)
+				.mav();
+	}
+	
 	@Override
 	public @ResponseBody JSON newstatus(Principal principal, WebRequest request) {
 		log.debug("Poster id: [{}]", request.getParameter("posterId"));
@@ -160,7 +171,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 	public @ResponseBody JSON post(long posterId, PostType type, String title, String text) {
 		title = clean(title);
 		text = clean(text);
-		Post post = postDao.newPost(posterId, type, title, text);
+		Post post = interact.newPost(posterId, type, title, text);
 		return JSON.ok().put("post", post);
 	}
 
@@ -287,7 +298,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 
 	@Override
 	public ModelAndView toptens(Principal principal) {
-		User user = users.getFacebook(principal.getName());
+		//User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName());
 		Collection<TopTenList> recentLists = interact.getRecentToptens(0, 8);
 		Collection<TopTenList> popularLists = interact.getPopularToptens(0, 8);
 		//Collection<TopTenList> userLists = interact.getUserToptens(principal.getName());
@@ -350,7 +362,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			log.debug("User has Not voted for a candidate in this list.");
 		}
 		
-		return render(user.getUser(), "toptenlist")
+		return render(user, "toptenlist")
 				.put("topten", topten)
 				.put("userVoted", userVoted == null ? 0 : userVoted.getId())
 				.mav();
@@ -443,6 +455,38 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.ok();
 		} catch (Exception e) {
 			log.error("Exception adding to wishlist", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON changetheme(Principal principal, @PathVariable Theme newtheme) {
+		try {
+			interact.changetheme(principal.getName(), newtheme);
+			return JSON.ok();
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public ModelAndView viewReview(Principal principal, @PathVariable ReviewType type, @PathVariable long reviewId) {
+		UserExtension user = users.getExtended(principal.getName());
+		Review review = interact.getReview(type, reviewId, true);
+		return render(user, "viewreview")
+				.put("review", review)
+				.put("agree", review.getAgreers().contains(user))
+				.put("disagree", review.getDisagreers().contains(user))
+				.mav();
+	}
+
+	@Override
+	public @ResponseBody JSON reviewReact(Principal principal, @PathVariable ReviewType type, @PathVariable String mode, @PathVariable long reviewId) {
+		try {
+			Review review = interact.reviewReact(principal.getName(), type, mode, reviewId);
+			return JSON.ok().put("review", review);
+		} catch (Exception e) {
+			log.error("Error that I forgot to log again", e);
 			return JSON.status500(e);
 		}
 	}

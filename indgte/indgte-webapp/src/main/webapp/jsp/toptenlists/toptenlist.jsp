@@ -32,7 +32,14 @@
 		<li class="candidate-container<c:if test="${index.index >= 10  }"> honorable-mention</c:if>" candidateId="${candidate.id }">
 			<div class="rank ui-widget-header ui-corner-all">${index.index + 1}</div>
 			<c:if test="${not empty candidate.attachment }">
-				<div class="candidate-title">${candidate.attachment.name }</div>
+				<c:choose>
+					<c:when test="${candidate.attachmentType eq 'business' }">
+						<div class="candidate-title"><a href="${urlProfile }${candidate.attachment.id}">${candidate.attachment.name }</a></div>
+					</c:when>
+					<c:otherwise>
+						<div class="candidate-title">${candidate.attachment.name }</div>
+					</c:otherwise>
+				</c:choose>
 				<div class="link-vote" candidateId="${candidate.id }"></div>
 				<c:if test="${index.index <= 9  }">
 				<div class="clear"></div>

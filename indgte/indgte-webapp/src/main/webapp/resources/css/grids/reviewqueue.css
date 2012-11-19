@@ -21,13 +21,17 @@
 .review-request-info {
 	margin-left: 40px;
 }
+
+.review-decline-container a {
+	color: transparent;
+}
 .review-decline, .review-accede {
 	margin: 5px 2px 0 2px;
 	font-size: 0.9em;
 }
 a.review-decline:hover {
-	color: red;
+	color: red !important;
 }
 a.review-accede:hover {
-	color: green;
+	color: green !important;
 }

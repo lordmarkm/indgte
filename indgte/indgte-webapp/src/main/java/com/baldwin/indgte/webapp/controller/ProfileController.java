@@ -9,6 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.model.Imgur;
+import com.baldwin.indgte.webapp.controller.impl.ProfileControllerImpl;
 
 /**
  * Handles both business and personal profiles
@@ -16,6 +17,8 @@ import com.baldwin.indgte.persistence.model.Imgur;
  * 1. View own (personal) profile
  * 2. View other people's personal profiles
  * 3. View business profiles
+ * 
+ * <p>{@link ProfileControllerImpl}
  * 
  * @author mbmartinez
  */

@@ -7,10 +7,12 @@ import java.util.Set;
 import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Post;
+import com.baldwin.indgte.persistence.model.Review;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.UserReview;
@@ -89,5 +91,13 @@ public interface InteractiveDao {
 	public void initializeAttachment(TopTenCandidate candidate);
 
 	public Collection<TopTenList> getAllLists();
+
+	public void changetheme(String name, Theme newtheme);
+
+	public Post getPost(long postId);
+
+	public Review getReview(ReviewType type, long reviewId, boolean getReactors);
+
+	public Review reviewReact(String name, ReviewType type, String mode, long reviewId);
 
 }

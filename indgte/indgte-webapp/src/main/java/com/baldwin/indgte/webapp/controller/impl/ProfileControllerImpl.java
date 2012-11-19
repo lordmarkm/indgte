@@ -1,10 +1,10 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
 import static com.baldwin.indgte.persistence.constants.Initializable.wishlist;
-import static com.baldwin.indgte.webapp.controller.MavBuilder.*;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
-import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Imgur;
@@ -59,21 +60,16 @@ public class ProfileControllerImpl implements ProfileController {
 	public ModelAndView myBusinesses(Principal principal, WebRequest request) {
 		log.debug("Profile page requested by {}", principal);
 		
-		User fbUser = users.getFacebook(principal.getName());
-		Collection<BusinessProfile> businessez = businesses.getBusinesses(principal.getName());
+		UserExtension user = users.getExtended(principal.getName(), Initializable.businesses);
 		
-		ModelAndView mav = new ModelAndView()
-							.addObject("user", fbUser)
-							.addObject("businesses", businessez);
-		
-		mav.setViewName("businesses");
-		
-		return mav;
+		return render(user, "businesses")
+				.put("businesses", user.getBusinesses())
+				.mav();
 	}
 	
 	@Override
 	public ModelAndView userProfile(Principal principal, @PathVariable String targetUsername) {
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName());
 		UserExtension target = users.getExtended(targetUsername, wishlist);
 
 		return render(user, "userprofile")
@@ -103,13 +99,12 @@ public class ProfileControllerImpl implements ProfileController {
 		}
 		
 		UserExtension userExtension = (UserExtension) profileObjects[0];
-		User user = userExtension.getUser();
 		BusinessProfile business = (BusinessProfile) profileObjects[1];
 		
-		return render(user, "businessprofile")
+		return render(userExtension, "businessprofile")
 				.put("business", business)
 				.put("subscribed", posts.isSubscribed(principal.getName(), business.getId(), PostType.business))
-				.put("owner", business.getOwner().equals(user))
+				.put("owner", business.getOwner().equals(userExtension))
 				.put("imgurKey", imgurKey)
 				.mav();
 	}

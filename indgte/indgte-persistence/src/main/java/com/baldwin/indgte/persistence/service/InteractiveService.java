@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.baldwin.indgte.persistence.constants.AttachmentType;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
@@ -193,5 +194,25 @@ public class InteractiveService {
 
 	public Collection<TopTenList> getAllLists() {
 		return dao.getAllLists();
+	}
+
+	public void changetheme(String name, Theme newtheme) {
+		dao.changetheme(name, newtheme);
+	}
+
+	public Post newPost(long posterId, PostType type, String title, String text) {
+		return dao.newPost(posterId, type, title, text);
+	}
+
+	public Post getPost(long postId) {
+		return dao.getPost(postId);
+	}
+
+	public Review getReview(ReviewType type, long reviewId, boolean getReactors) {
+		return dao.getReview(type, reviewId, getReactors);
+	}
+
+	public Review reviewReact(String name, ReviewType type, String mode, long reviewId) {
+		return dao.reviewReact(name, type, mode, reviewId);
 	}
 }

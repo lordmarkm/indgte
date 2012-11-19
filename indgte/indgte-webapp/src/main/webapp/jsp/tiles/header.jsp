@@ -35,7 +35,7 @@
 
 <c:choose>
 	<c:when test="${not empty user.theme }">
-		<c:set var="theme" value="${user.theme }" />
+		<c:set var="theme" value="${user.theme.name }" />
 	</c:when>
 	<c:otherwise>
 		<c:set var="theme" value="flick" />

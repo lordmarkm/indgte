@@ -58,7 +58,7 @@
 						<div class="name">${user.username }</div>
 						<div class="post-as-category">Personal</div>
 					</div>
-					<c:forEach items="${businesses }" var="business">
+					<c:forEach items="${user.businesses }" var="business">
 					<div class="post-as-option" posterId="${business.id }" posterType="business">
 						<c:choose>
 						<c:when test="${not empty business.profilepic }">
@@ -811,6 +811,19 @@ $(function(){
 		//footnote
 		var $footnote = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow() + ' by ').appendTo($dataContainer);
 		$('<a>').attr('href', link).text(post.posterTitle).appendTo($footnote);
+		
+		//comments
+		var $comments = $('<div class="post-comments">').appendTo($dataContainer);
+		
+		var urlPostDetails = 'http://www.facebook.com/plugins/comments.php?' + dgte.domain + urls.postdetails + post.id + '&permalink=1';
+		$('<iframe scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:130px; height:16px;" allowTransparency="true">')
+			.attr('src', urlPostDetails)
+			.appendTo($comments);
+//		$('<div class="fb-comments" data-width="470" data-num-posts="2">')
+//			.attr('data-href', dgte.domain + urls.postdetails + post.id)
+//			.attr('simple', '1')
+//			.attr('css', 'http://www.fileden.com/files/2012/11/19/3368241/fb-comments.css')
+//			.appendTo($post);
 	}
 	
 	$posts.on({
@@ -879,3 +892,13 @@ window.urls.topTenLeader = '<spring:url value="/i/toptens/leader/" />',
 window.urls.topTensPage = '<spring:url value="/i/toptens/" />'
 </script>
 <script src="${jsTopTens }"></script>
+<!-- End Top Tens -->
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>

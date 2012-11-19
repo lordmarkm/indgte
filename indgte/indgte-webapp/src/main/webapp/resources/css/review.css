@@ -81,3 +81,12 @@
 	color: darkgrey;
 	margin-right: 50px;
 }
+
+.agree-disagree-preview-container {
+	display: inline-block;
+	margin-left:20px;
+	position: absolute;
+}
+.agree-disagree-preview {
+	margin-left: 10px;
+}

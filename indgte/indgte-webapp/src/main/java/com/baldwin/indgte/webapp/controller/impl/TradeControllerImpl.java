@@ -77,7 +77,7 @@ public class TradeControllerImpl implements TradeController {
 		UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist);
 		BuyAndSellItem item = trade.get(principal.getName(), itemId);
 		
-		MavBuilder builder = render(user.getUser(), "buyandsellitem")
+		MavBuilder builder = render(user, "buyandsellitem")
 					.put("item", item)
 					.put("inwishlist", user.inWishlist(item))
 					.put("owner", item.getOwner().equals(user.getUser()));

@@ -1,5 +1,6 @@
 //we give 0 ***** about corrupting the global namespace
 window.dgte = {
+	domain: 'href=http://testfb.com:8080',
 	search: {
 		autocompleteMinlength: 4,
 		letters: letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -187,7 +188,12 @@ $.fn.extend({
 		}
 		this.offset(newoffset);
 		return this;
-	}
+	},
+	
+	dgteFadeIn : function() {
+		this.hide().fadeIn(1000);
+		return this;
+	} 
 });
 
 $(function(){

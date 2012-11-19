@@ -78,7 +78,7 @@ $(function(){
 				summary.description;
 		$('<div class="subtitle">').text(description).appendTo($infocontainer);
 		
-		var $decline = $('<div class="review-decline-container hide">').appendTo($infocontainer);
+		var $decline = $('<div class="review-decline-container">').appendTo($infocontainer);
 		$('<a class="review-accede">').attr('href', urls.business + summary.identifier + '#3').text('Review').appendTo($decline);
 		$('<a href="javascript:;" class="review-decline noreview">').text('Not now').appendTo($decline);
 		$('<a href="javascript:;" class="review-decline neverreview">').text('Don\'t show again').appendTo($decline);
@@ -86,10 +86,10 @@ $(function(){
 	
 	$reviewqueue.on({
 		mouseenter: function(){
-			$(this).addClass('ui-state-highlight').find('.review-decline-container').show();
+			$(this).addClass('ui-state-highlight').find('.review-decline-container a').css('color', 'black');
 		},
 		mouseleave: function(){
-			$(this).removeClass('ui-state-highlight').find('.review-decline-container').hide();
+			$(this).removeClass('ui-state-highlight').find('.review-decline-container a').css('color', 'transparent');
 		}
 	}, '.review-request');
 	

@@ -335,4 +335,34 @@ public class UserExtension implements Summarizable {
 	public void setUserSubscriptions(Set<Long> userSubscriptions) {
 		this.userSubscriptions = userSubscriptions;
 	}
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserExtension other = (UserExtension) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
 }

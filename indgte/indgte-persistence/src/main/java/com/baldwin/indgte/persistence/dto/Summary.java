@@ -21,6 +21,7 @@ public class Summary {
 	private String title;
 	private String description;
 	private String thumbnailHash;
+	private String rank;
 	
 	/**
 	 * User: username
@@ -90,5 +91,13 @@ public class Summary {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getRank() {
+		return rank;
+	}
+
+	public void setRank(String rank) {
+		this.rank = rank;
 	}
 }

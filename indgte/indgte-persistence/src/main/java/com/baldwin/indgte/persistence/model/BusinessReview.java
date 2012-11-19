@@ -1,6 +1,8 @@
 package com.baldwin.indgte.persistence.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -9,14 +11,19 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.ReviewerType;
+import com.baldwin.indgte.persistence.dto.Summary;
 
 @Entity
 @Table(name="businessReviews")
@@ -32,6 +39,28 @@ public class BusinessReview implements Review {
 	@ManyToOne(optional=false)
 	@JoinColumn(name="reviewedId", nullable=false, updatable=false)
 	private BusinessProfile reviewed;
+	
+	@Column
+	private int agreeCount = 0;
+	
+	@Column
+	private int disagreeCount = 0;
+	
+	@ManyToMany
+	@JoinTable(
+		name="businessreviewagreers",
+		joinColumns = {@JoinColumn(name="reviewId")},
+		inverseJoinColumns = {@JoinColumn(name="userId")}
+	)
+	private Set<UserExtension> agreers;
+	
+	@ManyToMany
+	@JoinTable(
+		name="businessreviewdisagreers",
+		joinColumns = {@JoinColumn(name="reviewId")},
+		inverseJoinColumns = {@JoinColumn(name="userId")}
+	)
+	private Set<UserExtension> disagreers;
 	
 	@Column
 	private int score;
@@ -68,7 +97,12 @@ public class BusinessReview implements Review {
 	public void setScore(int score) {
 		this.score = score;
 	}
-
+	
+	public Summary getReviewerSummary() {
+		return reviewer.summarize();
+	}
+	
+	@JsonIgnore
 	public UserExtension getReviewer() {
 		return reviewer;
 	}
@@ -77,6 +111,7 @@ public class BusinessReview implements Review {
 		this.reviewer = reviewer;
 	}
 
+	@JsonIgnore
 	public BusinessProfile getReviewed() {
 		return reviewed;
 	}
@@ -107,5 +142,56 @@ public class BusinessReview implements Review {
 
 	public void setTime(Date time) {
 		this.time = time;
+	}
+
+	@Override
+	public Summary getRevieweeSummary() {
+		return reviewed.summarize();
+	}
+
+	@Override
+	@JsonIgnore
+	public Set<UserExtension> getAgreers() {
+		if(null == agreers) {
+			this.agreers = new HashSet<UserExtension>();
+		}
+		return agreers;
+	}
+
+	public void setAgreers(Set<UserExtension> agreers) {
+		this.agreers = agreers;
+	}
+	
+	@Override
+	@JsonIgnore
+	public Set<UserExtension> getDisagreers() {
+		if(null == disagreers) {
+			this.disagreers = new HashSet<UserExtension>();
+		}
+		return disagreers;
+	}
+
+	public void setDisagreers(Set<UserExtension> disagreers) {
+		this.disagreers = disagreers;
+	}
+	
+	@Override
+	public int getAgreeCount() {
+		return agreeCount;
+	}
+
+	@Override
+	public void setAgreeCount(int agreeCount) {
+		this.agreeCount = agreeCount;
+	}
+
+	@Override
+	public int getDisagreeCount() {
+		return disagreeCount;
+	}
+
+	@Override
+	public void setDisagreeCount(int disagreeCount) {
+		this.disagreeCount = disagreeCount;
 	}
 }

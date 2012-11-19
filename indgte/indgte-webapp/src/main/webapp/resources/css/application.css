@@ -12,13 +12,14 @@ body {
 /* margins and other trivial stuff */
 .ml5 {margin-left: 5px;}
 .mr5 {margin-right: 5px;}
-
+.mt10 {margin-top: 10px;}
 /* descriptive-name classes */
 .hide {display: none;}
 
 	/* layout */
 .inline {display: inline;}
 .inline-block {display: inline-block;}
+.floatleft {float: left;}
 .floatright {float: right;}
 .centercontent {text-align: center;}
 	/* fonts */
@@ -27,6 +28,12 @@ body {
 .subtitle {
 	font-size: 0.8em;
 	color: #202020;
+}
+.greentext {
+	color: green;
+}
+.redtext {
+	color: red;
 }
 	/* mouse */
 .pointer {cursor: pointer;}

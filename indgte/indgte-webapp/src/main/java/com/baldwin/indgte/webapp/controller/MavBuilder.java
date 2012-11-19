@@ -46,16 +46,17 @@ public class MavBuilder {
 		loadGlobals(this);
 	}
 	
+	private MavBuilder(String viewname) {
+		this();
+		mav.setViewName(viewname);
+	}
+	
+	private MavBuilder(RedirectView redirectView) {
+		mav = new ModelAndView(redirectView);
+	}
+	
 	private void loadGlobals(MavBuilder m) {
 		m.put("themes", Theme.values());
-	}
-	
-	public MavBuilder(String viewname) {
-		mav = new ModelAndView(viewname);
-	}
-	
-	public MavBuilder(RedirectView redirectViewname) {
-		mav = new ModelAndView(redirectViewname);
 	}
 	
 	public MavBuilder put(String name, Object object) {

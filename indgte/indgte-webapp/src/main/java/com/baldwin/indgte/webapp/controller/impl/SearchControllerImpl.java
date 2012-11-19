@@ -24,6 +24,7 @@ import com.baldwin.indgte.persistence.dto.YellowPagesEntry;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.SearchService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
@@ -47,7 +48,7 @@ public class SearchControllerImpl implements SearchController {
 
 	@Override
 	public ModelAndView searchpage(Principal principal) {
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName());
 		MultiValueMap<String, Number> count = search.getYellowPagesIndex();
 		log.debug("Business count: {}", count);
 		return render(user, "yellowpages")

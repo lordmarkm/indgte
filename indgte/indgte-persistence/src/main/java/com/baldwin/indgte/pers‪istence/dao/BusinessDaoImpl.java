@@ -78,8 +78,8 @@ public class BusinessDaoImpl implements BusinessDao {
 			}
 		}
 		
-		if(!business.getOwner().equals(userExtension.getUser()) //owner can't review his own businesses
-				&& unreviewed									//don't notify if user has already reviewed the business
+		if(unreviewed //owner can't review his own businesses
+				&& !business.getOwner().equals(userExtension) //don't notify if user has already reviewed the business
 				&& !userExtension.getNeverReview().contains(business.getId())) { //don't notify if user has indicated he never wants to review the business
 			List<BusinessProfile> forReview = userExtension.getForReview();
 			forReview.remove(business);

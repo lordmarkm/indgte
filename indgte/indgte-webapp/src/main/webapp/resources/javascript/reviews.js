@@ -92,15 +92,19 @@ $(function(){
 		var $container = $('<div class="review-container user">').appendTo($reviewsList);
 		//reviewer
 		var $reviewerContainer = $('<div class="reviewer-container">').appendTo($container);
-		$('<img class="reviewer-img">').attr('src', review.reviewer.imageUrl).appendTo($reviewerContainer);
+		$('<img class="reviewer-img">').attr('src', review.reviewerSummary.thumbnailHash).appendTo($reviewerContainer);
 		var $reviewername = $('<div class="reviewer-name">').appendTo($reviewerContainer);
-		$('<a>').attr('href', urls.user + review.reviewer.username).text(review.reviewer.username).appendTo($reviewername);
-		$('<div class="reviewer-rank">').text(review.reviewer.rank).appendTo($reviewerContainer);
+		$('<a>').attr('href', urls.user + review.reviewerSummary.identifier).text(review.reviewerSummary.identifier).appendTo($reviewername);
+		$('<div class="reviewer-rank">').text(review.reviewerSummary.rank).appendTo($reviewerContainer);
 		//data
 		$detailsContainer = $('<div class="review-details-container">').appendTo($container)
-		//stars
+		//stars and +/-
 		var $stars = $('<div class="review-star-container">').appendTo($detailsContainer);
 		makestars($stars, review.score);
+		var $agreeDisagree = $('<div class="agree-disagree-preview-container">').appendTo($stars);
+		if(review.agreeCount) $('<span class="agree-disagree-preview greentext">').text(review.agreeCount + ' agree').appendTo($agreeDisagree);
+		if(review.disagreeCount) $('<span class="agree-disagree-preview redtext">').text(review.disagreeCount + ' disagree').appendTo($agreeDisagree);
+		
 		//justification
 		$('<div class="review-justification">')
 			.html(review.justification.length > dgte.review.previewChars ? 
@@ -123,7 +127,7 @@ $(function(){
 		$reviewsList.html('');
 		var reviews = response.reviews;
 		for(var i = 0, len = reviews.length; i < len; ++i) {
-			if(reviews[i].reviewer.username != user.username) {
+			if(reviews[i].reviewerSummary.identifier != user.username) {
 				addReview(reviews[i]);
 			} else {
 				addUserReview(reviews[i]);

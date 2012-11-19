@@ -2,15 +2,16 @@
 	list-style-type: none;
 }
 
+.post:first-child, .category:first-child {
+	border-top-color: transparent !important;
+}
+
 .post, .category {
 	border-color: #d2d2d2 !important;
 	border-style: solid !important;
 	border-width: 1px 0 0 !important;
 	min-height: 65px;
 	padding: 5px;
-}
-.post:first-child, .category:first-child {
-	border-top-color: transparent;
 }
 
 .post-pic, .category-pic {
@@ -89,4 +90,12 @@
 
 li.ui-state-default {
 	font-weight: normal;
+}
+
+.post-comments {
+	margin: 10px 0 0 0;
+}
+
+.fb-comments {
+	margin: 10px 10px 10px 60px;
 }
