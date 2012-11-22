@@ -49,3 +49,4 @@
 <spring:url var="jsReviews" value="/resources/javascript/reviews.js" />
 <spring:url var="jsAutocomplete" value="/resources/javascript/autocomplete.js" />
 <spring:url var="jsWatchedTags" value="/resources/javascript/grids/watchedtags.js" />
+<spring:url var="jsChat" value="/resources/javascript/navbar/chat.jsp" />

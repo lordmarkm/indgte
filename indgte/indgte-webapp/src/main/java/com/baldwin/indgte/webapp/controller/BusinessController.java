@@ -30,6 +30,9 @@ public interface BusinessController {
 	@RequestMapping(value = "/categories/{domain}.json", method = RequestMethod.GET)
 	public JSON getCategoriesJSON(Principal principal, String domain);
 	
+	@RequestMapping(value = "/categories/{categoryId}", method = RequestMethod.GET)
+	public String redirectCategory(long categoryId);
+	
 	@RequestMapping(value = "/categories/{domain}/{categoryId}", method = RequestMethod.GET)
 	public ModelAndView viewcategory(Principal principal, String domain, long categoryId);
 	

@@ -22,7 +22,6 @@
 			<button class="btn-promote">Promote</button>
 		</div>
 		</c:if>
-		<div class="category-welcome-divider">&nbsp;</div>
 		<div class="category-welcome-provider">
 			<img class="category-provider-image" />
 			<div class="category-provider-info">
@@ -97,7 +96,9 @@ window.products = {
 			}
 		});
 
-		$('<div>').html(product.description).appendTo($container);
+		var maxdesc = 240;
+		var desc = product.description.length > maxdesc ? product.description.substring(0, maxdesc) + '...' : product.description;
+		$('<div>').html(desc).appendTo($container);
 	}
 }
 

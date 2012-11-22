@@ -135,7 +135,7 @@ $(function(){
 	$('.attach-option.image').click(function(){
 		$attachInputContainer.show();
 		hideAttachInputs();
-		$attachType.val('image');
+		$attachType.val('imgur');
 		$status.removeClass('noattachment');
 		$iptFile.show();
 		matchWidths();
@@ -183,7 +183,7 @@ $(function(){
 			$status.removeClass('noattachment');
 			hideAttachInputs();
 			switch($attachType.val()) {
-			case 'image':
+			case 'imgur':
 				$iptFile.show();
 				break;
 			case 'video':
@@ -378,8 +378,8 @@ $(function(){
 		}
 		
 		switch(attachType) {
-		case 'image':
-			data.attachmentType = 'image';
+		case 'imgur':
+			data.attachmentType = 'imgur';
 			upload($iptFile[0].files[0], function(imgurResponse) {
 				data.hash = imgurResponse.upload.image.hash;
 				postStatus(data);
@@ -493,7 +493,7 @@ $(function(){
 		
 		//attachment, if any
 		switch(post.attachmentType) {
-		case 'image':
+		case 'imgur':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
 			var $attachmentImgA = $('<a>').attr('href', urls.imgurPage + post.attachmentImgurHash).appendTo($container);
 			$('<img class="attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($attachmentImgA);

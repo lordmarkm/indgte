@@ -56,4 +56,5 @@ public class TableConstants {
 	
 	public static final String REVIEW_AGREERS = "agreers";
 	public static final String REVIEW_DISAGREERS = "disagreers";
+	public static final String CHAT_CHANNEL = "channel";
 }

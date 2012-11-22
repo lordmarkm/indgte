@@ -1,7 +1,6 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
 import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
-import static com.baldwin.indgte.webapp.controller.MavBuilder.isAjax;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
@@ -29,7 +28,6 @@ import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Product;
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.UserService;
@@ -58,11 +56,11 @@ public class BusinessControllerImpl implements BusinessController {
 	public ModelAndView viewcategory(Principal principal, @PathVariable String domain, @PathVariable long categoryId) {
 		BusinessProfile business = businesses.get(domain);
 		Category category = businesses.getCategory(categoryId);
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName());
 		
 		return render(user, "viewcategory")
 				.put("business", business)
-				.put("owner", business.getOwner().getUsername().equals(user.getUsername()))
+				.put("owner", business.getOwner().equals(user))
 				.put("category", category)
 				.put("imgurKey", imgurKey)
 				.mav();
@@ -91,15 +89,9 @@ public class BusinessControllerImpl implements BusinessController {
 	@Override
 	public ModelAndView createCategoryPage(Principal principal, @PathVariable String domain, WebRequest request) {
 		BusinessProfile business = businesses.get(domain);
-		
-		if(isAjax(request)) {
-			return render("businessops/createcategory")
-					.put("business", business).mav();
-		} else {
-			User user = users.getFacebook(principal.getName());
-			return render(user, "createcategory")
-					.put("business", business).mav();
-		}
+		UserExtension user = users.getExtended(principal.getName());
+		return render(user, "createcategory")
+				.put("business", business).mav();
 	}
 
 	@Override
@@ -120,6 +112,7 @@ public class BusinessControllerImpl implements BusinessController {
 		try {
 			businesses.saveCategoryMainpic(domain, categoryId, mainpic);
 		} catch(Exception e) {
+			log.error("Error uploading pic", e);
 			return JSON.status500(e);
 		}
 		return JSON.ok();
@@ -142,7 +135,7 @@ public class BusinessControllerImpl implements BusinessController {
 	public ModelAndView createProductPage(Principal principal, @PathVariable String domain, @PathVariable long categoryId, WebRequest request) {
 		log.debug("Product creation page requested?");
 		
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName());
 		return render(user, "createproduct").mav();
 	}
 
@@ -164,10 +157,10 @@ public class BusinessControllerImpl implements BusinessController {
 		BusinessProfile business = businesses.get(domain);
 		Product product = businesses.getProduct(productId);
 		
-		return render(user.getUser(), "viewproduct")
+		return render(user, "viewproduct")
 					.put("business", business)
 					.put("product", product)
-					.put("owner", business.getOwner().equals(user.getUser()))
+					.put("owner", business.getOwner().equals(user))
 					.put("inwishlist", user.inWishlist(product))
 					.put("imgurKey", imgurKey)
 					.mav();
@@ -233,7 +226,7 @@ public class BusinessControllerImpl implements BusinessController {
 
 	@Override
 	public ModelAndView editProductPage(Principal principal, @PathVariable String domain, @PathVariable long productId, Model model) {
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName());
 		BusinessProfile business = businesses.get(domain);
 		Product product = businesses.getProduct(productId);
 		model.addAttribute("product", product);
@@ -300,5 +293,11 @@ public class BusinessControllerImpl implements BusinessController {
 			log.error("Exception deleting pics", e);
 			return JSON.status500(e);
 		}
+	}
+
+	@Override
+	public String redirectCategory(@PathVariable long categoryId) {
+		Category category = businesses.getCategory(categoryId);
+		return "redirect:/b/categories/" + category.getBusiness().getDomain() + "/" + categoryId;
 	}
 }

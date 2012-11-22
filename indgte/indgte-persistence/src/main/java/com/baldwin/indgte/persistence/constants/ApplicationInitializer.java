@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import com.baldwin.indgte.pers‪istence.dao.CategoryDao;
+import com.baldwin.indgte.pers‪istence.dao.BusinessGroupDao;
 
 /**
  * For "stuff" that needs initializing. Right now there's only cat dao
@@ -17,7 +17,7 @@ import com.baldwin.indgte.pers‪istence.dao.CategoryDao;
 public class ApplicationInitializer {
 
 	@Autowired 
-	private CategoryDao catDao;
+	private BusinessGroupDao catDao;
 	
 	/**
 	 * Really only need to set this to true once per database

@@ -1,6 +1,9 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.webapp.controller.MavBuilder.*;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.basicWithImages;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -36,7 +39,6 @@ import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.Review;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.InteractiveService;
@@ -102,7 +104,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 		PostType postType = PostType.valueOf(request.getParameter("posterType"));
 		switch(postType) {
 		case user:
-			User user = users.getFacebook(principal.getName());
+			UserExtension user = users.getExtended(principal.getName());
 			poster = user.summarize();
 			break;
 		case business:

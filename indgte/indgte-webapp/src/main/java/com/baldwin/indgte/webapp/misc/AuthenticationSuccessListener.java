@@ -15,13 +15,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuthenticationSuccessListener implements ApplicationListener<InteractiveAuthenticationSuccessEvent>{
+public class AuthenticationSuccessListener implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
 	static Logger log = LoggerFactory.getLogger(AuthenticationSuccessListener.class);
-	
-    @Override
-    public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
-		Object principal = event.getAuthentication().getPrincipal();
 
+	@Override
+    public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
+    	Object principal = event.getAuthentication().getPrincipal();
+    	
 		log.info("Auth success! {}", principal);
 		
 		//Make Mark Martinez an admin

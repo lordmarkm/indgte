@@ -10,8 +10,8 @@
 
 <div class="grid_9">
 
-<section class="userinfo ui-widget">
-	<div class="ui-widget-header">${target.user.username }</div>
+<section class="userinfo">
+	<div class="section-header">${target.user.username }</div>
 	<div class="container userinfo-container">
 		<img src="${target.user.imageUrl }" />
 		<ul>
@@ -22,8 +22,9 @@
 	</div>
 </section>
 
-<section class="wishlist ui-widget">
-	<div class="ui-widget-header">Wishlist</div>
+<c:if test="${not empty target.wishlist }">
+<section class="wishlist">
+	<div class="section-header">Wishlist</div>
 	<div class="container wishlist-container">
 		<ol>
 			<c:forEach items="${target.wishlist }" var="wish" varStatus="status">
@@ -56,15 +57,26 @@
 		</ol>
 	</div>
 </section>
+</c:if>
 
 <section class="feed">
 </section>
 
+<c:if test="${not empty target.businesses }">
 <section class="businesses">
+	<div class="section-header">Businesses</div>
+	<ul>
+	<c:forEach items="${target.businesses }" var="business">
+		<li>
+			${business.name }
+		</li>
+	</c:forEach>
+	</ul>
 </section>
+</c:if>
 
 <section class="reviews">
-	<div class="ui-widget-header">Reviews</div>
+	<div class="section-header">Reviews</div>
 	<div class="reviews-container">
 		<div class="review-header">
 			<div class="review-header-message"></div>

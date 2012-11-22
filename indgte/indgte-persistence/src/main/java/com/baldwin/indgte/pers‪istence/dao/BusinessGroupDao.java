@@ -2,7 +2,7 @@ package com.baldwin.indgte.pers‪istence.dao;
 
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 
-public interface CategoryDao {
+public interface BusinessGroupDao {
 	public void init();
 	public BusinessGroup get(long id);
 	public BusinessGroup get(String name);

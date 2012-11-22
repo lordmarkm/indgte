@@ -1,6 +1,9 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.*;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.business;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.category;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.product;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.user;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
@@ -23,7 +26,6 @@ import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.dto.YellowPagesEntry;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.Tag;
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.SearchService;
 import com.baldwin.indgte.persistence.service.UserService;
@@ -134,7 +136,7 @@ public class SearchControllerImpl implements SearchController {
 
 	@Override
 	public ModelAndView viewCategory(Principal principal, @PathVariable long groupId) {
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName());
 		BusinessGroup group = search.getBusinessGroup(groupId);
 		List<YellowPagesEntry> businesses = search.getYellowPagesEntries(groupId);
 		return render(user, "yellowpage")

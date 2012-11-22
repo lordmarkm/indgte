@@ -17,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Post;
-import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.pers‪istence.dao.InteractiveDao;
@@ -45,7 +45,7 @@ public class AdminControllerImpl implements AdminController {
 	
 	@Override
 	public ModelAndView daoTester(Principal principal) {
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName());
 		return render(user, "daotester").mav();
 	}
 

@@ -14,20 +14,19 @@ public class UserService {
 	@Autowired
 	private UserDao dao;
 	
+	@Deprecated
 	public User getByUsername(String userId, String providerId) {
 		return dao.getByUsername(userId, providerId);
 	}
 
+	@Deprecated
 	public User getMain(String userId) {
 		return dao.getSpring(userId);
 	}
 
+	@Deprecated
 	public User getFacebook(String userId) {
 		return dao.getFacebook(userId);
-	}
-
-	public UserExtension getExtended(String username) {
-		return dao.getExtended(username);
 	}
 
 	public UserExtension getExtended(String username, Initializable... initializables) {

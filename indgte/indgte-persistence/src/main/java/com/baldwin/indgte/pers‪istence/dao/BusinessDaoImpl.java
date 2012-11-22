@@ -20,11 +20,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.TopTenCandidate;
+import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.UserExtension;
 
 @Repository 
@@ -38,6 +41,9 @@ public class BusinessDaoImpl implements BusinessDao {
 	
 	@Autowired
 	private UserDao users;
+	
+	@Autowired
+	private BusinessGroupDao groups;
 	
 	@Value("${review.queue.maxsize}")
 	private int forReviewQueueMaxSize;
@@ -101,8 +107,20 @@ public class BusinessDaoImpl implements BusinessDao {
 		
 		owner.getBusinesses().add(profile);
 		profile.setOwner(owner);
-		
+
 		session.save(profile);
+
+
+		BusinessGroup group = groups.get(profile.getCategory().getId());
+		TopTenList list;
+		if(null != group && (list = group.getTopTenList()) != null) { //if list is null it will be added later on
+			TopTenCandidate candidate = new TopTenCandidate(profile);
+			candidate.setList(list);
+			candidate.setCreator(owner);
+			
+			list.getCandidates().add(candidate);
+			session.save(candidate);
+		}
 	}
 
 	@Override

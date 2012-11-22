@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
-import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
@@ -27,7 +27,7 @@ import com.baldwin.indgte.webapp.controller.RegistrationController;
 import com.baldwin.indgte.webapp.dto.RegistrationForm;
 
 @Component
-@SessionAttributes(value={"regform", "user"}, types={RegistrationForm.class, User.class})
+@SessionAttributes(value={"regform"}, types={RegistrationForm.class})
 public class RegistrationControllerImpl implements RegistrationController {
 	static Logger log = LoggerFactory.getLogger(RegistrationControllerImpl.class);
 	
@@ -40,7 +40,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 	@Override
 	public ModelAndView regform(Principal principal, RegistrationForm regform) {
 		log.debug("Registration form requested by {}", principal);
-		User user = userService.getFacebook(principal.getName());
+		UserExtension user = userService.getExtended(principal.getName());
 		
 		if(null != regform) {
 			log.debug("Extant business profile: " + regform.getBusinessProfile());
@@ -58,7 +58,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 	public ModelAndView editform(Principal principal, RegistrationForm regform, @PathVariable String domain) {
 		log.debug("Edit form requested by {} for {}", principal.getName(), domain);
 		
-		User user = userService.getFacebook(principal.getName());
+		UserExtension user = userService.getExtended(principal.getName());
 		BusinessProfile business = businesses.get(domain);
 		regform.setBusinessProfile(business);
 
@@ -74,18 +74,18 @@ public class RegistrationControllerImpl implements RegistrationController {
 		return domain.equals(editDomain) || null == businesses.get(domain);
 	}
 	
-	public ModelAndView savePageOne(Principal principal, @ModelAttribute User user, @ModelAttribute RegistrationForm regform) {
+	public ModelAndView savePageOne(Principal principal, @ModelAttribute RegistrationForm regform) {
 		log.info("Registration flow, Page 1 save request for domain {} from {}.", regform.getDomain(), principal.getName());
-		//User user = userService.getFacebook(principal.getName());
+		UserExtension user = userService.getExtended(principal.getName());
 		
 		return render(user, "choosecategory")
 				.put("regform", regform)
 				.mav();
 	}
 	
-	public ModelAndView savePageTwo(Principal principal, @ModelAttribute User user, @ModelAttribute RegistrationForm regform) {
+	public ModelAndView savePageTwo(Principal principal, @ModelAttribute RegistrationForm regform) {
 		log.debug("Registration flow, Page 2 save request form domain {}. Category is now [{}]", regform.getDomain(), regform.getCategory());
-		//User user = userService.getFacebook(principal.getName());
+		UserExtension user = userService.getExtended(principal.getName());
 		String name = clean(regform.getRegformCategory(), false);
 		BusinessGroup category = businesses.getCategory(name);
 		regform.getBusinessProfile().setCategory(category);

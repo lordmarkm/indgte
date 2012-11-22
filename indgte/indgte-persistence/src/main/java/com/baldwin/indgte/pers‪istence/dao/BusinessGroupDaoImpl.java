@@ -18,8 +18,8 @@ import com.baldwin.indgte.persistence.model.BusinessGroup;
 
 @Repository
 @Transactional
-public class CategoryDaoImpl implements CategoryDao {
-	static Logger log = LoggerFactory.getLogger(CategoryDaoImpl.class);
+public class BusinessGroupDaoImpl implements BusinessGroupDao {
+	static Logger log = LoggerFactory.getLogger(BusinessGroupDaoImpl.class);
 	
 	@Autowired
 	SessionFactory sessions;

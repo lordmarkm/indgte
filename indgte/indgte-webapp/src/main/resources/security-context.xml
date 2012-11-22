@@ -8,8 +8,8 @@
 	<http auto-config='false' use-expressions="true" entry-point-ref="springSocialSecurityEntryPoint">
 		<custom-filter position="FORM_LOGIN_FILTER" ref="springSocialSecurityAuthenticationFilter" />
 		<anonymous />
-		<logout logout-success-url="/login.jsp?loggedout=true" />
-		
+		<logout success-handler-ref="chatRepository" />
+
 		<intercept-url pattern="/" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/r/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/p/**" access="hasRole('ROLE_USER')" />
@@ -21,5 +21,6 @@
 	</http>
 	<!--  global-method-security pre-post-annotations="enabled" /--><!-- for @PreAuthorize -->
 	<!--  global-method-security secured-annotations="enabled"/ --><!-- for @Secured -->
+
 	<authentication-manager alias="authenticationManager" />
 </beans:beans>

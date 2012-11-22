@@ -1,6 +1,6 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.persistence.constants.Initializable.wishlist;
+import static com.baldwin.indgte.persistence.constants.Initializable.*;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
@@ -21,7 +21,6 @@ import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Imgur;
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.InteractiveService;
@@ -49,7 +48,7 @@ public class ProfileControllerImpl implements ProfileController {
 	public ModelAndView profile(Principal principal) {
 		log.debug("Profile page requested by {}", principal);
 		
-		User user = users.getFacebook(principal.getName());
+		UserExtension user = users.getExtended(principal.getName());
 		
 		return render(user, "ownprofile")
 				.put("authorities", SecurityContextHolder.getContext().getAuthentication().getAuthorities())
@@ -70,11 +69,11 @@ public class ProfileControllerImpl implements ProfileController {
 	@Override
 	public ModelAndView userProfile(Principal principal, @PathVariable String targetUsername) {
 		UserExtension user = users.getExtended(principal.getName());
-		UserExtension target = users.getExtended(targetUsername, wishlist);
+		UserExtension target = users.getExtended(targetUsername, wishlist, Initializable.businesses);
 
 		return render(user, "userprofile")
 					.put("target", target)
-					.put("subscribed", posts.isSubscribed(principal.getName(), target.getUser().getId(), PostType.user))
+					.put("subscribed", posts.isSubscribed(principal.getName(), target.getId(), PostType.user))
 					.mav();
 	}
 	

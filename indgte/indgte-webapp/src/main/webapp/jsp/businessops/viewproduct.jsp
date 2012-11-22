@@ -19,7 +19,6 @@
 			<h3>${product.name }</h3>
 			<div class="product-welcome-description italic">${product.description }</div>
 		</div>
-		<div class="product-welcome-divider">&nbsp;</div>
 		<div class="product-welcome-category">
 			<a href="${urlCategories }${business.domain}/${product.category.id}"><img class="product-category-image" /></a>
 			<div class="product-category-info">
@@ -27,7 +26,6 @@
 				<div><spring:message code="generics.category" /></div>
 			</div>
 		</div>
-		<div class="product-welcome-divider">&nbsp;</div>
 		<div class="product-welcome-provider">
 			<a href="${urlProfile }${business.domain}"><img class="product-provider-image" /></a>
 			<div class="product-provider-info">
@@ -295,6 +293,7 @@ $(function(){
 	});
 	
 	$btnAddPhoto.click(function(){
+		debug('add photo button clicked');
 		$uploadPreview.html('');
 		$addPhoto.find('.overlay').remove().end()
 			.dialog({
@@ -359,10 +358,7 @@ $(function(){
 	    			setTimeout(function(){$('.galleria-image:last').click()}, 250);
 	    			break;
 	    		default:
-	    			debug('Error: .dropbox-message {
-	    					display: table-cell;
-	    		    vertical-align: middle;
-	    		}' + dgteResponse);
+	    			debug('Error: ' + dgteResponse);
     		}
     		
     		//remove overlay if all files are done processing

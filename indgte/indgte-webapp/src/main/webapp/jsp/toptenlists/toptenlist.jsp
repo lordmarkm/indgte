@@ -36,6 +36,12 @@
 					<c:when test="${candidate.attachmentType eq 'business' }">
 						<div class="candidate-title"><a href="${urlProfile }${candidate.attachment.id}">${candidate.attachment.name }</a></div>
 					</c:when>
+					<c:when test="${candidate.attachmentType eq 'category' }">
+						<div class="candidate-title"><a href="${urlCategories }${candidate.attachment.id }">${candidate.attachment.name }</a></div>
+					</c:when>
+					<c:when test="${candidate.attachmentType eq 'product' }">
+						<div class="candidate-title"><a href="${urlProducts }${candidate.attachment.id }">${candidate.attachment.name }</a></div>
+					</c:when>
 					<c:otherwise>
 						<div class="candidate-title">${candidate.attachment.name }</div>
 					</c:otherwise>

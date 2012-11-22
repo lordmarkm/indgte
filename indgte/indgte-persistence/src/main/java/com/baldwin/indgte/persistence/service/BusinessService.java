@@ -12,12 +12,12 @@ import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.pers‪istence.dao.BusinessDao;
-import com.baldwin.indgte.pers‪istence.dao.CategoryDao;
+import com.baldwin.indgte.pers‪istence.dao.BusinessGroupDao;
 
 @Service
 public class BusinessService {
 	@Autowired BusinessDao dao;
-	@Autowired CategoryDao cDao;
+	@Autowired BusinessGroupDao cDao;
 	public BusinessProfile get(String domain) {
 		return dao.get(domain);
 	}

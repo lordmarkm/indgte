@@ -80,7 +80,7 @@ public class TradeControllerImpl implements TradeController {
 		MavBuilder builder = render(user, "buyandsellitem")
 					.put("item", item)
 					.put("inwishlist", user.inWishlist(item))
-					.put("owner", item.getOwner().equals(user.getUser()));
+					.put("owner", item.getOwner().equals(user));
 		
 		if(item instanceof AuctionItem) {
 			AuctionItem auctionItem = (AuctionItem)item;

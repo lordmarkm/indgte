@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.webapp.dto.RegistrationForm;
 
 /**
@@ -38,7 +37,7 @@ public interface RegistrationController {
 	 * @return Page 2 of registration flow
 	 */
 	@RequestMapping(value = URL_SAVE_PAGE1, method = RequestMethod.POST)
-	public ModelAndView savePageOne(Principal principal, User user, RegistrationForm regform);
+	public ModelAndView savePageOne(Principal principal, RegistrationForm regform);
 	
 	/**
 	 * @return true if the domain is available
@@ -47,7 +46,7 @@ public interface RegistrationController {
 	public boolean isDomainTaken(String domain, String editDomain);
 	
 	@RequestMapping(value = URL_SAVE_PAGE2, method = RequestMethod.POST)
-	public ModelAndView savePageTwo(Principal principal, User user, RegistrationForm regform);
+	public ModelAndView savePageTwo(Principal principal, RegistrationForm regform);
 	
 	/**
 	 * Save request after User pinpoints business location on a Google Map. Not much will actually happen

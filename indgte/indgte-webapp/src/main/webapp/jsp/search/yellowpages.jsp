@@ -166,7 +166,8 @@ $(function(){
 		var $businessContainer = $('<div class="yellowpages autocomplete-container">').attr('domain', business.identifier).appendTo($topbusinesses);
 		
 		$('<img class="yellowpages autocomplete-img">').attr('src', business.thumbnailHash ? urls.imgur + business.thumbnailHash + 's.jpg' : dgte.urls.blackSquareSmall).appendTo($businessContainer);
-		$('<div class="yellowpages autocomplete-title">').text(business.title).appendTo($businessContainer);
+		var $title = $('<div class="yellowpages autocomplete-title">').appendTo($businessContainer);
+		$('<a>').attr('href', urls.businessProfile + business.identifier).text(business.title).appendTo($title);
 		$('<div class="yellowpages autocomplete-description">').html(business.description).appendTo($businessContainer);
 	}
 	

@@ -1,5 +1,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@include file="../tiles/links.jsp" %>
 
 <spring:url var="urlHome" value="/" />
 <spring:url var="urlYellowPages" value="/s/" />
@@ -39,17 +40,19 @@
 		</div>
 	</div>
 	
-	<div class="search-container">
-		<input class="search-input" type="text" placeholder="Search for stuff in Dumaguete"/>
-		<button>&nbsp;</button>
-		<div class="autocomplete-results ui-state-highlight" style="display: none;"></div>
+	<div class="search-padder">
+		<div class="search-container">
+			<input class="search-input" type="text" placeholder="Search for stuff in Dumaguete"/>
+			<button>&nbsp;</button>
+			<div class="autocomplete-results ui-state-highlight" style="display: none;"></div>
+		</div>
 	</div>
 	
 	<div class="navigation-container floatright">
 		<strong class="navigation home"><a href="${urlHome }">Home</a></strong>
 		<strong class="navigation yellowpages"><a href="${urlYellowPages }">Yellow Pages</a></strong>
 		<strong class="navigation buysell"><a href="${urlBuySell }">Buy&Sell</a></strong>
-		<strong class="navigation chat">Chat</strong>
+		<strong class="navigation chat"><a href="javascript:;">Chat</a></strong>
 	</div>
 </section>
 
@@ -75,30 +78,6 @@ $(function(){
 		$searchInput = $('.search-input'),
 		$autocompleteResults = $('.autocomplete-results')
 		$navigation = $('.navigation');
-	
-	//show user-menu
-	$btnShowUsermenu.click(function(event){
-		var $that = $(this);
-		event.stopPropagation();
-		$that.toggleClass('active');
-		$userMenuTopBorder.toggle();
-		$userMenu.toggle();
-	});
-	
-	//clicking the user-menu-item div follows its a child link
-	$userMenuItem.click(function(){
-		var $that = $(this);
-		var $a = $that.find('a:first-child');
-		
-		window.location.href = $that.find('a:only-child').attr('href');	
-	});
-	
-	//same goes for navigation
-	$navigation.click(function(){
-		var $that = $(this);
-		var $a = $that.find('a:first-child');
-		window.location.href = $that.find('a:only-child').attr('href');	
-	});
 	
 	$btnSearch.button({ icons: {primary: 'ui-icon-search'}}).click(function(){
 	});
@@ -186,16 +165,61 @@ $(function(){
 		},
 		'.autocomplete-container');
 	
-	//all .loadhere links while navbar is active
+	$(document).on({
+		mouseenter : function(){
+			var $this = $(this);
+			if($this.hasClass('ui-state-active')) return;
+			$this.addClass('ui-state-highlight');
+		},
+		mouseleave : function(){
+			$(this).removeClass('ui-state-highlight');
+		},
+		click : function(event){
+			event.stopPropagation();
+			$userMenuTopBorder.toggle();
+			$userMenu.toggle();
+			$(this).removeClass('ui-state-highlight').addClass('ui-state-active');
+			$userMenu.addClass('ui-state-active');
+			$userMenuTopBorder.addClass('ui-state-active');
+		}
+	}, '.menu-container');
+	
+	$(document).on({
+		mouseenter : function(){
+			$(this).addClass('ui-state-highlight');
+		},
+		mouseleave : function(){
+			$(this).removeClass('ui-state-highlight');
+		},
+		click : function(){
+			window.location.href = $(this).find('a:only-child').attr('href');	
+		}
+	}, '.user-menu-item');
+	
+	$(document).on({
+		mouseenter : function(){
+			$(this).addClass('ui-state-highlight');
+		},
+		mouseleave : function(){
+			$(this).removeClass('ui-state-highlight');
+		},
+		click: function(event){
+			event.stopPropagation();
+			$(this).addClass('ui-state-active');
+			window.location.href = $(this).find('a:only-child').attr('href');
+		}
+	}, '.navigation')
+	
 	//hide popups
 	$(document).click(function(){
+		$btnShowUsermenu.removeClass('ui-state-active');
+		
 		$userMenuTopBorder.hide();
 		$userMenu.hide();
 		$autocompleteResults.hide();
-		$btnShowUsermenu.removeClass('active');
 	});
 });
 </script>
 
-<spring:url var="jsApplication" value="/resources/javascript/application.js" />
 <script type="text/javascript" src="${jsApplication }"></script>
+<%@include file="/resources/javascript/navbar/chat.jsp"  %>
