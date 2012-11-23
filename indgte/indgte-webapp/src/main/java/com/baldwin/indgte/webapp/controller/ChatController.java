@@ -15,7 +15,7 @@ import com.baldwin.indgte.persistence.model.ChatMessage;
 public interface ChatController {
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public JSON getChatters(Principal principal);
+	public DeferredResult<JSON> getChatters(Principal principal, String[] chatters);
 	
 	@RequestMapping(value="/messages/", method = RequestMethod.POST)
 	public JSON send(Principal principal, String channel, String message);
@@ -25,4 +25,7 @@ public interface ChatController {
 	 */
 	@RequestMapping(value="/messages/", method = RequestMethod.GET)
 	public DeferredResult<List<ChatMessage>> getMessages(Principal principal, String[] channels, long lastReceivedId);
+	
+	@RequestMapping(value="/messages/{channel}/{howmany}.json", method = RequestMethod.POST) //Post prevents caching
+	public JSON getChannelMessages(Principal principal, String channel, int howmany);
 }

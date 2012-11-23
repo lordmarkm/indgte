@@ -20,4 +20,5 @@ public interface UserDao {
 	UserExtension getExtended(long userId, Initializable... initialize);
 	UserExtension getExtended(String username, Initializable... initialize);
 	UserExtension getDefault(Initializable... initializables);
+	String getImageUrl(String sender);
 }

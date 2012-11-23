@@ -1,9 +1,11 @@
 package com.baldwin.indgte.persistence.model;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -14,16 +16,25 @@ public class ChatMessage {
 	private long id;
 	
 	@Column
+	private String sender;
+
+	@Column
+	private String senderImageUrl;
+	
+	@Column
 	private String channel;
 	
 	@Column
+	@Lob @Basic
 	private String message;
 
 	public ChatMessage() {
 		//
 	}
 	
-	public ChatMessage(String channel, String message) {
+	public ChatMessage(String sender, String senderImageUrl, String channel, String message) {
+		this.sender = sender;
+		this.senderImageUrl = senderImageUrl;
 		this.channel = channel;
 		this.message = message;
 	}
@@ -50,5 +61,21 @@ public class ChatMessage {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public String getSender() {
+		return sender;
+	}
+
+	public void setSender(String sender) {
+		this.sender = sender;
+	}
+
+	public String getSenderImageUrl() {
+		return senderImageUrl;
+	}
+
+	public void setSenderImageUrl(String senderImageUrl) {
+		this.senderImageUrl = senderImageUrl;
 	}
 }

@@ -100,4 +100,6 @@ public interface InteractiveDao {
 
 	public Review reviewReact(String name, ReviewType type, String mode, long reviewId);
 
+	public List<String> getBusinessSubscriptionDomains(String username);
+
 }

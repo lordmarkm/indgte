@@ -29,12 +29,9 @@ body {
 	font-size: 0.8em;
 	color: #202020;
 }
-.greentext {
-	color: green;
-}
-.redtext {
-	color: red;
-}
+.greentext {color: green;}
+.redtext {color: red;}
+.bluetext {color: blue;}
 	/* mouse */
 .pointer {cursor: pointer;}
 	/* others */
@@ -57,7 +54,7 @@ body {
 	background-image: url("../images/spinner.gif");
 	background-repeat: no-repeat;
 	background-position: center;
-	z-index: 9001;
+	z-index: 4;
 	/*center the info text, if any*/
 	text-align: center;
 	font-size: 14pt !important;

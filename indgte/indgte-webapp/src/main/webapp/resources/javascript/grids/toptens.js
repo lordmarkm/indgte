@@ -46,7 +46,7 @@ $(function(){
 		var $topten = $('<li class="topten">').appendTo($container);
 		var imgSrc = dgte.toptens.genericTen;
 		try {
-			imgSrc = topten.leader.attachmentSummary.thumbnailHash ? 
+			imgSrc = topten.leader.attachmentSummary && topten.leader.attachmentSummary.thumbnailHash ? 
 					dgte.urls.imgur + topten.leader.attachmentSummary.thumbnailHash + 's.jpg' :
 						dgte.toptens.genericTen;
 		} catch(e) {

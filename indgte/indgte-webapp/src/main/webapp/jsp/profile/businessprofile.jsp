@@ -383,7 +383,7 @@ $(function(){
 		if(initialized) return;
 		var $overlay = $('<div class="overlay">').appendTo($catalogContainer);
 		$categories.html('');
-		$.get(urlCategories + domain + '.json', function(response) {
+		$.get(urlCategories + domain + '/json', function(response) {
 			switch(response.status) {
 			case '200':
 				if(response.categories.length === 0) {
@@ -418,7 +418,7 @@ $(function(){
 		$('<div class="category-description italic">').text(category.description).appendTo($dataContainer);
 		
 		var $productsContainer = $('<div class="products-container">').appendTo($category);
-		$.get(urls.getProducts + business.domain + '/' + category.id + '.json', function(response) {
+		$.get(urls.getProducts + business.domain + '/' + category.id + '/json', function(response) {
 			switch(response.status) {
 			case '200':
 				for(var i = 0, length = response.products.length; i < length; ++i) {

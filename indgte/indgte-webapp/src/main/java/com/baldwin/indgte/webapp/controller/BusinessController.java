@@ -27,7 +27,7 @@ public interface BusinessController {
 	 * Category operations for domain
 	 */
 	
-	@RequestMapping(value = "/categories/{domain}.json", method = RequestMethod.GET)
+	@RequestMapping(value = "/categories/{domain}/json", method = RequestMethod.GET)
 	public JSON getCategoriesJSON(Principal principal, String domain);
 	
 	@RequestMapping(value = "/categories/{categoryId}", method = RequestMethod.GET)
@@ -52,7 +52,7 @@ public interface BusinessController {
 	 * Product operations for domain and category
 	 */
 	
-	@RequestMapping(value = "/products/{domain}/{categoryId}.json", method = RequestMethod.GET)
+	@RequestMapping(value = "/products/{domain}/{categoryId}/json", method = RequestMethod.GET)
 	public JSON getProductsJSON(Principal principal, String domain, long categoryId);
 	
 	@RequestMapping(value = "/products/{domain}/{productId}", method = RequestMethod.GET)

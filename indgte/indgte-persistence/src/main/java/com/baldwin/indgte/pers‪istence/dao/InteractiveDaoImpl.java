@@ -760,4 +760,14 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	public UserReview getUserReview(long reviewId) {
 		return (UserReview) sessions.getCurrentSession().get(UserReview.class, reviewId);
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<String> getBusinessSubscriptionDomains(String username) {
+		UserExtension user = users.getExtended(username);
+		return sessions.getCurrentSession().createCriteria(BusinessProfile.class)
+					.add(Restrictions.in(TableConstants.ID, user.getBusinessSubscriptions()))
+					.setProjection(Projections.property("domain"))
+					.list();
+	}
 }

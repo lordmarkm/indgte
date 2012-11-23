@@ -52,7 +52,7 @@
 		<strong class="navigation home"><a href="${urlHome }">Home</a></strong>
 		<strong class="navigation yellowpages"><a href="${urlYellowPages }">Yellow Pages</a></strong>
 		<strong class="navigation buysell"><a href="${urlBuySell }">Buy&Sell</a></strong>
-		<strong class="navigation chat"><a href="javascript:;">Chat</a></strong>
+		<strong class="navigation chat">Chat</strong>
 	</div>
 </section>
 
@@ -205,7 +205,7 @@ $(function(){
 		},
 		click: function(event){
 			event.stopPropagation();
-			$(this).addClass('ui-state-active');
+			$(this).addClass('ui-state-active').removeClass('ui-state-highlight');
 			window.location.href = $(this).find('a:only-child').attr('href');
 		}
 	}, '.navigation')

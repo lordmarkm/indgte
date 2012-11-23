@@ -1,5 +1,6 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -18,9 +19,12 @@ public class ChatDaoImpl implements ChatDao {
 	@Autowired
 	private SessionFactory sessions;
 	
+	@Autowired
+	private UserDao users;
+	
 	@Override
-	public ChatMessage newMessage(String channel, String message) {
-		ChatMessage chatMessage = new ChatMessage(channel, message);
+	public ChatMessage newMessage(String sender, String channel, String message) {
+		ChatMessage chatMessage = new ChatMessage(sender, users.getImageUrl(sender), channel, message);
 		sessions.getCurrentSession().save(chatMessage);
 		return chatMessage;
 	}
@@ -33,6 +37,16 @@ public class ChatDaoImpl implements ChatDao {
 			.add(Restrictions.in(TableConstants.CHAT_CHANNEL, channels))
 			.addOrder(Order.desc(TableConstants.ID))
 			.list();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection<ChatMessage> getChannelMessages(String channel, int howmany) {
+		return sessions.getCurrentSession().createCriteria(ChatMessage.class)
+				.add(Restrictions.eq(TableConstants.CHAT_CHANNEL, channel))
+				.addOrder(Order.desc(TableConstants.ID))
+				.setMaxResults(howmany)
+				.list();
 	}
 
 }

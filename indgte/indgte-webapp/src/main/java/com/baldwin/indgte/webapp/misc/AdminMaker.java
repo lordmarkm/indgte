@@ -15,8 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuthenticationSuccessListener implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
-	static Logger log = LoggerFactory.getLogger(AuthenticationSuccessListener.class);
+public class AdminMaker implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
+	static Logger log = LoggerFactory.getLogger(AdminMaker.class);
 
 	@Override
     public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {

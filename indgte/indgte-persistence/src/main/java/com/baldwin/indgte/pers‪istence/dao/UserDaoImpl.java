@@ -5,6 +5,7 @@ import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,5 +177,17 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public UserExtension getDefault(Initializable... initializables) {
 		return getExtended(defaultUsername, initializables);
+	}
+
+	/**
+	 * This method depends on springSocialSecurity provided imageUrl being null.
+	 */
+	@Override
+	public String getImageUrl(String username) {
+		return (String) sessions.getCurrentSession().createCriteria(User.class)
+			.add(Restrictions.eq(TableConstants.USER_USERNAME, username))
+			.add(Restrictions.isNotNull(TableConstants.USER_IMAGEURL))
+			.setProjection(Projections.property(TableConstants.USER_IMAGEURL))
+			.uniqueResult();
 	}
 }
