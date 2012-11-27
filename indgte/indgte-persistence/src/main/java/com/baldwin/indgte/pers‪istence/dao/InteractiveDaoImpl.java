@@ -35,6 +35,8 @@ import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
+import com.baldwin.indgte.persistence.dto.Summarizer;
+import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
@@ -45,6 +47,7 @@ import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.Review;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
+import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.model.UserReview;
 import com.baldwin.indgte.persistence.model.Wish;
@@ -769,5 +772,14 @@ public class InteractiveDaoImpl implements InteractiveDao {
 					.add(Restrictions.in(TableConstants.ID, user.getBusinessSubscriptions()))
 					.setProjection(Projections.property("domain"))
 					.list();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<User> getUserSubscripionSummaries(String username) {
+		UserExtension user = users.getExtended(username);
+		return (List<User>) sessions.getCurrentSession().createCriteria(User.class) //relies on User and UserExtension having the same id due to @MapsId
+				.add(Restrictions.in(TableConstants.ID, user.getUserSubscriptions()))
+				.list();
 	}
 }

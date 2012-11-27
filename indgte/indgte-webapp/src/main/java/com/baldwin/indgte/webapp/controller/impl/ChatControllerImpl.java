@@ -3,9 +3,9 @@ package com.baldwin.indgte.webapp.controller.impl;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,26 +22,28 @@ import com.baldwin.indgte.webapp.misc.ChatRepository;
 @Component
 public class ChatControllerImpl implements ChatController {
 
-	static Logger log = Logger.getLogger(ChatControllerImpl.class);
+	static Logger log = LoggerFactory.getLogger(ChatControllerImpl.class);
 	
 	@Autowired
 	private ChatRepository chat;
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public @ResponseBody DeferredResult<JSON> getChatters(Principal principal, @RequestParam("chatters[]") String[] chatters) {
+	public @ResponseBody DeferredResult<JSON> getChatters(Principal principal, @RequestParam("chatters[]") String[] chatters, @RequestParam boolean initial) {
 		DeferredResult<JSON> response = new DeferredResult<>();
 		
-			Object[] changes = chat.getChatters(principal.getName(), chatters);
+			Object[] changes = chat.getChatters(principal.getName(), chatters, initial);
 			
 			Collection<Chatter> goneOnline = (Collection<Chatter>) changes[0];
 			Collection<Chatter> goneOffline = (Collection<Chatter>) changes[1];
-			List<String> channels = (List<String>) changes[2];
+			Collection<Chatter> userSubs = (Collection<Chatter>) changes[2];
+			List<String> channels = (List<String>) changes[3];
 			
-			if(goneOnline.size() > 0 || goneOffline.size() > 0 || channels.size() > 0) {
+			if(goneOnline.size() > 0 || goneOffline.size() > 0) {
 				JSON jsonResponse = JSON.ok()
 						.put("goneOnline", goneOnline)
 						.put("goneOffline", goneOffline)
+						.put("usersubs", userSubs)
 						.put("channels", channels);
 				response.setResult(jsonResponse);
 			} else {
@@ -86,4 +88,15 @@ public class ChatControllerImpl implements ChatController {
 		}
 	}
 
+	@Override
+	public @ResponseBody JSON toggleAppearOffline(Principal principal, @PathVariable boolean appearOffline) {
+		try {
+			log.debug("{} wants to appear {}", principal.getName(), appearOffline ? "offline" : "online");
+			chat.toggleAppearOffline(principal.getName(), appearOffline);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Exception toggling appear offline", e);
+			return JSON.status500(e);
+		}
+	}
 }

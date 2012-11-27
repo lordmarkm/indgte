@@ -40,6 +40,7 @@
 <spring:url var="jsAwesomecloud" value="/resources/awesomecloud/jquery.awesomeCloud-0.2.min.js" />
 <spring:url var="jsTagcloud" value="/resources/tagcloud/tagcloud.js" />
 <spring:url var="jsDgteTagCloud" value="/resources/javascript/grids/tagcloud.js" />
+<spring:url var="jsCookie" value="/resources/jquery-plugins/jquery-cookie.js" />
 
 <spring:url var="jsColumnize" value="/resources/javascript/libs/columnize/columnize.js" />
 
@@ -49,4 +50,6 @@
 <spring:url var="jsReviews" value="/resources/javascript/reviews.js" />
 <spring:url var="jsAutocomplete" value="/resources/javascript/autocomplete.js" />
 <spring:url var="jsWatchedTags" value="/resources/javascript/grids/watchedtags.js" />
-<spring:url var="jsChat" value="/resources/javascript/navbar/chat.jsp" />
+
+<spring:url var="jspChat" value="/resources/javascript/navbar/chat.jsp" />
+<spring:url var="jsChat" value="/resources/javascript/navbar/chat.js" />

@@ -1,0 +1,88 @@
+.smileys-container {
+	position: absolute;
+	background-color: white;
+	border: 1px solid lightskyblue;
+	z-index: 9001;
+}
+.smileys-container .smiley-box, .btn-smileys {
+	cursor: pointer;
+}
+.smileys-container .smiley-box:hover, .btn-smileys:hover {
+	border: 1px solid lightskyblue;
+}
+.smileys-container .smiley-box:not(:hover), .btn-smileys:not(:hover) {
+	border: 1px solid transparent;
+}
+
+.smiley-box {
+	padding: 3px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.smiley {
+	background-image: url("../../images/icons/bigbig.png");
+	width: 30px;
+	height: 30px;
+}
+
+/* row 1 */
+.smiley.grin {
+	background-position: -5px -3px;
+	width: 29px;
+}
+.smiley.shades {
+	background-position: -34px -3px;
+}
+.smiley.brick {
+	background-position: -64px -3px;
+}
+.smiley.pray {
+	background-position: -94px -3px;
+}
+.smiley.sick {
+	background-position: -124px -3px;
+}
+.smiley.undercover {
+	background-position: -154px -3px;
+}
+.smiley.cry2 {
+	background-position: -184px -3px;
+}
+.smiley.leer {
+	background-position: -214px -3px;
+}
+
+/* row 2 */
+.smiley.google {
+	background-position: -4px -33px;
+}
+.smiley.leer2 {
+	background-position: -34px -33px;
+}
+.smiley.smile {
+	background-position: -64px -33px;
+}
+.smiley.spiderman {
+	background-position: -94px -33px;
+}
+.smiley.angry {
+	background-position: -124px -33px;
+}
+.smiley.embarrassed {
+	background-position: -154px -33px;
+}
+.smiley.kiss {
+	background-position: -184px -33px;
+}
+.smiley.wat {
+	background-position: -214px -33px;
+}
+
+/* row 3 */
+.smiley.cry {
+	background-position: -4px -63px;
+}
+.smiley.steam {
+	background-position: -34px -63px;
+}

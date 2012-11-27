@@ -18,6 +18,7 @@
 		<intercept-url pattern="/i/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/s/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/t/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/c/**" access="hasRole('ROLE_USER')" />
 	</http>
 	<!--  global-method-security pre-post-annotations="enabled" /--><!-- for @PreAuthorize -->
 	<!--  global-method-security secured-annotations="enabled"/ --><!-- for @Secured -->

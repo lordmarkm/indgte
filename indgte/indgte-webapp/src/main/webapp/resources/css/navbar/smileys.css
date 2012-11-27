@@ -1,0 +1,51 @@
+.smileys-container {
+	position: absolute;
+	background-color: white;
+	border: 1px solid lightskyblue;
+	z-index: 9001;
+}
+.smileys-container .smiley, .btn-smileys {
+	cursor: pointer;
+}
+.smileys-container .smiley:hover, .btn-smileys:hover {
+	border: 1px solid lightskyblue;
+}
+.smileys-container .smiley:not(:hover), .btn-smileys:not(:hover) {
+	border: 1px solid transparent;
+}
+
+.smiley-box {
+	padding: 3px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.smiley {
+	background-image: url("../images/icons/big1.png");
+	width: 15px;
+	height: 15px;
+}
+
+/* row 1 */
+.smiley.grin {
+	background-position: -2px -2px;
+}
+.smiley.shades {
+	background-position: -17px -2px;
+}
+.smiley.brick {
+	background-position: -32px -2px;
+}
+.smiley.pray {
+	background-position: -47px -2px;
+}
+.smiley.sick {
+	background-position: -62px -2px;
+}
+.smiley.undercover {
+	background-position: -77px -2px;
+}
+
+.smiley.cry {
+	background-position: -2px -17px;	
+}

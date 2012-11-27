@@ -17,7 +17,7 @@ public interface SearchController {
 	@RequestMapping("/{term}")
 	public ModelAndView search(Principal principal, String term);
 	
-	@RequestMapping("/{term}.json")
+	@RequestMapping("/{term}/json")
 	public JSON autocomplete(Principal principal, String term);
 	
 	@RequestMapping("/own/{term}.json")

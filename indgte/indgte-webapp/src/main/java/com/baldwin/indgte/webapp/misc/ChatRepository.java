@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import com.baldwin.indgte.persistence.model.ChatMessage;
+import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.pers‪istence.dao.ChatDao;
 import com.baldwin.indgte.pers‪istence.dao.InteractiveDao;
 import com.baldwin.indgte.pers‪istence.dao.UserDao;
@@ -79,70 +80,51 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 		}
 	}
 	
-	@Override
-	public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
-		Object p = event.getAuthentication().getPrincipal();
-		log.debug("Registering principal {}", p);
+	private void newChatter(String username) {
+		Chatter newChatter = new Chatter(username, users.getImageUrl(username));
+		presence.add(newChatter);
 		
-		if(p instanceof String) {
-			String username = (String)p;
-			
-			Chatter newChatter = new Chatter(username, users.getImageUrl(username));
-			
-			presence.add(newChatter);
-			
-			List<Chatter> lonechatter = new ArrayList<Chatter>();
-			lonechatter.add(newChatter);
-			JSON asyncResponse = JSON.ok().put("goneOnline", lonechatter);
-			synchronized(presenceRequests) {
-				for(Iterator<DeferredResult<JSON>> i = presenceRequests.iterator(); i.hasNext();) {
-					DeferredResult<JSON> presenceRequest = i.next();
-					if(presenceRequest.isSetOrExpired()) {
-						i.remove();
-						continue;
-					}
-					presenceRequest.setResult(asyncResponse);
+		List<Chatter> lonechatter = new ArrayList<Chatter>();
+		lonechatter.add(newChatter);
+		JSON asyncResponse = JSON.ok().put("goneOnline", lonechatter);
+		synchronized(presenceRequests) {
+			for(Iterator<DeferredResult<JSON>> i = presenceRequests.iterator(); i.hasNext();) {
+				DeferredResult<JSON> presenceRequest = i.next();
+				if(presenceRequest.isSetOrExpired()) {
+					i.remove();
+					continue;
 				}
+				presenceRequest.setResult(asyncResponse);
 			}
 		}
 	}
 	
-	@Override
-	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-		Object p = authentication.getPrincipal();
-		log.debug("Unregistering principal {}", p);
-		
-		if(p instanceof String) {
-			String username = (String)p;
-			
-			synchronized(presence) {
-				for(Iterator<Chatter> i = presence.iterator(); i.hasNext();) {
-					if(i.next().getUsername().equals(username)) i.remove();
-				}
-			}
-			
-			List<Chatter> quitter = new ArrayList<>();
-			quitter.add(convertToChatter(username));
-			JSON asyncResponse = JSON.ok().put("goneOffline", quitter);
-			synchronized(presenceRequests) {
-				for(Iterator<DeferredResult<JSON>> i = presenceRequests.iterator(); i.hasNext();) {
-					DeferredResult<JSON> presenceRequest = i.next();
-					if(presenceRequest.isSetOrExpired()) {
-						i.remove();
-						continue;
-					}
-					presenceRequest.setResult(asyncResponse);
-				}
-			}
-			
-			for(Set<String> participants : channels.values()) {
-				participants.remove(p);
+	private void removeChatter(String username) {
+		synchronized(presence) {
+			for(Iterator<Chatter> i = presence.iterator(); i.hasNext();) {
+				if(i.next().getUsername().equals(username)) i.remove();
 			}
 		}
 		
-		response.sendRedirect("/indgte-webapp/login.jsp?loggedout=true");
+		List<Chatter> quitter = new ArrayList<>();
+		quitter.add(convertToChatter(username));
+		JSON asyncResponse = JSON.ok().put("goneOffline", quitter);
+		synchronized(presenceRequests) {
+			for(Iterator<DeferredResult<JSON>> i = presenceRequests.iterator(); i.hasNext();) {
+				DeferredResult<JSON> presenceRequest = i.next();
+				if(presenceRequest.isSetOrExpired()) {
+					i.remove();
+					continue;
+				}
+				presenceRequest.setResult(asyncResponse);
+			}
+		}
+		
+		for(Set<String> participants : channels.values()) {
+			participants.remove(username);
+		}
 	}
-
+	
 	public List<ChatMessage> getMessages(String username, String[] subscriptions, long lastReceivedId) {
 		log.debug("Finding messages to user [{}] on channels [{}] who last received id {}", username, Arrays.asList(subscriptions), lastReceivedId);
 		
@@ -171,25 +153,35 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 	}
 
 	/**
-	 * @return Collection[] {goneOnline, goneOffline, subs channels}
+	 * @return Collection[] {goneOnline, goneOffline, user subs, subs channels}
 	 */
 	private final String CHANNEL_PREFIX = "#";
 	private final String HOME_CHANNEL = "#dumaguete";
 	@SuppressWarnings("unchecked")
-	public Collection<Object>[] getChatters(String username, String[] chatters) {
-		//if chatters[0] = 'none', it's an initial request and we should send his business subscriptions'
+	public Collection<Object>[] getChatters(String username, String[] chatters, boolean initial) {
+		Set<Chatter> goneOnline = new HashSet<>(presence);
+		List<String> goneOffline = new ArrayList<String>(Arrays.asList(chatters));
+		
 		//channels along
+		//also his user subs
+		List<Chatter> userSubs = new ArrayList<>();
 		List<String> channels = new ArrayList<>();
-		if(chatters.length == 1 && DgteConstants.CHANNEL_NONE.equals(chatters[0])) {
+		if(initial) {
 			List<String> subsDomains = interact.getBusinessSubscriptionDomains(username);
 			for(String domain : subsDomains) {
 				channels.add(CHANNEL_PREFIX + domain);
 			}
 			channels.add(HOME_CHANNEL);
+			
+			List<User> users = interact.getUserSubscripionSummaries(username);
+			for(User user : users) {
+				Chatter sub = new Chatter(user.getUsername(), user.getImageUrl());
+				userSubs.add(sub);
+			}
+			
+			return new Collection[]{goneOnline, convertToChatters(goneOffline), userSubs, channels};
 		}
 		
-		Set<Chatter> goneOnline = new HashSet<>(presence);
-		List<String> goneOffline = new ArrayList<String>(Arrays.asList(chatters));
 		for(Iterator<String> j = goneOffline.iterator(); j.hasNext();) {
 			String name = j.next();
 			if(name.startsWith(CHANNEL_PREFIX)) {
@@ -204,8 +196,9 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 				}
 			}
 		}
+		List<Chatter> goneOfflineChatters = convertToChatters(goneOffline);
 		
-		return new Collection[]{goneOnline, convertToChatters(goneOffline), channels};
+		return new Collection[]{goneOnline, goneOfflineChatters, userSubs, channels};
 	}
 
 	public void storePresenceRequest(DeferredResult<JSON> response) {
@@ -224,5 +217,34 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 	
 	private Chatter convertToChatter(String username) {
 		return new Chatter(username, users.getImageUrl(username));
+	}
+
+	public void toggleAppearOffline(String name, boolean appearOffline) {
+		if(appearOffline) removeChatter(name);
+		else newChatter(name);
+	}
+	
+	@Override
+	public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
+		Object p = event.getAuthentication().getPrincipal();
+		log.debug("Registering principal {}", p);
+		
+		if(p instanceof String) {
+			String username = (String)p;
+			newChatter(username);
+		}
+	}
+	
+	@Override
+	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+		Object p = authentication.getPrincipal();
+		log.debug("Unregistering principal {}", p);
+		
+		if(p instanceof String) {
+			String username = (String)p;
+			removeChatter(username);
+		}
+		
+		response.sendRedirect("/indgte-webapp/login.jsp?loggedout=true");
 	}
 }

@@ -1,0 +1,130 @@
+.chatwindows {
+	width: 305px;
+	border: 1px solid lightskyblue;
+}
+
+.chat-form-container {
+	margin-top: 10px;
+}
+
+.ipt-message {
+	width: 230px;
+}
+
+.btn-send {
+	width: 65px;
+}
+
+.chatters-container {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 230px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.chatters {
+	padding: 0;
+	margin: 5px 0;
+	list-style-type: none;
+	width: 170px;
+	font-size: 11px;
+}
+
+.chatter {
+   	cursor: pointer;
+    padding: 3px 2px;
+    width: 140px;
+}
+
+.chatter:not(.ui-state-highlight):not(.ui-state-active) {
+	border: 1px solid transparent;
+}
+
+.chatter-img {
+	width: 28px;
+	height: 28px;
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+.chatter-info {
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.chattername {
+	width: 100px;
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.chatter-status {
+	width: 40px;
+	display: inline-block;
+}
+.chatter.offline .chatter-status {
+	opacity: 0.4;
+	font-style: italic;
+}
+
+.chatter-notification {
+	width: 40px;
+	display: inline-block;
+	color: red;
+	font-weight: bolder;
+}
+
+.chat-text {
+	height: 200px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.chat-message {
+	font-size: 11px;
+	margin: 0 5px 5px 5px;
+	padding-top: 5px;
+}
+
+.chat-message:not(:first-child) {
+	border-top: 1px solid #eeeeee;
+}
+
+.chat-img {
+	vertical-align: text-top;
+	height: 32px;
+	width: 32px;
+	margin: 2px 5px 2px 2px;
+	cursor: pointer;
+}
+
+.chat-onemessage-container {
+	width: 235px;
+	vertical-align: text-top;
+	display: inline-block;
+}
+
+.chat-sender {
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.chat-onemessage, .chat-sender {
+	margin-bottom: 3px;
+}
+.chat-onemessage:first-child, .chat-sender {
+	margin-top: 4px;
+}
+
+.chat-form-container {
+	display: inline-block;
+}
+
+.chat-extras {
+	margin-top: 10px;
+	display: inline-block;
+}

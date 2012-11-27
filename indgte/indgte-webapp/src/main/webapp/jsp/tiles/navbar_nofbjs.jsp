@@ -10,7 +10,7 @@
 <spring:url var="urlMyBusinesses" value="/p/businesses" />
 <spring:url var="urlHelp" value="/etc/help/" />
 <spring:url var="urlLogout" value="/j_spring_security_logout" />
-<spring:url var="cssNavbar" value="/resources/css/navbar.css" />
+<spring:url var="cssNavbar" value="/resources/css/navbar/navbar.css" />
 
 <link rel="stylesheet" href="${cssNavbar }" />
 
@@ -98,7 +98,7 @@ $(function(){
 	function autocomplete() {
 		var term = $searchInput.val();
 		if(term.length < navbar.search.minlength) return;
-		$.get(navbar.search.url + term + '.json', function(response){
+		$.get(navbar.search.url + term + '/json', function(response){
 			switch(response.status) {
 			case '200':
 				$autocompleteResults.html('');

@@ -9,12 +9,14 @@ import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
+import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Review;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
+import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserReview;
 
 public interface InteractiveDao {
@@ -101,5 +103,7 @@ public interface InteractiveDao {
 	public Review reviewReact(String name, ReviewType type, String mode, long reviewId);
 
 	public List<String> getBusinessSubscriptionDomains(String username);
+
+	public List<User> getUserSubscripionSummaries(String username);
 
 }

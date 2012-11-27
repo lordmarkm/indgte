@@ -121,8 +121,8 @@
 <script>
 window.urls = {
 	user : '<spring:url value="/p/user/" />',
-	subscribe: '<spring:url value="/i/subscribe/user/${targetFacebook.id}.json" />',
-	unsubscribe: '<spring:url value="/i/unsubscribe/user/${targetFacebook.id}.json" />',
+	subscribe: '<spring:url value="/i/subscribe/user/${target.id}.json" />',
+	unsubscribe: '<spring:url value="/i/unsubscribe/user/${target.id}.json" />',
 	review: '<spring:url value="/i/review/user/" />',
 	allReviews: '<spring:url value="/i/allreviews/user/" />'
 }
