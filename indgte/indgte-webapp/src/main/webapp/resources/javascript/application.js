@@ -216,6 +216,26 @@ $.fn.extend({
             this.value += myValue;
             this.focus();
         }
+    },
+    
+    spinner: function(adjustheight){
+		if(adjustheight) {
+			if(this.height() < 48) {
+				this.css('min-height', '48px'); //set to height of spinner.gif
+			}
+		}
+		this.append($('<div class="overlay">'));
+		return this;
+    },
+    
+    fadeSpinner: function(callback, options) {
+		var delay = options && options.delay ? options.delay : 800;
+		var fade = options && options.fade ? optiond.fade : 200;
+		this.find('.overlay').delay(delay).fadeOut(fade, function(){
+			$(this).remove();
+			if(typeof callback == 'function') callback();
+		});
+		return this;
     }
 });
 

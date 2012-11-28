@@ -33,6 +33,8 @@ import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
+import com.baldwin.indgte.persistence.model.CommentNotification;
+import com.baldwin.indgte.persistence.model.CommentNotification.CommentableType;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
@@ -42,11 +44,13 @@ import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.InteractiveService;
+import com.baldwin.indgte.persistence.service.NotificationsService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.pers‪istence.dao.InteractiveDao;
 import com.baldwin.indgte.webapp.controller.InteractiveController;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.dto.TopTenForm;
+import com.baldwin.indgte.webapp.misc.Comet;
 import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 import com.baldwin.indgte.webapp.misc.URLScraper;
 
@@ -67,6 +71,12 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Autowired
 	private InteractiveDao postDao;
 
+	@Autowired
+	private NotificationsService notifs;
+	
+	@Autowired
+	private Comet comet;
+	
 	@Override
 	public @ResponseBody JSON subposts(Principal principal, @RequestParam int start, @RequestParam int howmany) {
 		try {
@@ -489,6 +499,39 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.ok().put("review", review);
 		} catch (Exception e) {
 			log.error("Error that I forgot to log again", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON clearNotification(@PathVariable long id) {
+		try {
+			notifs.clearNotification(id);
+			return JSON.ok();
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON getOldNotifs(Principal principal, @PathVariable int start, @PathVariable int howmany) {
+		try {
+			return JSON.ok().put("notifs", notifs.getOldNotifs(principal.getName(), start, howmany));
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON commentNotify(Principal principal, 
+			@PathVariable CommentableType type, @PathVariable long targetId, 
+			@RequestParam String providerUserId, @RequestParam String providerUsername) {
+		
+		try {
+			CommentNotification notif = notifs.commentNotif(principal.getName(), type, targetId, providerUserId, providerUsername);
+			comet.fireNotif(notif);
+			return JSON.ok();
+		} catch (Exception e) {
 			return JSON.status500(e);
 		}
 	}

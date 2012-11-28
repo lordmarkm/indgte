@@ -27,12 +27,15 @@
 <script>
 window.chat = {
 	user : '${user.username}',
+	urlLive: '<spring:url value="/live/" />',
 	urlGetChatters : '<spring:url value="/c/" />',
 	urlPost: '<spring:url value="/c/messages/" />',
 	urlGet: '<spring:url value="/c/messages/" />',
 	urlChannelMessages: '<spring:url value="/c/messages/" />',
 	channelImageUrl: 'http://i.imgur.com/unfvF.png',
-	urlAppearOffline: '<spring:url value="/c/appearoffline/" />'
+	urlAppearOffline: '<spring:url value="/c/appearoffline/" />',
+	urlClearNotif: '<spring:url value="/i/clearnotif/" />',
+	urlGetOldNotifs: '<spring:url value="/i/oldnotifs/" />'
 }
 </script>
 <script src="${jsChat}"></script>

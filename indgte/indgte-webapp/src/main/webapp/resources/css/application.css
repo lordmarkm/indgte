@@ -17,6 +17,7 @@ body {
 .hide {display: none;}
 
 	/* layout */
+.relative {position: relative;}
 .inline {display: inline;}
 .inline-block {display: inline-block;}
 .floatleft {float: left;}
@@ -39,6 +40,10 @@ body {
  	box-shadow: -6px 4px 1px grey;
   	-webkit-box-shadow:  -6px 4px 1px grey;
   	-moz-box-shadow:  -6px 4px 1px grey;
+}
+a.fatlink {
+	text-decoration: none;
+	font-weight: bold;
 }
 
 /* special classes */

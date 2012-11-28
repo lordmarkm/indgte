@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baldwin.indgte.persistence.model.ChatMessage;
+import com.baldwin.indgte.persistence.model.MessageNotification;
+import com.baldwin.indgte.persistence.model.UserExtension;
 
 @Repository
 @Transactional
@@ -22,11 +24,22 @@ public class ChatDaoImpl implements ChatDao {
 	@Autowired
 	private UserDao users;
 	
+	@Autowired
+	private NotificationsDao notifications;
+	
+	/**
+	 * [ChatMessage, MessageNotification]
+	 */
 	@Override
-	public ChatMessage newMessage(String sender, String channel, String message) {
-		ChatMessage chatMessage = new ChatMessage(sender, users.getImageUrl(sender), channel, message);
+	public Object[] newMessage(String sendername, String channel, String message) {
+		UserExtension sender = users.getExtended(sendername);
+		
+		ChatMessage chatMessage = new ChatMessage(sendername, sender.getImageUrl(), channel, message);
 		sessions.getCurrentSession().save(chatMessage);
-		return chatMessage;
+	
+		MessageNotification notification = notifications.newMessageNotification(sender, chatMessage);
+		
+		return new Object[] {chatMessage, notification};
 	}
 	
 	@Override

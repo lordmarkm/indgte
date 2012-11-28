@@ -14,6 +14,7 @@ import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
+import com.baldwin.indgte.persistence.model.CommentNotification.CommentableType;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.webapp.dto.TopTenForm;
 
@@ -157,4 +158,17 @@ public interface InteractiveController {
 	 */
 	@RequestMapping(value = "/wishlist/{type}/{id}.json", method = RequestMethod.POST)
 	public JSON addToWishlist(Principal principal, WishType type, long id);
+	
+	/*
+	 * Notifications
+	 */
+	
+	@RequestMapping(value = "/postcommentnotify/{type}/{targetId}/json", method = RequestMethod.POST)
+	public JSON commentNotify(Principal principal, CommentableType type, long targetId, String providerUserId, String providerUsername);
+	
+	@RequestMapping(value = "/clearnotif/{id}/json", method = RequestMethod.POST)
+	public JSON clearNotification(long id);
+	
+	@RequestMapping(value = "/oldnotifs/{start}/{howmany}/json", method = RequestMethod.GET)
+	public JSON getOldNotifs(Principal principal, int start, int howmany);
 }

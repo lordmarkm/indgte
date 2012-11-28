@@ -105,5 +105,4 @@ public interface InteractiveDao {
 	public List<String> getBusinessSubscriptionDomains(String username);
 
 	public List<User> getUserSubscripionSummaries(String username);
-
 }

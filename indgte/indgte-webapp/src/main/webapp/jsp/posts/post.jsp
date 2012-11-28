@@ -24,13 +24,14 @@
 			<div class="post-text">${post.text }</div>
 		</div>
 		
-		<div class="fb-comments" data-href="${domain}${urlPosts }${post.id}" data-width="470"></div>
+		<div class="fb-comments" data-href="${domain}${urlPosts }${post.id}" data-width="540"></div>
 	</div>
 
 </div>
 
 <script>
 window.post = {
+	id : '${post.id}',
 	type : '${post.type}',
 	attachmentType : '${post.attachmentType}',
 	attachmentImgurHash : '${post.attachmentImgurHash}',
@@ -38,7 +39,6 @@ window.post = {
 	postTime : '${post.postTime }',
 	posterIdentifier : '${post.posterIdentifier}',
 	posterTitle: '${post.posterTitle }'
-	
 }
 
 window.urls = {
@@ -47,7 +47,8 @@ window.urls = {
 	imgur : 'http://i.imgur.com/',
 	imgurPage : 'http://imgur.com/',
 	categoryWithProducts: '<spring:url value="/b/categories/" />',
-	productwithpics: '<spring:url value="/b/products/withpics/" />'
+	productwithpics: '<spring:url value="/b/products/withpics/" />',
+	commentNotify: '<spring:url value="/i/postcommentnotify/" />'
 }
 
 $(function(){
@@ -196,10 +197,34 @@ $(function(){
 </script>
 
 <div id="fb-root"></div>
-<script>(function(d, s, id) {
+<script>
+(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
   js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
   fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+}(document, 'script', 'facebook-jssdk'));
+
+window.fbAsyncInit=function() {
+	FB.Event.subscribe('comment.create', function(){
+		FB.getLoginStatus(function(loginStatus) {
+			if(loginStatus.status === 'connected') {
+				
+				//user is logged in. get details and notify poster of new comment
+			    FB.api('/me', function(response) {
+			        alert ("Welcome " + response.name + ": Your UID is " + response.id); 
+			    
+			        $.post(urls.commentNotify + post.id + '/json', 
+			        	{providerUserId: response.id, providerUsername: response.name},
+			        	function(response) {
+			        		//do nothing
+			        	}
+			        );
+			    
+			    });
+			}
+		});
+	});
+}
+</script>

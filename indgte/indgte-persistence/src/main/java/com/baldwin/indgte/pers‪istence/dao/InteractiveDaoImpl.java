@@ -3,6 +3,7 @@ package com.baldwin.indgte.pers‪istence.dao;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -768,6 +769,7 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	@SuppressWarnings("unchecked")
 	public List<String> getBusinessSubscriptionDomains(String username) {
 		UserExtension user = users.getExtended(username);
+		if(user.getBusinessSubscriptions().size() == 0) return Collections.<String>emptyList();
 		return sessions.getCurrentSession().createCriteria(BusinessProfile.class)
 					.add(Restrictions.in(TableConstants.ID, user.getBusinessSubscriptions()))
 					.setProjection(Projections.property("domain"))
@@ -778,6 +780,7 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	@SuppressWarnings("unchecked")
 	public List<User> getUserSubscripionSummaries(String username) {
 		UserExtension user = users.getExtended(username);
+		if(user.getUserSubscriptions().size() == 0) return Collections.<User>emptyList();
 		return (List<User>) sessions.getCurrentSession().createCriteria(User.class) //relies on User and UserExtension having the same id due to @MapsId
 				.add(Restrictions.in(TableConstants.ID, user.getUserSubscriptions()))
 				.list();

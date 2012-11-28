@@ -4,7 +4,8 @@ public class TableConstants {
 	public static final String ID = "id";
 	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";
-	
+	public static final String TIME = "time";
+
 	public final static String USER_USERNAME = "username";
 	public final static String USER_PROVIDER_USERID = "providerUserId";
 	public static final String USER_USERID = "userId";
@@ -59,4 +60,18 @@ public class TableConstants {
 	public static final String REVIEW_AGREERS = "agreers";
 	public static final String REVIEW_DISAGREERS = "disagreers";
 	public static final String CHAT_CHANNEL = "channel";
+	
+	public static final String NOTIF_NOTIFIED = "notified";
+	public static final String NOTIF_NOTIFIED_USER = "notified.user";
+	public static final String NOTIF_NOTIFIED_NAME = "notified.user.username";
+	public static final String NOTIF_SEEN = "seen";
+	
+	public static final String NOTIF_MSG_CHANNEL = "channel";
+	
+	public static final String NOTIF_COMMENT_TYPE = "commentableType";
+	public static final String NOTIF_COMMENT_TARGETID = "targetId";
+	
+	/* Aliases */
+	public static final String ALIAS_USER = "user";
+	public static final String ALIAS_USER_USERNAME = "user.username";
 }

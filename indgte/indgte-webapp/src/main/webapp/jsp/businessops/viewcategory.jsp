@@ -140,7 +140,7 @@ $(function(){
 		window.location.href = urlProfile + domain;
 	});
 	
-	$.get(urlProducts + domain + '/' + categoryId + '.json', function(response){
+	$.get(urlProducts + domain + '/' + categoryId + '/json', function(response){
 		switch(response.status){
 		case '200':
 			if(response.products.length < 2) {

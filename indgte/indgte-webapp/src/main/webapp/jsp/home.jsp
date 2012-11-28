@@ -855,6 +855,22 @@ $(function(){
 });
 </script>
 
+<!-- Notifications -->
+<div class="notifications-container grid_4 sidebar-section">
+	<div class="notifications-container relative">
+		<div class="sidebar-section-header">Notifications</div>
+		<span class="msg-uptodate">You're completely up to date. Yey!</span>
+		<ul class="notifications hasnotifs"></ul>
+	</div>
+	<div class="old-notifications-container hide relative">
+		<div class="sidebar-section-header">Previous notifications</div>
+		<ul class="old-notifications hasnotifs"></ul>
+	</div>
+	<a class="link-showoldnotifs" href="javascript:;">Show old notifications...</a>
+	<div class="sidebar-divider"></div>
+</div>
+<!-- Notifications -->
+
 <!-- Reviews -->
 <div class="reviewqueue grid_4 sidebar-section">
 	<div class="sidebar-section-header">Recently Viewed Business for Review</div>

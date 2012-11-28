@@ -14,6 +14,7 @@ $(function(){
 			resizable: false,
 			maxHeight: false,
 			open: makefixed,
+			beforeClose: function(){updateCookieData(true);},
 			close: closeChat,
 			width: 500,
 			dragStop: updateCookieData
@@ -21,9 +22,10 @@ $(function(){
 		$dialog.parent().offset(offset);
 		$btnChat.removeClass('ui-state-highlight').addClass('ui-state-active');
 		
-		setTimeout(function(){
-			getChatters(true);
-		}, 500);
+		//setTimeout(function(){
+		//	getChatters(true);
+		//}, 500);
+		
 		if(persistentChannel) {
 			p2pOpen(persistentChannel, true);
 		} else {
@@ -33,6 +35,22 @@ $(function(){
 		//getMessages(true);
 	}
 	
+	function isChatOpen() {
+		return $dialog.dialog('isOpen') === true;
+	}
+	
+	function switchToChannel(channel, openIfClosed) {
+		debug('Switching to channel ' + channel);
+		
+		var chatter = extractChatterFromChannel(channel);
+		if(isChatOpen()) {
+			p2pOpen(chatter, true);
+		} else if(openIfClosed) {
+			debug('Chat is closed. Opening chat..');
+			openChat(chatter, getCookieData().offset);
+		}
+	}
+	
 	function makefixed() {
 		$dialog.parent().css('position', 'fixed');
 	}
@@ -40,12 +58,20 @@ $(function(){
 	function closeChat() {
 		if($dialog.dialog('isOpen') == true) $dialog.dialog('close');
 		$btnChat.removeClass('ui-state-highlight').removeClass('ui-state-active');
-		updateCookieData();
 	}
 	
 	$btnChat.click(function(event) {
 		event.stopPropagation(); //important! prevent $(doc).on click(.navigation)
-		$btnChat.hasClass('ui-state-active') ? closeChat() : restoreStateFromCookies() ? false : openChat();
+		$btnChat.hasClass('ui-state-active') ? closeChat() : (function() {
+			debug('opening chat');
+			var data = getCookieData();
+			if(data) {
+				debug('Will try to open channel ' + data.ac + ' and set offset ' + data.l + ',' + data.t);
+				openChat(extractChatterFromChannel(data.ac), {left: data.l, top: data.t});
+			} else {
+				openChat();
+			}
+		})();
 		return false;
 	});
 	
@@ -60,43 +86,71 @@ $(function(){
 	}
 	
 	var initial = true;
-	function getChatters(loop) {
-		var onlineChatters = getOnlineChatters();
-		debug('Getting chatters. Online chatters: ' + onlineChatters);
+	var lastReceivedId = 0;
+	function live() {
 		
-		$.get(chat.urlGetChatters + '?time=' + Date.now(), {chatters: onlineChatters, initial: initial}, function(response) {
-			switch(response.status) {
-			case '200':
-				if(response.channels) {
-					for(var i = 0, len = response.channels.length; i < len; ++i) {
-						addChannelOption(response.channels[i]);
-						//channelOpen(response.channels[i], false);
+		var onlineChatters = getOnlineChatters();
+		var channels = getOpenChannels();
+		var lastNotifId = getLastNotifId();
+		
+		$.get(chat.urlLive + '?time=' + Date.now(),
+				{
+					chatters: onlineChatters,
+					initial: initial,
+					channels: channels,
+					lastReceivedId : lastReceivedId,
+					lastNotifId : lastNotifId
+				},
+				function(response) {
+					switch(response.status) {
+					case '200':
+						//old getChannels(...)
+						if(response.channels) {
+							for(var i = 0, len = response.channels.length; i < len; ++i) {
+								addChannelOption(response.channels[i]);
+								//channelOpen(response.channels[i], false);
+							}
+						}
+						if(response.goneOffline) {
+							for(var i = 0, len = response.goneOffline.length; i < len; ++i) {
+								makeOffline(response.goneOffline[i]);
+							}
+						}
+						if(response.usersubs) {
+							for(var i = 0, len = response.usersubs.length; i < len; ++i) {
+								makeOffline(response.usersubs[i]);
+							}
+						}
+						if(response.goneOnline) {//must come after subs so that overlaps or Online
+							for(var i = 0, len = response.goneOnline.length; i < len; ++i) {
+								makeOnline(response.goneOnline[i]);
+							}
+						}
+						
+						//old getMessages(...)
+						if(response.messages) {
+							if(typeof response.messages.reverse == 'function') response.messages.reverse();
+							for(var i = 0, len = response.messages.length; i < len; ++i) {
+								processMessage(response.messages[i], true);
+							}
+						}
+						
+						//notifs
+						if(response.notifications) {
+							processNotifications(response.notifications);
+						}
+						break;
+					default:
+						debug('No response. Will resend request.');
+						debug(response);
 					}
+					
+					initial = false;
+					live();
 				}
-				if(response.goneOffline) {
-					for(var i = 0, len = response.goneOffline.length; i < len; ++i) {
-						makeOffline(response.goneOffline[i]);
-					}
-				}
-				if(response.usersubs) {
-					for(var i = 0, len = response.usersubs.length; i < len; ++i) {
-						makeOffline(response.usersubs[i]);
-					}
-				}
-				if(response.goneOnline) {//must come after subs so that overlaps or Online
-					for(var i = 0, len = response.goneOnline.length; i < len; ++i) {
-						makeOnline(response.goneOnline[i]);
-					}
-				}
-				if(initial) initial = false;
-				if(loop) getChatters(true);
-				break;
-			default:
-				debug('Timeout. Resending request.');
-				if(loop) getChatters(true);
-			}
-		});		
+		);
 	}
+	live();
 	
 	function addChannelOption(channel) {
 		debug('Adding channel ' + channel);
@@ -165,16 +219,23 @@ $(function(){
 		return $window.attr('channel');
 	}
 	
+	var extractCache = {};
 	function extractChatterFromChannel(channel) {
-		var usernames = channel.split('|');
+		var chatter = extractCache[channel];
+		if(null != chatter) {
+			return chatter;
+		}
 		
-		var chatter = chat.user;
+		var usernames = channel.split('|');
+		chatter = chat.user;
 		for(var n in usernames) {
 			if(usernames[n] != chat.user) {
 				chatter = usernames[n];
 				break;
 			}
 		}
+		extractCache[channel] = chatter;
+		
 		return chatter;
 	}
 	
@@ -191,11 +252,6 @@ $(function(){
 			for(var i = 0, len = response.messages.length; i < len; ++i) {
 				var message = response.messages[i];
 				processMessage(message);
-			}
-			
-			if(!messageRetrievalLoopStarted) {
-				debug('At least 1 channel is open. Starting message retrieval loop.');
-				getMessages(true);
 			}
 		});
 		
@@ -230,6 +286,9 @@ $(function(){
 		} else {
 			$chatwindow.hide();
 		}
+		
+		scrollToBottom($chatwindow);
+		$iptMessage.focus();
 	}
 	
 	function channelOpen(channel, switchTo) {
@@ -267,52 +326,6 @@ $(function(){
 		return false;
 	});
 	
-	//get messages
-	var lastReceivedId = 0;
-	var waiting = false;
-	var messageRetrievalLoopStarted = false;
-	function getMessages(loop) {
-		if(waiting) return;
-		waiting = true;
-		
-		messageRetrievalLoopStarted = true;
-		
-		var channels = getOpenChannels();
-		
-		debug('Getting messages on channels ' + channels + ' with last received ID at ' + lastReceivedId);
-		
-		$.get(chat.urlGet, 
-			{
-				channels: channels,
-				lastReceivedId : lastReceivedId
-			},	
-			function(messages){
-				if(!messages || messages.length == 0) {
-					debug('No new messages. Will fire new request.');
-					waiting = false;
-					if(loop) getMessages(true);
-					return;
-				}
-				if(typeof messages.reverse == 'function') messages.reverse();
-				for(var i = 0, len = messages.length; i < len; ++i) {
-					processMessage(messages[i], true);
-				}
-				//this is the loop
-				if(loop) {
-					waiting = false;
-					getMessages(true);
-				}
-			}
-		).error(function(){
-			//on error, try again after 10 seconds
-			debug('XHR returned error on get messages');
-			setTimeout(function(){
-				waiting = false;
-				getMessages(true);
-			}, 10000);
-		});
-	}
-	
 	function getOpenChannels() {
 		var channels = [];
 		$('.chatwindow').each(function(i, window) {
@@ -345,7 +358,7 @@ $(function(){
 	
 	function notify(sender) {
 		var activeChannelName = findActiveChannel();
-		var activeChattername = extractChatterFromChannel(activeChannelName);
+		var activeChattername = activeChannelName ? extractChatterFromChannel(activeChannelName) : '';
 		
 		if(sender != activeChattername) {
 			//add notif to chatter summary
@@ -362,6 +375,11 @@ $(function(){
 			
 			$notif.dgteFadeIn();
 		}
+	}
+	
+	function scrollToBottom($window) {
+		var $textbox = $window.find('.chat-text');
+		$textbox.scrollTop($textbox[0].scrollHeight);
 	}
 	
 	//accepts ChatMessage in JSON form
@@ -504,13 +522,14 @@ $(function(){
 	
 	//update cookies
 	var cookieKey = "dgte-chat";
-	function updateCookieData() {
+	//set closing to true if updating cookie data right before closing the chat window
+	function updateCookieData(closing) {
 		var off = $dialog.parent().offset();
 		var offset = {left: off.left, top: off.top - $(window).scrollTop()};
 		
 		var data = {
 			//open
-			o: $dialog.dialog('isOpen') == true ? 't' : 'f',
+			o: closing ? 'f' : $dialog.dialog('isOpen') == true ? 't' : 'f',
 			//active channel
 			ac: findActiveChannel(),
 			//is 'appear offline' ticked
@@ -541,7 +560,7 @@ $(function(){
 		);
 	}
 	
-	function restoreStateFromCookies() {
+	function getCookieData() {
 		var serialized = $.cookie(cookieKey);
 		if(!serialized) return false;
 		
@@ -555,12 +574,18 @@ $(function(){
 		}
 		
 		//var data = JSON.parse(serialized);
-		
+		debug('got cookie data: ');
 		debug('open? ' + data.o);
 		debug('active channel: ' + data.ac);
 		debug('left: ' + data.l);
 		debug('top: ' + data.t);
 		debug('appearOffline? ' + data.ao);
+		
+		return data;
+	}
+	
+	function restoreStateFromCookies() {
+		var data = getCookieData();
 		
 		if(data.o === 't') {
 			openChat(extractChatterFromChannel(data.ac), {left: data.l, top: data.t});
@@ -571,6 +596,155 @@ $(function(){
 		}
 	}
 	restoreStateFromCookies();
+	
+	//notifications
+	var 
+		$notifs = $('.notifications'),
+		$oldNotifs = $('.old-notifications'),
+		$linkShowOld = $('.link-showoldnotifs'),
+		$msgUptodate = $('.msg-uptodate');
+	
+	function getLastNotifId() {
+		if(!$notifs || $notifs.length == 0) {
+			$notifs = $('.notifications');
+			if($notifs.length == 0) return -1;
+		}
+		
+		var $lastNotif = $notifs.find('.notification:first-child');
+		if($lastNotif.length == 0) return 0;
+		
+		return $lastNotif.attr('notifId');
+	}
+	
+	function addNotification(notification) {
+		$('.notification[notifId="' + notification.id + '"]').remove();
+		var $notif = $('<li class="notification">').attr('notifId', notification.id);
+		
+		switch(notification.type) {
+		case 'message':
+			$notif.text(notification.senderSummary.title + ' has sent you ');
+			var $linkShowmessages = $('<a class="notif-shownewmessages fatlink">').attr('href', 'javascript:;')
+				.attr('channel', notification.channel)
+				.text(notification.howmany > 1 ? notification.howmany + ' new messages.' : ' a new message.')
+				.appendTo($notif);
+			$('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notif);
+			break;
+		default:
+			debug('Unsupported notif type: ' + notification.type);
+		}
+		
+		$notif.prependTo($notifs).hide().fadeIn('slow');
+	}
+	
+	//actions available to notifs (both new and old)
+	//differentiate on the handler method with attr 'cleared'='cleared'
+	$('.hasnotifs').on({
+		click: function(){
+			var $this = $(this);
+			var channel = $this.attr('channel');
+			switchToChannel(channel, true);
+			clearNotif($this.closest('li'));
+		}
+	}, '.notif-shownewmessages');
+	
+	function showMsgUptodateIfAppropriate() {
+		var notifsleft = $notifs.find('.notification').length;
+		if(notifsleft == 0) {
+			$msgUptodate.fadeIn();
+		} else {
+			debug('Still ' + notifsleft + ' notifs left');
+		}		
+	}
+	
+	function clearNotif($li) {
+		if($li.attr('cleared') == 'cleared') return;
+		$.post(chat.urlClearNotif + $li.attr('notifId') + '/json', function(response) {
+			switch(response.status) {
+			case '200':
+				$li.attr('cleared', 'cleared').fadeOut(1000, function(){
+					$li.prependTo($oldNotifs);
+					if($oldNotifs.is(':visible')) {
+						$li.dgteFadeIn();
+					}
+					showMsgUptodateIfAppropriate();
+				});
+				break;
+			default:
+				debug('problem clearing notif');
+				debug(response);
+			}
+		});
+	}
+	
+	function processNotifications(notifications) {
+		if(!$notifs) {
+			$notifs = $('.notifications');
+			if(!$notifs) return;
+		}
+		
+		var len = notifications.length;
+		if(len > 0) $msgUptodate.hide();
+
+		for(var i = 0; i < len; ++i) {
+			addNotification(notifications[i]);
+		}
+	}
+	
+	var oldNotifsStart = 0;
+	var oldNotifsPerLoad = 5;
+	var showOldNotifsEnabled = true;
+	$linkShowOld.click(function(){
+		if(!showOldNotifsEnabled) return false;
+		showOldNotifsEnabled = false;
+		
+		var $container = $oldNotifs.parent().spinner();
+		
+		$.get(chat.urlGetOldNotifs + oldNotifsStart + '/' + oldNotifsPerLoad + '/json?time=' + Date.now(), function(response) {
+			switch(response.status) {
+			case '200':
+				$oldNotifs.parent().show();
+				
+				for(var i = 0, len = response.notifs.length; i < len; ++i) {
+					addOldNotif(response.notifs[i]);
+				}
+				
+				if(response.notifs.length >= oldNotifsPerLoad) {
+					$linkShowOld.text('Load more');
+					oldNotifsStart += response.notifs.length;
+				} else {
+					$linkShowOld.fadeOut('slow');
+				}
+				break;
+			default:
+				debug('error getting old notifs');
+				debug(response);
+			}
+			showOldNotifsEnabled = true;
+		}).complete(function(){
+			$container.fadeSpinner();
+		});
+	});
+	
+	function addOldNotif(notification) {
+		var $notif = $('<li class="notification">')
+			.attr('cleared', 'cleared')
+			.attr('notifId', notification.id);
+		
+		switch(notification.type) {
+		case 'message':
+			$notif.text(notification.senderSummary.title + ' sent you ');
+			var $linkShowmessages = $('<a class="notif-shownewmessages fatlink">').attr('href', 'javascript:;')
+				.attr('channel', notification.channel)
+				.text(notification.howmany > 1 ? notification.howmany + ' messages.' : ' a message.')
+				.appendTo($notif);
+			$('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notif);
+			break;
+		default:
+			debug('Unsupported notif type: ' + notification.type);
+		}
+		
+		$notif.appendTo($oldNotifs).hide().fadeIn('slow');
+	}
 	
 	$(document).mousedown(function(){
 		$smileys.hide();

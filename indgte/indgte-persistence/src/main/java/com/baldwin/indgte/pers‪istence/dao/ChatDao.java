@@ -7,7 +7,7 @@ import com.baldwin.indgte.persistence.model.ChatMessage;
 
 public interface ChatDao {
 
-	ChatMessage newMessage(String sender, String channel, String message);
+	Object[] newMessage(String sender, String channel, String message);
 
 	List<ChatMessage> getMessages(String[] channels, long lastReceivedId);
 
