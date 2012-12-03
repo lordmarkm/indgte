@@ -134,8 +134,14 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 			presenceRequest.setResult(asyncResponse);
 		}
 
-		for(Set<String> participants : channels.values()) {
+		for(Iterator<Set<String>> i = channels.values().iterator(); i.hasNext();) {
+			Set<String> participants = i.next();
 			participants.remove(username);
+			
+			if(participants.size() == 0) {
+				log.debug("0 participants left in channel {}. Removing...");
+				i.remove();
+			}
 		}
 	}
 
@@ -151,14 +157,25 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 				participant.add(username);
 				channels.put(channel, participant);
 				continue;
+			} else {
+				participants.add(username);
 			}
-			participants.add(username);
 		}
 
 		return dao.getMessages(subscriptions, lastReceivedId);
 	}
 
-	public Collection<ChatMessage> getChannelMessages(String channel, int howmany) {
+	public Collection<ChatMessage> getChannelMessages(String username, String channel, int howmany) {
+		Set<String> participants = channels.get(channel);
+		if(null == participants) {
+			Set<String> participant = new CopyOnWriteArraySet<>();
+			participant.add(username);
+			channels.put(channel, participant);
+			log.debug("New channel {} created. Channels: {}", channel, channels);
+		} else {
+			participants.add(username);
+		}
+
 		return dao.getChannelMessages(channel, howmany);
 	}
 

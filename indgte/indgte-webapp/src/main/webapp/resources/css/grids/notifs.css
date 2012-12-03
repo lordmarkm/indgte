@@ -1,0 +1,30 @@
+.notifications-container ul {
+	list-style-type: none;
+	padding: 0 5px 5px 5px;
+	margin: 0;
+}
+
+.clearnotif-container {
+	margin-left: 5px;
+}
+
+.notification {
+	border-top: 1px solid #E9E9E9;
+	padding: 2px;
+}
+
+.notification:first-child {
+	border-top: 0 !important;
+}
+
+.notifimg {
+	width: 35px;
+	height: 35px;
+	vertical-align: top;
+}
+
+.notiftxt {
+	display: inline-block;
+	width: 240px;
+	margin-left: 5px;
+}

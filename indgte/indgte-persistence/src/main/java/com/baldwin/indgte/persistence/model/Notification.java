@@ -25,7 +25,19 @@ public abstract class Notification {
 
 	public enum NotificationType {
 		message, 
-		comment
+		comment,
+		like
+	}
+	
+	public enum InteractableType {
+		post,
+		review,
+		business,
+		category,
+		product,
+		fixedpriceitem,
+		auctionitem,
+		tradeitem
 	}
 	
 	@Id

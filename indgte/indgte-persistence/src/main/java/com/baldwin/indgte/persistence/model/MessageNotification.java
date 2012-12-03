@@ -2,8 +2,6 @@ package com.baldwin.indgte.persistence.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -14,7 +12,6 @@ import com.baldwin.indgte.persistence.dto.Summary;
 
 @Entity
 @Table(name="notifications_messages")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class MessageNotification extends Notification {
 	
 	@ManyToOne(optional=false)

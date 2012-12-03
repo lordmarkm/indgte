@@ -307,7 +307,7 @@ $(function(){
 		if(message.length < 1) return false;
 		var channel = findActiveChannel();
 		debug('Posting message [' + message + '] to channel [' + channel + ']');
-		$.post(chat.urlPost, 
+		$.post(chat.urlSendMessage, 
 			{
 				channel: channel,
 				message: message
@@ -602,7 +602,9 @@ $(function(){
 		$notifs = $('.notifications'),
 		$oldNotifs = $('.old-notifications'),
 		$linkShowOld = $('.link-showoldnotifs'),
-		$msgUptodate = $('.msg-uptodate');
+		$linkClearOld = $('.link-clearoldnotifs'),
+		$msgUptodate = $('.msg-uptodate'),
+		$msgClearhistory = $('.msg-clearhistory');
 	
 	function getLastNotifId() {
 		if(!$notifs || $notifs.length == 0) {
@@ -622,18 +624,85 @@ $(function(){
 		
 		switch(notification.type) {
 		case 'message':
-			$notif.text(notification.senderSummary.title + ' has sent you ');
+			$('<img class="notifimg">').attr('src', notification.senderSummary.thumbnailHash).appendTo($notif);
+			var $notiftxt = $('<div class="notiftxt">').html('<strong>' + notification.senderSummary.title + '</strong> has sent you ').appendTo($notif);
 			var $linkShowmessages = $('<a class="notif-shownewmessages fatlink">').attr('href', 'javascript:;')
 				.attr('channel', notification.channel)
 				.text(notification.howmany > 1 ? notification.howmany + ' new messages.' : ' a new message.')
-				.appendTo($notif);
-			$('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notif);
+				.appendTo($notiftxt);
+			var $footer = $('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notiftxt);
+			var $clearnotif = $('<span class="clearnotif-container">').hide().appendTo($footer);
+			$('<a class="clearnotif">').attr('href', 'javascript:;').text('Clear').appendTo($clearnotif);
+			break;
+			
+		case 'comment':
+			addCommentNotification(notification, $notif);
+			break;
+		case 'like':
+			addLikeNotification(notification, $notif);
 			break;
 		default:
 			debug('Unsupported notif type: ' + notification.type);
 		}
 		
 		$notif.prependTo($notifs).hide().fadeIn('slow');
+	}
+	
+	function addCommentNotification(notification, $notif) {
+		$('<img class="notifimg">').attr('src', 'http://graph.facebook.com/' + notification.lastCommenterId + '/picture').appendTo($notif);
+		var $notiftxt = $('<div class="notiftxt">').html('<strong>' + presentNames(notification.commenters) + '</strong> commented on your ' + notification.commentableType + ' ').appendTo($notif);
+		var url = '#';
+		switch(notification.commentableType) {
+		case 'post':
+			url = chat.urlPost + notification.targetId;
+			break;
+		default:
+			debug('unsupported commentable type: ' + notification.commentableType);
+		}
+		$('<a class="fatlink">').text(notification.targetTitle).attr('href', url).appendTo($notiftxt);
+		
+		var $footer = $('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notiftxt);
+		var $clearnotif = $('<span class="clearnotif-container">').hide().appendTo($footer);
+		$('<a class="clearnotif">').attr('href', 'javascript:;').text('Clear').appendTo($clearnotif);	
+	}
+	
+	function addLikeNotification(notification, $notif) {
+		$('<img class="notifimg">').attr('src', 'http://graph.facebook.com/' + notification.lastLikerId + '/picture').appendTo($notif);
+		var names = presentNames(notification.likers);
+		var $notiftxt = $('<div class="notiftxt">').html('<strong>' + names + '</strong> ' + (names.indexOf(' and ') == -1 ? 'likes' : 'like') + ' your ' + notification.likeableType + ' ').appendTo($notif);
+		var url = '#';
+		switch(notification.likeableType) {
+		case 'post':
+			url = chat.urlPost + notification.targetId;
+			break;
+		default:
+			debug('unsupported interactable type: ' + notification.likeableType);
+		}
+		$('<a class="fatlink">').text(notification.targetTitle).attr('href', url).appendTo($notiftxt);
+		
+		var $footer = $('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notiftxt);
+		var $clearnotif = $('<span class="clearnotif-container">').hide().appendTo($footer);
+		$('<a class="clearnotif">').attr('href', 'javascript:;').text('Clear').appendTo($clearnotif);	
+	}
+
+	$notifs.on({
+		click: function(){
+			clearNotif($(this).closest('.notification'));
+		}
+	}, '.clearnotif');
+	
+	function presentNames(names) {
+		var arr = names.split(',');
+		
+		if(arr.length == 1) {
+			return arr[0];
+		} else if(arr.length == 2) {
+			return arr[0] + ' and ' + arr[1];
+		} else if(arr.length == 3) {
+			return arr[0] + ', ' + arr[1] + ' and ' + arr[2];
+		} else {
+			return arr[0] + ', ' + arr[1] + ' and ' + (arr.length - 2) + ' others';
+		}
 	}
 	
 	//actions available to notifs (both new and old)
@@ -656,12 +725,22 @@ $(function(){
 		}		
 	}
 	
+	$notifs.on({
+		mouseenter: function(){
+			$(this).find('.clearnotif-container').css('display', 'inline-block');
+		},
+		mouseleave: function(){
+			$(this).find('.clearnotif-container').css('display', 'none');
+		}
+	}, '.notification');
+	
 	function clearNotif($li) {
 		if($li.attr('cleared') == 'cleared') return;
 		$.post(chat.urlClearNotif + $li.attr('notifId') + '/json', function(response) {
 			switch(response.status) {
 			case '200':
 				$li.attr('cleared', 'cleared').fadeOut(1000, function(){
+					$msgClearhistory.hide();
 					$li.prependTo($oldNotifs);
 					if($oldNotifs.is(':visible')) {
 						$li.dgteFadeIn();
@@ -694,26 +773,39 @@ $(function(){
 	var oldNotifsPerLoad = 5;
 	var showOldNotifsEnabled = true;
 	$linkShowOld.click(function(){
+		debug('loading old notifs...');
+		
 		if(!showOldNotifsEnabled) return false;
 		showOldNotifsEnabled = false;
 		
-		var $container = $oldNotifs.parent().spinner();
+		var $container = $oldNotifs.parent().spinner(true);
 		
 		$.get(chat.urlGetOldNotifs + oldNotifsStart + '/' + oldNotifsPerLoad + '/json?time=' + Date.now(), function(response) {
 			switch(response.status) {
 			case '200':
 				$oldNotifs.parent().show();
 				
-				for(var i = 0, len = response.notifs.length; i < len; ++i) {
-					addOldNotif(response.notifs[i]);
+				if(oldNotifsStart === 0 && response.notifs.length === 0) {
+					//empty notification history
+					$msgClearhistory.fadeIn();
+					$linkShowOld.fadeOut();
+				} else {
+					$msgClearhistory.fadeOut();
+					$linkClearOld.show();
+					
+					for(var i = 0, len = response.notifs.length; i < len; ++i) {
+						addOldNotif(response.notifs[i]);
+					}
+					
+					if(response.notifs.length >= oldNotifsPerLoad) {
+						$linkShowOld.text('Load more');
+					} else {
+						$linkShowOld.fadeOut();
+					}
+					
+					oldNotifsStart += response.notifs.length;
 				}
 				
-				if(response.notifs.length >= oldNotifsPerLoad) {
-					$linkShowOld.text('Load more');
-					oldNotifsStart += response.notifs.length;
-				} else {
-					$linkShowOld.fadeOut('slow');
-				}
 				break;
 			default:
 				debug('error getting old notifs');
@@ -732,19 +824,50 @@ $(function(){
 		
 		switch(notification.type) {
 		case 'message':
-			$notif.text(notification.senderSummary.title + ' sent you ');
-			var $linkShowmessages = $('<a class="notif-shownewmessages fatlink">').attr('href', 'javascript:;')
-				.attr('channel', notification.channel)
-				.text(notification.howmany > 1 ? notification.howmany + ' messages.' : ' a message.')
-				.appendTo($notif);
-			$('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notif);
+			addMessageNotification(notification, $notif);
+			break;
+		case 'comment':
+			addCommentNotification(notification, $notif);
+			break;
+		case 'like':
+			addLikeNotification(notification, $notif);
 			break;
 		default:
-			debug('Unsupported notif type: ' + notification.type);
 		}
 		
 		$notif.appendTo($oldNotifs).hide().fadeIn('slow');
 	}
+	
+	$linkClearOld.click(function(){
+		var notifIds = [];
+		
+		var $clearedNotifs = $('.notification[cleared="cleared"]');
+		$clearedNotifs.each(function(i, li) {
+			notifIds.push($(li).attr('notifId'));
+		});
+		
+		if(notifIds.length === 0) return false;
+		
+		debug('Deleting notifs with ids in ' + notifIds);
+		
+		$.post(chat.urlDeleteNotifs, {notifIds: notifIds}, function(response) {
+			switch(response.status) {
+			case '200':
+				debug('clearing...');
+				$clearedNotifs.fadeOut(1000, function(){
+					$(this).remove();
+				});
+				break;
+			default:
+				debug('Error deleting notifs');
+				debug(response);
+			}
+			
+			debug('about to retrieve old notifs after clearing visible ones...');
+			oldNotifsStart = 0;
+			$linkShowOld.click(); //after displayed notifs are cleared, load the older ones
+		});
+	});
 	
 	$(document).mousedown(function(){
 		$smileys.hide();

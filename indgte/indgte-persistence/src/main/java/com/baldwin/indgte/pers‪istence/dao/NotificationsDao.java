@@ -4,7 +4,8 @@ import java.util.Collection;
 
 import com.baldwin.indgte.persistence.model.ChatMessage;
 import com.baldwin.indgte.persistence.model.CommentNotification;
-import com.baldwin.indgte.persistence.model.CommentNotification.CommentableType;
+import com.baldwin.indgte.persistence.model.LikeNotification;
+import com.baldwin.indgte.persistence.model.Notification.InteractableType;
 import com.baldwin.indgte.persistence.model.MessageNotification;
 import com.baldwin.indgte.persistence.model.Notification;
 import com.baldwin.indgte.persistence.model.UserExtension;
@@ -26,9 +27,14 @@ public interface NotificationsDao {
 	 */
 	public MessageNotification newMessageNotification(UserExtension sender, ChatMessage chatMessage);
 
-	public void clearNotification(long id);
+	public void clearNotifications(String username, Long... ids);
 
 	public Collection<Notification> getOldNotifs(String name, int start, int howmany);
 
-	public CommentNotification commentNotif(String name, CommentableType type, long targetId, String providerUserId, String providerUsername);
+	public CommentNotification commentNotif(String name, InteractableType type, long targetId, String providerUserId, String providerUsername);
+
+	public LikeNotification likeNotif(String name, InteractableType type, long targetId, String providerUserId, String providerUsername);
+	
+	public void delete(String username, Long[] notifIds);
+
 }

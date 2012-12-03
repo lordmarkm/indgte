@@ -80,8 +80,8 @@
 
 .post-time {
 	margin-top: 2px;
-	color: grey;
-	font-size:0.7em;
+	font-size: 0.8em;
+	color: #202020;
 }
 
 .post-time a {
@@ -96,6 +96,6 @@ li.ui-state-default {
 	margin: 10px 0 0 0;
 }
 
-.fb-comments {
-	margin: 10px 10px 10px 60px;
+.post-fb {
+	margin: 20px 10px 10px 60px;
 }

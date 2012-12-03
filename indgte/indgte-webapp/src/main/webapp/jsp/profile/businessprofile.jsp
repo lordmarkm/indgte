@@ -1,3 +1,13 @@
+<script>
+//clear the annoying spring soc sec #_=_ hash... it affects the FB like button
+(function(){
+	if(window.location.hash === '#_=_') {
+		window.location.hash = ''; //for older browsers
+	    history.pushState('', document.title, window.location.pathname);
+	}
+})();
+</script>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@include file="../tiles/links.jsp" %>
@@ -36,190 +46,195 @@
 
 <title>${business.fullName }</title>
 
-<div class="cover grid_9">
-	<c:if test="${not empty business.coverpic }">
-	<a href="http://imgur.com/${business.coverpic.hash }"><img class="coverpic" src="http://i.imgur.com/${business.coverpic.hash }l.jpg" /></a>
-	</c:if>
-</div>
-
-<div class="rightbar grid_3">&nbsp;
-</div>
-
-<div class="content grid_9">
-<div class="profilepic-container grid_2">
-	<div class="profilepic-inner-container">
-		<c:choose>
-		<c:when test="${not empty business.profilepic }">
-		<a href="http://imgur.com/${business.profilepic.hash }"><img class="profilepic" src="${urlSmallProfilepic }" /></a>
-		</c:when>
-		<c:otherwise>
-		<img class="profilepic" src="${noimage }" />
-		</c:otherwise>
-		</c:choose>
-	</div>
-	<div class="button btn-subscribe-toggle">Subscribe</div>
-</div>
-
-<div class="content-info">
-	<h2 class="ui-widget-header fullname">${business.fullName }</h2>
-	<div class="content-info-indented grid_6">
-		<div style="text-transform: capitalize;">${business.category.name }</div>
-		<div class="description">${business.description }</div>
-		<div class="biz-url">www.indumaguete.com/p/${business.domain }</div>
-		<div class="biz-owner"><a href="${urlProfileRoot}user/${business.owner.username}">${business.owner.username }</a></div>
-		<c:if test="${owner }">
-		<div class="business-owner-operations">
-			<a class="button" href="${urlEdit }${business.domain}">Edit</a>
-			<button class="btn-promote">Promote</button>
-		</div>
+<div class="businessprofile grid_9">
+	<div class="cover">
+		<c:if test="${not empty business.coverpic }">
+		<a href="http://imgur.com/${business.coverpic.hash }"><img class="coverpic" src="http://i.imgur.com/${business.coverpic.hash }l.jpg" /></a>
 		</c:if>
 	</div>
-</div>
-
-<div class="tabs grid_9">
-	<ul>
-		<li><a href="#feed"><spring:message code="business.profile.tabs.feed" /></a></li>
-		<li><a href="#catalog"><spring:message code="business.profile.tabs.products" /></a></li>
-		<li><a href="#map">Map</a>
-		<li><a href="#reviews"><spring:message code="business.profile.tabs.reviews" /></a></li>
-		<li><a href="#comments"><spring:message code="business.profile.tabs.comments" /></a>
-	</ul>
 	
-	<!-- Business's feed - shows posts by the business -->
-	<div id="feed">
-		<c:if test="${owner }">
-		<div class="newpost">
-			<form id="form-newpost">
-				<div class="border-provider ui-state-active inline-block">
-					<div class="status-title-container">
-						<input name="title" class="status-title ui-state-active hide" maxlength="45" type="text" placeholder="title" />
-					</div>
-					<textarea name="text" class="status-textarea noattachment" maxlength="140" rows="1" placeholder="<spring:message code="home.status.textarea" />"></textarea>	
-					<div class="attach-input-container">
-						<!-- Hidden -->
-						<input class="posterId" type="hidden" value="${business.id }" />
-						<input class="posterType" type="hidden" value="business" />
-						<input class="iptType" type="hidden" value="none"/>
-						
-						<!-- Image -->
-						<input class="iptFile" type="file" />
-						
-						<!-- Video and link -->
-						<input class="iptUrl" type="text" placeholder="Paste URL"/>
-						
-						<!-- Entity -->
-						<input class="iptEntity" type="text" placeholder="Enter Entity name" />
-						<div class="entity-preview hide"></div> 
-						<div class="entity-suggestions ui-state-default"></div>
-					</div>
-				</div>
-				<div class="newpost-errors"></div>
-			</form>
-			<div class="status-options hide">
-				<sec:authorize access="hasRole('ROLE_USER_FACEBOOK')">
-				<input type="checkbox" name="toFacebook" id="toFacebook" value="true"><label for="toFacebook"><spring:message code="home.status.postfb" /></label>
-				</sec:authorize>
-				<div class="floatright">
-					<span class="status-counter"></span>
-					<div class="post-as">
-						<div class="menubutton post-as-visibles" title="Posting as ${business.fullName }">
-							<c:if test="${not empty business.profilepic }">
-							<img src="${business.profilepic.smallSquare }" />
-							</c:if>
-						</div>
-					</div>
-					<div class="attach">
-						<div class="menubutton attach-visibles" title="Attach a product or image">
-							<img src="${paperclip }" style="max-width: 15px; max-height: 15px;" />
-							<div class="ui-icon ui-icon-triangle-1-s attach-triangle"></div>
-						</div>
-						<div class="attach-menu">
-							<div class="attach-option image">
-								<div class="name"><span class="ui-icon ui-icon-image inline-block mr5"></span>Image</div>
-							</div>
-							<div class="attach-option video">
-								<div class="name"><span class="ui-icon ui-icon-video inline-block mr5"></span>Video</div>
-							</div>
-							<div class="attach-option link">
-								<div class="name"><span class="ui-icon ui-icon-link inline-block mr5"></span>Link</div>
-							</div>
-							<div class="attach-option entity">
-								<div class="name"><span class="ui-icon ui-icon-cart inline-block mr5"></span> Indgte Entity</div>
-							</div>
-							<div class="attach-option none">
-								<div class="name"><span class="ui-icon ui-icon-cancel inline-block mr5"></span>None</div>
-							</div>
-						</div>			
-					</div>
-					<div class="button btn-post">Post</div>
-				</div>
+	<div class="content">
+		<div class="profilepic-container">
+			<div class="profilepic-inner-container">
+				<c:choose>
+				<c:when test="${not empty business.profilepic }">
+				<a href="http://imgur.com/${business.profilepic.hash }"><img class="profilepic" src="${urlSmallProfilepic }" /></a>
+				</c:when>
+				<c:otherwise>
+				<img class="profilepic" src="${noimage }" />
+				</c:otherwise>
+				</c:choose>
 			</div>
-		</div>
-		</c:if>
-	
-		<div class="feed-container">
-			<ul class="posts"></ul>
-			<div class="loadmoreContainer" style="text-align: center; height: 100px; position: relative;">
-				<button class="loadmore" style="width: 50%; margin-top: 50px;">Load 10 more</button>
-			</div>
-		</div>
-	</div>
-	
-	<div id="catalog">
-		<div class="catalog-container">
-			<c:if test="${owner }">
-			<div class="catalog-owner-container">
-				<div class="catalog-new">
-					<a class="dialog" href="${urlCreateCategory}${business.domain}"><spring:message code="business.newcategory.link" /></a>
-				</div>
-			</div>
-			</c:if>	
-			<div class="catalog-categories-container">
-				<ul class="catalog-categories"></ul>
-			</div>
-		</div>
-	</div>
-	
-	<div id="map">
-		<div class="map"></div>
-	</div>
-	
-	<div id="reviews">
-	<div class="reviews-container">
-		<div class="review-header">
-			<div class="review-header-message"></div>
-			<span class="review-count"></span>
-			<span class="review-average-score"></span>
 		</div>
 		
-		<c:if test="${not owner }">
-		<div class="review-container user-review ui-state-highlight">
-			<div class="reviewer-container">
-				<img class="reviewer-img" src="${user.imageUrl }" />
-				<span class="reviewer-name">${user.username }</span>
-				<div class="review-star-container"></div>
+		<div class="content-info">
+			<h2 class="ui-widget-header fullname">${business.fullName }</h2>
+			<div class="content-info-indented">
+				<div style="text-transform: capitalize;">${business.category.name }</div>
+				<div class="description">${business.description }</div>
+				<div class="biz-url">www.indumaguete.com/p/${business.domain }</div>
+				<div class="biz-owner"><a href="${urlProfileRoot}user/${business.owner.username}">${business.owner.username }</a></div>
+				<c:if test="${owner }">
+				<div class="business-owner-operations">
+					<a class="button" href="${urlEdit }${business.domain}">Edit</a>
+					<button class="btn-promote">Promote</button>
+				</div>
+				</c:if>
 			</div>
-			<div class="review-justification"></div>
+		</div>
+		
+		<div class="tabs">
+			<ul>
+				<li><a href="#feed"><spring:message code="business.profile.tabs.feed" /></a></li>
+				<li><a href="#catalog"><spring:message code="business.profile.tabs.products" /></a></li>
+				<li><a href="#map">Map</a>
+				<li><a href="#reviews"><spring:message code="business.profile.tabs.reviews" /></a></li>
+				<li><a href="#comments"><spring:message code="business.profile.tabs.comments" /></a>
+			</ul>
 			
-			<div class="review-form-container">
-				<form id="review-form">
-					<textarea name="justification" class="justification" rows="3" cols="50" placeholder="Say something about ${business.fullName }"></textarea>
-					<input class="review-score" type="hidden" name="score" />
-					<div>
-						<a class="review-submit button" href="javascript:;">Submit</a>
+			<!-- Business's feed - shows posts by the business -->
+			<div id="feed">
+				<c:if test="${owner }">
+				<div class="newpost">
+					<form id="form-newpost">
+						<div class="border-provider ui-state-active inline-block">
+							<div class="status-title-container">
+								<input name="title" class="status-title ui-state-active hide" maxlength="45" type="text" placeholder="title" />
+							</div>
+							<textarea name="text" class="status-textarea noattachment" maxlength="140" rows="1" placeholder="<spring:message code="home.status.textarea" />"></textarea>	
+							<div class="attach-input-container">
+								<!-- Hidden -->
+								<input class="posterId" type="hidden" value="${business.id }" />
+								<input class="posterType" type="hidden" value="business" />
+								<input class="iptType" type="hidden" value="none"/>
+								
+								<!-- Image -->
+								<input class="iptFile" type="file" />
+								
+								<!-- Video and link -->
+								<input class="iptUrl" type="text" placeholder="Paste URL"/>
+								
+								<!-- Entity -->
+								<input class="iptEntity" type="text" placeholder="Enter Entity name" />
+								<div class="entity-preview hide"></div> 
+								<div class="entity-suggestions ui-state-default"></div>
+							</div>
+						</div>
+						<div class="newpost-errors"></div>
+					</form>
+					<div class="status-options hide">
+						<sec:authorize access="hasRole('ROLE_USER_FACEBOOK')">
+						<input type="checkbox" name="toFacebook" id="toFacebook" value="true"><label for="toFacebook"><spring:message code="home.status.postfb" /></label>
+						</sec:authorize>
+						<div class="floatright">
+							<span class="status-counter"></span>
+							<div class="post-as">
+								<div class="menubutton post-as-visibles" title="Posting as ${business.fullName }">
+									<c:if test="${not empty business.profilepic }">
+									<img src="${business.profilepic.smallSquare }" />
+									</c:if>
+								</div>
+							</div>
+							<div class="attach">
+								<div class="menubutton attach-visibles" title="Attach a product or image">
+									<img src="${paperclip }" style="max-width: 15px; max-height: 15px;" />
+									<div class="ui-icon ui-icon-triangle-1-s attach-triangle"></div>
+								</div>
+								<div class="attach-menu">
+									<div class="attach-option image">
+										<div class="name"><span class="ui-icon ui-icon-image inline-block mr5"></span>Image</div>
+									</div>
+									<div class="attach-option video">
+										<div class="name"><span class="ui-icon ui-icon-video inline-block mr5"></span>Video</div>
+									</div>
+									<div class="attach-option link">
+										<div class="name"><span class="ui-icon ui-icon-link inline-block mr5"></span>Link</div>
+									</div>
+									<div class="attach-option entity">
+										<div class="name"><span class="ui-icon ui-icon-cart inline-block mr5"></span> Indgte Entity</div>
+									</div>
+									<div class="attach-option none">
+										<div class="name"><span class="ui-icon ui-icon-cancel inline-block mr5"></span>None</div>
+									</div>
+								</div>			
+							</div>
+							<div class="button btn-post">Post</div>
+						</div>
 					</div>
-				</form>
+				</div>
+				</c:if>
+			
+				<div class="feed-container">
+					<ul class="posts"></ul>
+					<div class="loadmoreContainer" style="text-align: center; height: 100px; position: relative;">
+						<button class="loadmore" style="width: 50%; margin-top: 50px;">Load 10 more</button>
+					</div>
+				</div>
 			</div>
+			
+			<div id="catalog">
+				<div class="catalog-container">
+					<c:if test="${owner }">
+					<div class="catalog-owner-container">
+						<div class="catalog-new">
+							<a class="dialog" href="${urlCreateCategory}${business.domain}"><spring:message code="business.newcategory.link" /></a>
+						</div>
+					</div>
+					</c:if>	
+					<div class="catalog-categories-container">
+						<ul class="catalog-categories"></ul>
+					</div>
+				</div>
+			</div>
+			
+			<div id="map">
+				<div class="map"></div>
+			</div>
+			
+			<div id="reviews">
+			<div class="reviews-container">
+				<div class="review-header"> 
+					<div class="review-header-message"></div>
+					<span class="review-count"></span>
+					<span class="review-average-score"></span>
+				</div>
+				
+				<c:if test="${not owner }">
+				<div class="review-container user-review ui-state-highlight">
+					<div class="reviewer-container">
+						<img class="reviewer-img" src="${user.imageUrl }" />
+						<span class="reviewer-name">${user.username }</span>
+						<div class="review-star-container"></div>
+					</div>
+					<div class="review-justification"></div>
+					
+					<div class="review-form-container">
+						<form id="review-form">
+							<textarea name="justification" class="justification" rows="3" cols="50" placeholder="Say something about ${business.fullName }"></textarea>
+							<input class="review-score" type="hidden" name="score" />
+							<div>
+								<a class="review-submit button" href="javascript:;">Submit</a>
+							</div>
+						</form>
+					</div>
+				</div>
+				</c:if>
+				
+				<div class="reviews-list"></div>
+			</div>
+			</div>
+			
+			<div id="comments">Comments</div>
 		</div>
-		</c:if>
 		
-		<div class="reviews-list"></div>
-	</div>
-	</div>
-	
-	<div id="comments">Comments</div>
+		</div>
 </div>
 
+<div class="grid_3 sidebar-section">
+	<div class="sidebar-section-header">Interact</div>
+	<div class="button btn-subscribe-toggle">Subscribe</div>
+	<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+	<div class="sidebar-divider"></div>
 </div>
 
 <script>
@@ -593,3 +608,12 @@ $(function(){
 </c:if>
 
 <script src="${jsReviews }"></script>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>

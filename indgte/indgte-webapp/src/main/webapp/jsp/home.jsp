@@ -810,7 +810,7 @@ $(function(){
 		
 		//footnote
 		var $footnote = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow() + ' by ').appendTo($dataContainer);
-		$('<a>').attr('href', link).text(post.posterTitle).appendTo($footnote);
+		$('<a class="fatlink">').attr('href', link).text(post.posterTitle).appendTo($footnote);
 		
 		//comments
 		var $comments = $('<div class="post-comments">').appendTo($dataContainer);
@@ -864,11 +864,14 @@ $(function(){
 	</div>
 	<div class="old-notifications-container hide relative">
 		<div class="sidebar-section-header">Previous notifications</div>
+		<span class="msg-clearhistory hide">You're notification history is empty. Yey!</span>
 		<ul class="old-notifications hasnotifs"></ul>
 	</div>
 	<a class="link-showoldnotifs" href="javascript:;">Show old notifications...</a>
+	<a class="link-clearoldnotifs hide" href="javascript:;">Clear all</a>
 	<div class="sidebar-divider"></div>
 </div>
+<link rel="stylesheet" href="<spring:url value='/resources/css/grids/notifs.css' />" />
 <!-- Notifications -->
 
 <!-- Reviews -->

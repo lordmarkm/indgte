@@ -76,7 +76,7 @@ public class ChatControllerImpl implements ChatController {
 	@Override
 	public @ResponseBody JSON getChannelMessages(Principal principal, @PathVariable String channel, @PathVariable int howmany) {
 		try { 
-			return JSON.ok().put("messages", chat.getChannelMessages(channel, howmany));
+			return JSON.ok().put("messages", chat.getChannelMessages(principal.getName(), channel, howmany));
 		} catch (Exception e) {
 			log.error("Error getting messages for channel " + channel, e);
 			return JSON.status500(e);

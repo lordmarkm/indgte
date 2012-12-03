@@ -34,7 +34,8 @@ import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.CommentNotification;
-import com.baldwin.indgte.persistence.model.CommentNotification.CommentableType;
+import com.baldwin.indgte.persistence.model.LikeNotification;
+import com.baldwin.indgte.persistence.model.Notification.InteractableType;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
@@ -214,6 +215,17 @@ public class InteractiveControllerImpl implements InteractiveController {
 		}
 	}
 
+	@Override
+	public @ResponseBody JSON countsubs(Principal principal, @PathVariable PostType type, @PathVariable Long id) {
+		try {
+			int subscount = interact.countsubs(type, id);
+			return JSON.ok().put("subscount", subscount);
+		} catch (Exception e) {
+			log.error("Error", e);
+			return JSON.status500(e);
+		}
+	}
+	
 	@Override
 	public @ResponseBody JSON getReview(Principal principal, @PathVariable ReviewType type, @PathVariable long targetId) {
 		try {
@@ -504,11 +516,12 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 
 	@Override
-	public @ResponseBody JSON clearNotification(@PathVariable long id) {
+	public @ResponseBody JSON clearNotification(Principal principal, @PathVariable long id) {
 		try {
-			notifs.clearNotification(id);
+			notifs.clearNotifications(principal.getName(), id);
 			return JSON.ok();
 		} catch (Exception e) {
+			log.error("Error clearing unread notif", e);
 			return JSON.status500(e);
 		}
 	}
@@ -518,13 +531,14 @@ public class InteractiveControllerImpl implements InteractiveController {
 		try {
 			return JSON.ok().put("notifs", notifs.getOldNotifs(principal.getName(), start, howmany));
 		} catch (Exception e) {
+			log.error("Error getting old notifs", e);
 			return JSON.status500(e);
 		}
 	}
 
 	@Override
 	public @ResponseBody JSON commentNotify(Principal principal, 
-			@PathVariable CommentableType type, @PathVariable long targetId, 
+			@PathVariable InteractableType type, @PathVariable long targetId, 
 			@RequestParam String providerUserId, @RequestParam String providerUsername) {
 		
 		try {
@@ -532,7 +546,35 @@ public class InteractiveControllerImpl implements InteractiveController {
 			comet.fireNotif(notif);
 			return JSON.ok();
 		} catch (Exception e) {
+			log.error("Error adding comment notif", e);
 			return JSON.status500(e);
 		}
 	}
+
+	@Override
+	public @ResponseBody JSON likeNotify(Principal principal, 
+			@PathVariable InteractableType type, @PathVariable long targetId, 
+			@RequestParam String providerUserId, @RequestParam String providerUsername) {
+		
+		try {
+			LikeNotification notif = notifs.likeNotif(principal.getName(), type, targetId, providerUserId, providerUsername);
+			comet.fireNotif(notif);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Error adding comment notif", e);
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON deleteNotifs(Principal principal, @RequestParam("notifIds[]") Long[] notifIds) {
+		try {
+			notifs.delete(principal.getName(), notifIds);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Exception deleting notifs", e);
+			return JSON.status500(e);
+		}
+	}
+
 }

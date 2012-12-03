@@ -75,6 +75,11 @@ public class BuyAndSellItem {
 	@Column
 	private long views;
 
+	@Override
+	public String toString() {
+		return name;
+	}
+	
 	@JsonIgnore
 	public UserExtension getOwner() {
 		return owner;

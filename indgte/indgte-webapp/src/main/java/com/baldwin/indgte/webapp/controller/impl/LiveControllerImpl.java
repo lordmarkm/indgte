@@ -38,8 +38,13 @@ public class LiveControllerImpl implements LiveController {
 										@RequestParam("chatters[]") String[] chatters, 
 										@RequestParam("channels[]") String[] channels, 
 										@RequestParam long lastReceivedId,
-										@RequestParam long lastNotifId ) 
+										@RequestParam long lastNotifId//,
+										//@RequestParam("rejectedNotifs[]") Long[] rejectedNotifs
+										) 
 	{
+//		notifs.clearNotifications(principal.getName(), rejectedNotifs);
+
+		//make the response
 		DeferredResult<JSON> response = new DeferredResult<>();
 		JSON json = JSON.ok();
 		boolean respond = false;

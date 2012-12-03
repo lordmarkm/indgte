@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -92,6 +93,9 @@ public class BusinessProfile implements Searchable, Attachable {
 	
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="reviewed")
 	private Set<BusinessReview> reviews;
+	
+	@ManyToMany(mappedBy="forReview")
+	private Set<UserExtension> pendingReviewers;
 	
 	@Override
 	public String toString() {
@@ -285,5 +289,14 @@ public class BusinessProfile implements Searchable, Attachable {
 	@Override
 	public AttachmentType getAttachmentType() {
 		return AttachmentType.business;
+	}
+
+	@JsonIgnore
+	public Set<UserExtension> getPendingReviewers() {
+		return pendingReviewers;
+	}
+
+	public void setPendingReviewers(Set<UserExtension> pendingReviewers) {
+		this.pendingReviewers = pendingReviewers;
 	}
 }

@@ -9,14 +9,17 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.ChatMessage;
 import com.baldwin.indgte.persistence.model.CommentNotification;
-import com.baldwin.indgte.persistence.model.CommentNotification.CommentableType;
+import com.baldwin.indgte.persistence.model.LikeNotification;
+import com.baldwin.indgte.persistence.model.Notification.InteractableType;
 import com.baldwin.indgte.persistence.model.MessageNotification;
 import com.baldwin.indgte.persistence.model.Notification;
 import com.baldwin.indgte.persistence.model.Post;
@@ -26,6 +29,8 @@ import com.baldwin.indgte.persistence.model.UserExtension;
 @Transactional
 public class NotificationsDaoImpl implements NotificationsDao {
 
+	static Logger log = LoggerFactory.getLogger(NotificationsDaoImpl.class);
+	
 	private static final String BROADCAST_CHANNEL_PREFIX = "#";
 	private static final String CHANNEL_USERNAME_DELIMITER_REGEXP = "\\|";
 	
@@ -37,6 +42,9 @@ public class NotificationsDaoImpl implements NotificationsDao {
 	
 	@Autowired
 	private SessionFactory sessions;
+	
+	@Autowired
+	private BusinessDao businesses;
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -105,9 +113,14 @@ public class NotificationsDaoImpl implements NotificationsDao {
 	}
 	
 	@Override
-	public void clearNotification(long id) {
-		Notification notification = getNotification(id);
-		notification.setSeen(true);
+	public void clearNotifications(String username, Long... ids) {
+		int updatedrows = sessions.getCurrentSession().createQuery("update Notification set seen = true where id in :ids")
+			.setParameterList("ids", ids)
+			.executeUpdate();
+		
+		log.debug("{} has cleared {} notifications", username, updatedrows);
+//		Notification notification = getNotification(id);
+//		notification.setSeen(true);
 	}
 
 	@Override
@@ -123,76 +136,140 @@ public class NotificationsDaoImpl implements NotificationsDao {
 	}
 
 	@Override
-	public CommentNotification commentNotif(String name, CommentableType commentableType, long targetId, 	String providerUserId, String providerUsername) {
+	public CommentNotification commentNotif(String name, InteractableType commentableType, long targetId, 	String providerUserId, String providerUsername) {
 		UserExtension commenter = users.getExtended(name);
 		String commenterName = commenter != null ? commenter.getUsername() : providerUsername;
 		
 		switch(commentableType) {
 		case post:
-			return processPostComment(targetId, commenterName);
+			return processPostComment(targetId, commenterName, providerUserId);
 		default:
 			throw new IllegalStateException("Unsupported comment type: " + commentableType);
 		}
 	}
 	
-	private CommentNotification processPostComment(long postId, String commenterName) {
+	@Override
+	public LikeNotification likeNotif(String name, InteractableType type, long targetId, String providerUserId, String providerUsername) {
+		UserExtension commenter = users.getExtended(name);
+		String commenterName = commenter != null ? commenter.getUsername() : providerUsername;
+		
+		switch(type) {
+		case post:
+			return processPostLike(targetId, commenterName, providerUserId);
+		default:
+			throw new IllegalStateException("Unsupported like type: " + type);
+		}
+	}
+	
+	private LikeNotification processPostLike(long postId, String likerName, String likerId) {
+		log.debug("Creating notification for post with id {}, from commenter {}", postId, likerName);
+		
 		Session session = sessions.getCurrentSession();
 		
-		Post post = interact.getPost(postId);
-		UserExtension poster = users.getExtended(post.getPosterId());
-		
-		CommentNotification notification = null;
-
-		notification = (CommentNotification) session.createCriteria(CommentNotification.class)
-				.add(Restrictions.eq(NOTIF_COMMENT_TYPE, CommentableType.post))
-				.add(Restrictions.eq(NOTIF_COMMENT_TARGETID, postId))
+		LikeNotification notification = null;
+		notification = (LikeNotification) session.createCriteria(LikeNotification.class)
+				.add(Restrictions.eq(NOTIF_LIKE_TYPE, InteractableType.post))
+				.add(Restrictions.eq(NOTIF_COMMENTORLIKE_TARGETID, postId))
 				.add(Restrictions.eq(NOTIF_SEEN, false))
 				.uniqueResult();
 				
 		if(null == notification) {
-			notification = new CommentNotification();
-			notification.setCommentableType(CommentableType.post);
-			notification.setCommenters(commenterName);
-			notification.setNotified(poster);
+			Post post = interact.getPost(postId);
+			UserExtension notified = null;
+			
+			switch(post.getType()) {
+			case user:
+				if(post.getPosterIdentifier().equals(likerName)) {
+					return null;
+				}
+				notified = users.getExtended(post.getPosterIdentifier());
+				break;
+			case business:
+				BusinessProfile business = businesses.get(post.getPosterIdentifier());
+				if(business.getOwner().getUsername().equals(likerName)) {
+					return null;
+				}
+				notified = business.getOwner();
+				break;
+			default:
+				throw new IllegalStateException("Unsupported post type: " + post.getType());
+			}
+			
+			notification = new LikeNotification();
+			notification.setLikeableType(InteractableType.post);
+			notification.setLikers(likerName);
+			notification.setNotified(notified);
 			notification.setTargetId(postId);
+			notification.setTargetTitle(post.getTitle());
 		} else {
-			notification.setCommenters(constructCommentersString(notification.getCommenters(), commenterName));
+			if(notification.getNotified().getUsername().equals(likerName)) {
+				return null;
+			}
+			notification.setLikers(constructMultinameString(notification.getLikers(), likerName));
 		}
 		
+		notification.setLastLikerId(likerId);
 		notification.setTime(new Date());
 		session.saveOrUpdate(notification);
 		
 		return notification;
 	}
 	
-	@Test
-	public void test() {
-		String p = null;
+	private CommentNotification processPostComment(long postId, String commenterName, String commenterId) {
+		log.debug("Creating notification for post with id {}, from commenter {}", postId, commenterName);
 		
-		p = c(p, "Mark Martinez");
-		System.out.println(p);
+		Session session = sessions.getCurrentSession();
 		
-		p = c(p, "martinezdescent");
-		System.out.println(p);
+		CommentNotification notification = null;
+		notification = (CommentNotification) session.createCriteria(CommentNotification.class)
+				.add(Restrictions.eq(NOTIF_COMMENT_TYPE, InteractableType.post))
+				.add(Restrictions.eq(NOTIF_COMMENTORLIKE_TARGETID, postId))
+				.add(Restrictions.eq(NOTIF_SEEN, false))
+				.uniqueResult();
+				
+		if(null == notification) {
+			Post post = interact.getPost(postId);
+			UserExtension notified = null;
+			
+			switch(post.getType()) {
+			case user:
+				if(post.getPosterIdentifier().equals(commenterName)) {
+					return null;
+				}
+				notified = users.getExtended(post.getPosterIdentifier());
+				break;
+			case business:
+				BusinessProfile business = businesses.get(post.getPosterIdentifier());
+				if(business.getOwner().getUsername().equals(commenterName)) {
+					return null;
+				}
+				notified = business.getOwner();
+				break;
+			default:
+				throw new IllegalStateException("Unsupported post type: " + post.getType());
+			}
+			
+			notification = new CommentNotification();
+			notification.setCommentableType(InteractableType.post);
+			notification.setCommenters(commenterName);
+			notification.setNotified(notified);
+			notification.setTargetId(postId);
+			notification.setTargetTitle(post.getTitle());
+		} else {
+			if(notification.getNotified().getUsername().equals(commenterName)) {
+				return null;
+			}
+			notification.setCommenters(constructMultinameString(notification.getCommenters(), commenterName));
+		}
 		
-		p = c(p, "Hesus Nazareno");
-		System.out.println(p);
+		notification.setLastCommenterId(commenterId);
+		notification.setTime(new Date());
+		session.saveOrUpdate(notification);
 		
-		p = c(p, "Hesus Nazareno");
-		System.out.println(p);
-		
-		p = c(p, "martinezdescent");
-		System.out.println(p);
-		
-		p = c(p, "Cecille B. Demille");
-		System.out.println(p);
+		return notification;
 	}
 	
-	private String c(String p, String n) {
-		return constructCommentersString(p, n);
-	}
-	
-	private String constructCommentersString(String previous, String newname) {
+	private String constructMultinameString(String previous, String newname) {
 		
 		if(null == previous) {
 			return newname;
@@ -212,5 +289,13 @@ public class NotificationsDaoImpl implements NotificationsDao {
 		} else {
 			return previous;
 		}
+	}
+
+	@Override
+	public void delete(String username, Long[] notifIds) {
+		int deleted = sessions.getCurrentSession().createQuery("delete from Notification where id in :ids")
+			.setParameterList("ids", notifIds)
+			.executeUpdate();
+		log.debug("{} old notifications deleted by {}", deleted, username);
 	}
 }

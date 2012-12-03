@@ -52,6 +52,8 @@
 				<value>com.baldwin.indgte.persistence.model.Tag</value>
 				<value>com.baldwin.indgte.persistence.model.ChatMessage</value>
 				<value>com.baldwin.indgte.persistence.model.MessageNotification</value>
+				<value>com.baldwin.indgte.persistence.model.CommentNotification</value>
+				<value>com.baldwin.indgte.persistence.model.LikeNotification</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

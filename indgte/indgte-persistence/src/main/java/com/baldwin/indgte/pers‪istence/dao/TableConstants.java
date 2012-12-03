@@ -69,7 +69,10 @@ public class TableConstants {
 	public static final String NOTIF_MSG_CHANNEL = "channel";
 	
 	public static final String NOTIF_COMMENT_TYPE = "commentableType";
-	public static final String NOTIF_COMMENT_TARGETID = "targetId";
+	
+	public static final String NOTIF_LIKE_TYPE = "likeableType";
+	
+	public static final String NOTIF_COMMENTORLIKE_TARGETID = "targetId";
 	
 	/* Aliases */
 	public static final String ALIAS_USER = "user";

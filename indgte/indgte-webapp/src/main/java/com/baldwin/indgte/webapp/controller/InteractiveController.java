@@ -14,7 +14,7 @@ import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
-import com.baldwin.indgte.persistence.model.CommentNotification.CommentableType;
+import com.baldwin.indgte.persistence.model.Notification.InteractableType;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.webapp.dto.TopTenForm;
 
@@ -81,6 +81,9 @@ public interface InteractiveController {
 	
 	@RequestMapping(value = "/unsubscribe/{type}/{id}.json", method = RequestMethod.POST)
 	public JSON unsubscribe(Principal principal, PostType type, Long id);
+	
+	@RequestMapping(value = "/countsubs/{type}/{id}/json", method = RequestMethod.GET)
+	public JSON countsubs(Principal principal, PostType type, Long id);
 	
 	/**
 	 * Review
@@ -163,11 +166,17 @@ public interface InteractiveController {
 	 * Notifications
 	 */
 	
-	@RequestMapping(value = "/postcommentnotify/{type}/{targetId}/json", method = RequestMethod.POST)
-	public JSON commentNotify(Principal principal, CommentableType type, long targetId, String providerUserId, String providerUsername);
+	@RequestMapping(value = "/commentnotify/{type}/{targetId}/json", method = RequestMethod.POST)
+	public JSON commentNotify(Principal principal, InteractableType type, long targetId, String providerUserId, String providerUsername);
+	
+	@RequestMapping(value = "/likenotify/{type}/{targetId}/json", method = RequestMethod.POST)
+	public JSON likeNotify(Principal principal, InteractableType type, long targetId, String providerUserId, String providerUsername);
 	
 	@RequestMapping(value = "/clearnotif/{id}/json", method = RequestMethod.POST)
-	public JSON clearNotification(long id);
+	public JSON clearNotification(Principal principal, long id);
+	
+	@RequestMapping(value = "/deletenotifs/json", method = RequestMethod.POST)
+	public JSON deleteNotifs(Principal principal, Long[] notifIds);
 	
 	@RequestMapping(value = "/oldnotifs/{start}/{howmany}/json", method = RequestMethod.GET)
 	public JSON getOldNotifs(Principal principal, int start, int howmany);

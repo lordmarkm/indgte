@@ -56,6 +56,11 @@ public class Wish {
 	@Column
 	private String wishText;
 	
+	@Override
+	public String toString() {
+		return wisher.getUsername() + ":" + product != null ? product.toString() : buyAndSellItem != null ? buyAndSellItem.toString() : " nothing";
+	}
+	
 	public String getText() {
 		switch(type) {
 		case buyandsell:

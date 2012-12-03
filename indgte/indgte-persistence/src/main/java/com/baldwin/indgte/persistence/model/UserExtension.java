@@ -24,6 +24,8 @@ import javax.persistence.Table;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.IndexColumn;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.dto.Summarizable;
@@ -37,6 +39,8 @@ import com.baldwin.indgte.persistence.dto.Summary;
 @Entity
 @Table(name="userextensions")
 public class UserExtension implements Summarizable {
+	static Logger log = LoggerFactory.getLogger(UserExtension.class);
+	
 	@Id
 	private long id;
 	
@@ -130,7 +134,9 @@ public class UserExtension implements Summarizable {
 	}
 	
 	public boolean inWishlist(BuyAndSellItem item) {
-		for(Wish wish : wishlist) {
+		if(null == item) return false;
+		for(Wish wish : wishlist) {	
+			if(null == wish) continue;
 			if(item.equals(wish.getBuyAndSellItem())) return true;
 		}
 		return false;

@@ -2,6 +2,7 @@ package com.baldwin.indgte.pers‪istence.dao;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -360,5 +361,38 @@ public class BusinessDaoImpl implements BusinessDao {
 			.setProjection(Projections.property("domain"))
 			.add(Restrictions.eq("id", id))
 			.uniqueResult();
+	}
+
+	/**
+	 * From where else should we delete business subs besides the business itself? We'll find out I guess
+	 */
+	@Override
+	public void delete(Long id) {
+		log.warn("Deleting business with id {}!!!", id);
+//		sessions.getCurrentSession().createQuery("delete from BusinessProfile where id = :id")
+//			.setLong(TableConstants.ID, id)
+//			.executeUpdate();
+		Session session = sessions.getCurrentSession();
+		BusinessProfile b = (BusinessProfile) session.load(BusinessProfile.class, id);
+		
+		log.debug("Gonna delete {}", b);
+		
+		//remove all pending reviews
+		for(UserExtension pendingReviewer : b.getPendingReviewers()) {
+			for(Iterator<BusinessProfile> i = pendingReviewer.getForReview().iterator(); i.hasNext();) {
+				BusinessProfile c = i.next();
+				log.debug("Comparing for removal: [{}], [{}] - equal ? {}", b.getDomain(), c.getDomain(), b.getDomain().equals(c.getDomain()));
+				if(b.getDomain().equals(c.getDomain())) {
+					i.remove();
+				}
+			}
+		}
+		
+		//remove all wishlists apparently Wish cascade was enough
+		
+		//delete associated posts... or... or not, really
+		//yeah leave those posts floating
+		
+		session.delete(b);
 	}
 }

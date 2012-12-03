@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import com.baldwin.indgte.persistence.model.CommentNotification;
-import com.baldwin.indgte.persistence.model.MessageNotification;
 import com.baldwin.indgte.persistence.model.Notification;
 import com.baldwin.indgte.webapp.controller.JSON;
 

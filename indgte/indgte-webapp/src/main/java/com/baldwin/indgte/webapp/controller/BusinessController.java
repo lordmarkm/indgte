@@ -107,4 +107,12 @@ public interface BusinessController {
 	
 	@RequestMapping(value = "/deletepics/{domain}/{productId}.json", method = RequestMethod.POST)
 	public JSON deletePics(Principal principal, String domain, long productId, List<Long> imgurIds);
+	
+	
+	/*
+	 * Delete business
+	 */
+	@RequestMapping(value = "/deletebusiness/{id}/json", method = RequestMethod.POST)
+	public JSON deleteBusiness(Principal principal, Long id);
+	
 }

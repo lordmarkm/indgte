@@ -17,6 +17,8 @@ public interface LiveController {
 			String[] chatters, 
 			String[] channels, 
 			long lastReceivedId,
-			long lastNotifId);
+			long lastNotifId//,
+			//Long[] rejectedNotifs
+			);
 
 }

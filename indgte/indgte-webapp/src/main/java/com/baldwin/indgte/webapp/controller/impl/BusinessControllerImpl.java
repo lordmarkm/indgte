@@ -300,4 +300,15 @@ public class BusinessControllerImpl implements BusinessController {
 		Category category = businesses.getCategory(categoryId);
 		return "redirect:/b/categories/" + category.getBusiness().getDomain() + "/" + categoryId;
 	}
+
+	@Override
+	public @ResponseBody JSON deleteBusiness(Principal principal, @PathVariable Long id) {
+		try {
+			businesses.delete(id);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Exception deleting business", e);
+			return JSON.status500(e);
+		}
+	}
 }

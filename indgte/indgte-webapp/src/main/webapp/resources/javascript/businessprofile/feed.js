@@ -617,7 +617,7 @@ $(function(){
 		
 		//footnote
 		var $footnote = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow() + ' by ').appendTo($dataContainer);
-		$('<a>').attr('href', link).text(post.posterTitle).appendTo($footnote);
+		$('<a class="fatlink">').attr('href', link).text(post.posterTitle).appendTo($footnote);
 	}
 	
 	$posts.on({

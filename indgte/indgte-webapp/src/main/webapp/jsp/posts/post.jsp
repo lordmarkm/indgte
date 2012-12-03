@@ -24,12 +24,19 @@
 			<div class="post-text">${post.text }</div>
 		</div>
 		
-		<div class="fb-comments" data-href="${domain}${urlPosts }${post.id}" data-width="540"></div>
+		<div class="post-fb">
+			<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+			<div class="fb-comments" data-href="${domain}${urlPosts }${post.id}" data-width="540"></div>
+		</div>
 	</div>
 
 </div>
 
 <script>
+window.user = {
+	username : '${user.username}'	
+}
+
 window.post = {
 	id : '${post.id}',
 	type : '${post.type}',
@@ -48,7 +55,8 @@ window.urls = {
 	imgurPage : 'http://imgur.com/',
 	categoryWithProducts: '<spring:url value="/b/categories/" />',
 	productwithpics: '<spring:url value="/b/products/withpics/" />',
-	commentNotify: '<spring:url value="/i/postcommentnotify/" />'
+	commentNotify: '<spring:url value="/i/commentnotify/post/" />',
+	likeNotify: '<spring:url value="/i/likenotify/post/" />'
 }
 
 $(function(){
@@ -199,30 +207,44 @@ $(function(){
 <div id="fb-root"></div>
 <script>
 (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
-  fjs.parentNode.insertBefore(js, fjs);
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id))
+		return;
+	js = d.createElement(s);
+	js.id = id;
+	js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
+	fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
-window.fbAsyncInit=function() {
-	FB.Event.subscribe('comment.create', function(){
+window.fbAsyncInit = function() {
+	FB.Event.subscribe('comment.create', function() {
 		FB.getLoginStatus(function(loginStatus) {
-			if(loginStatus.status === 'connected') {
-				
-				//user is logged in. get details and notify poster of new comment
-			    FB.api('/me', function(response) {
-			        alert ("Welcome " + response.name + ": Your UID is " + response.id); 
-			    
-			        $.post(urls.commentNotify + post.id + '/json', 
-			        	{providerUserId: response.id, providerUsername: response.name},
-			        	function(response) {
-			        		//do nothing
-			        	}
-			        );
-			    
-			    });
+			if (loginStatus.status === 'connected') {
+					//user is logged in. get details and notify poster of new comment
+				FB.api('/me', function(response) {
+						$.post(urls.commentNotify + post.id + '/json', {
+						providerUserId : response.id,
+						providerUsername : response.name
+					}, function(response) {
+						//do nothing
+					});
+				});
+			}
+		});
+	});
+	
+	FB.Event.subscribe('edge.create', function() {
+		FB.getLoginStatus(function(loginStatus) {
+			if (loginStatus.status === 'connected') {
+					//user is logged in. get details and notify poster of new comment
+				FB.api('/me', function(response) {
+						$.post(urls.likeNotify + post.id + '/json', {
+						providerUserId : response.id,
+						providerUsername : response.name
+					}, function(response) {
+						//do nothing
+					});
+				});
 			}
 		});
 	});

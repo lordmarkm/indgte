@@ -36,8 +36,6 @@ import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
-import com.baldwin.indgte.persistence.dto.Summarizer;
-import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
@@ -192,6 +190,21 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	public void unsubscribeFromBusiness(String username, Long id) {
 		UserExtension user = users.getExtended(username);
 		user.getBusinessSubscriptions().remove(id);
+	}
+	
+	@Override
+	public int subscount(PostType type, Long id) {
+		switch(type) {
+		case business:
+			log.debug("Querying for subscriptions to business with id {}", id);
+			Long count = (Long) sessions.getCurrentSession().createQuery("select count(*) from UserExtension u where :businessId in elements(u.businessSubscriptions)")
+				.setLong("businessId", id)
+				.uniqueResult();
+			return null == count ? 0 : count.intValue();
+		default:
+			log.error("Unsupported subs type: {}", type);
+			return -1;
+		}
 	}
 	
 	private Map<PostType, Set<Long>> getSubscriptions(String name, PostType[] types) {
@@ -785,4 +798,5 @@ public class InteractiveDaoImpl implements InteractiveDao {
 				.add(Restrictions.in(TableConstants.ID, user.getUserSubscriptions()))
 				.list();
 	}
+	
 }

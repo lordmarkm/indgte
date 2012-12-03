@@ -69,6 +69,9 @@ public class Product implements Searchable, Attachable {
 	)
 	private List<Imgur> pics;
 
+	@OneToMany(mappedBy="product", cascade=CascadeType.ALL)
+	private List<Wish> wishes;
+	
 	@Override
 	public String toString() {
 		return name + ": " + description;
@@ -169,5 +172,14 @@ public class Product implements Searchable, Attachable {
 	@JsonIgnore
 	public Imgur getImgur() {
 		return mainpic;
+	}
+
+	@JsonIgnore
+	public List<Wish> getWishes() {
+		return wishes;
+	}
+
+	public void setWishes(List<Wish> wishes) {
+		this.wishes = wishes;
 	}
 }

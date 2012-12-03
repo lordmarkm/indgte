@@ -1,31 +1,29 @@
 package com.baldwin.indgte.persistence.model;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="notifications_comments")
 public class CommentNotification extends Notification {
 
-	public enum CommentableType {
-		post,
-		review,
-		business,
-		category,
-		product,
-		fixedpriceitem,
-		auctionitem,
-		tradeitem
-	}
-	
 	@Column
+	@Lob @Basic
 	private String commenters;
 	
 	@Column
+	private String lastCommenterId;
+	
+	@Column
 	@Enumerated
-	private CommentableType commentableType;
+	private InteractableType commentableType;
+	
+	@Column
+	private String targetTitle;
 	
 	@Column
 	private long targetId;
@@ -51,12 +49,28 @@ public class CommentNotification extends Notification {
 		this.targetId = targetId;
 	}
 
-	public CommentableType getCommentableType() {
+	public InteractableType getCommentableType() {
 		return commentableType;
 	}
 
-	public void setCommentableType(CommentableType commentableType) {
+	public void setCommentableType(InteractableType commentableType) {
 		this.commentableType = commentableType;
+	}
+
+	public String getTargetTitle() {
+		return targetTitle;
+	}
+
+	public void setTargetTitle(String targetTitle) {
+		this.targetTitle = targetTitle;
+	}
+
+	public String getLastCommenterId() {
+		return lastCommenterId;
+	}
+
+	public void setLastCommenterId(String lastCommenterId) {
+		this.lastCommenterId = lastCommenterId;
 	}
 
 }

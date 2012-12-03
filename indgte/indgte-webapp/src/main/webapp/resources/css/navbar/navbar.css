@@ -4,6 +4,7 @@
 }
 .user-container {
 	display: inline-block;
+	vertical-align: top;
 }
 .user-image {
 	width: 20px;
@@ -24,9 +25,8 @@
 }
 
 .menu-container {
-	vertical-align: bottom;
 	display: inline-block;
-	height: 80%;
+	height: 90%;
 	width: 16px;
 	padding: 1px;
 	font-size: 0.8em;
@@ -108,7 +108,8 @@
 
 .search-padder {
 	display: inline-block;
-	padding: 2px 0 2px 0;
+	padding: 3px 0 2px 0;
+	vertical-align: top;
 }
 
 .search-container {

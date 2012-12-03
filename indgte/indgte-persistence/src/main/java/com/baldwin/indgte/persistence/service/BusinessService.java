@@ -116,4 +116,7 @@ public class BusinessService {
 	public String getDomain(long id) {
 		return dao.getDomain(id);
 	}
+	public void delete(Long id) {
+		dao.delete(id);
+	}
 }

@@ -11,6 +11,8 @@
 <spring:url var="spinner" value="/resources/images/spinner.gif" />
 <spring:url var="paperclip" value="/resources/images/icons/paperclip.png" />
 
+<spring:url var="urlRegister" value="/r/" />
+
 <spring:url var="urlProfile" value="/p/" />
 <spring:url var="urlUserProfile" value="/p/user/" />
 

@@ -215,4 +215,8 @@ public class InteractiveService {
 	public Review reviewReact(String name, ReviewType type, String mode, long reviewId) {
 		return dao.reviewReact(name, type, mode, reviewId);
 	}
+
+	public int countsubs(PostType type, Long id) {
+		return dao.subscount(type, id);
+	}
 }
