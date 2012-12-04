@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
 <style>
 .footer {
@@ -13,6 +14,7 @@
 
 <section class="footer grid_12">
 	<div class="footer-container">
+		<sec:authorize access="hasRole('ROLE_USER')">
 		<div>
 			<select id="sel-theme">
 				<c:forEach items="${themes }" var="theme">
@@ -20,6 +22,7 @@
 				</c:forEach>
 			</select>
 		</div>
+		</sec:authorize>
 		<div>Made by Mark</div>
 	</div>
 </section>

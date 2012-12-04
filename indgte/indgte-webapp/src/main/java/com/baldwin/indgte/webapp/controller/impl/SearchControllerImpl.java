@@ -30,6 +30,7 @@ import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.SearchService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
+import com.baldwin.indgte.webapp.controller.MavBuilder;
 import com.baldwin.indgte.webapp.controller.SearchController;
 
 @Component
@@ -50,12 +51,20 @@ public class SearchControllerImpl implements SearchController {
 
 	@Override
 	public ModelAndView searchpage(Principal principal) {
-		UserExtension user = users.getExtended(principal.getName());
+		log.debug("Search page requested. Principal: {}", principal == null ? "Anonymous" : principal);
+		
 		MultiValueMap<String, Number> count = search.getYellowPagesIndex();
 		log.debug("Business count: {}", count);
-		return render(user, "yellowpages")
-				.put("businesses", count)
-				.mav();
+		
+		MavBuilder mav = render("yellowpages")
+				.put("businesses", count);
+		
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName());
+			mav.put("user", user);
+		}
+		
+		return mav.mav();
 	}
 	
 	/*
@@ -136,13 +145,19 @@ public class SearchControllerImpl implements SearchController {
 
 	@Override
 	public ModelAndView viewCategory(Principal principal, @PathVariable long groupId) {
-		UserExtension user = users.getExtended(principal.getName());
 		BusinessGroup group = search.getBusinessGroup(groupId);
 		List<YellowPagesEntry> businesses = search.getYellowPagesEntries(groupId);
-		return render(user, "yellowpage")
+		
+		MavBuilder mav = render("yellowpage")
 				.put("group", group)
-				.put("businesses", businesses)
-				.mav();
+				.put("businesses", businesses);
+		
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName());
+			mav.put("user", user);
+		}
+		
+		return mav.mav();
 	}
 
 	@Override

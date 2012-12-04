@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
 <link rel="stylesheet" href="<c:url value='/resources/css/businessops.css' />" />
@@ -67,9 +68,11 @@
 <div class="viewproduct-controls grid_4 ui-widget sidebar-section">
 	<div class="sidebar-section-header">Product Actions</div>
 	<div class="product-actions">
+		<sec:authorize access="hasRole('ROLE_USER')">
 		<c:if test="${!inwishlist }">
 		<button class="btn-wishlist-add">Add to Wishlist</button>
 		</c:if>
+		</sec:authorize>
 		<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
 	</div>
 	<div class="sidebar-divider"></div>

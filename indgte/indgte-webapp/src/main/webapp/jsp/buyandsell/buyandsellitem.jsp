@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
 <title>${item.name }</title>
@@ -95,6 +96,7 @@
 
 </div>
 
+<sec:authorize access="hasRole('ROLE_USER')">
 <div class="buyandsell-controls grid_4 ui-widget sidebar-section">
 	<div class="sidebar-section-header">Buy&Sell Item Actions</div>
 	
@@ -124,6 +126,7 @@
 	</div>	
 	<div class="sidebar-divider"></div>
 </div>
+</sec:authorize>
 
 <style>
 /*buyandsell.css overrides */

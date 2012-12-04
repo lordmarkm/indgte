@@ -27,11 +27,11 @@
 	<context:component-scan base-package="org.socialsignin.provider" />
 
 	<bean id="springSocialSecurityEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-		<property name="loginFormUrl" value="/sociallogin" />
+		<property name="loginFormUrl" value="/login/" />
 	</bean>
 	
 	<bean class="org.springframework.social.connect.web.ProviderSignInController" >
-        <property name="signUpUrl" value="/signup" />
+        <property name="signUpUrl" value="/signup/" />
         <property name="postSignInUrl" value="/authenticate" />
    	</bean>
    	

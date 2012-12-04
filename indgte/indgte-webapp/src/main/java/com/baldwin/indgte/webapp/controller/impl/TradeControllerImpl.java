@@ -42,17 +42,22 @@ public class TradeControllerImpl implements TradeController {
 	
 	@Override
 	public ModelAndView landing(Principal principal) {
-		UserExtension user = users.getExtended(principal.getName(), Initializable.watchedtags, Initializable.buyandsellitems);
-		
 		Collection<BuyAndSellItem> popular = trade.getPopular(0, 9);
 		Collection<BuyAndSellItem> recent = trade.getRecent(0, 9);
-		Collection<BuyAndSellItem> owned = trade.getOwned(user);
 		
-		return render(user, "buyandsell")
+		MavBuilder mav = render("buyandsell")
 				.put("popular", popular)
-				.put("recent", recent)
-				.put("owned", owned)
-				.mav();
+				.put("recent", recent);
+		
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName(), Initializable.watchedtags, Initializable.buyandsellitems);
+			Collection<BuyAndSellItem> owned = trade.getOwned(user);
+			
+			mav.put("user", user)
+			   .put("owned", owned);
+		}
+		
+		return mav.mav();
 	}
 
 	@Override
@@ -73,19 +78,23 @@ public class TradeControllerImpl implements TradeController {
 	
 	@Override
 	public ModelAndView viewItem(Principal principal, @PathVariable long itemId) {
-		log.debug("{} viewing item with id {}", principal.getName(), itemId);
-		UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist);
-		BuyAndSellItem item = trade.get(principal.getName(), itemId);
+		log.debug("{} viewing item with id {}", null == principal ? "Anonymous" : principal.getName(), itemId);
+		BuyAndSellItem item = trade.get(null == principal ? null : principal.getName(), itemId);
 		
-		MavBuilder builder = render(user, "buyandsellitem")
-					.put("item", item)
-					.put("inwishlist", user.inWishlist(item))
-					.put("owner", item.getOwner().equals(user));
+		MavBuilder builder = render("buyandsellitem")
+					.put("item", item);
+
 		
 		if(item instanceof AuctionItem) {
 			AuctionItem auctionItem = (AuctionItem)item;
 			builder.put("bidIncrement", trade.getBidIncrement());
 			builder.put("finished", System.currentTimeMillis() - auctionItem.getBiddingEnds().getTime() > 0);
+		}
+		
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist);
+			builder.put("inwishlist", user.inWishlist(item))
+				.put("owner", item.getOwner().equals(user));
 		}
 		
 		return builder.mav();
@@ -116,7 +125,6 @@ public class TradeControllerImpl implements TradeController {
 
 	@Override
 	public ModelAndView tags(Principal principal, @PathVariable String tag) {
-		UserExtension user = users.getExtended(principal.getName(), Initializable.watchedtags);
 		Tag actualTag = trade.getTag(tag);
 		Collection<BuyAndSellItem> items; 
 		if(null != actualTag) { // don't bother loading if tag is not found
@@ -125,12 +133,19 @@ public class TradeControllerImpl implements TradeController {
 			items = new ArrayList<BuyAndSellItem>();
 		}
 		
-		return render(user, "buyandselltag")
+		MavBuilder mav = render("buyandselltag")
 					.put("items", items)
 					.put("tag", actualTag)
-					.put("tagString", tag)
-					.put("watched", user.getWatchedTags().contains(actualTag))
-					.mav();
+					.put("tagString", tag);
+		
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName(), Initializable.watchedtags);
+
+			mav.put("user", user)
+			   .put("watched", user.getWatchedTags().contains(actualTag));
+		}
+					
+		return mav.mav();
 	}
 
 	@Override

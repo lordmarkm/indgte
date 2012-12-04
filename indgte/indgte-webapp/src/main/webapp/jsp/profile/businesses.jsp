@@ -27,7 +27,7 @@
 				<li>Domain: ${business.domain }</li>
 				<li>URL: <a href="http://indgte.com/${business.domain }">http://indgte.com/${business.domain }</a></li>
 				<li>Group: <span class="capitalize">${business.category.name }</span></li>
-				<li>Subscribers: <span class="business-subscribers">Querying Indgte</span></li>
+				<li>Subscribers: <span class="business-subscribers">Querying Indgte...</span></li>
 				<li>Likes: <span class="business-likes">Querying Facebook...</span></li>
 				<li>Product likes: </li>
 			</ul>
@@ -50,6 +50,8 @@
 	</c:otherwise>
 	</c:choose>
 </section>
+
+<div class="dialog-delete"></div>
 
 <div class="grid_3 sidebar-section">
 	<div class="sidebar-section-header">Menu</div>
@@ -99,7 +101,6 @@
 }
 </style>
 
-<c:set var="baseURL" value="${fn:replace(pageContext.request.requestURL, pageContext.request.requestURI, pageContext.request.contextPath)}" />
 <script>
 window.urls = {
 	profile: 'http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}' + '<spring:url value="/p/" />',
@@ -174,7 +175,10 @@ $(function(){
 			
 			$this.remove();
 		}
-	}, '.show-details');
+	}, '.show-details,.delete-business');
+	
+	//delete
+	var $delete = $('.dialog-delete');
 	
 	$business.on({
 		click: function(){
@@ -185,7 +189,7 @@ $(function(){
 			var name = $business.find('.business-title').text();
 			var id = $business.attr('businessId');
 
-			$('<div>')
+			$delete
 				.attr('title', 'Really delete ' + name + '?')
 				.text('Are you sure you want to delete ' + name + '? This cannot be undone.')
 				.dialog({

@@ -39,9 +39,6 @@ public class BusinessService {
 	public void saveOrUpdate(BusinessProfile businessProfile, String owner) {
 		dao.saveOrUpdate(businessProfile, owner);
 	}
-	public void delete(BusinessProfile bizProfile) {
-		dao.delete(bizProfile);
-	}
 	public Collection<BusinessProfile> getBusinesses(String userId) {
 		return dao.getBusinesses(userId);
 	}

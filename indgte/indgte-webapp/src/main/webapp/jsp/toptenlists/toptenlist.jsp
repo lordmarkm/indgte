@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
 <title>Top Ten Lists In Dumaguete</title>
@@ -9,7 +10,7 @@
 <link rel="stylesheet" href="<spring:url value='/resources/css/autocomplete.css' />" />
 <script type="text/javascript" src="${jsAutocomplete }"></script>
 
-<div class="grid_8">
+<div class="grid_8 maingrid">
 
 <section class="list-details-head">
 	<h1 class="list-title">${topten.title }</h1>
@@ -102,6 +103,10 @@
 
 <section class="newcandidate ui-state-highlight">
 	<h1>Add a new option</h1>
+	<sec:authorize access="hasRole('ROLE_ANONYMOUS')">
+		<spring:message code="anon.topten.newcandidate" />
+	</sec:authorize>
+	<sec:authorize access="hasRole('ROLE_USER')">
 	<div class="newcandidate-form-container">
 		<form id="newcandidate-form">
 			Add option: <input type="text" class="newcandidate-title" />
@@ -109,6 +114,7 @@
 		</form>
 		<div class="newcandidate-autocomplete-results ui-state-active" style="display: none;"></div>
 	</div>
+	</sec:authorize>
 </section>
 
 </div>
@@ -128,6 +134,10 @@
 <script src="<spring:url value='/resources/javascript/grids/imageupload.js' />"></script>
 
 <script>
+window.constants = {
+	auth : '<sec:authorize access="hasRole('ROLE_USER')">true</sec:authorize>' === 'true'
+}
+
 window.urls = {
 	toptens : '<spring:url value="/i/toptens/" />',
 	attach : '<spring:url value="/i/toptens/attach/" />',
@@ -220,6 +230,22 @@ $(function(){
 	
 	//vote
 	$('.link-vote').click(function(){
+		if(!constants.auth) {
+			$('<div>').attr('title', 'Must be logged in to vote')
+			.text('Sorry, you must be logged in to vote')
+			.dialog({
+				buttons: {
+					'Login': function(){
+						window.location.href = '${urlLogin}';
+					},
+					'Nevermind': function(){
+						$(this).dialog('close');
+					}
+				}
+			});
+			return false;
+		}
+		
 		var candidateId = $(this).attr('candidateId');
 		$.post(urls.toptens + topten.id + '/' + candidateId + '.json', function(response) {
 			switch(response.status) {
@@ -441,6 +467,7 @@ window.urls.topTensPage = '<spring:url value="/i/toptens/" />'
 <script src="${jsTopTens }"></script>
 <!-- End Top Tens -->
 
+<sec:authorize access="hasRole('ROLE_USER')">
 <!-- Reviews -->
 <div class="reviewqueue grid_4 sidebar-section">
 	<div class="sidebar-section-header">Recently Viewed Business for Review</div>
@@ -458,3 +485,4 @@ window.urls.neverreview = '<spring:url value="/i/neverreview/" />'
 <script src="${jsReviewQueue }"></script>
 <link rel="stylesheet" href="<spring:url value='/resources/css/grids/reviewqueue.css' />" />
 <!-- End Reviews -->
+</sec:authorize>

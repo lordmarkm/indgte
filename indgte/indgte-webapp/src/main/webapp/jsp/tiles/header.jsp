@@ -43,5 +43,8 @@
 </c:choose>
 
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/${theme }/jquery-ui.css" type="text/css" media="all" />
+<!-- 
 <link rel="stylesheet" href="//cachedcommons.org/cache/960/0.0.0/stylesheets/960-min.css" type="text/css" media="all" />
+ -->
+<link rel="stylesheet" href="<spring:url value='/resources/css/960/960_12_col.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/application.css' />" />

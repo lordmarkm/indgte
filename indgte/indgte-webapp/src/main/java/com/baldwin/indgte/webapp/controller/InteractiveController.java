@@ -38,7 +38,7 @@ public interface InteractiveController {
 	 * Get most recent posts of entities principal is subscribed to
 	 */
 	@RequestMapping(value = "/subposts.json", method = RequestMethod.GET)
-	public JSON subposts(Principal principal, int start, int howmany);
+	public JSON subposts(Principal principal, int start, int howmany, boolean subsonly);
 	
 	/**
 	 * Get most recent posts of a single entity

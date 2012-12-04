@@ -264,6 +264,8 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+		if(null == authentication) return;
+		
 		Object p = authentication.getPrincipal();
 		log.debug("Unregistering principal {}", p);
 
@@ -272,6 +274,6 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 			removeChatter(username);
 		}
 
-		response.sendRedirect("/indgte-webapp/login.jsp?loggedout=true");
+		response.sendRedirect("/s/");
 	}
 }

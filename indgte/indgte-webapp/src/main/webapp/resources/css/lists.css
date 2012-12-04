@@ -61,6 +61,11 @@
 	max-height: 300px;
 }
 
+.post-attachment img.attachment-img-large {
+	max-width: 540px;
+	max-height: 1000px;
+}
+
 .category-attachment-img {
 	max-width: 400px;
 	max-height: 300px;

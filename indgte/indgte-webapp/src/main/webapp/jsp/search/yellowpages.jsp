@@ -80,7 +80,7 @@
 window.urls = {
 	getCategoryBusinesses: '<spring:url value="/s/businesses/" />',
 	imgur: 'http://i.imgur.com/',
-	businessProfile: '<spring:url value="/p/" />',
+	businessProfile: '<spring:url value="/" />',
 	categories : '<spring:url value="/s/categories/" />'
 }
 

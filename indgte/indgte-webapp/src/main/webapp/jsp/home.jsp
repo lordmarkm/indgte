@@ -11,8 +11,15 @@
 
 <script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 
-<div class="grid_8">
+<div class="grid_8 maingrid">
 
+<sec:authorize access="hasRole('ROLE_ANONYMOUS')">
+<section class="newpost">
+	<div><spring:message code="anon.newpost" /></div>
+</section>
+</sec:authorize>
+
+<sec:authorize access="hasRole('ROLE_USER')">
 <section class="newpost">
 	<form id="form-newpost">
 		<div class="border-provider ui-state-active inline-block">
@@ -101,9 +108,12 @@
 		</div>
 	</div>
 </section>
+</sec:authorize>
 
 <section class="feedcontainer">
-	<ul class="posts"></ul>
+	<div class="posts-container relative">
+		<ul class="posts"></ul>
+	</div>
 	<div class="loadmoreContainer" style="text-align: center; height: 100px; position: relative;">
 		<button class="loadmore" style="width: 50%; margin-top: 50px;">Load 10 more</button>
 	</div>
@@ -114,7 +124,8 @@
 <script type="text/javascript" src="${jsApplication }"></script>
 <script>
 window.constants = {
-	imgurKey : '${imgurKey}'
+	imgurKey : '${imgurKey}',
+	auth : '<sec:authorize access="hasRole('ROLE_USER')">true</sec:authorize>' === 'true'
 }
 window.urls = {
 	status : '<spring:url value="/i/newstatus.json" />',
@@ -122,7 +133,7 @@ window.urls = {
 	postdetails : '<spring:url value="/i/posts/" />',
 	linkpreview : '<spring:url value="/i/linkpreview/" />',
 	user : '<spring:url value="/p/user/" />',
-	business : '<spring:url value="/p/" />',
+	business : '<spring:url value="/" />',
 	category: '<spring:url value="/b/categories/" />',
 	categoryWithProducts: '<spring:url value="/b/categories/" />',
 	getproducts: '<spring:url value="/b/products/" />',
@@ -160,7 +171,8 @@ $(function(){
 		$attachMenu = $('.attach-menu').hide(),
 		$btnPost = $('.btn-post'),
 		$loadmoreContainer = $('.loadmoreContainer'),
-		$loadmore = $('.loadmore');
+		$loadmore = $('.loadmore'),
+		$chkSubsonly = $('#subsonly');
 	
 	//posts
 	var $feedcontainer = $('.feedcontainer'),
@@ -218,7 +230,7 @@ $(function(){
 			expandStatus();
 		}
 	}
-	checkStatus();
+	if(constants.auth) checkStatus();
 	
 	$status.focus(function(){
 		expandStatus();
@@ -628,7 +640,7 @@ $(function(){
 	//posts
 	var startPostIndex = 0;
 	function getPosts() {
-		$.get(urls.subposts, {start: startPostIndex, howmany: dgte.constants.postsPerPage}, function(response){
+		$.get(urls.subposts, {start: startPostIndex, howmany: dgte.constants.postsPerPage, subsonly: $chkSubsonly.is(':checked')}, function(response){
 			switch(response.status) {
 			case '200':
 				for(var i = 0, length = response.posts.length; i < length; ++i) {
@@ -639,10 +651,23 @@ $(function(){
 			default:
 				debug(response);
 			}
+		}).complete(function(){
+			$posts.parent().fadeSpinner();
 		});
 		$loadmoreContainer.find('.overlay').delay(800).fadeOut(200, function() { $(this).remove(); });
 	}
 	getPosts();
+	
+	function clearPosts() {
+		$posts.html('');
+	}
+	
+	$chkSubsonly.change(function(){
+		startPostIndex = 0;
+		$posts.parent().spinner(true);
+		clearPosts();
+		getPosts();
+	});
 	
 	function addPost(post, prepend, fadein) {
 		var posterImgSrc;
@@ -719,7 +744,6 @@ $(function(){
 			//main category pic
 			var $a2 = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
 			$('<img class="category-attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($a2);
-			//product previews			
 			$.get(urls.categoryWithProducts + post.attachmentIdentifier + '/' + dgte.home.productPreviews + '.json', function(response) {
 				switch(response.status) {
 				case '200':
@@ -813,12 +837,19 @@ $(function(){
 		$('<a class="fatlink">').attr('href', link).text(post.posterTitle).appendTo($footnote);
 		
 		//comments
-		var $comments = $('<div class="post-comments">').appendTo($dataContainer);
+		var $aComments = $('<a>').attr('href', dgte.domain + urls.postdetails + post.id).appendTo($dataContainer);
+		var $comments = $('<div class="post-comments">').appendTo($aComments);
 		
-		var urlPostDetails = 'http://www.facebook.com/plugins/comments.php?' + dgte.domain + urls.postdetails + post.id + '&permalink=1';
-		$('<iframe scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:130px; height:16px;" allowTransparency="true">')
-			.attr('src', urlPostDetails)
-			.appendTo($comments);
+//		var urlPostDetails = 'http://www.facebook.com/plugins/comments.php?' + dgte.domain + urls.postdetails + post.id + '&permalink=1';
+//		$('<iframe scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:130px; height:16px;" allowTransparency="true">')
+//			.attr('src', urlPostDetails)
+//			.appendTo($comments);
+		
+		$comments.append('View ')
+		var urlPostDetails = dgte.domain + urls.postdetails + post.id;
+		$('<fb:comments-count>').attr('href', urlPostDetails).appendTo($comments);
+		$comments.append(' comments');
+		
 //		$('<div class="fb-comments" data-width="470" data-num-posts="2">')
 //			.attr('data-href', dgte.domain + urls.postdetails + post.id)
 //			.attr('simple', '1')
@@ -855,7 +886,14 @@ $(function(){
 });
 </script>
 
+<sec:authorize access="hasRole('ROLE_USER')">
 <!-- Notifications -->
+<div class="grid_4 sidebar-section">
+	<div class="sidebar-section-header">Controls</div>
+	<input type="checkbox" id="subsonly" checked /><label for="subsonly">Show posts from subscriptions only</label>
+	<div class="sidebar-divider"></div>
+</div>
+
 <div class="notifications-container grid_4 sidebar-section">
 	<div class="notifications-container relative">
 		<div class="sidebar-section-header">Notifications</div>
@@ -891,6 +929,7 @@ window.urls.neverreview = '<spring:url value="/i/neverreview/" />'
 <script src="${jsReviewQueue }"></script>
 <link rel="stylesheet" href="<spring:url value='/resources/css/grids/reviewqueue.css' />" />
 <!-- End Reviews -->
+</sec:authorize>
 
 <!-- Top Tens -->
 <div class="toptens-container grid_4 sidebar-section">

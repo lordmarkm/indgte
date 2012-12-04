@@ -42,6 +42,10 @@ public class LiveControllerImpl implements LiveController {
 										//@RequestParam("rejectedNotifs[]") Long[] rejectedNotifs
 										) 
 	{
+		if(null == principal) {
+			return null;
+		}
+		
 //		notifs.clearNotifications(principal.getName(), rejectedNotifs);
 
 		//make the response

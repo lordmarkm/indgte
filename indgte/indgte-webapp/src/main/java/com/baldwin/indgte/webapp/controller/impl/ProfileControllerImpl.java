@@ -78,37 +78,6 @@ public class ProfileControllerImpl implements ProfileController {
 	}
 	
 	@Override
-	public ModelAndView businessProfile(Principal principal, WebRequest request, @PathVariable String domain) {
-		log.debug("Profile requested for {}", domain);
-
-		Object[] profileObjects = businesses.getForViewProfile(principal.getName(), domain);
-		if(null == profileObjects) {
-			log.debug("No business profile found for domain {}. Trying as an Id", domain);
-			try {
-				long id = Long.parseLong(domain);
-				String queriedDomain = businesses.getDomain(id);
-				if(null == queriedDomain) {
-					throw new IllegalArgumentException("Unknown domain " + domain);
-				}
-				return redirect("/p/" + queriedDomain).mav();
-			} catch (Exception e) {
-				log.error("Failed to find anything.", e);
-				throw new IllegalArgumentException("Unknown domain " + domain);
-			}
-		}
-		
-		UserExtension userExtension = (UserExtension) profileObjects[0];
-		BusinessProfile business = (BusinessProfile) profileObjects[1];
-		
-		return render(userExtension, "businessprofile")
-				.put("business", business)
-				.put("subscribed", posts.isSubscribed(principal.getName(), business.getId(), PostType.business))
-				.put("owner", business.getOwner().equals(userExtension))
-				.put("imgurKey", imgurKey)
-				.mav();
-	}
-
-	@Override
 	public @ResponseBody Imgur profilepic(@PathVariable String domain) {
 		return businesses.getProfilepic(domain);
 	}

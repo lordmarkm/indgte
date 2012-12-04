@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
 <title>Buy & Sell In Dumaguete</title>
@@ -8,7 +9,7 @@
 <script type="text/javascript" src="${jsApplication }"></script>
 <script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 
-<div class="grid_8">
+<div class="grid_8 maingrid">
 
 <span class="page-header">Buy & Sell</span>
 
@@ -97,6 +98,7 @@
 </div>
 
 <div class="newitem sidebar-section grid_4">
+	<sec:authorize access="hasRole('ROLE_USER')">
 	<button class="btn-newitem">Sell your possessions</button>
 	<div class="newitem-form-container hide" title="Sell your possessions">
 		<div class="newitem-img-container noimage"><div class="newitem-img-message">Drop picture here (or click)</div></div>
@@ -137,6 +139,7 @@
 		</form>
 		<div class="newitem-form-errors"></div>
 	</div>
+	</sec:authorize>
 	
 	<div class="buyandsell-search">
 		<form id="buysellsearchform">
@@ -395,6 +398,7 @@ $(function(){
 });
 </script>
 
+<sec:authorize access="hasRole('ROLE_USER')">
 <!-- Watched Tags -->
 <div class="watched-tags-container sidebar-section grid_4">
 	<div class="sidebar-section-header">Watched tags</div>
@@ -422,6 +426,7 @@ $(function(){
 <link rel="stylesheet" href="<c:url value='/resources/css/grids/watchedtags.css' />" />
 </c:if>
 <!-- End watched tags -->
+</sec:authorize>
 
 <!-- Tagcloud -->
 <div class="tagcloud-container sidebar-section grid_4">

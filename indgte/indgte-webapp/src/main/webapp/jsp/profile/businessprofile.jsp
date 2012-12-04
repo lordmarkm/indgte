@@ -1,13 +1,4 @@
-<script>
-//clear the annoying spring soc sec #_=_ hash... it affects the FB like button
-(function(){
-	if(window.location.hash === '#_=_') {
-		window.location.hash = ''; //for older browsers
-	    history.pushState('', document.title, window.location.pathname);
-	}
-})();
-</script>
-
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@include file="../tiles/links.jsp" %>
@@ -199,6 +190,7 @@
 					<span class="review-average-score"></span>
 				</div>
 				
+				<sec:authorize access="hasRole('ROLE_USER')">
 				<c:if test="${not owner }">
 				<div class="review-container user-review ui-state-highlight">
 					<div class="reviewer-container">
@@ -219,12 +211,15 @@
 					</div>
 				</div>
 				</c:if>
+				</sec:authorize>
 				
 				<div class="reviews-list"></div>
 			</div>
 			</div>
 			
-			<div id="comments">Comments</div>
+			<div id="comments">
+				<div class="fb-comments" data-href="${baseURL}${business.domain}" data-width="660"></div>
+			</div>
 		</div>
 		
 		</div>
@@ -232,12 +227,22 @@
 
 <div class="grid_3 sidebar-section">
 	<div class="sidebar-section-header">Interact</div>
-	<div class="button btn-subscribe-toggle">Subscribe</div>
-	<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+	<sec:authorize access="hasRole('ROLE_USER')">
+		<div class="button btn-subscribe-toggle">Subscribe</div>
+	</sec:authorize>
+	<div class="fb-like" href="${baseURL }/${business.domain}" data-send="true" data-width="450" data-show-faces="true"></div>
 	<div class="sidebar-divider"></div>
 </div>
 
 <script>
+//clear the annoying spring soc sec #_=_ hash... it affects the FB like button
+(function(){
+	if(window.location.hash === '#_=_') {
+		window.location.hash = ''; //for older browsers
+	    history.pushState('', document.title, window.location.pathname);
+	}
+})();
+
 window.constants = {
 	owner : '${owner}' === 'true',
 	imgurKey : '${imgurKey}'

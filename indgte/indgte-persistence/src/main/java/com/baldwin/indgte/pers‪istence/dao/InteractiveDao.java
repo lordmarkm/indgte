@@ -106,4 +106,6 @@ public interface InteractiveDao {
 	public List<User> getUserSubscripionSummaries(String username);
 
 	public int subscount(PostType type, Long id);
+
+	public Collection<Post> getPosts(int start, int howmany);
 }

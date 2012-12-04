@@ -465,7 +465,7 @@ $(function(){
 	getPosts();
 	
 	function addPost(post, prepend, fadein) {
-		var posterImgSrc = post.posterImgurHash ? urls.imgur + post.posterImgurHash  + 's.jpg' : null; //something like H4qu1
+		var posterImgSrc = post.posterImgurHash ? urls.imgur + post.posterImgurHash  + 's.jpg' : dgte.urls.blackSquareSmall; //something like H4qu1
 		var link = urls.business + post.posterIdentifier;
 		
 		var $post = $('<li class="post">').attr('postId', post.id);

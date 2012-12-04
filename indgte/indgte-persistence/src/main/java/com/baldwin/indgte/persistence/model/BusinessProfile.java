@@ -97,6 +97,9 @@ public class BusinessProfile implements Searchable, Attachable {
 	@ManyToMany(mappedBy="forReview")
 	private Set<UserExtension> pendingReviewers;
 	
+	@Column
+	private Boolean deleted = false;
+	
 	@Override
 	public String toString() {
 		return domain + ":" + fullName;
@@ -298,5 +301,13 @@ public class BusinessProfile implements Searchable, Attachable {
 
 	public void setPendingReviewers(Set<UserExtension> pendingReviewers) {
 		this.pendingReviewers = pendingReviewers;
+	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 }

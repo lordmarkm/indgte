@@ -13,4 +13,10 @@ public interface HomeController {
 	@RequestMapping
 	public ModelAndView home(Principal principal);
 	
+	/**
+	 * View a business domain directly
+	 */
+	@RequestMapping("/{domain}")
+	public ModelAndView businessProfile(Principal principal, String domain);
+	
 }

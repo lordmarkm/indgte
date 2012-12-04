@@ -50,6 +50,7 @@ import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.pers‪istence.dao.InteractiveDao;
 import com.baldwin.indgte.webapp.controller.InteractiveController;
 import com.baldwin.indgte.webapp.controller.JSON;
+import com.baldwin.indgte.webapp.controller.MavBuilder;
 import com.baldwin.indgte.webapp.dto.TopTenForm;
 import com.baldwin.indgte.webapp.misc.Comet;
 import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
@@ -79,9 +80,12 @@ public class InteractiveControllerImpl implements InteractiveController {
 	private Comet comet;
 	
 	@Override
-	public @ResponseBody JSON subposts(Principal principal, @RequestParam int start, @RequestParam int howmany) {
+	public @ResponseBody JSON subposts(Principal principal, @RequestParam int start, @RequestParam int howmany, @RequestParam boolean subsonly) {
+		
+		Collection<Post> feedposts = (principal == null || !subsonly)? interact.getPosts(start, howmany) : interact.getSubposts(principal.getName(), start, howmany);
+		
 		try {
-			return JSON.ok().put("posts", interact.getSubposts(principal.getName(), start, howmany));
+			return JSON.ok().put("posts", feedposts);
 		} catch (Exception e) {
 			log.error("Exception getting subposts", e);
 			return JSON.status500(e);
@@ -95,12 +99,17 @@ public class InteractiveControllerImpl implements InteractiveController {
 
 	@Override
 	public ModelAndView viewpost(Principal principal, @PathVariable long postId) {
-		UserExtension user = users.getExtended(principal.getName());
 		Post post = interact.getPost(postId);
+
+		MavBuilder mav = render("viewpost")
+				.put("post", post);
 		
-		return render(user, "viewpost")
-				.put("post", post)
-				.mav();
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName());
+			mav.put("user", user);
+		}
+		
+		return mav.mav();
 	}
 	
 	@Override
@@ -322,19 +331,23 @@ public class InteractiveControllerImpl implements InteractiveController {
 
 	@Override
 	public ModelAndView toptens(Principal principal) {
-		//User user = users.getFacebook(principal.getName());
-		UserExtension user = users.getExtended(principal.getName());
 		Collection<TopTenList> recentLists = interact.getRecentToptens(0, 8);
 		Collection<TopTenList> popularLists = interact.getPopularToptens(0, 8);
 		//Collection<TopTenList> userLists = interact.getUserToptens(principal.getName());
 		Collection<TopTenList> allLists = interact.getAllLists();
 		
-		return render(user, "toptenlists")
+		MavBuilder mav =  render("toptenlists")
 				.put("recentLists", recentLists)
 				.put("popularLists", popularLists)
 				.put("allLists", allLists)
-				.put("form", new TopTenForm())
-				.mav();
+				.put("form", new TopTenForm());
+		
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName());
+			mav.put("user", user);
+		}
+		
+		return mav.mav();
 	}
 
 	@Override
@@ -354,30 +367,38 @@ public class InteractiveControllerImpl implements InteractiveController {
 
 	@Override
 	public ModelAndView topten(Principal principal, @PathVariable long toptenId) {
-		UserExtension user = users.getExtended(principal.getName(), Initializable.toptenvotes);
 		TopTenList topten = interact.getTopten(toptenId);
 		TopTenCandidate userVoted = null;
 		
-		if(log.isDebugEnabled()) {
-			StringBuilder candidateIds = new StringBuilder();
-			for(TopTenCandidate candidate : topten.getCandidates()) {
-				candidateIds.append(candidate.getId() + ",");
-			}
+//		if(log.isDebugEnabled()) {
+//			StringBuilder candidateIds = new StringBuilder();
+//			for(TopTenCandidate candidate : topten.getCandidates()) {
+//				candidateIds.append(candidate.getId() + ",");
+//			}
+//		
+//			StringBuilder votedIds = new StringBuilder();
+//			for(TopTenCandidate candidate : user.getVotes()) {
+//				votedIds.append(candidate.getId() + ",");
+//			}
+//			
+//			log.debug("List candidate ids: {}", candidateIds);
+//			log.debug("User voted ids: {}", votedIds);
+//		}
 		
-			StringBuilder votedIds = new StringBuilder();
-			for(TopTenCandidate candidate : user.getVotes()) {
-				votedIds.append(candidate.getId() + ",");
+		MavBuilder mav = render("toptenlist")
+				.put("topten", topten);
+		
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName(), Initializable.toptenvotes);
+	
+			for(TopTenCandidate voted : user.getVotes()) {
+				if(voted.getList().getId() == toptenId) {
+					userVoted = voted;
+					break;
+				}
 			}
 			
-			log.debug("List candidate ids: {}", candidateIds);
-			log.debug("User voted ids: {}", votedIds);
-		}
-
-		for(TopTenCandidate voted : user.getVotes()) {
-			if(voted.getList().getId() == toptenId) {
-				userVoted = voted;
-				break;
-			}
+			mav.put("user", user);
 		}
 		
 		if(null != userVoted) {
@@ -386,9 +407,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			log.debug("User has Not voted for a candidate in this list.");
 		}
 		
-		return render(user, "toptenlist")
-				.put("topten", topten)
-				.put("userVoted", userVoted == null ? 0 : userVoted.getId())
+		return mav.put("userVoted", userVoted == null ? 0 : userVoted.getId())
 				.mav();
 	}
 
@@ -495,13 +514,18 @@ public class InteractiveControllerImpl implements InteractiveController {
 
 	@Override
 	public ModelAndView viewReview(Principal principal, @PathVariable ReviewType type, @PathVariable long reviewId) {
-		UserExtension user = users.getExtended(principal.getName());
 		Review review = interact.getReview(type, reviewId, true);
-		return render(user, "viewreview")
-				.put("review", review)
-				.put("agree", review.getAgreers().contains(user))
-				.put("disagree", review.getDisagreers().contains(user))
-				.mav();
+		MavBuilder mav = render("viewreview")
+				.put("review", review);
+		
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName());
+			mav.put("user", user)
+			   .put("agree", review.getAgreers().contains(user))
+			   .put("disagree", review.getDisagreers().contains(user));
+		}
+		
+		return mav.mav();
 	}
 
 	@Override

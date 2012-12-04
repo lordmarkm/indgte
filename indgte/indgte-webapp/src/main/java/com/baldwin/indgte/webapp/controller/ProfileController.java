@@ -40,12 +40,6 @@ public interface ProfileController {
 	public ModelAndView myBusinesses(Principal principal, WebRequest request);
 	
 	/**
-	 * View a business domain directly
-	 */
-	@RequestMapping("/{domain}")
-	public ModelAndView businessProfile(Principal principal, WebRequest request, String domain);
-
-	/**
 	 * Return a link to the business's existing profile pic
 	 */
 	@RequestMapping(value = "/{domain}/profilepic", method = RequestMethod.GET)

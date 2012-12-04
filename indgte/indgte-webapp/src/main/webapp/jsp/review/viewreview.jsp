@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
 <title>Review for ${review.revieweeSummary.title }</title>
@@ -47,10 +48,15 @@
 		<div class="react-agree-disagree hide"></div>
 		<div class="react">
 			<div>How do you feel about this review?</div>
-			<div class="centercontent mt10">
-				<button class="btn-react agree">I agree with this review</button>
-				<button class="btn-react disagree">I disagree with this review</button>
-			</div>
+			<sec:authorize access="hasRole('ROLE_USER')">
+				<div class="centercontent mt10">
+					<button class="btn-react agree">I agree with this review</button>
+					<button class="btn-react disagree">I disagree with this review</button>
+				</div>
+			</sec:authorize>
+			<sec:authorize access="hasRole('ROLE_ANONYMOUS')">
+				<div class="mt10"><spring:message code="anon.review.react" /></div>
+			</sec:authorize>
 		</div>
 	</section>
 	

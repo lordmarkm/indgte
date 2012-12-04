@@ -21,7 +21,6 @@ public interface BusinessDao {
 	void create(BusinessProfile bizProfile, String owner);
 	Object update(Object dirtyObject);
 	void saveOrUpdate(BusinessProfile businessProfile, String owner);
-	void delete(BusinessProfile bizProfile);
 	Collection<BusinessProfile> getBusinesses(String userId);
 	void saveProfilepic(String domain, Imgur profilepic);
 	void saveCoverpic(String domain, Imgur coverpic);

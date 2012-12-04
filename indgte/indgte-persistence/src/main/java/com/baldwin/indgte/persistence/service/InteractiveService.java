@@ -219,4 +219,8 @@ public class InteractiveService {
 	public int countsubs(PostType type, Long id) {
 		return dao.subscount(type, id);
 	}
+
+	public Collection<Post> getPosts(int start, int howmany) {
+		return dao.getPosts(start, howmany);
+	}
 }

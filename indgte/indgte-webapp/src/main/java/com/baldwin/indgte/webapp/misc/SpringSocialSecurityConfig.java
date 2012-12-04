@@ -1,5 +1,8 @@
 package com.baldwin.indgte.webapp.misc;
 
+import javax.annotation.PostConstruct;
+
+import org.socialsignin.springsocial.security.signin.SpringSocialSecurityAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +18,18 @@ import org.springframework.social.facebook.api.Facebook;
  * @author mbmartinez
  */
 @Configuration
-public class RequestScopeConfig {
+public class SpringSocialSecurityConfig {
 
 	@Autowired
 	JdbcUsersConnectionRepository repository;
+	
+	@Autowired
+	SpringSocialSecurityAuthenticationFilter filter;
+	
+	@PostConstruct
+	public void init() {
+		filter.setAuthenticationSuccessHandler(new DgteAuthHandler());
+	}
 	
 	@Bean
 	@Scope(value="request", proxyMode=ScopedProxyMode.INTERFACES)	

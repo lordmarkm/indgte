@@ -12,7 +12,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,6 +32,7 @@ import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.BusinessController;
 import com.baldwin.indgte.webapp.controller.JSON;
+import com.baldwin.indgte.webapp.controller.MavBuilder;
 
 @Component
 public class BusinessControllerImpl implements BusinessController {
@@ -44,9 +44,6 @@ public class BusinessControllerImpl implements BusinessController {
 	@Autowired
 	private BusinessService businesses;
 	
-	@Value("${imgur.devkey}")
-	private String imgurKey;
-	
 	@Override
 	public @ResponseBody JSON getCategoriesJSON(Principal principal, @PathVariable String domain) {
 		return JSON.ok().put("categories", businesses.getCategories(domain, true));
@@ -56,14 +53,18 @@ public class BusinessControllerImpl implements BusinessController {
 	public ModelAndView viewcategory(Principal principal, @PathVariable String domain, @PathVariable long categoryId) {
 		BusinessProfile business = businesses.get(domain);
 		Category category = businesses.getCategory(categoryId);
-		UserExtension user = users.getExtended(principal.getName());
 		
-		return render(user, "viewcategory")
+		MavBuilder mav = render("viewcategory")
 				.put("business", business)
-				.put("owner", business.getOwner().equals(user))
-				.put("category", category)
-				.put("imgurKey", imgurKey)
-				.mav();
+				.put("category", category);
+		
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName());
+			mav.put("user", user)
+    		   .put("owner", business.getOwner().equals(user));
+		}
+		
+		return mav.mav();
 	}
 	
 	@Override
@@ -151,19 +152,23 @@ public class BusinessControllerImpl implements BusinessController {
 
 	@Override
 	public ModelAndView viewProduct(Principal principal, @PathVariable String domain, @PathVariable long productId) {
-		log.debug("ModelAndView for Product with id {} requested.", productId);
+		log.debug("ModelAndView for Product with id {} requested by {}.", productId, principal == null ? "Anonymous" : principal);
 		
-		UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist);
 		BusinessProfile business = businesses.get(domain);
 		Product product = businesses.getProduct(productId);
 		
-		return render(user, "viewproduct")
+		MavBuilder mav = render("viewproduct")
 					.put("business", business)
-					.put("product", product)
-					.put("owner", business.getOwner().equals(user))
-					.put("inwishlist", user.inWishlist(product))
-					.put("imgurKey", imgurKey)
-					.mav();
+					.put("product", product);
+		
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist);
+			mav.put("user", user)
+			   .put("owner", business.getOwner().equals(user))
+			   .put("inwishlist", user.inWishlist(product));
+		}
+		
+		return mav.mav();
 	}
 
 	@Override

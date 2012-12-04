@@ -17,6 +17,7 @@ body {
 .hide {display: none;}
 
 	/* layout */
+.maingrid {min-height: 1000px;}
 .relative {position: relative;}
 .inline {display: inline;}
 .inline-block {display: inline-block;}

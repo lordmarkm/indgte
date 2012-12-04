@@ -10,16 +10,17 @@
 		<anonymous />
 		<logout success-handler-ref="chatRepository" />
 
-		<intercept-url pattern="/" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/r/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/p/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/a/**" access="hasRole('ROLE_ADMIN')" />
-		<intercept-url pattern="/b/**" access="hasRole('ROLE_USER')" />
-		<intercept-url pattern="/i/**" access="hasRole('ROLE_USER')" />
-		<intercept-url pattern="/s/**" access="hasRole('ROLE_USER')" />
-		<intercept-url pattern="/t/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/c/**" access="hasRole('ROLE_USER')" />
+		
+		<intercept-url pattern="/b/newcategory/**" access="hasRole('ROLE_USER')" />
+
+		<intercept-url pattern="/t/bid/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/t/sold/**" access="hasRole('ROLE_USER')" />
 	</http>
+	
 	<!--  global-method-security pre-post-annotations="enabled" /--><!-- for @PreAuthorize -->
 	<!--  global-method-security secured-annotations="enabled"/ --><!-- for @Secured -->
 

@@ -2,6 +2,7 @@ package com.baldwin.indgte.webapp.controller;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -9,9 +10,14 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
+import com.baldwin.indgte.webapp.misc.DgteConstants;
 import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 
 public class MavBuilder {
+	
+	@Autowired
+	private DgteConstants constants;
+	
 	ModelAndView mav;
 	
 	public static MavBuilder render(User user) {
@@ -26,13 +32,11 @@ public class MavBuilder {
 	/**
 	 * @param user - must always be 3rd party provider (like Facebook)!
 	 */
+	@Deprecated
 	public static MavBuilder render(User user, String viewname) {
 		return new MavBuilder(viewname).put("user", user);
 	}
 	
-	/**
-	 * TODO migrate this {@link #render(User, String)} to this.
-	 */
 	public static MavBuilder render(UserExtension user, String viewname) {
 		return new MavBuilder(viewname).put("user", user);
 	}
@@ -57,6 +61,7 @@ public class MavBuilder {
 	
 	private void loadGlobals(MavBuilder m) {
 		m.put("themes", Theme.values());
+		m.put("imgurKey", DgteConstants.IMGUR_DEVKEY);
 	}
 	
 	public MavBuilder put(String name, Object object) {

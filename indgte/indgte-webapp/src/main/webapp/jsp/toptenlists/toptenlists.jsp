@@ -2,6 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
 <title>Top Ten Lists In Dumaguete</title>
@@ -352,7 +353,9 @@ $(function(){
 <!-- Topten Controls -->
 <div class="grid_4 sidebar-section">
 	<div class="sidebar-section-header">Top Ten Lists</div>
-	<button class="btn-newlist">Create a new list</button>
+	<sec:authorize access="hasRole('ROLE_USER')">
+		<button class="btn-newlist">Create a new list</button>
+	</sec:authorize>
 	<div class="toptens-search">
 		<form id="topten-search-form">
 			<input type="text" class="ipt-toptens-search" />
@@ -383,6 +386,7 @@ $(function(){
 }
 </style>
 
+<sec:authorize access="hasRole('ROLE_USER')">
 <!-- Reviews -->
 <div class="reviewqueue grid_4 sidebar-section">
 	<div class="sidebar-section-header">Recently Viewed Business for Review</div>
@@ -400,3 +404,4 @@ window.urls.neverreview = '<spring:url value="/i/neverreview/" />'
 <script src="${jsReviewQueue }"></script>
 <link rel="stylesheet" href="<spring:url value='/resources/css/grids/reviewqueue.css' />" />
 <!-- End Reviews -->
+</sec:authorize>

@@ -43,14 +43,14 @@ window.post = {
 	attachmentType : '${post.attachmentType}',
 	attachmentImgurHash : '${post.attachmentImgurHash}',
 	attachmentIdentifier : '${post.attachmentIdentifier}',
-	postTime : '${post.postTime }',
+	postTime : '${post.postTime.time }',
 	posterIdentifier : '${post.posterIdentifier}',
 	posterTitle: '${post.posterTitle }'
 }
 
 window.urls = {
 	user : '<spring:url value="/p/user/" />',
-	business : '<spring:url value="/p/" />',
+	business : '<spring:url value="/" />',
 	imgur : 'http://i.imgur.com/',
 	imgurPage : 'http://imgur.com/',
 	categoryWithProducts: '<spring:url value="/b/categories/" />',
@@ -67,27 +67,13 @@ $(function(){
 	case 'imgur':
 		var $container = $('<div class="post-attachment">').appendTo($dataContainer);
 		var $attachmentImgA = $('<a>').attr('href', urls.imgurPage + post.attachmentImgurHash).appendTo($container);
-		$('<img class="attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($attachmentImgA);
+		$('<img class="attachment-img-large">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($attachmentImgA);
 		break;
 	case 'video':
 		var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-		var $playbutton = $('<div class="playbutton">').text('Show Video')
-			.button({icons: {secondary: 'ui-icon-play'}})
-			.appendTo($container);
-		$playbutton.click(function(){
-			var $this = $(this);
-			$this.toggleClass('showing');
-			
-			if($this.hasClass('showing')) {
-				var $player = $('<div class="player">').appendTo($container);
-				$player.html(post.attachmentIdentifier);
-				$player.find('iframe').attr('width', '400').attr('height', '300');
-				$this.button('option', 'label', 'Hide video').button({icons: {secondary: 'ui-icon-stop'}});
-			} else {
-				$container.find('.player').remove();
-				$this.button('option', 'label', 'Show video').button({icons: {secondary: 'ui-icon-play'}});
-			}
-		});
+		var $player = $('<div class="player">').appendTo($container);
+		$player.html(post.attachmentIdentifier);
+		$player.find('iframe').attr('width', '540').attr('height', '405');
 		break;
 	case 'category':
 		var $container = $('<div class="post-attachment">').appendTo($dataContainer);
@@ -199,7 +185,7 @@ $(function(){
 			debug('Illegal post type: ' + post.type);
 			return;
 	}
-	var $footnote = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow() + ' by ').appendTo($dataContainer);
+	var $footnote = $('<div class="fromnow post-time">').html(moment(parseInt(post.postTime)).fromNow() + ' by ').appendTo($dataContainer);
 	$('<a>').attr('href', link).text(post.posterTitle).appendTo($footnote);
 });
 </script>

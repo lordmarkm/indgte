@@ -6,7 +6,7 @@
 
 <title><spring:message code="category.title" arguments="${category.name },${business.domain }"/></title>
 
-<div class="newcategory grid_12">
+<div class="category-container grid_8">
 	<section class="category-welcome">
 		<div class="category-welcome-category">
 			<div class="category-welcome-image-container">

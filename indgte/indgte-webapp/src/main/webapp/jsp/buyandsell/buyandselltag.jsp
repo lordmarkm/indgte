@@ -1,13 +1,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
 <title>${fn:toUpperCase(tagString) } In Dumaguete</title>
 <link rel="stylesheet" href="<spring:url value='/resources/css/buyandsell.css' />" />
 <script type="text/javascript" src="${jsApplication }"></script>
 
-<div class="grid_8">
+<div class="grid_8 maingrid">
 
 <c:choose>
 <c:when test="${empty tag }">
@@ -59,6 +60,7 @@
 	</div>
 </div>
 
+<sec:authorize access="hasRole('ROLE_USER')">
 <div class="sidebar-section grid_4">
 	<div class="sidebar-section-header">Watch Tag</div>
 	<c:choose>
@@ -72,6 +74,7 @@
 	
 	<div class="sidebar-divider"></div>
 </div>
+</sec:authorize>
 
 <style>
 .header {
@@ -275,6 +278,7 @@ $(function(){
 });
 </script>
 
+<sec:authorize access="hasRole('ROLE_USER')">
 <!-- Watched Tags -->
 <div class="watched-tags-container sidebar-section grid_4">
 	<div class="sidebar-section-header">Watched tags</div>
@@ -302,6 +306,7 @@ $(function(){
 <link rel="stylesheet" href="<c:url value='/resources/css/grids/watchedtags.css' />" />
 </c:if>
 <!-- End watched tags -->
+</sec:authorize>
 
 <!-- Tagcloud -->
 <div class="tagcloud-container sidebar-section grid_4">

@@ -18,8 +18,8 @@
 }
 
 .review-container:not(.ui-state-highlight) {
-	overflow: hidden;
-	float: left;
+    overflow: hidden;
+    display: inline-block;
 }
 
 .reviewer-container {

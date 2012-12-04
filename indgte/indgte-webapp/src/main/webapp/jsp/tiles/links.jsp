@@ -1,7 +1,13 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<c:set var="baseURL" value="${fn:replace(pageContext.request.requestURL, pageContext.request.requestURI, pageContext.request.contextPath)}" />
 
 <c:set var="domain" value="http://testfb.com:8080" />
+
+<spring:url var="urlCurrent" value="wat" />
+<spring:url var="urlLogin" value="/login/" />
 
 <spring:url var="urlImgur" value="http://imgur.com/" />
 <spring:url var="urlImgRoot" value="http://i.imgur.com/" />
@@ -13,7 +19,7 @@
 
 <spring:url var="urlRegister" value="/r/" />
 
-<spring:url var="urlProfile" value="/p/" />
+<spring:url var="urlProfile" value="/" />
 <spring:url var="urlUserProfile" value="/p/user/" />
 
 <spring:url var="urlNewCategory" value="/b/newcategory/" />

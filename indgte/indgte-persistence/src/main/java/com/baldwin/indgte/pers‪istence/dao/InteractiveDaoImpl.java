@@ -74,6 +74,16 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	
 	@Override
 	@SuppressWarnings("unchecked")
+	public Collection<Post> getPosts(int start, int howmany) {
+		return sessions.getCurrentSession().createCriteria(Post.class)
+				.setFirstResult(start)
+				.setMaxResults(howmany)
+				.addOrder(Order.desc(TableConstants.POST_TIME))
+				.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
 	public List<Post> getSubposts(String username, int start, int howmany) {
 		Session session = sessions.getCurrentSession();
 		

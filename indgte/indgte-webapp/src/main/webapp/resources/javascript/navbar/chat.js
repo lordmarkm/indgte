@@ -624,17 +624,8 @@ $(function(){
 		
 		switch(notification.type) {
 		case 'message':
-			$('<img class="notifimg">').attr('src', notification.senderSummary.thumbnailHash).appendTo($notif);
-			var $notiftxt = $('<div class="notiftxt">').html('<strong>' + notification.senderSummary.title + '</strong> has sent you ').appendTo($notif);
-			var $linkShowmessages = $('<a class="notif-shownewmessages fatlink">').attr('href', 'javascript:;')
-				.attr('channel', notification.channel)
-				.text(notification.howmany > 1 ? notification.howmany + ' new messages.' : ' a new message.')
-				.appendTo($notiftxt);
-			var $footer = $('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notiftxt);
-			var $clearnotif = $('<span class="clearnotif-container">').hide().appendTo($footer);
-			$('<a class="clearnotif">').attr('href', 'javascript:;').text('Clear').appendTo($clearnotif);
+			addMessageNotification(notification, $notif);
 			break;
-			
 		case 'comment':
 			addCommentNotification(notification, $notif);
 			break;
@@ -646,6 +637,18 @@ $(function(){
 		}
 		
 		$notif.prependTo($notifs).hide().fadeIn('slow');
+	}
+	
+	function addMessageNotification(notification, $notif) {
+		$('<img class="notifimg">').attr('src', notification.senderSummary.thumbnailHash).appendTo($notif);
+		var $notiftxt = $('<div class="notiftxt">').html('<strong>' + notification.senderSummary.title + '</strong> has sent you ').appendTo($notif);
+		var $linkShowmessages = $('<a class="notif-shownewmessages fatlink">').attr('href', 'javascript:;')
+			.attr('channel', notification.channel)
+			.text(notification.howmany > 1 ? notification.howmany + ' new messages.' : ' a new message.')
+			.appendTo($notiftxt);
+		var $footer = $('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notiftxt);
+		var $clearnotif = $('<span class="clearnotif-container">').hide().appendTo($footer);
+		$('<a class="clearnotif">').attr('href', 'javascript:;').text('Clear').appendTo($clearnotif);
 	}
 	
 	function addCommentNotification(notification, $notif) {
