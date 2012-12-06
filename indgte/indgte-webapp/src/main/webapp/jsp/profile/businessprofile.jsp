@@ -37,7 +37,7 @@
 
 <title>${business.fullName }</title>
 
-<div class="businessprofile grid_9">
+<div class="businessprofile grid_9 maingrid">
 	<div class="cover">
 		<c:if test="${not empty business.coverpic }">
 		<a href="http://imgur.com/${business.coverpic.hash }"><img class="coverpic" src="http://i.imgur.com/${business.coverpic.hash }l.jpg" /></a>
@@ -65,12 +65,6 @@
 				<div class="description">${business.description }</div>
 				<div class="biz-url">www.indumaguete.com/p/${business.domain }</div>
 				<div class="biz-owner"><a href="${urlProfileRoot}user/${business.owner.username}">${business.owner.username }</a></div>
-				<c:if test="${owner }">
-				<div class="business-owner-operations">
-					<a class="button" href="${urlEdit }${business.domain}">Edit</a>
-					<button class="btn-promote">Promote</button>
-				</div>
-				</c:if>
 			</div>
 		</div>
 		
@@ -224,6 +218,15 @@
 		
 		</div>
 </div>
+
+<c:if test="${owner }">
+<div class="grid_3 sidebar-section owner-operations">
+	<div class="sidebar-section-header">Page Owner Operations</div>
+	<a class="button" href="${urlEdit }${business.domain}">Edit</a>
+	<a class="button btn-promote" href="javascript:;">Promote</a>
+	<div class="sidebar-divider"></div>
+</div>
+</c:if>
 
 <div class="grid_3 sidebar-section">
 	<div class="sidebar-section-header">Interact</div>

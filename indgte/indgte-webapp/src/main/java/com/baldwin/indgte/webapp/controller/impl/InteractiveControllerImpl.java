@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.constants.AttachmentType;
+import com.baldwin.indgte.persistence.constants.Background;
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
@@ -155,7 +158,37 @@ public class InteractiveControllerImpl implements InteractiveController {
 			attachment = category.summarize();
 			break;
 		case link:
-			attachment = new Summary(attachmentType, null, null, null, request.getParameter("link"), null);
+			String link = request.getParameter("link");
+			log.debug("Trying to get data from {}", link);
+			
+			String linkTitle = request.getParameter("attachmentTitle");
+			String linkDescription = request.getParameter("attachmentDescription");
+			String linkUrl = request.getParameter("attachmentIdentifier");
+			String imgUrl = request.getParameter("attachmentImgurHash");
+			
+			attachment = new Summary(attachmentType, null, linkTitle, linkDescription, linkUrl, imgUrl);
+			
+//			String title = null;
+//			String description = null;
+//			try {
+//				Document scraped = Jsoup.connect(link).get();
+//				title = scraped.title();
+//				
+//				Element descElement = scraped.select("meta[name=description]").first();
+//				if(null != descElement) {
+//					log.debug("Found desc element: {}", descElement);
+//					description = descElement.attr("content");
+//				}
+//				
+//				Element firstpic = scraped.select("img").first();
+//				if(null != firstpic) {
+//					log.debug("Found first pic: {}", firstpic);
+//				}
+//			} catch (Exception e) {
+//				log.error("Could not scrape link " + link, e);
+//			}
+//			log.debug("Found title: [{}], description [{}]", title, description);
+//			attachment = new Summary(attachmentType, null, title, description, link, null);
 			break;
 		case none:
 			attachment = null;
@@ -184,9 +217,19 @@ public class InteractiveControllerImpl implements InteractiveController {
 	public @ResponseBody JSON linkpreview(@RequestParam String uri) throws IOException {
 		log.debug("Trying to create preview for {}", uri);
 
-		URLScraper scraper = new URLScraper(uri);
-		scraper.getMetadata();
-		return JSON.ok();
+		try {
+			URLScraper scraper = new URLScraper(uri);
+			return JSON.ok()
+						.put("url", uri)
+						.put("title", scraper.getTitle())
+						.put("description", scraper.getDescription())
+						.put("ogImage", scraper.getOgImage()) //open graph image, for FB optimization
+						.put("images", scraper.getImageUrls());
+		} catch (Exception e) {
+			log.warn("Could not scrape {}, got exception {}", uri, e);
+			return JSON.status500(e);
+		}
+		
 	}
 
 	@Override
@@ -511,6 +554,16 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
+	
+	@Override
+	public @ResponseBody JSON changebg(Principal principal, @PathVariable Background newbg) {
+		try {
+			interact.changebg(principal.getName(), newbg);
+			return JSON.ok();
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
 
 	@Override
 	public ModelAndView viewReview(Principal principal, @PathVariable ReviewType type, @PathVariable long reviewId) {
@@ -600,5 +653,4 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
-
 }

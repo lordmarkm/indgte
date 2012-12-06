@@ -608,6 +608,7 @@ $(function(){
 			break;
 		case 'link':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
+			$('<strong>').text('Attachment title: ' + post.attachmentTitle).appendTo($dataContainer);
 			$('<a>').attr('href', post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($container);
 			break;
 		case 'none':

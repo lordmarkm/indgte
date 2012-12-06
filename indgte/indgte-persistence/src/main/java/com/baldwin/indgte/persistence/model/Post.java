@@ -53,6 +53,10 @@ public class Post {
 	@Column
 	private String attachmentImgurHash;
 	
+	@Column
+	@Lob @Basic
+	private String attachmentDescription;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column
 	private Date postTime;
@@ -83,6 +87,7 @@ public class Post {
 			this.attachmentId = attachment.getId();
 			this.attachmentIdentifier = attachment.getIdentifier();
 			this.attachmentTitle = attachment.getTitle();
+			this.attachmentDescription = attachment.getDescription();
 			this.attachmentImgurHash = attachment.getThumbnailHash();
 		}
 	}
@@ -197,5 +202,13 @@ public class Post {
 
 	public void setAttachmentIdentifier(String attachmentIdentifier) {
 		this.attachmentIdentifier = attachmentIdentifier;
+	}
+
+	public String getAttachmentDescription() {
+		return attachmentDescription;
+	}
+
+	public void setAttachmentDescription(String attachmentDescription) {
+		this.attachmentDescription = attachmentDescription;
 	}
 }

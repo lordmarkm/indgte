@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.baldwin.indgte.persistence.constants.AttachmentType;
+import com.baldwin.indgte.persistence.constants.Background;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.Theme;
@@ -198,6 +199,10 @@ public class InteractiveService {
 
 	public void changetheme(String name, Theme newtheme) {
 		dao.changetheme(name, newtheme);
+	}
+	
+	public void changebg(String name, Background newBg) {
+		dao.changebg(name, newBg);
 	}
 
 	public Post newPost(long posterId, PostType type, String title, String text) {

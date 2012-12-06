@@ -14,15 +14,21 @@
 	padding: 5px;
 }
 
+.post-pic-container {
+	display: inline-block;
+}
+
 .post-pic, .category-pic {
-	position: absolute;
-	margin: 5px;
+	margin: 5px 5px 0 5px;
 	width: 50px;
 	height: 50px;
 }
 
 .post-data-container, .category-data-container {
-	margin: 10px 10px 10px 60px;
+	margin: 10px 10px 10px 0;
+	display: inline-block;
+	width: 80%;
+	vertical-align: top;
 }
 
 .post-title, .post-title a,
@@ -84,9 +90,10 @@
 }
 
 .post-time {
-	margin-top: 2px;
+	margin-top: 5px;
 	font-size: 0.8em;
 	color: #202020;
+	display: inline-block;
 }
 
 .post-time a {
@@ -97,8 +104,14 @@ li.ui-state-default {
 	font-weight: normal;
 }
 
+.linkdescription {
+	font-size: 0.9em;
+}
+
 .post-comments {
-	margin: 10px 0 0 0;
+	margin: 5px 0 0 5px;
+	display: inline-block;
+	font-size: 0.8em;
 }
 
 .post-fb {

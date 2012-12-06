@@ -14,7 +14,7 @@
 <script src="${jsEasyPaginate }"></script>
 <link rel="stylesheet" href="${cssEasyPaginate }" />
 
-<div class="grid_8">
+<div class="grid_8 maingrid">
 
 <section class="lists-section recent">
 	<div class="section-header">Recent Top Ten Lists</div>

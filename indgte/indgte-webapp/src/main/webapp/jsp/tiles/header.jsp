@@ -42,6 +42,16 @@
 	</c:otherwise>
 </c:choose>
 
+<c:choose>
+	<c:when test="${not empty user.background }">
+		<c:set var="background" value="${user.background.filename }	" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="background" value="grass" />
+	</c:otherwise>
+</c:choose>
+
+<link rel="stylesheet" href="<c:url value='/resources/css/backgrounds/' />${background}.css" />
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/${theme }/jquery-ui.css" type="text/css" media="all" />
 <!-- 
 <link rel="stylesheet" href="//cachedcommons.org/cache/960/0.0.0/stylesheets/960-min.css" type="text/css" media="all" />

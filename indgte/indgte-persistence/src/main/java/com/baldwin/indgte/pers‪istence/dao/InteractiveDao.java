@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.baldwin.indgte.persistence.constants.AttachmentType;
+import com.baldwin.indgte.persistence.constants.Background;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.Theme;
@@ -108,4 +109,6 @@ public interface InteractiveDao {
 	public int subscount(PostType type, Long id);
 
 	public Collection<Post> getPosts(int start, int howmany);
+
+	public void changebg(String name, Background newBg);
 }

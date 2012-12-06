@@ -42,25 +42,26 @@ public class SearchService {
 		dao.reindex();
 	}
 
-	public Map<SummaryType, List<Summary>> search(String term, int maxResults, SummaryType[] supportedTypes, String ownername) {
+	public Map<SummaryType, List<Summary>> search(String term, int firstResult, int maxResults, SummaryType[] supportedTypes, String ownername) {
 		Map<SummaryType, List<Summary>> results = new HashMap<SummaryType, List<Summary>>();
 		
 		for(SummaryType type : supportedTypes) {
 			switch(type) {
 			case business:
-				results.put(business, dao.search(term, maxResults, BusinessProfile.class, ownername));
+				results.put(business, dao.search(term, firstResult, maxResults, BusinessProfile.class, ownername));
 				break;
 			case user:
-				results.put(user, dao.search(term, maxResults, User.class, ownername));
+				results.put(user, dao.searchusers(term, firstResult, maxResults));
 				break;
 			case category:
-				results.put(category, dao.search(term, maxResults, Category.class, ownername));
+				results.put(category, dao.search(term, firstResult, maxResults, Category.class, ownername));
 				break;
 			case product:
-				results.put(product, dao.search(term, maxResults, Product.class, ownername));
+				results.put(product, dao.search(term, firstResult, maxResults, Product.class, ownername));
 				break;
 			default:
-				throw new IllegalArgumentException("Illegal type: " + type);
+				//throw new IllegalArgumentException("Illegal type: " + type);
+				log.warn("Ignoring illegal type: {}", type);
 			}
 		}
 		

@@ -20,8 +20,9 @@ public interface SearchDao {
 	 * IMPORTANT: owner name must be null if c == User.class, else explode! (Actually, OwnerSummarizer
 	 * will throw an IllegalArgumentException because slavery has always been illegal in the Philippines)
 	 */
-	List<Summary> search(String term, int maxResults, Class<? extends Summarizable> c, String ownername);
-	
+	List<Summary> search(String term, int firstResult, int maxResults, Class<? extends Summarizable> c, String ownername);
+	List<Summary> searchusers(String term, int firstResult, int maxResults);
+
 	/**
 	 * For the yellow pages index
 	 */

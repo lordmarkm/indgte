@@ -98,6 +98,7 @@
 </div>
 
 <div class="newitem sidebar-section grid_4">
+	<div class="sidebar-section-header">Buy & Sell Actions</div>
 	<sec:authorize access="hasRole('ROLE_USER')">
 	<button class="btn-newitem">Sell your possessions</button>
 	<div class="newitem-form-container hide" title="Sell your possessions">

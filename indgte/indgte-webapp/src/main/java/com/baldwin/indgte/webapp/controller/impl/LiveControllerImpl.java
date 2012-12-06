@@ -18,7 +18,10 @@ import com.baldwin.indgte.persistence.service.NotificationsService;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.LiveController;
 import com.baldwin.indgte.webapp.dto.Chatter;
+import com.baldwin.indgte.webapp.dto.Preview;
+import com.baldwin.indgte.webapp.dto.Preview.PreviewType;
 import com.baldwin.indgte.webapp.misc.ChatRepository;
+import com.baldwin.indgte.webapp.misc.PreviewService;
 
 @Component
 public class LiveControllerImpl implements LiveController {
@@ -30,6 +33,9 @@ public class LiveControllerImpl implements LiveController {
 	
 	@Autowired
 	private NotificationsService notifs;
+	
+	@Autowired
+	private PreviewService previews;
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -97,6 +103,18 @@ public class LiveControllerImpl implements LiveController {
 		}
 		
 		return response;
+	}
+
+	
+	@Override
+	public @ResponseBody JSON preview(Principal principal, @RequestParam PreviewType type, @RequestParam String href) {
+		try {
+			Preview preview = previews.preview(type, href);
+			return JSON.ok().put("preview", preview);
+		} catch (Exception e) {
+			log.warn("Could not create preview for type {}, with href {} due to exception {}", type, href, e);
+			return JSON.status500(e);
+		}
 	}
 	
 	

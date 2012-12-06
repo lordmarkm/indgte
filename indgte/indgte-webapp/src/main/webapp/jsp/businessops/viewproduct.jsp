@@ -134,7 +134,7 @@ window.product = {
 		hash: '${product.mainpic.hash}',
 		image: '${product.mainpic.largeThumbnail}',
 		thumb: '${product.mainpic.smallSquare}',
-		big: '${product.mainpic.original}',
+		big: '${product.mainpic.largeThumbnail}',
 		title: '${product.name}',
 		link: '${product.mainpic.imgurPage}'
 	}

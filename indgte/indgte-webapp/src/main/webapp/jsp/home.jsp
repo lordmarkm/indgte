@@ -5,9 +5,9 @@
 
 <spring:url var="paperclip" value="/resources/images/icons/paperclip.png" />
 
-<title>${user.username } | InDumaguete</title>
+<title>Dumaguete</title>
 <link rel="stylesheet" href="<spring:url value='/resources/css/lists.css' />" />
-<link rel="stylesheet" href="<spring:url value='/resources/css/home.css' />" />
+<link rel="stylesheet" href="<spring:url value='/resources/css/feed.css' />" />
 
 <script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 
@@ -38,6 +38,14 @@
 				
 				<!-- Video and link -->
 				<input class="iptUrl" type="text" placeholder="Paste URL"/>
+				<div class="link-preview-container ui-state-default">
+					<div class="link-preview-images"></div>
+					<div class="inline-block">
+						<div class="link-preview-title"></div>
+						<div class="link-preview-description"></div>
+						<div class="link-preview-url"></div>
+					</div>
+				</div>
 				
 				<!-- Entity -->
 				<input class="iptEntity" type="text" placeholder="Enter Entity name" />
@@ -121,7 +129,8 @@
 
 </div>
 
-<script type="text/javascript" src="${jsApplication }"></script>
+<div class="dgte-preview"></div>
+
 <script>
 window.constants = {
 	imgurKey : '${imgurKey}',
@@ -172,7 +181,9 @@ $(function(){
 		$btnPost = $('.btn-post'),
 		$loadmoreContainer = $('.loadmoreContainer'),
 		$loadmore = $('.loadmore'),
-		$chkSubsonly = $('#subsonly');
+		$chkSubsonly = $('#subsonly'),
+		$linkpreview = $('.link-preview-container'),
+		$linkpreviewImg = $('.link-preview-images');
 	
 	//posts
 	var $feedcontainer = $('.feedcontainer'),
@@ -326,6 +337,7 @@ $(function(){
 	function hideAttachInputs() {
 		$attachInputContainer.find('input').hide();
 		$entityPreview.hide();
+		$linkpreview.hide();
 	}
 	
 	$('.attach-option').click(function(){
@@ -356,6 +368,7 @@ $(function(){
 		$attachType.val('link');
 		$status.removeClass('noattachment');
 		$iptUrl.attr('placeholder', 'Paste link URL').show();
+		$linkpreview.show();
 		matchWidths();
 	});
 	
@@ -391,6 +404,7 @@ $(function(){
 				break;
 			case 'link':
 				$iptUrl.attr('placeholder', 'Paste link URL').show();
+				$linkpreview.show();
 				break;
 			case 'entity':
 				$iptEntity.show().blur();
@@ -426,9 +440,41 @@ $(function(){
 	//link
 	$iptUrl.change(function(){
 		if($attachType.val() != 'link') return;
-		
-		$.get(urls.linkpreview, {uri:$iptUrl.val()}, function(response) {
+		$linkpreview.find('.inline-block div,.link-preview-images').text('');
+		var url = $iptUrl.val();
+		$.get(urls.linkpreview, {uri: url}, function(response) {
 			debug(response);
+			
+			switch(response.status) {
+			case '200':
+				$linkpreview
+					.find('.link-preview-title').text(response.title).end()
+					.find('.link-preview-description').text(response.description).end()
+					.find('.link-preview-url').text(response.url);
+			
+				if(response.ogImage) {
+					$('<img>').attr('src', response.ogImage).appendTo($linkpreviewImg);
+				} else {
+					if(response.images.length > 0) {
+						$('<img>').attr('src', response.images[0]).appendTo($linkpreviewImg);
+					}
+					
+					//for(var i = 0, len = response.images.length; i < len; ++i) {
+					//	$('<img>').attr('src', response.images[i]).appendTo($linkpreviewImg);
+					//}
+				}
+				break;
+			case '500':
+				$linkpreview
+					.find('.link-preview-title').text(url).end()
+					.find('.link-preview-description').text('').end()
+					.find('.link-preview-url').text(url);
+				$('<img>').attr('src', '${noimage50	}').appendTo($linkpreviewImg);
+				break;
+			default:
+				debug('wat');
+				debug(response);
+			}
 		});
 	});
 	
@@ -592,6 +638,10 @@ $(function(){
 		case 'link':
 			data.attachmentType = 'link';
 			data.link = encodeURI($iptUrl.val());
+			data.attachmentImgurHash = $linkpreview.find('.link-preview-images img:first').attr('src');
+			data.attachmentTitle = $linkpreview.find('.link-preview-title').text();
+			data.attachmentDescription = $linkpreview.find('.link-preview-description').text();
+			data.attachmentIdentifier = $linkpreview.find('.link-preview-url').text();
 			break;
 		case 'entity':
 			data.attachmentType = $iptEntity.attr('entitytype');
@@ -700,7 +750,11 @@ $(function(){
 		
 		if(posterImgSrc) {
 			var $picContainer = $('<div class="post-pic-container">').appendTo($post);
-			$('<img class="post-pic">').attr('src', posterImgSrc).appendTo($picContainer);	
+			var $aPostPic = $('<a class="dgte-previewlink">')
+				.attr('previewtype', post.type)
+				.attr('href', link)
+				.appendTo($picContainer);
+			$('<img class="post-pic">').attr('src', posterImgSrc).appendTo($aPostPic);	
 		}
 		
 		//title and text
@@ -825,7 +879,13 @@ $(function(){
 			break;
 		case 'link':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-			$('<a>').attr('href', post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($container);
+			var $linkImgContainer = $('<div class="link-preview-images">').appendTo($container);
+			$('<img>').attr('src', post.attachmentImgurHash).appendTo($linkImgContainer);
+			
+			var $linkInfoContainer = $('<div class="link-info-container">').appendTo($container);
+			$('<div class="bold">').text(post.attachmentTitle).appendTo($linkInfoContainer);
+			$('<a>').attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($linkInfoContainer);
+			$('<p class="linkdescription">').text(post.attachmentDescription).appendTo($linkInfoContainer);
 			break;
 		case 'none':
 		default:
@@ -834,21 +894,23 @@ $(function(){
 		
 		//footnote
 		var $footnote = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow() + ' by ').appendTo($dataContainer);
-		$('<a class="fatlink">').attr('href', link).text(post.posterTitle).appendTo($footnote);
+		$('<a class="fatlink dgte-previewlink">')
+			.attr('previewtype', post.type)
+			.attr('href', link).text(post.posterTitle).appendTo($footnote);
 		
 		//comments
-		var $aComments = $('<a>').attr('href', dgte.domain + urls.postdetails + post.id).appendTo($dataContainer);
-		var $comments = $('<div class="post-comments">').appendTo($aComments);
-		
+		var $comments = $('<div class="post-comments">').appendTo($dataContainer);
+		var $aComments = $('<a class="fatlink">').attr('href', dgte.domain + urls.postdetails + post.id).appendTo($comments);
+
 //		var urlPostDetails = 'http://www.facebook.com/plugins/comments.php?' + dgte.domain + urls.postdetails + post.id + '&permalink=1';
 //		$('<iframe scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:130px; height:16px;" allowTransparency="true">')
 //			.attr('src', urlPostDetails)
 //			.appendTo($comments);
 		
-		$comments.append('View ')
+		$aComments.append('View ')
 		var urlPostDetails = dgte.domain + urls.postdetails + post.id;
-		$('<fb:comments-count>').attr('href', urlPostDetails).appendTo($comments);
-		$comments.append(' comments');
+		$('<fb:comments-count>').attr('href', urlPostDetails).appendTo($aComments);
+		$aComments.append(' comments');
 		
 //		$('<div class="fb-comments" data-width="470" data-num-posts="2">')
 //			.attr('data-href', dgte.domain + urls.postdetails + post.id)

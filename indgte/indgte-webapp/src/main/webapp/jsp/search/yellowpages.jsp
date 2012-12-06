@@ -5,8 +5,6 @@
 <title>Yellow Pages | In Dumaguete</title>
 <script type="text/javascript" src="${jsApplication }"></script>
 
-<div class="grid_12">
-
 <ul class="hide">
 <c:forEach items="${businesses }" var="entry">
 	<li class="category ${fn:substring(entry.key, 0, 1)}" categoryName="${entry.key }" categoryId="${entry.value[0] }" businessCount="${entry.value[1] }">
@@ -15,7 +13,9 @@
 </c:forEach>
 </ul>
 
-<div class="grid_6">
+<div class="grid_12">
+
+<div class="grid_6 maingrid">
 	<ul class="alphabetized"></ul>
 </div>
 

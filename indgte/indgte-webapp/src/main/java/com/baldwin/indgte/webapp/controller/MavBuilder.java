@@ -2,11 +2,11 @@ package com.baldwin.indgte.webapp.controller;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.baldwin.indgte.persistence.constants.Background;
 import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
@@ -14,9 +14,6 @@ import com.baldwin.indgte.webapp.misc.DgteConstants;
 import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 
 public class MavBuilder {
-	
-	@Autowired
-	private DgteConstants constants;
 	
 	ModelAndView mav;
 	
@@ -61,7 +58,10 @@ public class MavBuilder {
 	
 	private void loadGlobals(MavBuilder m) {
 		m.put("themes", Theme.values());
+		m.put("backgrounds", Background.values());
 		m.put("imgurKey", DgteConstants.IMGUR_DEVKEY);
+		m.put("page_thumbnail", DgteConstants.SITE_THUMBNAIL);
+		m.put("page_description", DgteConstants.SITE_DESCRIPTION);
 	}
 	
 	public MavBuilder put(String name, Object object) {

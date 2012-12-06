@@ -31,6 +31,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baldwin.indgte.persistence.constants.AttachmentType;
+import com.baldwin.indgte.persistence.constants.Background;
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
@@ -698,6 +699,12 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	public void changetheme(String name, Theme newtheme) {
 		UserExtension user = users.getExtended(name);
 		user.setTheme(newtheme);
+	}
+	
+	@Override
+	public void changebg(String name, Background newBg) {
+		UserExtension user = users.getExtended(name);
+		user.setBackground(newBg);
 	}
 
 	@Override

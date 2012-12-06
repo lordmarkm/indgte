@@ -1,0 +1,7 @@
+body {
+	background-image: url("../../../resources/images/backgrounds/bg-silliman.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
+	background-position: 0 -15px;
+}

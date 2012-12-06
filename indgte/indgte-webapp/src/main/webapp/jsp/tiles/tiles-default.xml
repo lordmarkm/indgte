@@ -72,6 +72,9 @@
 	</definition>
 	
 	<!-- Search and Yellow Pages -->
+	<definition name="fullsearch" extends="default">
+		<put-attribute name="body" value="/jsp/search/fullsearch.jsp" />
+	</definition>
 	<definition name="yellowpages" extends="default">
 		<put-attribute name="body" value="/jsp/search/yellowpages.jsp" />
 	</definition>

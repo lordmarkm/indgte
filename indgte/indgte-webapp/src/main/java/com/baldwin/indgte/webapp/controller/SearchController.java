@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 public interface SearchController {
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView searchpage(Principal principal);
+	public ModelAndView yellowpages(Principal principal);
 	
 	@RequestMapping("/{term}")
 	public ModelAndView search(Principal principal, String term);

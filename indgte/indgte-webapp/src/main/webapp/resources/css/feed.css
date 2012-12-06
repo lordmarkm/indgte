@@ -1,12 +1,9 @@
-.ui-tabs {
-	font-size: 0.8em;
-}
-
 .newpost {
 	margin: 10px 0 10px 0;
 	border: 1px solid transparent;
 	width: 500px;
 	position: relative;
+	font-size: 10pt !important;
 }
 
 .newpost input, .newpost textarea {
@@ -23,9 +20,9 @@
 }
 
 .status-title {
-	width: 90%;
-	border-width: 0 0 1px 0;
-	border-bottom-style: dashed;
+	width: 97% !important;
+	border-width: 0 0 1px 0 !important;
+	border-bottom-style: dashed !important;
 	padding: 4px;
 }
 
@@ -35,7 +32,7 @@
 	overflow-y: hidden;
 	font-weight: normal !important;
 	padding: 4px;
-	border: 0;
+	border: 0 !important;
 }
 
 .status-textarea:-moz-placeholder, .status-title:-moz-placeholder{
@@ -46,9 +43,8 @@
 }
 
 .attach-input-container {
-	margin-top: -2px;
 	border-top-style: dashed !important;
-	border-width: 1px 0 0 0;
+	border-width: 1px 0 0 0 !important;
 	padding: 2px;	
 }
 
@@ -77,14 +73,14 @@
 	margin-right: 5px;
 }
 
-.post-as, .attach {
+.attach, .post-as {
 	cursor: pointer;
 	position: relative;
 	margin: 0 5px 0 0;
 }
 
-.post-as-visibles:not(.ui-state-highlight):not(.ui-state-active),
-.attach-visibles:not(.ui-state-highlight):not(.ui-state-active) {
+.attach-visibles:not(.ui-state-highlight):not(.ui-state-active), 
+.post-as-visibles:not(.ui-state-highlight):not(.ui-state-active) {
 	border: 1px dotted lightskyblue;
 }
 
@@ -171,4 +167,24 @@
 
 .entity-suggestion, .entity-suggestion-clone {
 	cursor: pointer;
+}
+
+.link-preview-images {
+	display: inline-block;
+	vertical-align: top;
+}
+.link-preview-images img {
+	max-width: 50px;
+	max-height: 50px;
+	margin: 5px;
+}
+.link-preview-container .inline-block,
+.link-info-container {
+	display: inline-block;
+	vertical-align: top;
+	max-width: 80%;
+}
+.link-preview-description {
+	font-weight: normal;
+	font-size: 0.9em;
 }

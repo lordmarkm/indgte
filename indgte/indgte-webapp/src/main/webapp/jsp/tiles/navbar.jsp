@@ -49,9 +49,11 @@
 	
 	<div class="search-padder">
 		<div class="search-container">
+			<form id="main-search">
 			<input class="search-input" type="text" placeholder="Search for stuff in Dumaguete"/>
 			<button>&nbsp;</button>
 			<div class="autocomplete-results ui-state-highlight" style="display: none;"></div>
+			</form>
 		</div>
 	</div>
 	
@@ -95,10 +97,22 @@ $(function(){
 		$btnSearch = $('.search-container button'),
 		$searchInput = $('.search-input'),
 		$autocompleteResults = $('.autocomplete-results')
-		$navigation = $('.navigation');
+		$navigation = $('.navigation'),
+		$mainSearchForm = $('#main-search');
 	
-	$btnSearch.button({ icons: {primary: 'ui-icon-search'}}).click(function(){
+	$mainSearchForm.submit(function(){
+		var term = $searchInput.val();
+		if(term.length < navbar.search.minlength) return false;
+		
+		window.location.href = navbar.search.url + term;
+		
+		return false;
 	});
+		
+	$btnSearch.button({ icons: {primary: 'ui-icon-search'}}).click(function(){
+		$mainSearchForm.submit();
+	});
+	
 	var searchtimeout;
 	$searchInput.bind({
 		keyup: startTimeout,
@@ -176,12 +190,12 @@ $(function(){
 		});
 	}
 	
-	$autocompleteResults.on(
-		{
-			mouseover: function(){$(this).addClass('ui-state-active')}, 
-			mouseout:  function(){$(this).removeClass('ui-state-active')}
-		},
-		'.autocomplete-container');
+	$autocompleteResults.on({
+		mouseover: function(){$(this).addClass('ui-state-active')}, 
+		mouseout:  function(){$(this).removeClass('ui-state-active')}
+	}, '.autocomplete-container' );
+	
+	
 	
 	$(document).on({
 		mouseenter : function(){

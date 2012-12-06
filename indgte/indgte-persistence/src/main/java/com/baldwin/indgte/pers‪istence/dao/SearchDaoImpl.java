@@ -43,6 +43,7 @@ import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.User;
+import com.baldwin.indgte.persistence.model.UserExtension;
 
 @Repository
 @Transactional
@@ -84,8 +85,31 @@ public class SearchDaoImpl implements SearchDao {
 	}
 
 	@Override
+	public List<Summary> searchusers(String term, int firstResult, int maxResults) {
+		@SuppressWarnings("unchecked")
+		
+		List<UserExtension> users = sessions.getCurrentSession().createCriteria(UserExtension.class)
+			.createAlias(TableConstants.USEREXTENSION_USER, "user")
+			.add(Restrictions.like("user.username", "%" + term + "%"))
+			.setFirstResult(firstResult).setMaxResults(maxResults)
+			.list();
+		
+//		List<UserExtension> users = sessions.getCurrentSession().createQuery("from UserExtension u where user.username like %:term%")
+//			.setString("term", term)
+//			.setFirstResult(firstResult).setMaxResults(maxResults)
+//			.list();
+		
+		List<Summary> results = new ArrayList<>();
+		for(UserExtension user : users) {
+			results.add(user.summarize());
+		}
+		
+		return results;
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<Summary> search(String term, int maxResults, Class<? extends Summarizable> c, String ownername) {
+	public List<Summary> search(String term, int firstResult, int maxResults, Class<? extends Summarizable> c, String ownername) {
 		log.debug("Searching for [{}] in class {}", term, c);
 		log.debug("Limiting results to [{}] and owner {}", maxResults == -1 ? "No limit" : maxResults, ownername == null ? "Any owner" : ownername);
 		
@@ -114,6 +138,9 @@ public class SearchDaoImpl implements SearchDao {
 			query.setResultTransformer(new OwnerSummarizer(ownername));
 		}
 		
+		if(firstResult != -1) {
+			query.setFirstResult(firstResult);
+		}
 		if(maxResults != -1) {
 			query.setMaxResults(maxResults);
 		}

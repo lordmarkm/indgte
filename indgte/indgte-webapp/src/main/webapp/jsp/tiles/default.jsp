@@ -9,6 +9,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="icon" href="<c:url value='/resources/images/favicon.ico?v=4' />" type="image/x-icon" />
+
+<meta name="og:image" content="${page_thumbnail }" />
+<meta itemprop="image" content="${page_thumbnail }" />
+<meta name="og:description" content="${page_description }" />
+<meta name="description" content="${page_description }" />
+
+
 </head>
 
 <body>

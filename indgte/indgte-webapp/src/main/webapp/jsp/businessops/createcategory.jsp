@@ -8,7 +8,7 @@
 
 <title><spring:message code="business.newcategory.title" arguments="${business.domain }"/></title>
 
-<div class="newcategory grid_12">
+<div class="newcategory grid_8 maingrid">
 	<div class="newcategory-welcome">
 		<img src="${business.profilepic.smallSquare }" />
 		<h3><spring:message code="business.newcategory.title" arguments="${business.fullName }"/></h3>

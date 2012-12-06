@@ -10,6 +10,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.MavBuilder;
 import com.baldwin.indgte.webapp.controller.SearchController;
+import com.baldwin.indgte.webapp.misc.DgteConstants;
 
 @Component
 public class SearchControllerImpl implements SearchController {
@@ -50,8 +52,8 @@ public class SearchControllerImpl implements SearchController {
 	}
 
 	@Override
-	public ModelAndView searchpage(Principal principal) {
-		log.debug("Search page requested. Principal: {}", principal == null ? "Anonymous" : principal);
+	public ModelAndView yellowpages(Principal principal) {
+		log.debug("Yellowpages requested. Principal: {}", principal == null ? "Anonymous" : principal);
 		
 		MultiValueMap<String, Number> count = search.getYellowPagesIndex();
 		log.debug("Business count: {}", count);
@@ -72,9 +74,35 @@ public class SearchControllerImpl implements SearchController {
 	 */
 
 	@Override
-	public ModelAndView search(Principal principal, String term) {
-		// TODO Auto-generated method stub
-		return null;
+	public ModelAndView search(Principal principal, @PathVariable String term) {
+		long start = System.currentTimeMillis();
+		
+		MavBuilder mav = render("fullsearch")
+				.put("term", term)
+				.put("maxresults", DgteConstants.FULLSEARCH_MAXRESULTS);
+		int total = 0;
+		
+		Map<SummaryType, List<Summary>> results = search.search(term, 0, DgteConstants.FULLSEARCH_MAXRESULTS, SummaryType.values(), null);
+		for(Entry<Summary.SummaryType, List<Summary>> result : results.entrySet()) {
+			SummaryType key = result.getKey();
+			List<Summary> entities = result.getValue();
+			if(null != entities && entities.size() > 0) {
+				mav.put(key.name().toUpperCase(), entities);
+			} else {
+				log.debug("Ignoring [{}]", key.name());
+			}
+			total += entities.size();
+		}
+		
+		mav.put("total", total);
+
+		if(null != principal) {
+			UserExtension user = users.getExtended(principal.getName());
+			mav.put("user", user);
+		}
+		
+		log.debug("Search took {} ms", System.currentTimeMillis() - start);
+		return mav.mav();
 	}
 	
 	@Override
@@ -110,7 +138,7 @@ public class SearchControllerImpl implements SearchController {
 	private JSON search(Principal principal, String term, SummaryType[] supportedTypes, int maxresults, String ownername) {
 		try {
 			JSON response = JSON.ok();
-			for(Entry<Summary.SummaryType, List<Summary>> result : search.search(term, maxresults, supportedTypes, ownername).entrySet()) {
+			for(Entry<Summary.SummaryType, List<Summary>> result : search.search(term, 0, maxresults, supportedTypes, ownername).entrySet()) {
 				response.put(String.valueOf(result.getKey()), result.getValue());
 			}
 			return response;

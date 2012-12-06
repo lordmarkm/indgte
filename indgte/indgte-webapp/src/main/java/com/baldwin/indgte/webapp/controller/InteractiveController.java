@@ -10,6 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.constants.AttachmentType;
+import com.baldwin.indgte.persistence.constants.Background;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.Theme;
@@ -29,10 +30,13 @@ import com.baldwin.indgte.webapp.dto.TopTenForm;
 @RequestMapping("/i/")
 public interface InteractiveController {
 	/**
-	 * Change themes
+	 * Change themes or backgrounds
 	 */
 	@RequestMapping(value="/themechange/{newtheme}.json", method = RequestMethod.POST)
 	public JSON changetheme(Principal principal, Theme newtheme);
+	
+	@RequestMapping(value="/bgchange/{newbg}/json", method = RequestMethod.POST)
+	public JSON changebg(Principal principal, Background newbg);
 	
 	/**
 	 * Get most recent posts of entities principal is subscribed to

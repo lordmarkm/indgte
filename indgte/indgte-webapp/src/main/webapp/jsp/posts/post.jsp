@@ -6,8 +6,9 @@
 <title>${post.title }</title>
 <script type="text/javascript" src="${jsApplication }"></script>
 <link rel="stylesheet" href="<spring:url value='/resources/css/lists.css' />" />
+<link rel="stylesheet" href="<spring:url value='/resources/css/feed.css' />" />
 
-<div class="grid_8">
+<div class="grid_8 maingrid">
 
 	<div class="post">
 		<div class="post-pic-container">
@@ -42,7 +43,9 @@ window.post = {
 	type : '${post.type}',
 	attachmentType : '${post.attachmentType}',
 	attachmentImgurHash : '${post.attachmentImgurHash}',
-	attachmentIdentifier : '${post.attachmentIdentifier}',
+	attachmentTitle : '<c:out value="${post.attachmentTitle}" />',
+	attachmentIdentifier : '<c:out value="${post.attachmentIdentifier}" />',
+	attachmentDescription : '<c:out value="${post.attachmentDescription}" />',
 	postTime : '${post.postTime.time }',
 	posterIdentifier : '${post.posterIdentifier}',
 	posterTitle: '${post.posterTitle }'
@@ -165,7 +168,13 @@ $(function(){
 		break;
 	case 'link':
 		var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-		$('<a>').attr('href', post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($container);
+		var $linkImgContainer = $('<div class="link-preview-images">').appendTo($container);
+		$('<img>').attr('src', post.attachmentImgurHash).appendTo($linkImgContainer);
+		
+		var $linkInfoContainer = $('<div class="link-info-container">').appendTo($container);
+		$('<div class="bold">').html(post.attachmentTitle).appendTo($linkInfoContainer);
+		$('<a>').attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier).html(post.attachmentIdentifier).appendTo($linkInfoContainer);
+		$('<p class="linkdescription">').html(post.attachmentDescription).appendTo($linkInfoContainer);
 		break;
 	case 'none':
 	default:

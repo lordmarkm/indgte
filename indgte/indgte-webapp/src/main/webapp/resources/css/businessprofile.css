@@ -103,3 +103,8 @@
 .fb-like {
 	margin-top: 5px;
 }
+
+.owner-operations button, .owner-operations .button {
+	margin-top: 5px;
+	width: 100%;
+}

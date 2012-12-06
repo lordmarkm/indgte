@@ -19,7 +19,14 @@
 			<img class="business-img" src="${business.profilepic.smallSquare }" />
 		</div>
 		<div class="business-info-container inline-block">
-			<div class="business-title"><a href="${urlProfile}${business.domain}">${business.fullName }</a></div>
+			<div class="business-title">
+				<a href="${urlProfile}${business.domain}">
+					${business.fullName }
+					<c:if test="${business.deleted }">
+						<span class="redtext bold">(Deleted)</span>
+					</c:if>
+				</a>
+			</div>
 			<div class="business-description">${business.description }</div>
 		</div>
 		<div class="details hide">
@@ -33,10 +40,11 @@
 			</ul>
 		</div>
 		<div class="controls">
-			&nbsp;
+			<c:if test="${!business.deleted }">
 			<button class="delete-business hide">Delete ${business.fullName }</button>
 			<button class="edit-business hide">Edit</button>
 			<button class="show-details hide">Show details</button>
+			</c:if>
 		</div>
 	</div>
 	
@@ -173,7 +181,7 @@ $(function(){
 				}
 			});
 			
-			$this.remove();
+			if($this.hasClass('.show-details')) $this.remove();
 		}
 	}, '.show-details,.delete-business');
 	
@@ -189,6 +197,8 @@ $(function(){
 			var name = $business.find('.business-title').text();
 			var id = $business.attr('businessId');
 
+			debug('Found business with name ' + name + ' and id ' + id);
+			
 			$delete
 				.attr('title', 'Really delete ' + name + '?')
 				.text('Are you sure you want to delete ' + name + '? This cannot be undone.')

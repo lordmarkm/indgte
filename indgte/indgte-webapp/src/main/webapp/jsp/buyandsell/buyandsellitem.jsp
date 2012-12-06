@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="<spring:url value='/resources/css/jquery-countdown.css' />" />
 </c:if>
 
-<div class="grid_8">
+<div class="grid_8 maingrid">
 
 <span class="page-header">${item.name }</span>
 

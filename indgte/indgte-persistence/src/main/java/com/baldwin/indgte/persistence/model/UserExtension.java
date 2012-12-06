@@ -27,6 +27,7 @@ import org.hibernate.annotations.IndexColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.baldwin.indgte.persistence.constants.Background;
 import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.dto.Summarizable;
 import com.baldwin.indgte.persistence.dto.Summary;
@@ -55,6 +56,10 @@ public class UserExtension implements Summarizable {
 	@Enumerated
 	@Column
 	private Theme theme = Theme.flick;
+	
+	@Enumerated
+	@Column
+	private Background background = Background.grass;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "reviewer")
 	private Set<BusinessReview> businessReviews;
@@ -342,6 +347,7 @@ public class UserExtension implements Summarizable {
 		this.userSubscriptions = userSubscriptions;
 	}
 
+	@JsonIgnore
 	public Theme getTheme() {
 		return theme;
 	}
@@ -370,5 +376,14 @@ public class UserExtension implements Summarizable {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+
+	@JsonIgnore
+	public Background getBackground() {
+		return background;
+	}
+
+	public void setBackground(Background background) {
+		this.background = background;
 	}
 }

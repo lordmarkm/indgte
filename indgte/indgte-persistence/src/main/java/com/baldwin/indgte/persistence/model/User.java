@@ -2,6 +2,7 @@ package com.baldwin.indgte.persistence.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -68,7 +69,7 @@ public class User implements Searchable {
 	@Column
 	private Long expireTime;
 	
-	@OneToOne(mappedBy="user")
+	@OneToOne(mappedBy="user", fetch=FetchType.EAGER)
 	private UserExtension extension;
 	
 	@Override

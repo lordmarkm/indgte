@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import com.baldwin.indgte.webapp.dto.Preview.PreviewType;
+
 @Controller
 @RequestMapping("/live/")
 public interface LiveController {
@@ -21,4 +23,6 @@ public interface LiveController {
 			//Long[] rejectedNotifs
 			);
 
+	@RequestMapping(value="/preview/json", method=RequestMethod.GET)
+	JSON preview(Principal principal, PreviewType type, String href);
 }

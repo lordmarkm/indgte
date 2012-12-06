@@ -29,7 +29,8 @@ window.dgte = {
 	urls : {
 		blackSquareSmall : 'http://i.imgur.com/Y0NTes.jpg',
 		imgurUpload : 'http://api.imgur.com/2/upload.json',
-		imgur : 'http://i.imgur.com/'
+		imgur : 'http://i.imgur.com/',
+		preview : '/live/preview/'
 	},
 	
 	upload: function(file, onComplete, title, caption) {
@@ -236,10 +237,134 @@ $.fn.extend({
 			if(typeof callback == 'function') callback();
 		});
 		return this;
+    },
+    
+    preview: function() {
+    	var href = this.attr('href');
+    	var type = this.attr('previewtype');
+
+    	var $preview = $('.dgte-preview');
+    	$preview.addClass('dgte-preview-visible');
+    	
+    	var offset = this.offset();
+    	offset.top = offset.top + this.height();
+    	$preview.show().offset(offset);
+    	
+    	var oldhref = $preview.attr('href');
+    	if(href === oldhref) {
+    		return;
+    	}
+    	$preview.attr('href', href);
+    	
+    	function constructPreview() {
+    		$preview.attr('constructed', 'true');
+    		
+    		$('<div class="white-arrow-up arrow">').appendTo($preview);
+    		
+    		var $whiteContainer = $('<div class="preview-white-container">').appendTo($preview);
+    		
+    		var $coverContainer = $('<div class="preview-cover-image-container relative">').appendTo($whiteContainer);
+    		$('<img class="preview-cover-image">').appendTo($coverContainer);
+    		
+    		var $imgContainer = $('<div class="preview-image-container">').appendTo($whiteContainer);
+    		$('<img class="preview-image">').appendTo($imgContainer);
+    		
+    		var $previewInfo = $('<div class="preview-info-container">').appendTo($whiteContainer);
+    		$('<div class="preview-title">').appendTo($previewInfo);
+    		$('<div class="preview-description">').appendTo($previewInfo);
+    	}
+    	
+    	function fillPreview(preview) {
+    		if($preview.attr('constructed') != 'true') {
+    			constructPreview();
+    		}
+
+    		$preview
+    			.find('.preview-cover-image').attr('src', preview.cover.source).end()
+    			.find('.preview-image').attr('src', preview.image).load(function(){$(this).show()}).end()
+    			.find('.preview-title').text(preview.title).end()
+    			.find('.preview-description').text(preview.description.length > 80 ? preview.description.substring(0, 80) + '...' : preview.description);
+    		
+    		//set cover offset (facebook only)
+    		if(preview.type == 'user' && preview.cover.offsetY != 0) {
+    			var $cover = $preview.find('.preview-cover-image');
+    			$cover.load(function(){
+    				var height = $cover.height();
+    				var offsetY = preview.cover.offsetY;
+    				var offset = parseInt((preview.cover.offsetY/100)*height);
+    				$cover.css('position', 'absolute').css('top', -(offset));
+    				$cover.show();
+    			})
+    		}
+    	}
+    	
+    	$preview.find('.preview-cover-image').hide().end()
+    		.find('.preview-image').hide().end()
+    		.find('.preview-info-container div').text(' ');
+    	
+    	$.get(dgte.domain + dgte.urls.preview + 'json',
+    		{
+    			href: href,
+    			type: type
+    		},
+    		function(response) {
+		    	switch(response.status) {
+		    	case '200':
+		    		fillPreview(response.preview);
+		    		break;
+		    	default:
+		    		debug(response);
+		    	}
+    		}
+    	)
+    	
+    	return this;
     }
 });
 
 $(function(){
+	//preview links
+	var $preview = $('.dgte-preview'),
+		closetimeout;
+	
+	$(document).on({
+		mouseenter: function() {
+			setOpenTimeout(this);
+			$(this).preview();
+		},
+		mouseleave: setCloseTimeout
+	}, '.dgte-previewlink');
+	
+	$(document).on({
+		mouseenter: function() {
+			setOpenTimeout(this);
+		},
+		mouseleave: setCloseTimeout
+	}, '.dgte-preview');
+	
+	function setOpenTimeout(a) {
+		var newhref = $(a).attr('href');
+		debug('setting href: ' + newhref);
+		$preview.attr('newhref', newhref);
+	}
+	
+	function setCloseTimeout() {
+		$preview.attr('newhref', '');
+
+		if(closetimeout) {
+			clearTimeout(closetimeout);
+		}
+		closetimeout = setTimeout(function(){
+			var newhref = $preview.attr('newhref');
+			var oldhref = $preview.attr('href');
+			
+			debug('comparing hrefs: ' + newhref + ', ' + oldhref);
+			if(newhref != oldhref) {
+				$preview.hide();
+			}
+		}, 400);
+	}
+	
 	//make buttons (real and fake) conform to our ui theme
 	$('button').button();
 	$('.button').button();
