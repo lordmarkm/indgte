@@ -100,6 +100,15 @@ public class BusinessProfile implements Searchable, Attachable {
 	@Column
 	private Boolean deleted = false;
 	
+	@Column
+	private int comments;
+	
+	@Column
+	private int likes;
+	
+	@Column
+	private int sends;
+	
 	@Override
 	public String toString() {
 		return domain + ":" + fullName;
@@ -309,5 +318,29 @@ public class BusinessProfile implements Searchable, Attachable {
 
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public int getComments() {
+		return comments;
+	}
+
+	public void setComments(int comments) {
+		this.comments = comments;
+	}
+
+	public int getLikes() {
+		return likes;
+	}
+
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
+
+	public int getSends() {
+		return sends;
+	}
+
+	public void setSends(int sends) {
+		this.sends = sends;
 	}
 }

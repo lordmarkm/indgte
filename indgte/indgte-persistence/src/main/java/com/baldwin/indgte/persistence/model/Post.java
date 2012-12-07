@@ -68,6 +68,21 @@ public class Post {
 	@Lob @Basic(fetch=FetchType.EAGER)
 	private String text;
 
+	@Column
+	private int likes = 0;
+	
+	@Column
+	private int sends = 0;
+	
+	@Column
+	private int timesFeatured = 0;
+	
+	@Column
+	private int comments = 0;
+	
+	@Column
+	private boolean isFeatured = false;
+	
 	@Override
 	public String toString() {
 		return title + ": " + text;
@@ -211,4 +226,45 @@ public class Post {
 	public void setAttachmentDescription(String attachmentDescription) {
 		this.attachmentDescription = attachmentDescription;
 	}
+
+	public int getLikes() {
+		return likes;
+	}
+
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
+
+	public int getSends() {
+		return sends;
+	}
+
+	public void setSends(int sends) {
+		this.sends = sends;
+	}
+
+	public boolean isFeatured() {
+		return isFeatured;
+	}
+
+	public void setFeatured(boolean isFeatured) {
+		this.isFeatured = isFeatured;
+	}
+
+	public int getTimesFeatured() {
+		return timesFeatured;
+	}
+
+	public void setTimesFeatured(int timesFeatured) {
+		this.timesFeatured = timesFeatured;
+	}
+
+	public int getComments() {
+		return comments;
+	}
+
+	public void setComments(int comments) {
+		this.comments = comments;
+	}
+
 }

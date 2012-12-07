@@ -72,6 +72,15 @@ public class Product implements Searchable, Attachable {
 	@OneToMany(mappedBy="product", cascade=CascadeType.ALL)
 	private List<Wish> wishes;
 	
+	@Column
+	private int comments;
+	
+	@Column
+	private int likes;
+	
+	@Column
+	private int sends;
+	
 	@Override
 	public String toString() {
 		return name + ": " + description;
@@ -181,5 +190,29 @@ public class Product implements Searchable, Attachable {
 
 	public void setWishes(List<Wish> wishes) {
 		this.wishes = wishes;
+	}
+
+	public int getComments() {
+		return comments;
+	}
+
+	public void setComments(int comments) {
+		this.comments = comments;
+	}
+
+	public int getLikes() {
+		return likes;
+	}
+
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
+
+	public int getSends() {
+		return sends;
+	}
+
+	public void setSends(int sends) {
+		this.sends = sends;
 	}
 }

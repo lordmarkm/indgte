@@ -77,6 +77,9 @@ public class BusinessReview implements Review {
 	@Column
 	private Date time;
 	
+	@Column
+	private int comments = 0;
+	
 	@Override
 	public ReviewType getReviewType() {
 		return ReviewType.business;
@@ -193,5 +196,13 @@ public class BusinessReview implements Review {
 	@Override
 	public void setDisagreeCount(int disagreeCount) {
 		this.disagreeCount = disagreeCount;
+	}
+
+	public int getComments() {
+		return comments;
+	}
+
+	public void setComments(int comments) {
+		this.comments = comments;
 	}
 }

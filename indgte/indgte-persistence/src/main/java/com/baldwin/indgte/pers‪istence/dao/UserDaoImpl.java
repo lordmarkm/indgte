@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baldwin.indgte.persistence.constants.Initializable;
+import com.baldwin.indgte.persistence.dto.Fame;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 
@@ -190,4 +191,5 @@ public class UserDaoImpl implements UserDao {
 			.setProjection(Projections.property(TableConstants.USER_IMAGEURL))
 			.uniqueResult();
 	}
+
 }

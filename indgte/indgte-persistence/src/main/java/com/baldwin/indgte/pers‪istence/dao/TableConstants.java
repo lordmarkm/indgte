@@ -5,7 +5,14 @@ public class TableConstants {
 	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";
 	public static final String TIME = "time";
+	public static final String TYPE = "type";
 
+	//for scoring
+	public static final String LIKES = "likes";
+	public static final String SENDS = "sends";
+	public static final String TIMESFEATURED = "timesFeatured";
+	public static final String COMMENTS = "comments";
+	
 	public final static String USER_USERNAME = "username";
 	public final static String USER_PROVIDER_USERID = "providerUserId";
 	public static final String USER_USERID = "userId";
@@ -29,6 +36,7 @@ public class TableConstants {
 	public static final String BUSINESS_ID = "id";
 	public final static String BUSINESS_DOMAIN = "domain";
 	public static final String BUSINESS_CATEGORIES = "categories";
+	public static final String BUSINESS_OWNER = "owner";
 	
 	public static final String CATEGORY_PRODUCTS = "products";
 	
@@ -56,7 +64,8 @@ public class TableConstants {
 	
 	public static final String TAG = "tag";
 	public static final String TAG_ITEMS = "items";
-	
+
+	public static final String REVIEW_REVIEWER = "reviewer";
 	public static final String REVIEW_AGREERS = "agreers";
 	public static final String REVIEW_DISAGREERS = "disagreers";
 	public static final String CHAT_CHANNEL = "channel";
@@ -77,4 +86,7 @@ public class TableConstants {
 	/* Aliases */
 	public static final String ALIAS_USER = "user";
 	public static final String ALIAS_USER_USERNAME = "user.username";
+	
+	public static final String POST_POSTERID = "posterId";
+	
 }

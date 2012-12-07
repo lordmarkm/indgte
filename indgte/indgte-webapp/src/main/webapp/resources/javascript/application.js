@@ -271,7 +271,7 @@ $.fn.extend({
     		
     		var $previewInfo = $('<div class="preview-info-container">').appendTo($whiteContainer);
     		$('<div class="preview-title">').appendTo($previewInfo);
-    		$('<div class="preview-description">').appendTo($previewInfo);
+    		$('<div class="preview-description subtitle">').appendTo($previewInfo);
     	}
     	
     	function fillPreview(preview) {

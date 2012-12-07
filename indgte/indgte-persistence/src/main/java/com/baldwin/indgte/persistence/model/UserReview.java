@@ -60,6 +60,9 @@ public class UserReview implements Review {
 	@Column
 	private int disagreeCount = 0;
 	
+	@Column
+	private int comments = 0;
+	
 	@ManyToMany
 	@JoinTable(
 		name="userreviewagreers",
@@ -186,5 +189,13 @@ public class UserReview implements Review {
 	@Override
 	public void setDisagreeCount(int disagreeCount) {
 		this.disagreeCount = disagreeCount;
+	}
+
+	public int getComments() {
+		return comments;
+	}
+
+	public void setComments(int comments) {
+		this.comments = comments;
 	}
 }
