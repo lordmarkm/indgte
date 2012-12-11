@@ -5,9 +5,15 @@ import java.util.Collection;
 import com.baldwin.indgte.persistence.model.ChatMessage;
 import com.baldwin.indgte.persistence.model.CommentNotification;
 import com.baldwin.indgte.persistence.model.LikeNotification;
-import com.baldwin.indgte.persistence.model.Notification.InteractableType;
 import com.baldwin.indgte.persistence.model.MessageNotification;
+import com.baldwin.indgte.persistence.model.NewBidNotification;
 import com.baldwin.indgte.persistence.model.Notification;
+import com.baldwin.indgte.persistence.model.Notification.InteractableType;
+import com.baldwin.indgte.persistence.model.Review;
+import com.baldwin.indgte.persistence.model.ReviewNotification;
+import com.baldwin.indgte.persistence.model.ReviewReactNotification;
+import com.baldwin.indgte.persistence.model.TopTenCandidate;
+import com.baldwin.indgte.persistence.model.TopTenVoteNotification;
 import com.baldwin.indgte.persistence.model.UserExtension;
 
 /**
@@ -37,4 +43,11 @@ public interface NotificationsDao {
 	
 	public void delete(String username, Long[] notifIds);
 
+	public ReviewReactNotification reviewReactNotif(String reactorName, String mode, Review review);
+
+	public ReviewNotification reviewNotif(Review review);
+
+	public Collection<TopTenVoteNotification> topTenVote(TopTenCandidate candidate);
+
+	public Collection<NewBidNotification> newBid(long itemId);
 }

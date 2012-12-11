@@ -212,17 +212,26 @@ $(function(){
 }(document, 'script', 'facebook-jssdk'));
 
 window.fbAsyncInit = function() {
-	FB.Event.subscribe('comment.create', function() {
+	FB.Event.subscribe('comment.create', function(event) {
+		debug(event);
 		FB.getLoginStatus(function(loginStatus) {
 			if (loginStatus.status === 'connected') {
 					//user is logged in. get details and notify poster of new comment
 				FB.api('/me', function(response) {
 						$.post(urls.commentNotify + post.id + '/json', {
+						name : response.name,
 						providerUserId : response.id,
 						providerUsername : response.name
 					}, function(response) {
-						//do nothing
+						//do nothing for now
 					});
+				});
+			} else {
+				debug('Somebody has commented with Yahoo!, AOL, or some other non-Facebook account');
+				$.post(urls.commentNotify + post.id + '/json', {
+					name : 'Somebody',
+					providerUserId : 'none',
+					providerUsername : 'none'
 				});
 			}
 		});
@@ -234,11 +243,19 @@ window.fbAsyncInit = function() {
 					//user is logged in. get details and notify poster of new comment
 				FB.api('/me', function(response) {
 						$.post(urls.likeNotify + post.id + '/json', {
+						name : response.name,
 						providerUserId : response.id,
 						providerUsername : response.name
 					}, function(response) {
-						//do nothing
+						//do nothing for now
 					});
+				});
+			} else {
+				debug('Somebody has commented with Yahoo!, AOL, or some other non-Facebook account');
+				$.post(urls.likeNotify + post.id + '/json', {
+					name : 'Somebody',
+					providerUserId : 'none',
+					providerUsername : 'none'
 				});
 			}
 		});

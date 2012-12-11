@@ -106,6 +106,7 @@ public class BusinessReview implements Review {
 	}
 	
 	@JsonIgnore
+	@Override
 	public UserExtension getReviewer() {
 		return reviewer;
 	}

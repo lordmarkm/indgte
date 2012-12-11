@@ -884,7 +884,9 @@ $(function(){
 			
 			var $linkInfoContainer = $('<div class="link-info-container">').appendTo($container);
 			$('<div class="bold">').text(post.attachmentTitle).appendTo($linkInfoContainer);
-			$('<a>').attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($linkInfoContainer);
+			if(post.attachmentIdentifier) {
+				$('<a>').attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($linkInfoContainer);
+			}
 			$('<p class="linkdescription">').text(post.attachmentDescription).appendTo($linkInfoContainer);
 			break;
 		case 'none':
@@ -902,21 +904,11 @@ $(function(){
 		var $comments = $('<div class="post-comments">').appendTo($dataContainer);
 		var $aComments = $('<a class="fatlink">').attr('href', dgte.domain + urls.postdetails + post.id).appendTo($comments);
 
-//		var urlPostDetails = 'http://www.facebook.com/plugins/comments.php?' + dgte.domain + urls.postdetails + post.id + '&permalink=1';
-//		$('<iframe scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:130px; height:16px;" allowTransparency="true">')
-//			.attr('src', urlPostDetails)
-//			.appendTo($comments);
-		
 		$aComments.append('View ')
 		var urlPostDetails = dgte.domain + urls.postdetails + post.id;
 		$('<fb:comments-count>').attr('href', urlPostDetails).appendTo($aComments);
 		$aComments.append(' comments');
 		
-//		$('<div class="fb-comments" data-width="470" data-num-posts="2">')
-//			.attr('data-href', dgte.domain + urls.postdetails + post.id)
-//			.attr('simple', '1')
-//			.attr('css', 'http://www.fileden.com/files/2012/11/19/3368241/fb-comments.css')
-//			.appendTo($post);
 	}
 	
 	$posts.on({
@@ -951,37 +943,40 @@ $(function(){
 <sec:authorize access="hasRole('ROLE_USER')">
 <!-- Notifications -->
 <div class="grid_4 sidebar-section">
-	<div class="sidebar-section-header">Controls</div>
-	<input type="checkbox" id="subsonly" checked /><label for="subsonly">Show posts from subscriptions only</label>
-	<div class="sidebar-divider"></div>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Home</div>
+		<input type="checkbox" id="subsonly" checked /><label for="subsonly">Show posts from subscriptions only</label>
+	</div>
 </div>
 
 <div class="notifications-container grid_4 sidebar-section">
-	<div class="notifications-container relative">
-		<div class="sidebar-section-header">Notifications</div>
-		<span class="msg-uptodate">You're completely up to date. Yey!</span>
-		<ul class="notifications hasnotifs"></ul>
+	<div class="sidebar-container">
+		<div class="notifications-container relative">
+			<div class="sidebar-section-header">Notifications</div>
+			<span class="msg-uptodate">You're completely up to date. Yey!</span>
+			<ul class="notifications hasnotifs"></ul>
+		</div>
+		<div class="old-notifications-container hide relative">
+			<div class="sidebar-section-header">Previous notifications</div>
+			<span class="msg-clearhistory hide">You're notification history is empty. Yey!</span>
+			<ul class="old-notifications hasnotifs"></ul>
+		</div>
+		<a class="link-showoldnotifs" href="javascript:;">Show old notifications...</a>
+		<a class="link-clearoldnotifs hide" href="javascript:;">Clear all</a>
 	</div>
-	<div class="old-notifications-container hide relative">
-		<div class="sidebar-section-header">Previous notifications</div>
-		<span class="msg-clearhistory hide">You're notification history is empty. Yey!</span>
-		<ul class="old-notifications hasnotifs"></ul>
-	</div>
-	<a class="link-showoldnotifs" href="javascript:;">Show old notifications...</a>
-	<a class="link-clearoldnotifs hide" href="javascript:;">Clear all</a>
-	<div class="sidebar-divider"></div>
 </div>
 <link rel="stylesheet" href="<spring:url value='/resources/css/grids/notifs.css' />" />
 <!-- Notifications -->
 
 <!-- Reviews -->
 <div class="reviewqueue grid_4 sidebar-section">
-	<div class="sidebar-section-header">Recently Viewed Business for Review</div>
-	<div class="review-container">
-		<div>Please take some time to review the businesses below if you have completed any transactions with them or have knowledge of their operations.</div>
-		<ul class="reviewlist"></ul>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Recently Viewed Business for Review</div>
+		<div class="review-container">
+			<div>Please take some time to review the businesses below if you have completed any transactions with them or have knowledge of their operations.</div>
+			<ul class="reviewlist"></ul>
+		</div>
 	</div>
-	<div class="sidebar-divider"></div>
 </div>
 <script>
 window.urls.reviewqueue = '<spring:url value="/i/reviewqueue.json" />',
@@ -995,15 +990,17 @@ window.urls.neverreview = '<spring:url value="/i/neverreview/" />'
 
 <!-- Top Tens -->
 <div class="toptens-container grid_4 sidebar-section">
-<div class="sidebar-section-header">Top Tens</div>
-<div class="toptens">
-	Popular:
-	<ul class="popular"></ul>
-	Recent:
-	<ul class="recent"></ul>
-	
-	<a href="<spring:url value='/i/toptens/' />">View all...</a>
-</div>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Top Tens</div>
+		<div class="toptens">
+			Popular:
+			<ul class="popular"></ul>
+			Recent:
+			<ul class="recent"></ul>
+			
+			<a href="<spring:url value='/i/toptens/' />">View all...</a>
+		</div>
+	</div>
 </div>
 <link rel="stylesheet" href="<spring:url value='/resources/css/grids/toptens.css' />" />
 <script>

@@ -25,6 +25,11 @@ public class Comet {
 	}
 
 	public void fireNotif(Notification notif) {
+		if(null == notif || null == notif.getNotified()) {
+			log.debug("Nobody needs to be notified. Strange. {}", notif);
+			return;
+		}
+		
 		String notifyName = notif.getNotified().getUsername();
 		DeferredResult<JSON> response = waiting.remove(notifyName);
 		
@@ -32,14 +37,12 @@ public class Comet {
 			log.debug("Null response retrieved for {}, user is likely offline.", notifyName);
 			return;
 		} else if(response.isSetOrExpired()) {
+			log.debug("Response is set or expired. They'll get their notif on the next live() cycle");
 			return;
 		}
 		
-		List<Notification> notifications = null;
-		if(null != notif) {
-			notifications = new ArrayList<>();
-			notifications.add(notif);
-		}
+		List<Notification> notifications = new ArrayList<>();
+		notifications.add(notif);
 		
 		JSON asyncResponse = JSON.ok();
 		asyncResponse.put("notifications", notifications);

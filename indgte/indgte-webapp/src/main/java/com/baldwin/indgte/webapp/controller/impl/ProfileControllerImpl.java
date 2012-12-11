@@ -1,7 +1,6 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.persistence.constants.Initializable.*;
-import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
+import static com.baldwin.indgte.persistence.constants.Initializable.wishlist;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
@@ -9,7 +8,6 @@ import java.security.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
-import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
@@ -40,9 +37,6 @@ public class ProfileControllerImpl implements ProfileController {
 	
 	@Autowired
 	private InteractiveService posts;
-	
-	@Value("${imgur.devkey}")
-	private String imgurKey;
 	
 	@Override
 	public ModelAndView profile(Principal principal) {

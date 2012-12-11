@@ -7,6 +7,7 @@ import com.baldwin.indgte.persistence.dto.Summary;
 
 public interface Review {
 	public ReviewType getReviewType();
+	public UserExtension getReviewer();
 	public Summary getReviewerSummary();
 	public Summary getRevieweeSummary();
 	public Set<UserExtension> getAgreers();

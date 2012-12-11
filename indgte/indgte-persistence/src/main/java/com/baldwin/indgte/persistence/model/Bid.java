@@ -34,7 +34,7 @@ public class Bid implements Comparable<Bid> {
 	
 	@ManyToOne
 	@JoinColumn(name="userId", nullable=false, updatable=false)
-	private User bidder;
+	private UserExtension bidder;
 	
 	@Column
 	private Double amount;
@@ -68,11 +68,11 @@ public class Bid implements Comparable<Bid> {
 		this.item = item;
 	}
 
-	public User getBidder() {
+	public UserExtension getBidder() {
 		return bidder;
 	}
 
-	public void setBidder(User bidder) {
+	public void setBidder(UserExtension bidder) {
 		this.bidder = bidder;
 	}
 

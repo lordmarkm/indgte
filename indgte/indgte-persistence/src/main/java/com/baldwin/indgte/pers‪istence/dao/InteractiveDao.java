@@ -64,7 +64,7 @@ public interface InteractiveDao {
 
 	public TopTenList getTopTenList(long toptenId);
 
-	public void toptenVote(String name, long topTenId);
+	public TopTenCandidate toptenVote(String name, long topTenId);
 
 	public TopTenCandidate createTopTenCandidate(String name, long topTenId, String title);
 

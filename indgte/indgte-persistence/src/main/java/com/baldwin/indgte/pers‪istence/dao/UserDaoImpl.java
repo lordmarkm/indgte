@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baldwin.indgte.persistence.constants.Initializable;
-import com.baldwin.indgte.persistence.dto.Fame;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 
@@ -39,27 +38,26 @@ public class UserDaoImpl implements UserDao {
 			.uniqueResult();
 	}
 
-	@Override
-	public User getSpring(String userId) {
-		log.debug("Trying to get SSS User by providerUserId = {}", userId);
+//	@Deprecated
+//	private User getSpring(String userId) {
+//		log.debug("Trying to get SSS User by providerUserId = {}", userId);
+//		
+//		User user =  (User)sessions.getCurrentSession()
+//				.createCriteria(User.class)
+//				.add(Restrictions.eq(TableConstants.USER_USERNAME, userId))
+//				.add(Restrictions.eq(TableConstants.USER_PROVIDERID, TableConstants.USER_PROVIDERID_SPRINGSOCSEC))
+//				.uniqueResult();
+//		
+//		log.debug("Found {}", user);
+//		return user;
+//	}
+	
+	private User getFacebook(String username) {
+		log.debug("Trying to get Facebook User by userId [{}]", username);
 		
 		User user =  (User)sessions.getCurrentSession()
 				.createCriteria(User.class)
-				.add(Restrictions.eq(TableConstants.USER_USERNAME, userId))
-				.add(Restrictions.eq(TableConstants.USER_PROVIDERID, TableConstants.USER_PROVIDERID_SPRINGSOCSEC))
-				.uniqueResult();
-		
-		log.debug("Found {}", user);
-		return user;
-	}
-
-	@Override
-	public User getFacebook(String userId) {
-		log.debug("Trying to get Facebook User by userId [{}]", userId);
-		
-		User user =  (User)sessions.getCurrentSession()
-				.createCriteria(User.class)
-				.add(Restrictions.eq(TableConstants.USER_USERNAME, userId))
+				.add(Restrictions.eq(TableConstants.USER_USERNAME, username))
 				.add(Restrictions.eq(TableConstants.USER_PROVIDERID, TableConstants.USER_PROVIDERID_FACEBOOK))
 				.uniqueResult();
 		
@@ -67,23 +65,59 @@ public class UserDaoImpl implements UserDao {
 		return user;
 	}
 
+	private User getTwitter(String username) {
+		log.debug("Trying to get Twitter User by username [{}]", username);
+		
+		User user =  (User)sessions.getCurrentSession()
+				.createCriteria(User.class)
+				.add(Restrictions.eq(TableConstants.USER_USERNAME, username))
+				.add(Restrictions.eq(TableConstants.USER_PROVIDERID, TableConstants.USER_PROVIDERID_TWITTER))
+				.uniqueResult();
+		
+		log.debug("Found {}", user);
+		return user;
+	}
+	
 	@Override
 	public UserExtension getExtended(String username) {
+		return getExtended(username, true);
+	}
+	
+	/**
+	 * Will return null if createIfAbsent is false
+	 */
+	@Override
+	public UserExtension getExtended(String username, boolean createIfAbsent) {
 		Session session = sessions.getCurrentSession();
 		UserExtension userExtension = (UserExtension) session.createCriteria(UserExtension.class)
 				.createAlias(TableConstants.USEREXTENSION_USER, "user")
 				.add(Restrictions.eq("user.username", username))
 				.uniqueResult();
 		
-		if(null == userExtension) {
-			User user = getFacebook(username);
-			userExtension = new UserExtension(user);
-			user.setExtension(userExtension);
-			
-			session.save(userExtension);
+		if(createIfAbsent && null == userExtension) {
+			userExtension = createUserExtension(username);
 		}
 		
 		return userExtension;
+	}
+	
+	private UserExtension createUserExtension(String username) {
+		User user = getFacebook(username);
+		if(null == user) {
+			user = getTwitter(username);
+		}
+		
+		UserExtension extension = new UserExtension(user);
+		user.setExtension(extension);
+		sessions.getCurrentSession().save(extension);
+		
+		//subscribe user to himself
+		extension.getUserSubscriptions().add(extension.getId());
+		
+		//subscribe user to admins
+		//TODO
+		
+		return extension;
 	}
 	
 	@Override 
@@ -98,8 +132,6 @@ public class UserDaoImpl implements UserDao {
 	public UserExtension getExtended(String username, Initializable... initializables) {
 		UserExtension userExtension = getExtended(username);
 		return initialize(userExtension, initializables);
-		
-//		return getExtended(username, 0, initializables);
 	}
 	
 	//TODO

@@ -28,9 +28,11 @@ window.dgte = {
 	},
 	urls : {
 		blackSquareSmall : 'http://i.imgur.com/Y0NTes.jpg',
+		noImage50 : '/resources/images/noimage50.png',
 		imgurUpload : 'http://api.imgur.com/2/upload.json',
 		imgur : 'http://i.imgur.com/',
-		preview : '/live/preview/'
+		preview : '/live/preview/',
+		twittercover : '/resources/images/preview/twittercover.jpg'
 	},
 	
 	upload: function(file, onComplete, title, caption) {
@@ -279,9 +281,11 @@ $.fn.extend({
     			constructPreview();
     		}
 
+    		debug('processing cover source: ' + preview.cover.source);
+    		var coverSrc = preview.cover.source === 'twitter' ? dgte.domain + dgte.urls.twittercover : preview.cover.source;
     		$preview
-    			.find('.preview-cover-image').attr('src', preview.cover.source).end()
-    			.find('.preview-image').attr('src', preview.image).load(function(){$(this).show()}).end()
+    			.find('.preview-cover-image').attr('src', coverSrc).end()
+    			.find('.preview-image').attr('src', preview.image ? preview.image : dgte.urls.noImage50).load(function(){$(this).show()}).end()
     			.find('.preview-title').text(preview.title).end()
     			.find('.preview-description').text(preview.description.length > 80 ? preview.description.substring(0, 80) + '...' : preview.description);
     		
@@ -325,27 +329,47 @@ $.fn.extend({
 $(function(){
 	//preview links
 	var $preview = $('.dgte-preview'),
-		closetimeout;
+		closetimeout,
+		opentimeout;
 	
 	$(document).on({
 		mouseenter: function() {
 			setOpenTimeout(this);
-			$(this).preview();
+			//$(this).preview();
 		},
 		mouseleave: setCloseTimeout
 	}, '.dgte-previewlink');
 	
 	$(document).on({
 		mouseenter: function() {
-			setOpenTimeout(this);
+			setHref(this);
 		},
 		mouseleave: setCloseTimeout
 	}, '.dgte-preview');
 	
-	function setOpenTimeout(a) {
-		var newhref = $(a).attr('href');
+	function setHref(e) {
+		var $e = $(e);
+		var newhref = $e.attr('href');
 		debug('setting href: ' + newhref);
 		$preview.attr('newhref', newhref);
+	}
+	
+	function setOpenTimeout(a) {
+		var $a = $(a);
+		var newhref = $a.attr('href');
+		debug('setting href: ' + newhref);
+		$preview.attr('newhref', newhref);
+		
+		if(opentimeout) {
+			clearTimeout(opentimeout);
+		}
+		opentimeout = setTimeout(function(){
+			var currenthref = $preview.attr('newhref');
+			debug('comparing hrefs: ' + currenthref + ', ' + newhref);
+			if(currenthref && newhref === currenthref) {
+				$a.preview();
+			}
+		}, 400);
 	}
 	
 	function setCloseTimeout() {

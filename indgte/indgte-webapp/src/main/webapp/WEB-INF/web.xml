@@ -41,4 +41,9 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	
+	<!-- Avoid jsessionid=XXX -->
+	<session-config>
+		<tracking-mode>COOKIE</tracking-mode>	    
+	</session-config>
 </web-app>

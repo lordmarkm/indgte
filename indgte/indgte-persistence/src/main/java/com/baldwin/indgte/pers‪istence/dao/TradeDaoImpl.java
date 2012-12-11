@@ -124,8 +124,10 @@ public class TradeDaoImpl implements TradeDao {
 	}
 	
 	@Override
-	public double bid(User user, long itemId, double amount, double minIncrementPercent) {
+	public double bid(String bidderName, long itemId, double amount, double minIncrementPercent) {
 		Session session = sessions.getCurrentSession();
+		
+		UserExtension user = users.getExtended(bidderName);
 		
 		AuctionItem item = (AuctionItem) session.get(AuctionItem.class, itemId);
 		

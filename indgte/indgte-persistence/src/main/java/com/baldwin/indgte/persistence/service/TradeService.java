@@ -45,8 +45,8 @@ public class TradeService {
 		return dao.get(name, itemId);
 	}
 
-	public double bid(User user, long itemId, double amount) {
-		return dao.bid(user, itemId, amount, bidIncrement);
+	public double bid(String bidderName, long itemId, double amount) {
+		return dao.bid(bidderName, itemId, amount, bidIncrement);
 	}
 	
 	public double getBidIncrement() {

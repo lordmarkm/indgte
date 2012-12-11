@@ -19,6 +19,7 @@ public class TableConstants {
 	public final static String USER_PROVIDERID = "providerId";
 	public final static String USER_PROVIDERID_SPRINGSOCSEC = "springSocialSecurity";
 	public static final String USER_PROVIDERID_FACEBOOK = "facebook";
+	public static final String USER_PROVIDERID_TWITTER = "twitter";
 	public static final String USER_BUSINESSES = "businesses";
 	public static final String USER_IMAGEURL = "imageUrl";
 	public static final String USER_BUSINESSSUBS = "businessSubscriptions";

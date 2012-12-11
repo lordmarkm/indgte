@@ -127,6 +127,7 @@ public class UserReview implements Review {
 	}
 
 	@JsonIgnore
+	@Override
 	public UserExtension getReviewer() {
 		return reviewer;
 	}

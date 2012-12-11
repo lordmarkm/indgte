@@ -466,7 +466,7 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	}
 	
 	@Override
-	public void toptenVote(String name, long candidateId) {
+	public TopTenCandidate toptenVote(String name, long candidateId) {
 		log.debug("Peristing vote from {} for candidate with id {}", name, candidateId);
 		
 		UserExtension user = users.getExtended(name);
@@ -494,6 +494,8 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		candidate.getVoters().add(user);
 		candidate.setVotes(candidate.getVoters().size());
 		user.getVotes().add(candidate);
+		
+		return candidate;
 	}
 
 	@Override

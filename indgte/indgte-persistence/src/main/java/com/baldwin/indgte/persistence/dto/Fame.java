@@ -61,6 +61,22 @@ public class Fame {
 	private int entityfame = 0;
 	private int friendshipfame = 0;
 	
+	public static String getTitle(int total) {
+		for(Title title : Title.values()) {
+			if(total < title.getMinExperience()) {
+				int ordinal = title.ordinal();
+				
+				if(ordinal > 0) {
+					return Title.values()[ordinal - 1].getTitle();
+				} else {
+					break;
+				}
+			}
+		}
+		
+		return "";
+	}
+	
 	public int getTotal() {
 		return total;
 	}

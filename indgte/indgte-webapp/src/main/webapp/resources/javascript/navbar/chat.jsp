@@ -37,6 +37,9 @@ window.chat = {
 	urlClearNotif: '<spring:url value="/i/clearnotif/" />',
 	urlGetOldNotifs: '<spring:url value="/i/oldnotifs/" />',
 	urlDeleteNotifs: '<spring:url value="/i/deletenotifs/json" />',
+	urlUserProfile: '<spring:url value="/p/user/" />',
+	urlBusinessProfile: '<spring:url value="/" />',
+	urlTopTens: '<spring:url value="/i/toptens/" />',
 	//redirects for notifs
 	urlPost: '<spring:url value="/i/posts/" />'
 }

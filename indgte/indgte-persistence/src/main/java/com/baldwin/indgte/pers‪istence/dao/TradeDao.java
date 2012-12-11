@@ -20,7 +20,7 @@ public interface TradeDao {
 	 * 			-1    : auction over <br>
 	 * 		    number: minimum bid <br>
 	 */
-	double bid(User user, long itemId, double amount, double minIncrementPercent);
+	double bid(String bidderName, long itemId, double amount, double minIncrementPercent);
 	Tag getTag(String tagString, boolean createIfAbsent);
 	Collection<BuyAndSellItem> getItemsWithTag(String tag, int start, int howmany);
 	Collection<BuyAndSellItem> getWatchedTagItems(String name, String tagString, int start, int howmany);

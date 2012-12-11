@@ -19,15 +19,15 @@ public class UserService {
 		return dao.getByUsername(userId, providerId);
 	}
 
-	@Deprecated
-	public User getMain(String userId) {
-		return dao.getSpring(userId);
-	}
-
-	@Deprecated
-	public User getFacebook(String userId) {
-		return dao.getFacebook(userId);
-	}
+//	@Deprecated
+//	public User getMain(String userId) {
+//		return dao.getSpring(userId);
+//	}
+//
+//	@Deprecated
+//	public User getFacebook(String userId) {
+//		return dao.getFacebook(userId);
+//	}
 
 	public UserExtension getExtended(String username, Initializable... initializables) {
 		return dao.getExtended(username, initializables);

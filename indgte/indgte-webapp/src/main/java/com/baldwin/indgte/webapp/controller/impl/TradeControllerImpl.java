@@ -19,15 +19,18 @@ import org.springframework.web.servlet.ModelAndView;
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.model.AuctionItem;
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
+import com.baldwin.indgte.persistence.model.NewBidNotification;
 import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
+import com.baldwin.indgte.persistence.service.NotificationsService;
 import com.baldwin.indgte.persistence.service.TradeService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.MavBuilder;
 import com.baldwin.indgte.webapp.controller.TradeController;
 import com.baldwin.indgte.webapp.dto.BuyAndSellForm;
+import com.baldwin.indgte.webapp.misc.Comet;
 
 @Component
 @SessionAttributes(value={"user"})
@@ -38,7 +41,14 @@ public class TradeControllerImpl implements TradeController {
 	@Autowired
 	private UserService users;
 	
-	@Autowired TradeService trade;
+	@Autowired 
+	private TradeService trade;
+	
+	@Autowired
+	private Comet comet;
+	
+	@Autowired
+	private NotificationsService notifs;
 	
 	@Override
 	public ModelAndView landing(Principal principal) {
@@ -101,13 +111,17 @@ public class TradeControllerImpl implements TradeController {
 	}
 	
 	@Override
-	public @ResponseBody JSON bid(@ModelAttribute User user, @PathVariable long itemId, @PathVariable double amount) {
+	public @ResponseBody JSON bid(Principal principal, @PathVariable long itemId, @PathVariable double amount) {
 		try {
-			double minimum = trade.bid(user, itemId, amount);
+			double minimum = trade.bid(principal.getName(), itemId, amount);
 			
 			if(minimum == -1) { //auction has finished
 				return JSON.status404().message("auction is finished");
 			} else if(minimum == 0) { //last bid is winning
+				Collection<NewBidNotification> newnotifs = notifs.newBid(itemId);
+				for(NewBidNotification notif : newnotifs) {
+					comet.fireNotif(notif);
+				}
 				return JSON.ok();
 			} else {
 				return JSON.teapot().put("minimum", minimum);

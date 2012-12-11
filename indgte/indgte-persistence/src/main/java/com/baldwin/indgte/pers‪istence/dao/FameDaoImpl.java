@@ -79,10 +79,14 @@ public class FameDaoImpl implements FameDao {
 	
 	@Override
 	public Fame computeFame(String username) {
+		UserExtension user = users.getExtended(username);
+		return computeFame(user);
+	}
+	
+	@Override
+	public Fame computeFame(UserExtension user) {
 		long startTime = System.currentTimeMillis();
 		
-		UserExtension user = users.getExtended(username);
-
 		int postfame = getPostFame(user);
 		int reviewfame = getReviewFame(user);
 		int friendshipfame = getFriendshipFame(user);
@@ -96,8 +100,16 @@ public class FameDaoImpl implements FameDao {
 		fame.setEntityfame(entityfame);
 		fame.setTotal(total);
 		
+		updateTitle(user, total);
+		
 		log.debug("Fame computation completed in {} ms.", System.currentTimeMillis() - startTime);
 		return fame;
+	}
+	
+	private void updateTitle(UserExtension user, int total) {
+		String prefix = Fame.getTitle(total);
+		user.setPrefix(prefix);
+		log.debug("Set prefix {} to user {}", prefix, user.getUsername());
 	}
 	
 	//"Review" operations

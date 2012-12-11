@@ -10,7 +10,12 @@
 <div class="grid_8 review">
 	<div class="page-header">Review for ${review.revieweeSummary.title }</div>
 	<section class="reviewee-summary">
-		<img class="reviewee-img floatleft" src="${urlImgur }${review.revieweeSummary.thumbnailHash }s.jpg" />
+		<c:if test="${review.reviewType eq 'business' }">
+			<img class="reviewee-img floatleft" src="${urlImgur }${review.revieweeSummary.thumbnailHash }s.jpg" />
+		</c:if>
+		<c:if test="${review.reviewType eq 'user' }">
+			<img class="reviewee-img floatleft" src="${review.revieweeSummary.thumbnailHash }" />
+		</c:if>
 		<div class="reviewee-info">
 			<div><strong>${review.revieweeSummary.title }</strong></div>
 			<div>${review.revieweeSummary.description }</div>

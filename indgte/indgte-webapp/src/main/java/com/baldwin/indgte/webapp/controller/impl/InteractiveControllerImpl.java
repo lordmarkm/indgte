@@ -13,8 +13,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +35,17 @@ import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.CommentNotification;
+import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.LikeNotification;
 import com.baldwin.indgte.persistence.model.Notification.InteractableType;
-import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.Review;
+import com.baldwin.indgte.persistence.model.ReviewNotification;
+import com.baldwin.indgte.persistence.model.ReviewReactNotification;
 import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
+import com.baldwin.indgte.persistence.model.TopTenVoteNotification;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.InteractiveService;
@@ -165,30 +166,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 			String linkDescription = request.getParameter("attachmentDescription");
 			String linkUrl = request.getParameter("attachmentIdentifier");
 			String imgUrl = request.getParameter("attachmentImgurHash");
-			
+
 			attachment = new Summary(attachmentType, null, linkTitle, linkDescription, linkUrl, imgUrl);
-			
-//			String title = null;
-//			String description = null;
-//			try {
-//				Document scraped = Jsoup.connect(link).get();
-//				title = scraped.title();
-//				
-//				Element descElement = scraped.select("meta[name=description]").first();
-//				if(null != descElement) {
-//					log.debug("Found desc element: {}", descElement);
-//					description = descElement.attr("content");
-//				}
-//				
-//				Element firstpic = scraped.select("img").first();
-//				if(null != firstpic) {
-//					log.debug("Found first pic: {}", firstpic);
-//				}
-//			} catch (Exception e) {
-//				log.error("Could not scrape link " + link, e);
-//			}
-//			log.debug("Found title: [{}], description [{}]", title, description);
-//			attachment = new Summary(attachmentType, null, title, description, link, null);
 			break;
 		case none:
 			attachment = null;
@@ -303,8 +282,11 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 
 	@Override
-	public @ResponseBody JSON review(Principal principal, @PathVariable ReviewType type, 
-			@PathVariable long targetId,	@RequestParam int score, @RequestParam String justification) {
+	public @ResponseBody JSON review(Principal principal, 
+			@PathVariable ReviewType type, 
+			@PathVariable long targetId,	
+			@RequestParam int score, 
+			@RequestParam String justification) {
 		try {
 			Review review = null;
 			switch(type) {
@@ -314,6 +296,9 @@ public class InteractiveControllerImpl implements InteractiveController {
 			case user:
 				review = interact.userReview(principal.getName(), targetId, score, Jsoup.clean(justification, DgteTagWhitelist.simpleText()));
 			}
+			ReviewNotification notif = notifs.reviewNotif(review);
+			comet.fireNotif(notif);
+			
 			return JSON.ok().put("review", review);
 		} catch (Exception e) {
 			log.error("Exception posting review", e);
@@ -489,7 +474,13 @@ public class InteractiveControllerImpl implements InteractiveController {
 	public @ResponseBody JSON vote(Principal principal, @PathVariable long topTenId, @PathVariable long candidateId) {
 		log.debug("User {} voting for candidate with id {}", principal.getName(), candidateId);
 		try {
-			interact.topTenVote(principal.getName(), candidateId);
+			TopTenCandidate candidate = interact.topTenVote(principal.getName(), candidateId);
+			interact.initializeAttachment(candidate);
+			
+			Collection<TopTenVoteNotification> newnotifs = notifs.topTenVote(candidate);
+			for(TopTenVoteNotification notif : newnotifs) {
+				comet.fireNotif(notif);
+			}
 			return JSON.ok();
 		} catch (Exception e) {
 			log.error("Exception voting", e);
@@ -585,6 +576,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 	public @ResponseBody JSON reviewReact(Principal principal, @PathVariable ReviewType type, @PathVariable String mode, @PathVariable long reviewId) {
 		try {
 			Review review = interact.reviewReact(principal.getName(), type, mode, reviewId);
+			ReviewReactNotification notification = notifs.reviewReactNotif(principal.getName(), mode, review);
+			comet.fireNotif(notification);
 			return JSON.ok().put("review", review);
 		} catch (Exception e) {
 			log.error("Error that I forgot to log again", e);
@@ -615,12 +608,16 @@ public class InteractiveControllerImpl implements InteractiveController {
 
 	@Override
 	public @ResponseBody JSON commentNotify(Principal principal, 
-			@PathVariable InteractableType type, @PathVariable long targetId, 
-			@RequestParam String providerUserId, @RequestParam String providerUsername) {
+			@PathVariable InteractableType type, @PathVariable long targetId,
+			@RequestParam String name,
+			@RequestParam String providerUserId, 
+			@RequestParam String providerUsername) {
+		
+		String commenterUsername = principal == null ? name : principal.getName();
 		
 		try {
-			CommentNotification notif = notifs.commentNotif(principal.getName(), type, targetId, providerUserId, providerUsername);
-			comet.fireNotif(notif);
+			CommentNotification notif = notifs.commentNotif(commenterUsername, type, targetId, providerUserId, providerUsername);
+			if(null != notif) comet.fireNotif(notif);
 			return JSON.ok();
 		} catch (Exception e) {
 			log.error("Error adding comment notif", e);
@@ -631,11 +628,15 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public @ResponseBody JSON likeNotify(Principal principal, 
 			@PathVariable InteractableType type, @PathVariable long targetId, 
-			@RequestParam String providerUserId, @RequestParam String providerUsername) {
+			@RequestParam String name,
+			@RequestParam String providerUserId, 
+			@RequestParam String providerUsername) {
+		
+		String likerName = principal == null ? name : principal.getName();
 		
 		try {
-			LikeNotification notif = notifs.likeNotif(principal.getName(), type, targetId, providerUserId, providerUsername);
-			comet.fireNotif(notif);
+			LikeNotification notif = notifs.likeNotif(likerName, type, targetId, providerUserId, providerUsername);
+			if(null != notif) comet.fireNotif(notif);
 			return JSON.ok();
 		} catch (Exception e) {
 			log.error("Error adding comment notif", e);

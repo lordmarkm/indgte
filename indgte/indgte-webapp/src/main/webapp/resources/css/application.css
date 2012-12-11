@@ -25,6 +25,8 @@ body {
 .ml5 {margin-left: 5px;}
 .mr5 {margin-right: 5px;}
 .mt10 {margin-top: 10px;}
+
+.pd5{padding:5px;}
 /* descriptive-name classes */
 .hide {display: none;}
 .bold {font-weight: bold;}
@@ -97,6 +99,10 @@ a.fatlink {
 .sidebar-section {
 	font-size: 0.9em !important;
 }
+.sidebar-section:not(:first-child) {
+	margin-top: 5px;
+}
+
 .sidebar-section-header {
 	font-weight: bolder;
 	margin: 0 0 5px 0;
@@ -105,6 +111,12 @@ a.fatlink {
     border-top: 1px solid #CCCCCC;
     width: 80%;
     margin: 10px auto;
+}
+
+.sidebar-container {
+	padding: 5px;
+	background-color: #F0FFFF;
+	border: 1px dashed #B0C4DE;
 }
 
 .embedded-images-200 img {

@@ -133,8 +133,8 @@ public class InteractiveService {
 		return dao.createTopTenCandidate(name, topTenId, title);
 	}
 	
-	public void topTenVote(String name, long topTenId) {
-		dao.toptenVote(name, topTenId);
+	public TopTenCandidate topTenVote(String name, long topTenId) {
+		return dao.toptenVote(name, topTenId);
 	}
 
 	public void addToWishlist(String name, WishType type, long id) {
@@ -227,5 +227,9 @@ public class InteractiveService {
 
 	public Collection<Post> getPosts(int start, int howmany) {
 		return dao.getPosts(start, howmany);
+	}
+
+	public void initializeAttachment(TopTenCandidate candidate) {
+		dao.initializeAttachment(candidate);
 	}
 }

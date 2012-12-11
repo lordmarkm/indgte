@@ -1,6 +1,7 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
 import com.baldwin.indgte.persistence.dto.Fame;
+import com.baldwin.indgte.persistence.model.UserExtension;
 
 /**
  * <p>A Dao for assigning and computing User "Fame"
@@ -35,5 +36,7 @@ import com.baldwin.indgte.persistence.dto.Fame;
 public interface FameDao {
 	
 	Fame computeFame(String username);
+
+	Fame computeFame(UserExtension user);
 	
 }

@@ -159,7 +159,7 @@ $(function(){
 		
 		var $chatterinfo = $('<div class="chatter-info">').appendTo($li);
 		
-		$('<div class="chattername bluetext">').text(channel).appendTo($chatterinfo);
+		$('<div class="chattername bold">').text(channel).appendTo($chatterinfo);
 		$('<div class="chatter-notification">').text(' ').appendTo($chatterinfo);
 	}
 	
@@ -632,6 +632,15 @@ $(function(){
 		case 'like':
 			addLikeNotification(notification, $notif);
 			break;
+		case 'reviewreaction':
+			addReviewReactNotification(notification, $notif);
+			break;
+		case 'review':
+			addReviewNotification(notification, $notif);
+			break;
+		case 'toptenvote':
+			addTopTenVoteNotification(notification, $notif);
+			break;
 		default:
 			debug('Unsupported notif type: ' + notification.type);
 		}
@@ -687,7 +696,90 @@ $(function(){
 		var $clearnotif = $('<span class="clearnotif-container">').hide().appendTo($footer);
 		$('<a class="clearnotif">').attr('href', 'javascript:;').text('Clear').appendTo($clearnotif);	
 	}
+	
+	function addReviewReactNotification(notification, $notif) {
+		$('<img class="notifimg">').attr('src', notification.lastReactorImageUrl).appendTo($notif);
+		var names = presentNames(notification.reactors);
+		var $notiftxt = $('<div class="notiftxt">').html('<strong>' + names + '</strong> ' + notification.mode + (names.indexOf(' and ') == -1 ? 's' : '') + ' with your review of ').appendTo($notif);
+		var url = '#';
+		switch(notification.reviewType) {
+		case 'user':
+			url = chat.urlUserProfile + notification.revieweeIdentifier;
+			$('<a class="fatlink dgte-previewlink">')
+				.attr('previewtype', 'user')
+				.text(notification.revieweeTitle).attr('href', url).appendTo($notiftxt);
+			break;
+		case 'business':
+			url = chat.urlBusinessProfile + notification.revieweeIdentifier;
+			$('<a class="fatlink dgte-previewlink">')
+				.attr('previewtype', 'business')
+				.text(notification.revieweeTitle).attr('href', url).appendTo($notiftxt);
+			break;
+		default:
+			debug('unsupported interactable type: ' + notification.likeableType);
+		}
+		
+		var $footer = $('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notiftxt);
+		var $clearnotif = $('<span class="clearnotif-container">').hide().appendTo($footer);
+		$('<a class="clearnotif">').attr('href', 'javascript:;').text('Clear').appendTo($clearnotif);
+	}
+	
+	function addReviewNotification(notification, $notif) {
+		var reviewer = notification.reviewerSummary;
+		var reviewee = notification.revieweeSummary;
+		
+		$('<img class="notifimg">').attr('src', reviewer.thumbnailHash).appendTo($notif);
 
+		var $notiftxt = $('<div class="notiftxt">').appendTo($notif);
+
+		//reviewer
+		$('<a class="fatlink dgte-previewlink">')
+			.text(reviewer.title)
+			.attr('previewtype', 'user')
+			.attr('href', chat.urlUserProfile + reviewer.identifier).appendTo($notiftxt);
+		
+		//message
+		$notiftxt.append(' has reviewed ');
+		switch(notification.reviewType) {
+		case 'user':
+			$('<a class="fatlink dgte-previewlink">')
+				.text('you')
+				.attr('previewtype', 'user')
+				.attr('href', chat.urlUserProfile + reviewee.identifier)
+				.appendTo($notiftxt);
+			break;
+		case 'business':
+			$notiftxt.append('your business ');
+			$('<a class="fatlink dgte-previewlink">')
+				.text(reviewee.title)
+				.attr('previewtype', 'business')
+				.attr('href', chat.urlBusinessProfile + reviewee.identifier)
+				.appendTo($notiftxt);
+			break;
+		default:
+			debug('Unsupported review type: ' + notification.reviewType);
+		}
+		$notiftxt.append(' with a score of ' + notification.score);
+		
+		
+		var $footer = $('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notiftxt);
+		var $clearnotif = $('<span class="clearnotif-container">').hide().appendTo($footer);
+		$('<a class="clearnotif">').attr('href', 'javascript:;').text('Clear').appendTo($clearnotif);
+	}
+
+	function addTopTenVoteNotification(notification, $notif) {
+		$('<img class="notifimg">').attr('src', notification.imageUrl ? notification.imageUrl : dgte.toptens.genericTen).appendTo($notif);
+		
+		var $notiftxt = $('<div class="notiftxt">').html('There are new vote(s) on the Top Ten List ').appendTo($notif);
+		$('<a>').text(notification.title)
+			.attr('href', chat.urlTopTens + notification.topTenId)
+			.appendTo($notiftxt);
+		
+		var $footer = $('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notiftxt);
+		var $clearnotif = $('<span class="clearnotif-container">').hide().appendTo($footer);
+		$('<a class="clearnotif">').attr('href', 'javascript:;').text('Clear').appendTo($clearnotif);
+	}
+	
 	$notifs.on({
 		click: function(){
 			clearNotif($(this).closest('.notification'));
@@ -834,6 +926,15 @@ $(function(){
 			break;
 		case 'like':
 			addLikeNotification(notification, $notif);
+			break;
+		case 'reviewreaction':
+			addReviewReactNotification(notification, $notif);
+			break;
+		case 'review':
+			addReviewNotification(notification, $notif);
+			break;
+		case 'toptenvote':
+			addTopTenVoteNotification(notification, $notif);
 			break;
 		default:
 		}

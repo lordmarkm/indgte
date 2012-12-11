@@ -113,6 +113,7 @@ public class LiveControllerImpl implements LiveController {
 			return JSON.ok().put("preview", preview);
 		} catch (Exception e) {
 			log.warn("Could not create preview for type {}, with href {} due to exception {}", type, href, e);
+			log.debug("Ex", e);
 			return JSON.status500(e);
 		}
 	}

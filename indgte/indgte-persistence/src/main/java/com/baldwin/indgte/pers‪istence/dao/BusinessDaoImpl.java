@@ -107,10 +107,12 @@ public class BusinessDaoImpl implements BusinessDao {
 		
 		owner.getBusinesses().add(profile);
 		profile.setOwner(owner);
-
+		
 		session.save(profile);
 
-
+		//subscribe owner to his own business
+		owner.getBusinessSubscriptions().add(profile.getId());
+		
 		BusinessGroup group = groups.get(profile.getCategory().getId());
 		TopTenList list;
 		if(null != group && (list = group.getTopTenList()) != null) { //if list is null it will be added later on

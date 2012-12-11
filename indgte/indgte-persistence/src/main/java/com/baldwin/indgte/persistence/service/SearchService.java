@@ -27,7 +27,6 @@ import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.Tag;
 import com.baldwin.indgte.persistence.model.TopTenList;
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.pers‪istence.dao.SearchDao;
 
 @Service

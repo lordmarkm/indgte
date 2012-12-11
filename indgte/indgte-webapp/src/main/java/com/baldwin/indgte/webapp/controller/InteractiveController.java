@@ -171,10 +171,10 @@ public interface InteractiveController {
 	 */
 	
 	@RequestMapping(value = "/commentnotify/{type}/{targetId}/json", method = RequestMethod.POST)
-	public JSON commentNotify(Principal principal, InteractableType type, long targetId, String providerUserId, String providerUsername);
+	public JSON commentNotify(Principal principal, InteractableType type, long targetId, String name, String providerUserId, String providerUsername);
 	
 	@RequestMapping(value = "/likenotify/{type}/{targetId}/json", method = RequestMethod.POST)
-	public JSON likeNotify(Principal principal, InteractableType type, long targetId, String providerUserId, String providerUsername);
+	public JSON likeNotify(Principal principal, InteractableType type, long targetId, String name, String providerUserId, String providerUsername);
 	
 	@RequestMapping(value = "/clearnotif/{id}/json", method = RequestMethod.POST)
 	public JSON clearNotification(Principal principal, long id);

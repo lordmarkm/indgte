@@ -51,6 +51,9 @@ public class UserExtension implements Summarizable {
 	private User user;
 	
 	@Column
+	private String prefix = "";
+	
+	@Column
 	private String rank = "Dumagueteño";
 	
 	@Enumerated
@@ -340,6 +343,9 @@ public class UserExtension implements Summarizable {
 	
 	@JsonIgnore
 	public Set<Long> getUserSubscriptions() {
+		if(null == userSubscriptions) {
+			this.userSubscriptions = new HashSet<>();
+		}
 		return userSubscriptions;
 	}
 
@@ -385,5 +391,13 @@ public class UserExtension implements Summarizable {
 
 	public void setBackground(Background background) {
 		this.background = background;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 }

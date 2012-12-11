@@ -39,10 +39,10 @@
    	<bean id="connectionFactoryLocator" class="org.springframework.social.connect.support.ConnectionFactoryRegistry">
 	    <property name="connectionFactories">
 	        <list>
-	            <!-- bean class="org.springframework.social.twitter.connect.TwitterConnectionFactory">
+	            <bean class="org.springframework.social.twitter.connect.TwitterConnectionFactory">
 	                <constructor-arg value="${twitter.consumerKey}" />
 	                <constructor-arg value="${twitter.consumerSecret}" />				
-	            </bean-->
+	            </bean>
 	            <bean class="org.springframework.social.facebook.connect.FacebookConnectionFactory">
 	                <constructor-arg value="${facebook.clientId}" />
 	                <constructor-arg value="${facebook.clientSecret}" />				

@@ -26,7 +26,11 @@ public abstract class Notification {
 	public enum NotificationType {
 		message, 
 		comment,
-		like
+		like, 
+		reviewreaction, 
+		review,
+		toptenvote, 
+		newbid
 	}
 	
 	public enum InteractableType {

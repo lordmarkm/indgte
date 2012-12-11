@@ -274,6 +274,6 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 			removeChatter(username);
 		}
 
-		response.sendRedirect("/s/");
+		response.sendRedirect("//");
 	}
 }

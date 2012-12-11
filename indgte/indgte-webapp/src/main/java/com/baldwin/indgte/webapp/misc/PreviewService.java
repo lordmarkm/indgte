@@ -1,12 +1,19 @@
 package com.baldwin.indgte.webapp.misc;
 
 import java.net.URL;
+import java.net.URLConnection;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.social.oauth1.OAuth1Template;
+import org.springframework.social.oauth1.OAuthToken;
+import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Service;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
@@ -28,6 +35,9 @@ public class PreviewService {
 	@Autowired
 	private BusinessDao businesses;
 	
+	@Autowired
+	private Twitter twitter;
+	
 	public Preview preview(PreviewType type, String href) {
 		switch(type) {
 		case user:
@@ -44,10 +54,12 @@ public class PreviewService {
 		UserExtension user = users.getExtended(username);
 		
 		Preview preview = new Preview();
-		preview.setDescription(user.getRank());
 		preview.setImage(user.getImageUrl());
 		preview.setTitle(user.getUsername());
 		preview.setType(PreviewType.user);
+
+		String prefix = user.getPrefix() != null && user.getPrefix().length() > 0 ? user.getPrefix() + " " : "";
+		preview.setDescription(prefix + user.getRank());
 		
 		String provider = user.getUser().getProviderId();
 		switch(provider) {
@@ -55,7 +67,7 @@ public class PreviewService {
 			preview.setCover(getCoverFromFacebook(user.getUser().getProviderUserId()));
 			break;
 		case "twitter":
-			preview.setCover(getCoverFromTwitter(user.getUser().getProviderId()));
+			preview.setCover(getCoverFromTwitter(user.getUser().getProviderUserId()));
 			break;
 		default:
 			log.error("Unknown provider: {}", provider);
@@ -84,7 +96,10 @@ public class PreviewService {
 	}
 	
 	private Cover getCoverFromTwitter(String id) {
-		return new Cover();	
+		//TODO Here we wait for spring soc sec to support twitter banners
+		Cover cover = new Cover();
+		cover.setSource("twitter");
+		return cover;
 	}
 	
 	private Preview makeBusinessPreview(String href) {
@@ -94,7 +109,7 @@ public class PreviewService {
 		
 		Preview preview = new Preview();
 		preview.setDescription(business.getDescription());
-		preview.setImage(business.getImgur().getSmallSquare());
+		preview.setImage(business.getImgur() == null ? "" : business.getImgur().getSmallSquare());
 		preview.setTitle(business.getFullName());
 		preview.setType(PreviewType.business);
 		

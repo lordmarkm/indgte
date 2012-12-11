@@ -2,8 +2,12 @@ package com.baldwin.indgte.pers‪istence.dao;
 
 import static com.baldwin.indgte.pers‪istence.dao.TableConstants.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -15,15 +19,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baldwin.indgte.persistence.constants.ReviewType;
+import com.baldwin.indgte.persistence.dto.Attachable;
+import com.baldwin.indgte.persistence.model.AuctionItem;
+import com.baldwin.indgte.persistence.model.Bid;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.ChatMessage;
 import com.baldwin.indgte.persistence.model.CommentNotification;
 import com.baldwin.indgte.persistence.model.LikeNotification;
+import com.baldwin.indgte.persistence.model.NewBidNotification;
 import com.baldwin.indgte.persistence.model.Notification.InteractableType;
 import com.baldwin.indgte.persistence.model.MessageNotification;
 import com.baldwin.indgte.persistence.model.Notification;
 import com.baldwin.indgte.persistence.model.Post;
+import com.baldwin.indgte.persistence.model.Review;
+import com.baldwin.indgte.persistence.model.ReviewNotification;
+import com.baldwin.indgte.persistence.model.ReviewReactNotification;
+import com.baldwin.indgte.persistence.model.ReviewReactNotification.ReactionMode;
+import com.baldwin.indgte.persistence.model.TopTenCandidate;
+import com.baldwin.indgte.persistence.model.TopTenVoteNotification;
 import com.baldwin.indgte.persistence.model.UserExtension;
+import com.baldwin.indgte.persistence.model.UserReview;
 
 @Repository
 @Transactional
@@ -45,6 +62,12 @@ public class NotificationsDaoImpl implements NotificationsDao {
 	
 	@Autowired
 	private BusinessDao businesses;
+	
+	@Autowired
+	private FameDao fame;
+	
+	@Autowired
+	private TradeDao trade;
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -137,8 +160,8 @@ public class NotificationsDaoImpl implements NotificationsDao {
 
 	@Override
 	public CommentNotification commentNotif(String name, InteractableType commentableType, long targetId, 	String providerUserId, String providerUsername) {
-		UserExtension commenter = users.getExtended(name);
-		String commenterName = commenter != null ? commenter.getUsername() : providerUsername;
+		UserExtension commenter = users.getExtended(name, false);
+		String commenterName = commenter != null ? commenter.getUsername() : name;
 		
 		switch(commentableType) {
 		case post:
@@ -150,12 +173,12 @@ public class NotificationsDaoImpl implements NotificationsDao {
 	
 	@Override
 	public LikeNotification likeNotif(String name, InteractableType type, long targetId, String providerUserId, String providerUsername) {
-		UserExtension commenter = users.getExtended(name);
-		String commenterName = commenter != null ? commenter.getUsername() : providerUsername;
+		UserExtension liker = users.getExtended(name, false);
+		String likerName = liker != null ? liker.getUsername() : name;
 		
 		switch(type) {
 		case post:
-			return processPostLike(targetId, commenterName, providerUserId);
+			return processPostLike(targetId, likerName, providerUserId);
 		default:
 			throw new IllegalStateException("Unsupported like type: " + type);
 		}
@@ -220,6 +243,8 @@ public class NotificationsDaoImpl implements NotificationsDao {
 		
 		Session session = sessions.getCurrentSession();
 		
+		Post post = interact.getPost(postId);
+		
 		CommentNotification notification = null;
 		notification = (CommentNotification) session.createCriteria(CommentNotification.class)
 				.add(Restrictions.eq(NOTIF_COMMENT_TYPE, InteractableType.post))
@@ -228,7 +253,6 @@ public class NotificationsDaoImpl implements NotificationsDao {
 				.uniqueResult();
 				
 		if(null == notification) {
-			Post post = interact.getPost(postId);
 			UserExtension notified = null;
 			
 			switch(post.getType()) {
@@ -266,6 +290,10 @@ public class NotificationsDaoImpl implements NotificationsDao {
 		notification.setTime(new Date());
 		session.saveOrUpdate(notification);
 		
+		//fame
+		post.setComments(post.getComments() + 1);
+		fame.computeFame(notification.getNotified());
+		
 		return notification;
 	}
 	
@@ -298,4 +326,153 @@ public class NotificationsDaoImpl implements NotificationsDao {
 			.executeUpdate();
 		log.debug("{} old notifications deleted by {}", deleted, username);
 	}
+
+	@Override
+	public ReviewReactNotification reviewReactNotif(
+			String reactorName, 
+			String modeString, 
+			Review review 
+	) {
+		
+		ReactionMode mode = ReactionMode.valueOf(modeString);
+		
+		ReviewReactNotification notif = (ReviewReactNotification) sessions.getCurrentSession().createCriteria(ReviewReactNotification.class)
+				.add(Restrictions.eq("revieweeIdentifier", review.getRevieweeSummary().getIdentifier()))
+				.add(Restrictions.eq("notified", review.getReviewer()))
+				.add(Restrictions.eq("mode", mode))
+				.add(Restrictions.eq(NOTIF_SEEN, false))
+				.uniqueResult();
+		
+		if(null == notif) {
+			notif = new ReviewReactNotification();
+			notif.setMode(mode);
+			notif.setNotified(review.getReviewer());
+			notif.setReactors(reactorName);
+			notif.setRevieweeTitle(review.getRevieweeSummary().getTitle());
+			notif.setRevieweeIdentifier(review.getRevieweeSummary().getIdentifier());
+			notif.setReviewType(review.getReviewType());
+		} else {
+			notif.setReactors(constructMultinameString(notif.getReactors(), reactorName));
+		}
+		
+		UserExtension reactor = users.getExtended(reactorName);
+		notif.setLastReactorImageUrl(reactor.getImageUrl());
+		notif.setTime(new Date());
+		sessions.getCurrentSession().saveOrUpdate(notif);
+		
+		return notif;
+	}
+
+	@Override
+	public ReviewNotification reviewNotif(Review review) {
+		ReviewType type = review.getReviewType();
+		
+		ReviewNotification notif = new ReviewNotification();
+		
+		switch(type) {
+		case business:
+			BusinessReview businessReview = (BusinessReview)review;
+			BusinessProfile business = businessReview.getReviewed();
+			notif.setNotified(business.getOwner());
+			notif.setBusinessReview(businessReview);
+			break;
+		case user:
+			UserReview userReview = (UserReview)review;
+			UserExtension reviewee = userReview.getReviewee();
+			notif.setNotified(reviewee);
+			notif.setUserReview(userReview);
+			break;
+		default:
+			throw new IllegalStateException("Unsupported review type: " + type);
+		}
+		
+		notif.setReviewType(review.getReviewType());
+		notif.setTime(new Date());
+		sessions.getCurrentSession().save(notif); //always new
+
+		return notif;
+	}
+
+	@Override
+	public Collection<TopTenVoteNotification> topTenVote(TopTenCandidate candidate) {
+		
+		Session session = sessions.getCurrentSession();
+		
+		@SuppressWarnings("unchecked")
+		List<TopTenVoteNotification> notifs = (List<TopTenVoteNotification>) sessions.getCurrentSession().createCriteria(TopTenVoteNotification.class)
+				.add(Restrictions.eq("topten", candidate.getList()))
+				.list();
+		
+		List<UserExtension> needNewNotifs = new ArrayList<>();
+		
+		for(TopTenCandidate competitor : candidate.getList().getCandidates()) {
+			needNewNotifs.addAll(competitor.getVoters());
+		}
+		
+		for(TopTenVoteNotification oldnotif : notifs) {
+			needNewNotifs.remove(oldnotif.getNotified());
+		}
+		
+		for(UserExtension needsNewNotif : needNewNotifs) {
+			TopTenVoteNotification newNotif = new TopTenVoteNotification();
+			newNotif.setNotified(needsNewNotif);
+			newNotif.setTopten(candidate.getList());
+			notifs.add(newNotif);
+		}
+		
+		String imageUrl = null;
+		if(null != candidate.getAttachmentId()) {
+			Attachable attachment = candidate.getAttachment();
+			if(null != attachment.getImgur()) {
+				imageUrl = attachment.getImgur().getSmallSquare();
+			}
+		}
+		
+		for(TopTenVoteNotification notif : notifs) {
+			notif.setImageUrl(imageUrl);
+			notif.setSeen(false);
+			notif.setTime(new Date());
+			session.saveOrUpdate(notif);
+		}
+		
+		return notifs;
+	}
+
+	@Override
+	public Collection<NewBidNotification> newBid(long itemId) {
+		Session session = sessions.getCurrentSession();
+		
+		AuctionItem item = (AuctionItem) trade.get(itemId);
+
+		@SuppressWarnings("unchecked")
+		List<NewBidNotification> notifs = session.createCriteria(NewBidNotification.class)
+				.add(Restrictions.eq("item", item))
+				.list();
+		
+		Set<UserExtension> toNotify = new HashSet<>();
+		toNotify.add(item.getOwner());
+		for(Bid bid : item.getBids()) {
+			toNotify.add(bid.getBidder());
+		}
+		
+		for(NewBidNotification oldNotif : notifs) {
+			toNotify.remove(oldNotif.getNotified());
+		}
+		
+		for(UserExtension notifyMe : toNotify) {
+			NewBidNotification notif = new NewBidNotification();
+			notif.setItem(item);
+			notif.setNotified(notifyMe);
+			notifs.add(notif);
+		}
+		
+		for(NewBidNotification notif : notifs) {
+			notif.setTime(new Date());
+			notif.setSeen(false);
+			session.saveOrUpdate(notif);
+		}
+		
+		return notifs;
+	}
+	
 }
