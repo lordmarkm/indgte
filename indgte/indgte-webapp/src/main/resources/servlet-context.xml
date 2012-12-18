@@ -36,6 +36,21 @@
 	    <property name="basenames">
 	        <value>/WEB-INF/messages</value>
 	    </property>
+	    <!-- Uncomment this only if you're testing messages 
 	    <property name="cacheSeconds" value="0" />
+		 -->
+	</bean>
+	<!-- 
+	<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+	    <property name="paramName" value="lang" />
+	</bean>
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	    <property name="interceptors">
+	        <ref bean="localeChangeInterceptor" />
+	    </property>
+	</bean>
+	 -->
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+	    <property name="defaultLocale" value="en"/>
 	</bean> 
 </beans>

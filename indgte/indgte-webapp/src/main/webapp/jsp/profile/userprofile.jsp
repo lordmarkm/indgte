@@ -1,10 +1,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
 <title>${target.user.username } InDumaguete</title>
-<script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
+<script src="${jsValidator}"></script>
 <link rel="stylesheet" href="<spring:url value='/resources/css/review.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/userprofile/userprofile.css' />" />
 
@@ -59,9 +60,6 @@
 </section>
 </c:if>
 
-<section class="feed">
-</section>
-
 <c:if test="${not empty target.businesses }">
 <section class="businesses">
 	<div class="section-header">Businesses</div>
@@ -111,11 +109,70 @@
 
 </div><!-- grid_8 -->
 
+<sec:authorize access="hasRole('ROLE_ADMIN')">
+<div class="grid_3 sidebar-section">
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Admin menu</div>
+		<button class="btn-grant-coconuts">Grant coconuts</button>
+		<p>${target.username } currently has ${target.billingInfo.coconuts } coconuts.
+	</div>
+</div>
+<div class="dlg-grant-coconuts hide">
+	<form id="frm-grant-coconuts" method="post" action="<spring:url value='/p/user/grantcoconuts/${target.id }' />">
+		<label for="ipt-grant-coconuts">How many?</label>
+		<input type="number" name="howmany" id="ipt-grant-coconuts" />
+	</form>
+</div>
+<style>
+.btn-grant-coconuts {
+	width: 100%;
+}
+</style>
 
-<div class="grid_3">
-	<section class="interact">
+<script>
+$(function(){
+	var 
+		$btnGrant = $('.btn-grant-coconuts'),
+		$dlgGrant = $('.dlg-grant-coconuts'),
+		$frmGrant = $('#frm-grant-coconuts');
+	
+	$frmGrant.validate({
+		rules : {
+			howmany: {
+				required: true,
+				number: true,
+				range: [1, 1000]
+			}
+		}
+	});
+	
+	$btnGrant.click(function(){
+		$dlgGrant
+			.attr('title', 'Grant coconuts to ' + target.username)
+			.dialog({
+				buttons: {
+					'Grant' : function(){
+						if(!$frmGrant.valid()) {
+							return false;
+						}
+						$frmGrant.submit();
+					},
+					'Cancel': function(){
+						$(this).dialog('close');
+					}
+				}
+			});
+		
+	});
+});
+</script>
+</sec:authorize>
+
+<div class="grid_3 sidebar-section">
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Interact</div>
 		<button class="btn-subscribe-toggle">Subscribe to ${target.user.username }</button>
-	</section>
+	</div>
 </div>
 
 <script>

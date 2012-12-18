@@ -58,10 +58,21 @@ public class BusinessProfile implements Searchable, Attachable {
 	@JoinColumn(name="coverpicId")
 	private Imgur coverpic;
 	
+	/**
+	 * "Short description", really
+	 */
 	@Column
 	@Lob @Basic(fetch=FetchType.EAGER)
 	@Field
 	private String description;
+	
+	/**
+	 * The info you see on the business page
+	 */
+	@Column
+	@Lob @Basic(fetch=FetchType.LAZY)
+	@Field
+	private String info;
 	
 	@Column
 	private String address;
@@ -342,5 +353,13 @@ public class BusinessProfile implements Searchable, Attachable {
 
 	public void setSends(int sends) {
 		this.sends = sends;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
 	}
 }

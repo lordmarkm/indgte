@@ -28,6 +28,7 @@ import com.baldwin.indgte.persistence.model.TopTenCandidate;
 import com.baldwin.indgte.persistence.model.TopTenList;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.model.UserReview;
+import com.baldwin.indgte.pers‪istence.dao.BusinessDao;
 import com.baldwin.indgte.pers‪istence.dao.InteractiveDao;
 import com.baldwin.indgte.pers‪istence.dao.TableConstants;
 import com.baldwin.indgte.pers‪istence.dao.UserDao;
@@ -41,6 +42,9 @@ public class InteractiveService {
 
 	@Autowired
 	private UserDao users;
+	
+	@Autowired
+	private BusinessDao businesses;
 	
 	@Value("${toptens.candidate.preview}")
 	private int toptensCandidatePreview;
@@ -231,5 +235,42 @@ public class InteractiveService {
 
 	public void initializeAttachment(TopTenCandidate candidate) {
 		dao.initializeAttachment(candidate);
+	}
+
+	public Collection<Post> getPosts(String username, int start, int howmany, String sort) {
+		Collection<Post> results;
+		switch(sort) {
+		case "subs":
+			results = dao.getSubposts(username, start, howmany);
+			break;
+		case "newest":
+			results = dao.getPosts(start, howmany);
+			break;
+		case "popularity":
+			results = dao.getPostsByPopularity(start, howmany);
+			break;
+		default:
+			throw new IllegalArgumentException("Illegal sort order: " + sort);
+		}
+		
+		return results;
+	}
+
+	public boolean isPostOwner(Post post, UserExtension user) {
+		switch(post.getType()) {
+		case user:
+			return post.getPosterId() == user.getId();
+		case business:
+			BusinessProfile business = businesses.get(post.getPosterId());
+			return business.getOwner().equals(user);
+		default:
+			throw new IllegalStateException("Unsupported post type: " + post.getType());
+		}
+	}
+
+	public Post getRandomFeaturedPost() {
+		Post featured = dao.getRandomFeaturedPost();
+		log.debug("Returning featured post: {}", featured);
+		return featured;
 	}
 }

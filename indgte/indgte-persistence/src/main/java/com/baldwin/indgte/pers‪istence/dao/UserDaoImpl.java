@@ -224,4 +224,15 @@ public class UserDaoImpl implements UserDao {
 			.uniqueResult();
 	}
 
+	@Override
+	public void changeLocale(String name, String localeStr) {
+		log.debug("Setting {}'s locale to {}", name, localeStr);
+		
+		UserExtension user = getExtended(name);
+		user.getAppearanceSettings().setLocale(localeStr);
+		
+	}
+
+
+
 }

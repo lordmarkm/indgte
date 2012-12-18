@@ -4,7 +4,7 @@
 
 <spring:url value="/r/save/1/" var="urlSubmit" />
 
-<script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 
 <style>
 .form-container, .bigimg-container {

@@ -46,6 +46,9 @@
 	<definition name="businesses" extends="default">
 		<put-attribute name="body" value="/jsp/profile/businesses.jsp" />
 	</definition>
+	<definition name="manage" extends="default">
+	    <put-attribute name="body" value="/jsp/profile/manage.jsp" />
+	</definition>
 	
 	<!-- Business Profile -->
 	<definition name="businessprofile" extends="default">

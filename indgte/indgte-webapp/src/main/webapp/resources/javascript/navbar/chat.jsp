@@ -37,10 +37,13 @@ window.chat = {
 	urlClearNotif: '<spring:url value="/i/clearnotif/" />',
 	urlGetOldNotifs: '<spring:url value="/i/oldnotifs/" />',
 	urlDeleteNotifs: '<spring:url value="/i/deletenotifs/json" />',
+	//redirects for notifs
+	urlUserReview: '<spring:url value="/i/review/user/" />',
+	urlBusinessReview: '<spring:url value="/i/review/business/" />',
 	urlUserProfile: '<spring:url value="/p/user/" />',
 	urlBusinessProfile: '<spring:url value="/" />',
 	urlTopTens: '<spring:url value="/i/toptens/" />',
-	//redirects for notifs
+	urlAuction: '<spring:url value="/t/" />',
 	urlPost: '<spring:url value="/i/posts/" />'
 }
 </script>

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,19 @@ public class BusinessControllerImpl implements BusinessController {
 	
 	@Autowired
 	private BusinessService businesses;
+	
+	@Override
+	public @ResponseBody JSON getInfo(@PathVariable String domain) {
+		return JSON.ok().put("info", businesses.getInfo(domain));
+	}
+	
+	@Override
+	public String editInfo(Principal principal, @PathVariable String domain, @RequestParam String info) {
+		log.debug("Edit info request received for {}", domain);
+		info = Jsoup.clean(info, Whitelist.relaxed());
+		businesses.editInfo(principal.getName(), domain, info);
+		return "redirect:/" + domain;
+	}
 	
 	@Override
 	public @ResponseBody JSON getCategoriesJSON(Principal principal, @PathVariable String domain) {
@@ -316,4 +331,5 @@ public class BusinessControllerImpl implements BusinessController {
 			return JSON.status500(e);
 		}
 	}
+
 }

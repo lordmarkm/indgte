@@ -6,8 +6,7 @@
 
 <title>Buy & Sell In Dumaguete</title>
 <link rel="stylesheet" href="<spring:url value='/resources/css/buyandsell.css' />" />
-<script type="text/javascript" src="${jsApplication }"></script>
-<script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
+<script src="${jsValidator}"></script>
 
 <div class="grid_8 maingrid">
 
@@ -98,61 +97,62 @@
 </div>
 
 <div class="newitem sidebar-section grid_4">
-	<div class="sidebar-section-header">Buy & Sell Actions</div>
-	<sec:authorize access="hasRole('ROLE_USER')">
-	<button class="btn-newitem">Sell your possessions</button>
-	<div class="newitem-form-container hide" title="Sell your possessions">
-		<div class="newitem-img-container noimage"><div class="newitem-img-message">Drop picture here (or click)</div></div>
-		<form id="newitem-form" method="post">
-			<ul class="newitem-formfields">
-				<li>Name</li>
-				<li><input type="text" class="newitem-name" name="name" /></li>
-				<li>Description</li> 
-				<li><textarea class="newitem-description" rows="5" name="description"></textarea></li>
-				<li>Tags (maximum of 5)</li>
-				<li>
-					<span class="active-tags"></span><input type="text" name="tags" placeholder="space-delimited e.g. 'shoes mens-sports-shoes kalenji'"/>
-				</li>
-				<li>Sell mode</li>
-				<li> 
-					<select class="sellmode" name="sellMode">
-						<option value="fixed">Normal</option>
-						<option value="auction">Auction</option>
-						<option value="trade">Trade</option>
-					</select>
-				</li>
-				<li class="li-sellmode fixedprice">Price<br/><input type="number" value="0" class="newitem-fixedprice" name="fixedprice"/></li>
-				<li class="li-sellmode fixedprice">
-					<input type="checkbox" name="negotiable" id="fixedprice-negotiable" class="newitem-fixedprice-negotiable" />
-					<label for="fixedprice-negotiable">Negotiable?</label>
-				</li>
-				
-				<li class="li-sellmode auction">Starting Price<br/><input type="number" value="0" class="newitem-bidding-startingprice" name="startingprice"/></li>
-				<li class="li-sellmode auction">Buyout<br/><input type="number" value="0" class="newitem-bidding-buyout" name="buyout"/></li>
-				<li class="li-sellmode auction">End date<br/><input type="text" class="newitem-bidding-enddate" readonly="readonly" name="enddate"/></li>
-				
-				<li class="li-sellmode trade">Will trade for</li>
-				<li class="li-sellmode trade"><input type="text" class="newitem-trade-tradefor" name="tradefor" /></li>
-			</ul>
-			<input type="hidden" class="newitem-hash" name="hash" />
-			<input type="hidden" class="newitem-deletehash" name="deletehash" />
-			<input type="file" style="visibility: collapse; width: 0px;" class="newitem-img-file" />
-		</form>
-		<div class="newitem-form-errors"></div>
-	</div>
-	</sec:authorize>
-	
-	<div class="buyandsell-search">
-		<form id="buysellsearchform">
-			<input type="text" class="ipt-search" placeholder="<spring:message code='buyandsell.search' />"/>
-			<button class="btn-search">Search</button>
-		</form>
-		<div class="buyandsell-search-results-container">
-			<ul class="buyandsell-search-results"></ul>
-			<a href="javascript:;" class="showmore hide">Show more...</a>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Buy & Sell Actions</div>
+		<sec:authorize access="hasRole('ROLE_USER')">
+		<button class="btn-newitem">Sell your possessions</button>
+		<div class="newitem-form-container hide" title="Sell your possessions">
+			<div class="newitem-img-container noimage"><div class="newitem-img-message">Drop picture here (or click)</div></div>
+			<form id="newitem-form" method="post">
+				<ul class="newitem-formfields">
+					<li>Name</li>
+					<li><input type="text" class="newitem-name" name="name" /></li>
+					<li>Description</li> 
+					<li><textarea class="newitem-description" rows="5" name="description"></textarea></li>
+					<li>Tags (maximum of 5)</li>
+					<li>
+						<span class="active-tags"></span><input type="text" name="tags" placeholder="space-delimited e.g. 'shoes mens-sports-shoes kalenji'"/>
+					</li>
+					<li>Sell mode</li>
+					<li> 
+						<select class="sellmode" name="sellMode">
+							<option value="fixed">Normal</option>
+							<option value="auction">Auction</option>
+							<option value="trade">Trade</option>
+						</select>
+					</li>
+					<li class="li-sellmode fixedprice">Price<br/><input type="number" value="0" class="newitem-fixedprice" name="fixedprice"/></li>
+					<li class="li-sellmode fixedprice">
+						<input type="checkbox" name="negotiable" id="fixedprice-negotiable" class="newitem-fixedprice-negotiable" />
+						<label for="fixedprice-negotiable">Negotiable?</label>
+					</li>
+					
+					<li class="li-sellmode auction">Starting Price<br/><input type="number" value="0" class="newitem-bidding-startingprice" name="startingprice"/></li>
+					<li class="li-sellmode auction">Buyout<br/><input type="number" value="0" class="newitem-bidding-buyout" name="buyout"/></li>
+					<li class="li-sellmode auction">End date<br/><input type="text" class="newitem-bidding-enddate" readonly="readonly" name="enddate"/></li>
+					
+					<li class="li-sellmode trade">Will trade for</li>
+					<li class="li-sellmode trade"><input type="text" class="newitem-trade-tradefor" name="tradefor" /></li>
+				</ul>
+				<input type="hidden" class="newitem-hash" name="hash" />
+				<input type="hidden" class="newitem-deletehash" name="deletehash" />
+				<input type="file" style="visibility: collapse; width: 0px;" class="newitem-img-file" />
+			</form>
+			<div class="newitem-form-errors"></div>
+		</div>
+		</sec:authorize>
+		
+		<div class="buyandsell-search">
+			<form id="buysellsearchform">
+				<input type="text" class="ipt-search" placeholder="<spring:message code='buyandsell.search' />"/>
+				<button class="btn-search">Search</button>
+			</form>
+			<div class="buyandsell-search-results-container">
+				<ul class="buyandsell-search-results"></ul>
+				<a href="javascript:;" class="showmore hide">Show more...</a>
+			</div>
 		</div>
 	</div>
-	<div class="sidebar-divider"></div>
 </div>
 
 <script>
@@ -402,25 +402,27 @@ $(function(){
 <sec:authorize access="hasRole('ROLE_USER')">
 <!-- Watched Tags -->
 <div class="watched-tags-container sidebar-section grid_4">
-	<div class="sidebar-section-header">Watched tags</div>
-	<c:choose>
-	<c:when test="${not empty user.watchedTags }">
-	<div class="watched-tag-link-container">
-		<a class="watched-tag selected" href="javascript:;" tag="all">All</a>
-	<c:forEach items="${user.watchedTags }" var="watchedTag">
-		<a class="watched-tag" href="${urlTag }${watchedTag.tag }" tag="${watchedTag.tag }">${watchedTag.tag }</a>
-	</c:forEach>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Watched tags</div>
+		<c:choose>
+		<c:when test="${not empty user.watchedTags }">
+		<div class="watched-tag-link-container">
+			<a class="watched-tag selected" href="javascript:;" tag="all">All</a>
+		<c:forEach items="${user.watchedTags }" var="watchedTag">
+			<a class="watched-tag" href="${urlTag }${watchedTag.tag }" tag="${watchedTag.tag }">${watchedTag.tag }</a>
+		</c:forEach>
+		</div>
+		</c:when>
+		<c:otherwise>
+			<spring:url var="urlFaqWatchingTags" value="/h/buy-and-sell#watching-tags" />
+			<p class="no-watched-tags"><spring:message code="watchedtags.empty" arguments="${urlFaqWatchingTags }"/></p>
+		</c:otherwise>
+		</c:choose>
+		<div class="watched-tag-items-container">
+			<ul class="watched-tag-items"></ul>
+		</div>
+		<div class="sidebar-divider"></div>
 	</div>
-	</c:when>
-	<c:otherwise>
-		<spring:url var="urlFaqWatchingTags" value="/h/buy-and-sell#watching-tags" />
-		<p class="no-watched-tags"><spring:message code="watchedtags.empty" arguments="${urlFaqWatchingTags }"/></p>
-	</c:otherwise>
-	</c:choose>
-	<div class="watched-tag-items-container">
-		<ul class="watched-tag-items"></ul>
-	</div>
-	<div class="sidebar-divider"></div>
 </div>
 <c:if test="${not empty user.watchedTags }">
 <script src="${jsWatchedTags }" /></script>
@@ -431,8 +433,10 @@ $(function(){
 
 <!-- Tagcloud -->
 <div class="tagcloud-container sidebar-section grid_4">
-	<div class="sidebar-section-header">Popular tags</div>
-	<div class="tagcloud"></div>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Popular tags</div>
+		<div class="tagcloud"></div>
+	</div>
 </div>
 <script src="${jsTagcloud }"></script>
 <script src="${jsDgteTagCloud }"></script>

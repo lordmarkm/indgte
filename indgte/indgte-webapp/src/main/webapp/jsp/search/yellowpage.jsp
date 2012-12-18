@@ -5,7 +5,6 @@
 
 <title>${group.name } In Dumaguete</title>
 <script type="text/javascript" src="${jsColumnize }"></script>
-<script type="text/javascript" src="${jsApplication }"></script>
 
 <div class="yellowpages-content grid_9 ui-corner-all">
 	<div class="page-header capitalize">${group.name }</div>

@@ -6,6 +6,7 @@ public class TableConstants {
 	public static final String DESCRIPTION = "description";
 	public static final String TIME = "time";
 	public static final String TYPE = "type";
+	public static final String USER = "user";
 
 	//for scoring
 	public static final String LIKES = "likes";
@@ -38,6 +39,8 @@ public class TableConstants {
 	public final static String BUSINESS_DOMAIN = "domain";
 	public static final String BUSINESS_CATEGORIES = "categories";
 	public static final String BUSINESS_OWNER = "owner";
+	public static final String BUSINESS_INFO = "info";
+
 	
 	public static final String CATEGORY_PRODUCTS = "products";
 	
@@ -83,11 +86,11 @@ public class TableConstants {
 	public static final String NOTIF_LIKE_TYPE = "likeableType";
 	
 	public static final String NOTIF_COMMENTORLIKE_TARGETID = "targetId";
+
+	public static final String POST_POSTERID = "posterId";
+	public static final String POST_POPULARITY = "popularity";
 	
 	/* Aliases */
 	public static final String ALIAS_USER = "user";
 	public static final String ALIAS_USER_USERNAME = "user.username";
-	
-	public static final String POST_POSTERID = "posterId";
-	
 }

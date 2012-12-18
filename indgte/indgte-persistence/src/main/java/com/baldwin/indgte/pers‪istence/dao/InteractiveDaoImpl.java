@@ -1,5 +1,7 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
+import static com.baldwin.indgte.pers‪istence.dao.TableConstants.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,6 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -79,8 +82,26 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		return sessions.getCurrentSession().createCriteria(Post.class)
 				.setFirstResult(start)
 				.setMaxResults(howmany)
-				.addOrder(Order.desc(TableConstants.POST_TIME))
+				.addOrder(Order.desc(POST_TIME))
 				.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection<Post> getPostsByPopularity(int start, int howmany) {
+		long startTime = System.currentTimeMillis();
+		
+		String queryString = "select *, (p.likes*10 + p.comments + 3) * 10/(timestampdiff(HOUR,p.postTime,now())^1.4) as 'quotient'" +
+				" from posts p order by quotient desc, postId desc limit :start, :howmany";
+		
+		List<Post> results = sessions.getCurrentSession().createSQLQuery(queryString)
+			.addEntity(Post.class)
+			.setInteger("start", start).setInteger("howmany", howmany)
+			.list();
+		
+		log.debug("Find posts by popularity query completed in {} ms", System.currentTimeMillis() - startTime);
+
+		return results;
 	}
 	
 	@Override
@@ -700,13 +721,13 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	@Override
 	public void changetheme(String name, Theme newtheme) {
 		UserExtension user = users.getExtended(name);
-		user.setTheme(newtheme);
+		user.getAppearanceSettings().setTheme(newtheme);
 	}
 	
 	@Override
 	public void changebg(String name, Background newBg) {
 		UserExtension user = users.getExtended(name);
-		user.setBackground(newBg);
+		user.getAppearanceSettings().setBackground(newBg);
 	}
 
 	@Override
@@ -816,6 +837,29 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		return (List<User>) sessions.getCurrentSession().createCriteria(User.class) //relies on User and UserExtension having the same id due to @MapsId
 				.add(Restrictions.in(TableConstants.ID, user.getUserSubscriptions()))
 				.list();
+	}
+
+	Random random = new Random();
+	@Override
+	public Post getRandomFeaturedPost() {
+		Date now = new Date();
+		
+		@SuppressWarnings("unchecked")
+		List<Post> featuredPosts = (List<Post>) sessions.getCurrentSession().createCriteria(Post.class)
+			.add(Restrictions.le("featureStart", now))
+			.add(Restrictions.ge("featureEnd", now))
+			.list();
+		
+		Post featuredPost;
+		if(featuredPosts.size() > 0) {
+			int size = featuredPosts.size();
+			int rand = random.nextInt(size);
+			log.debug("Featured posts: {}, returning {}-th element", size, rand);
+			featuredPost = featuredPosts.get(rand);
+			return featuredPost;
+		} else {
+			return null;
+		}
 	}
 	
 }

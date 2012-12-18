@@ -75,13 +75,18 @@ public class Post {
 	private int sends = 0;
 	
 	@Column
-	private int timesFeatured = 0;
-	
-	@Column
 	private int comments = 0;
 	
 	@Column
-	private boolean isFeatured = false;
+	@Temporal(TemporalType.DATE)
+	private Date featureStart;
+	
+	@Column
+	@Temporal(TemporalType.DATE)
+	private Date featureEnd;
+	
+	@Column
+	private int timesFeatured = 0;
 	
 	@Override
 	public String toString() {
@@ -243,12 +248,28 @@ public class Post {
 		this.sends = sends;
 	}
 
-	public boolean isFeatured() {
-		return isFeatured;
+	public int getComments() {
+		return comments;
 	}
 
-	public void setFeatured(boolean isFeatured) {
-		this.isFeatured = isFeatured;
+	public void setComments(int comments) {
+		this.comments = comments;
+	}
+
+	public Date getFeatureStart() {
+		return featureStart;
+	}
+
+	public void setFeatureStart(Date featureStart) {
+		this.featureStart = featureStart;
+	}
+
+	public Date getFeatureEnd() {
+		return featureEnd;
+	}
+
+	public void setFeatureEnd(Date featureEnd) {
+		this.featureEnd = featureEnd;
 	}
 
 	public int getTimesFeatured() {
@@ -257,14 +278,6 @@ public class Post {
 
 	public void setTimesFeatured(int timesFeatured) {
 		this.timesFeatured = timesFeatured;
-	}
-
-	public int getComments() {
-		return comments;
-	}
-
-	public void setComments(int comments) {
-		this.comments = comments;
 	}
 
 }

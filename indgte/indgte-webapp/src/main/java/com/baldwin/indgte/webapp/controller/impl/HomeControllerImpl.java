@@ -63,11 +63,17 @@ public class HomeControllerImpl implements HomeController {
 				}
 			}
 			
-			return render("businessprofile")
+			MavBuilder mav = render("businessprofile")
 					.put("business", business)
 					.put("subscribed", false)
 					.put("owner", false)
-					.mav();
+					.put(MavBuilder.PAGE_DESCRIPTION, business.getDescription());
+			
+			if(null != business.getImgur()) {
+				mav.put(MavBuilder.PAGE_THUMBNAIL, business.getImgur().getSmallSquare());
+			}
+			
+			return mav.mav();
 			
 		} else {
 			//user is logged in

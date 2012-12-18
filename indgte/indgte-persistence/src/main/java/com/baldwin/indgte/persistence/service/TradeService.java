@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Tag;
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.pers‪istence.dao.TableConstants;
 import com.baldwin.indgte.pers‪istence.dao.TradeDao;

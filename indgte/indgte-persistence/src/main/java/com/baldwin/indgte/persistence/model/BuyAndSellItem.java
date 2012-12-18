@@ -26,7 +26,9 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import com.baldwin.indgte.persistence.constants.BuyAndSellMode;
+import com.baldwin.indgte.persistence.dto.Searchable;
 import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 
 /**
  * An item on the buy-and-sell market
@@ -37,7 +39,10 @@ import com.baldwin.indgte.persistence.dto.Summary;
 @Entity
 @Table(name="buyandsell")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class BuyAndSellItem {
+public class BuyAndSellItem implements Searchable {
+	
+	public static final String[] searchableFields = new String[]{"name", "description", "tags"};
+	
 	@Id
 	@GeneratedValue
 	private long id;
@@ -177,5 +182,22 @@ public class BuyAndSellItem {
 
 	public void setTags(String tags) {
 		this.tags = tags;
+	}
+
+	@Override
+	public Summary summarize() {
+		Summary summary = new Summary();
+		summary.setDescription(description);
+		summary.setId(id);
+		summary.setIdentifier(String.valueOf(id));
+		summary.setThumbnailHash(imgur.getHash());
+		summary.setTitle(name);
+		summary.setType(SummaryType.buyandsellitem);
+		return summary;
+	}
+
+	@Override
+	public String[] getSearchableFields() {
+		return searchableFields;
 	}
 }

@@ -1,5 +1,6 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
@@ -12,12 +13,12 @@
 
 </head>
 <body>
-	<c:url value='/signin/facebook' var="signin_facebook" />
-	<c:url value='/signin/twitter' var="signin_twitter" />
-	<c:url value='/resources/images/signin/creepychicken.gif'  var="nosignin"/>
-	<c:url value="/resources/images/signin/facebook.png" var="facebookIcon" />
-	<c:url value="/resources/images/signin/twitter.png" var="twitterIcon" />
-	<c:url value='/' var="back" />
+	<spring:url value='/signin/facebook' var="signin_facebook" />
+	<spring:url value='/signin/twitter' var="signin_twitter" />
+	<spring:url value='/resources/images/signin/creepychicken.gif'  var="nosignin"/>
+	<spring:url value="/resources/images/signin/facebook.png" var="facebookIcon" />
+	<spring:url value="/resources/images/signin/twitter.png" var="twitterIcon" />
+	<spring:url value='/' var="back" />
 	
 	<sec:authorize ifNotGranted="ROLE_USER">
 		<table id="table">

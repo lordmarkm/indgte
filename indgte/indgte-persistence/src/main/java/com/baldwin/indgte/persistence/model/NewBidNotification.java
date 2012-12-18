@@ -20,7 +20,7 @@ public class NewBidNotification extends Notification {
 	@JoinColumn(name="auctionitem_id", nullable=false, updatable=false)
 	private AuctionItem item;
 
-	public long getId() {
+	public long getItemId() {
 		return item.getId();
 	}
 
@@ -28,7 +28,7 @@ public class NewBidNotification extends Notification {
 		return item.getName();
 	}
 	
-	public String imageUrl() {
+	public String getImageUrl() {
 		return item.getImgur() == null ? null : item.getImgur().getSmallSquare();
 	}
 	

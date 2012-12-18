@@ -19,20 +19,18 @@ $(function(){
 			width: 500,
 			dragStop: updateCookieData
 		});
-		$dialog.parent().offset(offset);
-		$btnChat.removeClass('ui-state-highlight').addClass('ui-state-active');
 		
-		//setTimeout(function(){
-		//	getChatters(true);
-		//}, 500);
+		if(offset && offset.left > 0 && offset.top > 0) {
+			$dialog.parent().offset(offset);
+		}
+
+		$btnChat.removeClass('ui-state-highlight').addClass('ui-state-active');
 		
 		if(persistentChannel) {
 			p2pOpen(persistentChannel, true);
 		} else {
 			channelOpen('#dumaguete', true);
 		}
-		
-		//getMessages(true);
 	}
 	
 	function isChatOpen() {
@@ -43,6 +41,8 @@ $(function(){
 		debug('Switching to channel ' + channel);
 		
 		var chatter = extractChatterFromChannel(channel);
+		makeChatterActive($('.chatter[username="' + chatter + '"]'));
+		
 		if(isChatOpen()) {
 			p2pOpen(chatter, true);
 		} else if(openIfClosed) {
@@ -206,12 +206,19 @@ $(function(){
 		},
 		click: function(){
 			var $this = $(this);
-			$this.find('.chatter-notification').fadeOut('500', function(){$(this).text(' ').show()});
-			var chatter = $(this).attr('username');
+			makeChatterActive($this);
+			var chatter = $this.attr('username');
 			p2pOpen(chatter, true);
 			$iptMessage.focus();
 		}
 	}, '.chatter');
+	
+	function makeChatterActive($chatter) {
+		$chatter.removeClass('ui-state-highlight')
+			.addClass('ui-state-active')
+			.siblings().removeClass('ui-state-active').end()
+			.find('.chatter-notification').fadeOut('500', function(){$(this).text(' ').show()});
+	}
 	
 	function findActiveChannel() {
 		var $window = $('.chatwindow:visible');
@@ -275,13 +282,17 @@ $(function(){
 		$box.scrollTop($box[0].scrollHeight);
 	}
 	
+	function switchToWindow($chatwindow) {
+		$('.chatwindow').hide();
+		$chatwindow.show();
+	}
+	
 	function p2pOpen(chatter, switchTo) {
 		var channel = chatter.indexOf('#') == 0 ? chatter : chatter < chat.user ? chatter + '|' + chat.user : chat.user + '|' + chatter;
 		var $chatwindow = findWindow(channel, true);
 		
 		if(switchTo) {
-			$('.chatwindow').hide();
-			$chatwindow.show();
+			switchToWindow($chatwindow);
 			updateCookieData();
 		} else {
 			$chatwindow.hide();
@@ -295,8 +306,7 @@ $(function(){
 		var $chatwindow = findWindow(channel, true);
 		
 		if(switchTo) {
-			$('.chatwindow').hide();
-			$chatwindow.show();
+			switchToWindow($chatwindow);
 			updateCookieData();
 		}
 	}
@@ -540,6 +550,11 @@ $(function(){
 			t: offset.top
 		}
 		
+		if(data.l < 0 || data.t < 0) {
+			debug('Invalid offset values. Skipping cookie persist.');
+			return false;
+		}
+		
 		var serialized = data.o + ':' + data.ac + ':' + data.ao + ':' + data.l + ':' + data.t;
 		
 		//var serialized = JSON.stringify(data);
@@ -606,6 +621,7 @@ $(function(){
 		$msgUptodate = $('.msg-uptodate'),
 		$msgClearhistory = $('.msg-clearhistory');
 	
+	var lastNotifId = 0;
 	function getLastNotifId() {
 		if(!$notifs || $notifs.length == 0) {
 			$notifs = $('.notifications');
@@ -615,7 +631,9 @@ $(function(){
 		var $lastNotif = $notifs.find('.notification:first-child');
 		if($lastNotif.length == 0) return 0;
 		
-		return $lastNotif.attr('notifId');
+		var lastNotifIdFromElement = $lastNotif.attr('notifId');
+		
+		return lastNotifId > lastNotifIdFromElement ? lastNotifId : lastNotifIdFromElement;
 	}
 	
 	function addNotification(notification) {
@@ -640,6 +658,9 @@ $(function(){
 			break;
 		case 'toptenvote':
 			addTopTenVoteNotification(notification, $notif);
+			break;
+		case 'newbid':
+			addNewBidNotification(notification, $notif);
 			break;
 		default:
 			debug('Unsupported notif type: ' + notification.type);
@@ -739,9 +760,16 @@ $(function(){
 			.attr('href', chat.urlUserProfile + reviewer.identifier).appendTo($notiftxt);
 		
 		//message
-		$notiftxt.append(' has reviewed ');
+		$notiftxt.append(' wrote ');
 		switch(notification.reviewType) {
 		case 'user':
+			$('<a>')
+				.attr('href', chat.urlUserReview + notification.reviewId)
+				.text('a review ')
+				.appendTo($notiftxt);
+			
+			$notiftxt.append('of ');
+			
 			$('<a class="fatlink dgte-previewlink">')
 				.text('you')
 				.attr('previewtype', 'user')
@@ -749,6 +777,13 @@ $(function(){
 				.appendTo($notiftxt);
 			break;
 		case 'business':
+			$('<a>')
+				.attr('href', chat.urlBusinessReview + notification.reviewId)
+				.text('a review ')
+				.appendTo($notiftxt);
+			
+			$notiftxt.append('of ');
+			
 			$notiftxt.append('your business ');
 			$('<a class="fatlink dgte-previewlink">')
 				.text(reviewee.title)
@@ -773,6 +808,19 @@ $(function(){
 		var $notiftxt = $('<div class="notiftxt">').html('There are new vote(s) on the Top Ten List ').appendTo($notif);
 		$('<a>').text(notification.title)
 			.attr('href', chat.urlTopTens + notification.topTenId)
+			.appendTo($notiftxt);
+		
+		var $footer = $('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notiftxt);
+		var $clearnotif = $('<span class="clearnotif-container">').hide().appendTo($footer);
+		$('<a class="clearnotif">').attr('href', 'javascript:;').text('Clear').appendTo($clearnotif);
+	}
+	
+	function addNewBidNotification(notification, $notif) {
+		$('<img class="notifimg">').attr('src', notification.imageUrl ? notification.imageUrl : dgte.urls.noImage50).appendTo($notif);
+		
+		var $notiftxt = $('<div class="notiftxt">').html('There are new bid(s) on the Auction of ').appendTo($notif);
+		$('<a>').text(notification.name)
+			.attr('href', chat.urlAuction + notification.itemId)
 			.appendTo($notiftxt);
 		
 		var $footer = $('<div class="subtitle">').text(moment(notification.time).fromNow()).appendTo($notiftxt);
@@ -860,7 +908,9 @@ $(function(){
 		if(len > 0) $msgUptodate.hide();
 
 		for(var i = 0; i < len; ++i) {
-			addNotification(notifications[i]);
+			var notif = notifications[i];
+			if(notif.id > lastNotifId) lastNotifId = notif.id;
+			addNotification(notif);
 		}
 	}
 	
@@ -935,6 +985,9 @@ $(function(){
 			break;
 		case 'toptenvote':
 			addTopTenVoteNotification(notification, $notif);
+			break;
+		case 'newbid':
+			addNewBidNotification(notification, $notif);
 			break;
 		default:
 		}

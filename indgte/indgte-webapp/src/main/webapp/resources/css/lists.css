@@ -14,6 +14,16 @@
 	padding: 5px;
 }
 
+.sticky-pin {
+	width:48px;
+	height: 48px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin-top: -15px;
+	background-image: url("../images/icons/pin.png");
+}
+
 .post-pic-container {
 	display: inline-block;
 }
@@ -56,10 +66,8 @@
 }
 
 .attachment-description {
-	margin-bottom: 10px;
-	font-size: 0.9em;
-	color: grey;
-	font-style: italic;
+	font-size: 0.95em;
+	color: #292929;
 }
 
 .post-attachment img.attachment-img {

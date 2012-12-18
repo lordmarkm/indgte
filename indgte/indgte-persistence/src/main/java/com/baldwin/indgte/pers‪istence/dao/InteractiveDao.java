@@ -34,7 +34,7 @@ public interface InteractiveDao {
 
 	public void subscribeToBusiness(String username, Long id);
 
-	public List<Post> getSubposts(String username, int start, int end);
+	public List<Post> getSubposts(String username, int start, int howmany);
 
 	public void unsubscribeFromBusiness(String username, Long id);
 
@@ -111,4 +111,8 @@ public interface InteractiveDao {
 	public Collection<Post> getPosts(int start, int howmany);
 
 	public void changebg(String name, Background newBg);
+
+	Collection<Post> getPostsByPopularity(int start, int howmany);
+
+	public Post getRandomFeaturedPost();
 }

@@ -1,0 +1,54 @@
+section {
+	margin-top: 20px;
+}
+
+/*buyandsell.css overrides */
+.trade-item-details {
+	margin: 0 0 0 205px;
+}
+
+/*page unique styles*/
+.seller-img {
+}
+
+.trade-seller-details {
+	display: inline-block;	
+}
+
+.auction-winning {
+	font-weight: bold;
+}
+.auction-winning-amount {
+	font-size: 1.5em;
+	color: green;
+}
+
+.auction-countdown-container {
+	font-weight: bold;
+	width: 200px;
+}
+.auction-countdown {
+	color: red;
+}
+
+.auction-bids-list-container {
+	margin: 15px 0 0 0;
+}
+.auction-bids-list {
+	margin-top: 0;
+}
+
+.item-controls-container {
+	padding: 5px;
+}
+.auction-bid-amount {
+	width: 65%;
+}
+.auction-bid {
+	width: 31%;
+}
+
+.item-actions button {
+	margin-top: 5px;
+	width: 100%;
+}

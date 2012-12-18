@@ -6,7 +6,6 @@
 
 <title>${fn:toUpperCase(tagString) } In Dumaguete</title>
 <link rel="stylesheet" href="<spring:url value='/resources/css/buyandsell.css' />" />
-<script type="text/javascript" src="${jsApplication }"></script>
 
 <div class="grid_8 maingrid">
 
@@ -15,7 +14,7 @@
 	<span class="header">No items found with tag <strong>${tagString }</strong></span>
 </c:when>
 <c:otherwise>
-	<span class="header">Items with tag <strong>${tag.tag }</strong></span>
+	<div class="page-header">Items with tag <strong>${tag.tag }</strong></div>
 	<div class="items-container">
 		<ul class="items">
 		<c:forEach items="${items }" var="item" varStatus="index">

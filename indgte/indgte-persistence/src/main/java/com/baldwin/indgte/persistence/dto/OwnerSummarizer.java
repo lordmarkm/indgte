@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Product;
 
@@ -59,6 +60,11 @@ public class OwnerSummarizer implements ResultTransformer {
 				Product product = (Product)result;
 				if(product.getCategory().getBusiness().getOwner().getUsername().equals(username)) {
 					transformed.add(product.summarize());
+				}
+			} else if(result instanceof BuyAndSellItem) {
+				BuyAndSellItem item = (BuyAndSellItem)result;
+				if(item.getOwner().getUsername().equals(username)) {
+					transformed.add(item.summarize());
 				}
 			} else {
 				throw new IllegalArgumentException("Illegal class: " + result.getClass());

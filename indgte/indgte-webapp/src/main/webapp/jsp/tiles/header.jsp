@@ -34,8 +34,8 @@
  -->
 
 <c:choose>
-	<c:when test="${not empty user.theme }">
-		<c:set var="theme" value="${user.theme.name }" />
+	<c:when test="${not empty user.appearanceSettings.theme }">
+		<c:set var="theme" value="${user.appearanceSettings.theme.name }" />
 	</c:when>
 	<c:otherwise>
 		<c:set var="theme" value="flick" />
@@ -43,8 +43,8 @@
 </c:choose>
 
 <c:choose>
-	<c:when test="${not empty user.background }">
-		<c:set var="background" value="${user.background.filename }	" />
+	<c:when test="${not empty user.appearanceSettings.background }">
+		<c:set var="background" value="${user.appearanceSettings.background.filename }	" />
 	</c:when>
 	<c:otherwise>
 		<c:set var="background" value="grass" />

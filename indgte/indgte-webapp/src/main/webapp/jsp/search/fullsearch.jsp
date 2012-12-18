@@ -203,5 +203,3 @@ $(function(){
 	}, '.result');
 });
 </script>
-
-<script type="text/javascript" src="${jsApplication }"></script>

@@ -41,14 +41,14 @@ public interface InteractiveController {
 	/**
 	 * Get most recent posts of entities principal is subscribed to
 	 */
-	@RequestMapping(value = "/subposts.json", method = RequestMethod.GET)
-	public JSON subposts(Principal principal, int start, int howmany, boolean subsonly);
+	@RequestMapping(value = "/subposts/json", method = RequestMethod.GET)
+	public JSON subposts(Principal principal, int start, int howmany, String sort, boolean hasSticky);
 	
 	/**
 	 * Get most recent posts of a single entity
 	 */
 	@RequestMapping(value = "/posts/", method = RequestMethod.GET)
-	public JSON lastPosts(long posterId, PostType type, int start, int howmany);
+	public JSON lastPosts(long posterId, PostType type, int start, int howmany, boolean hasSticky);
 	
 	@RequestMapping(value = "/posts/{postId}", method = RequestMethod.GET)
 	public ModelAndView viewpost(Principal principal, long postId);
@@ -172,9 +172,15 @@ public interface InteractiveController {
 	
 	@RequestMapping(value = "/commentnotify/{type}/{targetId}/json", method = RequestMethod.POST)
 	public JSON commentNotify(Principal principal, InteractableType type, long targetId, String name, String providerUserId, String providerUsername);
+
+	@RequestMapping(value = "/commentremove/{type}/{targetId}/json", method = RequestMethod.POST)
+	public JSON commentRemove(InteractableType type, long targetId);
 	
 	@RequestMapping(value = "/likenotify/{type}/{targetId}/json", method = RequestMethod.POST)
 	public JSON likeNotify(Principal principal, InteractableType type, long targetId, String name, String providerUserId, String providerUsername);
+	
+	@RequestMapping(value = "/unlike/{type}/{targetId}/json", method = RequestMethod.POST)
+	public JSON unlike(InteractableType type, long targetId);
 	
 	@RequestMapping(value = "/clearnotif/{id}/json", method = RequestMethod.POST)
 	public JSON clearNotification(Principal principal, long id);

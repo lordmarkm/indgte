@@ -1,9 +1,13 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
 import static com.baldwin.indgte.persistence.constants.Initializable.wishlist;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,19 +15,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.UserExtension;
+import com.baldwin.indgte.persistence.service.BillingService;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.InteractiveService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.ProfileController;
+import com.baldwin.indgte.webapp.misc.Language;
 
 @Component
 public class ProfileControllerImpl implements ProfileController {
@@ -37,6 +45,18 @@ public class ProfileControllerImpl implements ProfileController {
 	
 	@Autowired
 	private InteractiveService posts;
+	
+	@Autowired
+	private BillingService billing;
+	
+	@Autowired
+	private LocaleResolver localeResolver;
+	
+	@Override
+	public String grantCoconuts(Principal principal, @PathVariable long userId, @RequestParam int howmany) {
+		UserExtension user = billing.grantCoconuts(principal.getName(), userId, howmany);
+		return "redirect:/p/user/" + user.getUsername();
+	}
 	
 	@Override
 	public ModelAndView profile(Principal principal) {
@@ -87,4 +107,24 @@ public class ProfileControllerImpl implements ProfileController {
 		businesses.saveCoverpic(domain, coverpic);
 		return JSON.ok();
 	}
+
+	@Override
+	public ModelAndView manageAccount(Principal principal) {
+		UserExtension user = users.getExtended(principal.getName());
+		return render(user, "manage")
+					.put("languages", Language.values())
+					.mav();
+	}
+
+	@Override
+	public ModelAndView changeLocale(Principal principal, 
+			HttpServletRequest request, HttpServletResponse response, 
+			@PathVariable String localeStr) {
+		
+		localeResolver.setLocale(request, response, Language.determineLocale(localeStr));
+		users.changeLocale(principal.getName(), localeStr);
+		return redirect("/p/manage/").mav();
+		
+	}
+
 }

@@ -19,6 +19,7 @@ import com.baldwin.indgte.persistence.model.BusinessReview;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Post;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.Rank;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.model.UserReview;
 
@@ -93,6 +94,13 @@ public class FameDaoImpl implements FameDao {
 		int entityfame = getEntityFame(user);
 		int total = postfame + reviewfame + friendshipfame + entityfame;
 		
+		Rank rank = user.getRank();
+		rank.setPostFame(postfame);
+		rank.setReviewFame(reviewfame);
+		rank.setFriendshipFame(friendshipfame);
+		rank.setEntityFame(entityfame);
+		rank.setTotalFame(total);
+		
 		Fame fame = new Fame();
 		fame.setPostfame(postfame);
 		fame.setReviewfame(reviewfame);
@@ -108,7 +116,7 @@ public class FameDaoImpl implements FameDao {
 	
 	private void updateTitle(UserExtension user, int total) {
 		String prefix = Fame.getTitle(total);
-		user.setPrefix(prefix);
+		user.getRank().setPrefix(prefix);
 		log.debug("Set prefix {} to user {}", prefix, user.getUsername());
 	}
 	

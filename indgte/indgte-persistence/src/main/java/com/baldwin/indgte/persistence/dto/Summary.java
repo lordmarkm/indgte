@@ -13,7 +13,8 @@ public class Summary {
 		user,
 		business,
 		product, 
-		category
+		category, 
+		buyandsellitem
 	}
 	
 	private Long id;

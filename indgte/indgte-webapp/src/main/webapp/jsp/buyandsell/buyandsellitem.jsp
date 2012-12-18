@@ -6,8 +6,7 @@
 
 <title>${item.name }</title>
 <link rel="stylesheet" href="<spring:url value='/resources/css/buyandsell.css' />" />
-<script type="text/javascript" src="${jsApplication }"></script>
-<script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
+<script src="${jsValidator}"></script>
 
 <c:if test="${item.buyAndSellMode eq 'auction' }">
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-countdown/1.6.0/jquery.countdown.min.js"></script>
@@ -86,97 +85,65 @@
 
 <section class="seller-details">
 	<div class="section-header">Seller</div>
-	<a href="${urlUserProfile }${item.owner.username}"><img class="seller-img" src="${item.owner.imageUrl }" /></a>
+	<a class="dgte-previewlink" previewtype="user" href="${urlUserProfile }${item.owner.username}"><img class="seller-img" src="${item.owner.imageUrl }" /></a>
 	<ul class="trade-seller-details">
-		<li><a href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>
-		<li>Reputation: Scoundrel</li>
-		<li><a href="${item.owner.profileUrl }">View Facebook profile</a></li>
+		<li><a class="dgte-previewlink fatlink" previewtype="user" href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>
+		<li>${item.owner.rank }</li>
+		<li><a href="${item.owner.profileUrl }">View <span class="capitalize">${item.owner.user.providerId }</span> profile</a></li>
 	</ul>
+</section>
+
+<section>
+	<div class="section-header">Comments</div>
+	<div class="fb-comments" data-href="${baseURL}/t/${item.id}" data-width="620"></div>
 </section>
 
 </div>
 
+<sec:authorize ifNotGranted="ROLE_USER">
+<div class="grid_4 sidebar-section">
+	<div class="sidebar-container">
+		<img src="${logo }" />
+	</div>
+</div> 
+</sec:authorize>
+
 <sec:authorize access="hasRole('ROLE_USER')">
 <div class="buyandsell-controls grid_4 ui-widget sidebar-section">
-	<div class="sidebar-section-header">Buy&Sell Item Actions</div>
-	
-	<div class="item-controls-container">
-		<c:if test="${item.buyAndSellMode eq 'auction' && !finished }">
-			<div class="auction-countdown-container">
-				Time left:
-				<div class="auction-countdown"></div>
-			</div>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Buy&Sell Item Actions</div>
 		
-			<div class="clear"></div>
-		
-			<c:if test="${not owner}">
-				<div class="bid-container">
-					<input type="number" class="auction-bid-amount" />
-					<button class="auction-bid">Bid</button>
+		<div class="item-controls-container">
+			<c:if test="${item.buyAndSellMode eq 'auction' && !finished }">
+				<div class="auction-countdown-container">
+					Time left:
+					<div class="auction-countdown"></div>
 				</div>
+			
+				<div class="clear"></div>
+			
+				<c:if test="${not owner}">
+					<div class="bid-container">
+						<input type="number" class="auction-bid-amount" />
+						<button class="auction-bid">Bid</button>
+					</div>
+				</c:if>
 			</c:if>
-		</c:if>
-	
-		<div class="item-actions">
-			<c:if test="${!inwishlist }">
-			<button class="btn-wishlist-add">Add to Wishlist</button>
-			</c:if>
-			<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
-		</div>
-	</div>	
-	<div class="sidebar-divider"></div>
+		
+			<div class="item-actions">
+				<c:if test="${!inwishlist }">
+				<button class="btn-wishlist-add">Add to Wishlist</button>
+				</c:if>
+				<div class="mt5">
+					<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+				</div>
+			</div>
+		</div>	
+	</div>
 </div>
 </sec:authorize>
 
-<style>
-/*buyandsell.css overrides */
-.trade-item-details {
-	margin: 0 0 0 205px;
-}
-
-/*page unique styles*/
-.seller-img {
-	float: left;
-}
-
-.auction-winning {
-	font-weight: bold;
-}
-.auction-winning-amount {
-	font-size: 1.5em;
-	color: green;
-}
-
-.auction-countdown-container {
-	font-weight: bold;
-	width: 200px;
-}
-.auction-countdown {
-	color: red;
-}
-
-.auction-bids-list-container {
-	margin: 15px 0 0 0;
-}
-.auction-bids-list {
-	margin-top: 0;
-}
-
-.item-controls-container {
-	padding: 5px;
-}
-.auction-bid-amount {
-	width: 65%;
-}
-.auction-bid {
-	width: 31%;
-}
-
-.item-actions button {
-	margin-top: 5px;
-	width: 100%;
-}
-</style>
+<link rel="stylesheet" href="<c:url value='/resources/css/buyandsell/buyandsellitem.css' />" />
 
 <script>
 window.constants = {
@@ -282,23 +249,72 @@ $(function(){
 
 </script>
 
+<sec:authorize access="hasRole('ROLE_USER')">
+<!-- Watched Tags -->
+<div class="watched-tags-container sidebar-section grid_4">
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Watched tags</div>
+		<c:choose>
+		<c:when test="${not empty user.watchedTags }">
+		<div class="watched-tag-link-container">
+			<a class="watched-tag selected" href="javascript:;" tag="all">All</a>
+		<c:forEach items="${user.watchedTags }" var="watchedTag">
+			<a class="watched-tag" href="${urlTag }${watchedTag.tag }" tag="${watchedTag.tag }">${watchedTag.tag }</a>
+		</c:forEach>
+		</div>
+		</c:when>
+		<c:otherwise>
+			<spring:url var="urlFaqWatchingTags" value="/h/buy-and-sell#watching-tags" />
+			<p class="no-watched-tags"><spring:message code="watchedtags.empty" arguments="${urlFaqWatchingTags }"/></p>
+		</c:otherwise>
+		</c:choose>
+		<div class="watched-tag-items-container">
+			<ul class="watched-tag-items"></ul>
+		</div>
+		<div class="sidebar-divider"></div>
+	</div>
+</div>
+<c:if test="${not empty user.watchedTags }">
+<script src="${jsWatchedTags }" /></script>
+<link rel="stylesheet" href="<c:url value='/resources/css/grids/watchedtags.css' />" />
+</c:if>
+<!-- End watched tags -->
 
-<!-- Top Tens -->
-<div class="toptens-container grid_4 ui-widget sidebar-section">
-<div class="sidebar-section-header">Top Tens</div>
-<div class="toptens">
-	Popular:
-	<ul class="popular"></ul>
-	Recent:
-	<ul class="recent"></ul>
-	
-	<a href="<spring:url value='/i/toptens/' />">View all...</a>
+<!-- Tagcloud -->
+<div class="tagcloud-container sidebar-section grid_4">
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Popular tags</div>
+		<div class="tagcloud"></div>
+	</div>
 </div>
-</div>
-<link rel="stylesheet" href="<spring:url value='/resources/css/grids/toptens.css' />" />
 <script>
-window.urls.topTens = '<spring:url value="/i/toptens.json" />',
-window.urls.topTenLeader = '<spring:url value="/i/toptens/leader/" />',
-window.urls.topTensPage = '<spring:url value="/i/toptens/" />'
+window.urls.tagweights = '<spring:url value="/s/tags.json" />';
 </script>
-<script src="${jsTopTens }"></script>
+<script src="${jsTagcloud }"></script>
+<script src="${jsDgteTagCloud }"></script>
+<link rel="stylesheet" href="<spring:url value='/resources/css/grids/tagcloud.css' />" />
+<!-- End tagcloud -->
+</sec:authorize>
+
+<div class="dgte-preview"></div>
+<sec:authorize access="hasRole('ROLE_USER')">
+<!-- Notifications -->
+<div class="notifications-container grid_4 sidebar-section">
+	<div class="sidebar-container">
+		<div class="notifications-container relative">
+			<img src="${logo }" />
+			<span class="msg-uptodate">You're completely up to date. Yey!</span>
+			<ul class="notifications hasnotifs"></ul>
+		</div>
+		<div class="old-notifications-container hide relative">
+			<div class="sidebar-section-header">Previous notifications</div>
+			<span class="msg-clearhistory hide">You're notification history is empty. Yey!</span>
+			<ul class="old-notifications hasnotifs"></ul>
+		</div>
+		<a class="link-showoldnotifs" href="javascript:;">Show old notifications...</a>
+		<a class="link-clearoldnotifs hide" href="javascript:;">Clear all</a>
+	</div>
+</div>
+<link rel="stylesheet" href="<spring:url value='/resources/css/grids/notifs.css' />" />
+<!-- Notifications -->
+</sec:authorize>

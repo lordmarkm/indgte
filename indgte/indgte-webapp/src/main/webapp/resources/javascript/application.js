@@ -242,9 +242,21 @@ $.fn.extend({
     },
     
     preview: function() {
+    	debug('starting preview');
+    	
     	var href = this.attr('href');
     	var type = this.attr('previewtype');
 
+    	if(!href) {
+    		debug('href not available');
+    		return;
+    	}
+    	
+    	if(!type) {
+    		debug('preview type not available');
+    		return;
+    	}
+    	
     	var $preview = $('.dgte-preview');
     	$preview.addClass('dgte-preview-visible');
     	
@@ -306,6 +318,7 @@ $.fn.extend({
     		.find('.preview-image').hide().end()
     		.find('.preview-info-container div').text(' ');
     	
+    	debug('firing ajax preview request');
     	$.get(dgte.domain + dgte.urls.preview + 'json',
     		{
     			href: href,
@@ -327,6 +340,9 @@ $.fn.extend({
 });
 
 $(function(){
+	//append border after page header
+	$('<div class="page-header-divider">').insertAfter('.page-header');
+	
 	//preview links
 	var $preview = $('.dgte-preview'),
 		closetimeout,

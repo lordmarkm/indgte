@@ -22,14 +22,17 @@ import org.springframework.social.twitter.api.Twitter;
 public class SpringSocialSecurityConfig {
 
 	@Autowired
-	JdbcUsersConnectionRepository repository;
+	private JdbcUsersConnectionRepository repository;
 	
 	@Autowired
-	SpringSocialSecurityAuthenticationFilter filter;
+	private SpringSocialSecurityAuthenticationFilter filter;
+	
+	@Autowired
+	private DgteAuthHandler authHandler;
 	
 	@PostConstruct
 	public void init() {
-		filter.setAuthenticationSuccessHandler(new DgteAuthHandler());
+		filter.setAuthenticationSuccessHandler(authHandler);
 	}
 	
 	@Bean

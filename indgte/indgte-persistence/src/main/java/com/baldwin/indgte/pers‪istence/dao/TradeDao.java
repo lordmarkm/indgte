@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Tag;
-import com.baldwin.indgte.persistence.model.User;
 import com.baldwin.indgte.persistence.model.UserExtension;
 
 public interface TradeDao {

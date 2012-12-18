@@ -88,4 +88,13 @@ public class ReviewNotification extends Notification {
 		this.reviewType = reviewType;
 	}
 
+	public long getReviewId() {
+		switch(reviewType) {
+		case business:
+			return businessReview.getId();
+		case user:
+			return userReview.getId();
+		}
+		return 0;
+	}
 }

@@ -18,11 +18,9 @@
 <link rel="stylesheet" href="<spring:url value='/resources/css/lists.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/review.css' />" />
 
-<script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
-<spring:url var="jsApplication" value="/resources/javascript/application.js" />
-<script type="text/javascript" src="${jsApplication }"></script>
 <spring:url var="jsFeed" value="/resources/javascript/businessprofile/feed.js" />
 <script type="text/javascript" src="${jsFeed }"></script>
 
@@ -60,22 +58,21 @@
 		
 		<div class="content-info">
 			<h2 class="ui-widget-header fullname">${business.fullName }</h2>
-			<div class="content-info-indented">
-				<div style="text-transform: capitalize;">${business.category.name }</div>
-				<div class="description">${business.description }</div>
-				<div class="biz-url">www.indumaguete.com/p/${business.domain }</div>
-				<div class="biz-owner"><a href="${urlProfileRoot}user/${business.owner.username}">${business.owner.username }</a></div>
-			</div>
-		</div>
+		</div>		
 		
 		<div class="tabs">
 			<ul>
+				<li><a href="#business-info">${business.fullName }</a>
 				<li><a href="#feed"><spring:message code="business.profile.tabs.feed" /></a></li>
 				<li><a href="#catalog"><spring:message code="business.profile.tabs.products" /></a></li>
 				<li><a href="#map">Map</a>
 				<li><a href="#reviews"><spring:message code="business.profile.tabs.reviews" /></a></li>
 				<li><a href="#comments"><spring:message code="business.profile.tabs.comments" /></a>
 			</ul>
+			
+			<div id="business-info">
+				<%@include file="./businessinfo.jsp"  %>
+			</div>
 			
 			<!-- Business's feed - shows posts by the business -->
 			<div id="feed">
@@ -221,20 +218,22 @@
 
 <c:if test="${owner }">
 <div class="grid_3 sidebar-section owner-operations">
-	<div class="sidebar-section-header">Page Owner Operations</div>
-	<a class="button" href="${urlEdit }${business.domain}">Edit</a>
-	<a class="button btn-promote" href="javascript:;">Promote</a>
-	<div class="sidebar-divider"></div>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Page Owner Operations</div>
+		<a class="button" href="${urlEdit }${business.domain}">Edit</a>
+		<a class="button btn-promote" href="javascript:;">Promote</a>
+	</div>
 </div>
 </c:if>
 
 <div class="grid_3 sidebar-section">
-	<div class="sidebar-section-header">Interact</div>
-	<sec:authorize access="hasRole('ROLE_USER')">
-		<div class="button btn-subscribe-toggle">Subscribe</div>
-	</sec:authorize>
-	<div class="fb-like" href="${baseURL }/${business.domain}" data-send="true" data-width="450" data-show-faces="true"></div>
-	<div class="sidebar-divider"></div>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Interact</div>
+		<sec:authorize access="hasRole('ROLE_USER')">
+			<div class="button btn-subscribe-toggle">Subscribe</div>
+		</sec:authorize>
+		<div class="fb-like" href="${baseURL }/${business.domain}" data-send="true" data-width="450" data-show-faces="true"></div>
+	</div>
 </div>
 
 <script>
@@ -617,11 +616,4 @@ $(function(){
 
 <script src="${jsReviews }"></script>
 
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+<%@include file="../grids/notifications3.jsp"  %>

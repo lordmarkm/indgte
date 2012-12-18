@@ -9,6 +9,8 @@
 <spring:url var="urlCurrent" value="wat" />
 <spring:url var="urlLogin" value="/login/" />
 
+<spring:url var="logo" value="/resources/images/logo.png" />
+<spring:url var="pin" value="/resources/images/icons/pin.png" />
 <spring:url var="urlImgur" value="http://imgur.com/" />
 <spring:url var="urlImgRoot" value="http://i.imgur.com/" />
 
@@ -20,6 +22,7 @@
 <spring:url var="urlRegister" value="/r/" />
 
 <spring:url var="urlProfile" value="/" />
+<spring:url var="urlOwnProfile" value="/p/" />
 <spring:url var="urlUserProfile" value="/p/user/" />
 
 <spring:url var="urlNewCategory" value="/b/newcategory/" />
@@ -41,6 +44,8 @@
 
 <spring:url var="urlTrade" value="/t/" />
 <spring:url var="urlTag" value="/t/tags/" />
+
+<spring:url var="jsValidator" value="/resources/jquery-plugins/jquery-validator.js" />
 
 <spring:url var="jsEasyPaginate" value="/resources/easypaginate/easypaginate.js" />
 <spring:url var="cssEasyPaginate" value="/resources/easypaginate/easypaginate.css" />

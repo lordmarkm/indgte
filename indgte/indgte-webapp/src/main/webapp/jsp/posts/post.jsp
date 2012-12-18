@@ -1,12 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@include file="../tiles/links.jsp" %>
 
 <title>${post.title }</title>
-<script type="text/javascript" src="${jsApplication }"></script>
 <link rel="stylesheet" href="<spring:url value='/resources/css/lists.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/feed.css' />" />
+<script src="${jsValidator}"></script>
 
 <div class="grid_8 maingrid">
 
@@ -33,9 +34,55 @@
 
 </div>
 
+<c:if test="${owner }">
+	<div class="grid_4 sidebar-section owner-menu">
+		<div class="sidebar-container">	
+			<div class="sidebar-section-header">Post Actions</div>
+			
+			<jsp:useBean id="now" class="java.util.Date" />
+			<fmt:formatDate value="${now }" pattern="yyyy-MM-dd" var="formattedNow" /> 
+			<c:choose>
+				<c:when test="${not empty post.featureEnd && post.featureEnd >= formattedNow }" >
+					<div class="ui-state-highlight pd5">This post is featured from <strong>${post.featureStart }</strong> to <strong>${post.featureEnd }</strong></div>
+				</c:when>
+				<c:otherwise>
+					<button class="btn-promote">Promote this post</button>
+				</c:otherwise>
+			</c:choose>
+		</div>
+	</div>
+	<div class="dialog-promote hide" title="Promote this post">
+		<span><spring:message code="post.promote.dialog" arguments="${user.billingInfo.coconuts }" /></span>
+		<form class="form-promote" method="post" action="<c:url value='/o/promotepost/${post.id }' />" >
+			<table>
+				<tr>
+					<td><label for="startDate">Promote from</label></td>
+					<td><input type="date" id="start-date" name="startDate" readonly="readonly" placeholder="Click to choose" /></td>
+				</tr>
+				<tr>
+					<td><label for="endDate">Promote until</label></td>
+					<td><input type="date" id="end-date" name="endDate" readonly="readonly" placeholder="Click to choose"/></td>
+				</tr>
+			</table>
+		</form>
+		<span class="coconut-cost"><spring:message code="post.promote.dialog.comp" /></span>
+	</div>
+</c:if>
+
+<!-- Notifications -->
+<%@include file="../grids/notifications4.jsp"  %>
+<!-- Notifications -->
+
+<style>
+.owner-menu button {
+	width: 100%
+}
+</style>
+
 <script>
 window.user = {
-	username : '${user.username}'	
+	username : '${user.username}',
+	coconuts : '${user.billingInfo.coconuts}'
 }
 
 window.post = {
@@ -59,206 +106,9 @@ window.urls = {
 	categoryWithProducts: '<spring:url value="/b/categories/" />',
 	productwithpics: '<spring:url value="/b/products/withpics/" />',
 	commentNotify: '<spring:url value="/i/commentnotify/post/" />',
-	likeNotify: '<spring:url value="/i/likenotify/post/" />'
-}
-
-$(function(){
-	var $dataContainer = $('.post-data-container');
-	
-	//attachment, if any
-	switch(post.attachmentType) {
-	case 'imgur':
-		var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-		var $attachmentImgA = $('<a>').attr('href', urls.imgurPage + post.attachmentImgurHash).appendTo($container);
-		$('<img class="attachment-img-large">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($attachmentImgA);
-		break;
-	case 'video':
-		var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-		var $player = $('<div class="player">').appendTo($container);
-		$player.html(post.attachmentIdentifier);
-		$player.find('iframe').attr('width', '540').attr('height', '405');
-		break;
-	case 'category':
-		var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-		//title
-		var $attachmentA = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
-		$('<h4>').text(post.attachmentTitle).appendTo($attachmentA);
-		//main category pic
-		var $a2 = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
-		$('<img class="category-attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($a2);
-		//product previews			
-		$.get(urls.categoryWithProducts + post.attachmentIdentifier + '/' + dgte.home.productPreviews + '.json', function(response) {
-			switch(response.status) {
-			case '200':
-				var description = response.category.description.length < dgte.home.attchDescLength ? response.category.description : response.category.description.substring(0, dgte.home.attchDescLength) + '...';
-				$('<div class="attachment-description">')
-					.text(description)
-					.insertAfter($attachmentA);
-				
-				if(response.products && response.products.length > 0) {
-					var $products = $('<div>').appendTo($container);
-					var visibleProducts = 0;
-					for(var prodIterator = 0, prodLength = response.products.length; prodIterator < prodLength; ++prodIterator) {
-						var attachedProduct = response.products[prodIterator];
-						if(attachedProduct.mainpic) {
-							var $productA = $('<a>').attr('href', urls.product + attachedProduct.id).appendTo($products);
-							$('<img class="category-attachment-product-img">')
-								.attr('src', attachedProduct.mainpic.smallSquare)
-								.attr('title', attachedProduct.name)
-								.appendTo($productA);
-							if(++visibleProducts >= dgte.home.productPreviews) {
-								break;
-							}								
-						}
-					}
-					
-					var notshown = response.moreproducts > 0 ? response.moreproducts : 0;
-					notshown = notshown + response.products.length - visibleProducts;
-					if(notshown > 0) {
-						var $moreproducts = $('<div class="category-attachment-moreproducts">').appendTo($products);
-						$('<a>').attr('href', urls.category + post.attachmentIdentifier).text(notshown + ' more...').appendTo($moreproducts);
-					}
-				}
-				break;
-			default:
-				debug(response);
-			}
-		});
-		break;
-	case 'product':
-		var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-		
-		//title
-		var $attachmentA = $('<a>').attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
-		$('<h4>').text(post.attachmentTitle).appendTo($attachmentA);
-		//mainpicproduct
-		if(post.attachmentImgurHash) {
-			var $attachmentImgA = $('<a>').attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
-			$('<img class="attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($attachmentImgA);
-		}
-			
-		$.get(urls.productwithpics + post.attachmentIdentifier + '/' + dgte.home.productPreviews + '.json', function(response) {
-			switch(response.status) {
-			case '200':
-				if(response.pics.length > 0) {
-					var description = response.product.description.length < dgte.home.attchDescLength ? response.product.description : response.product.description.substring(0, dgte.home.attchDescLength) + '...';
-					$('<div class="attachment-description">')
-						.text(description)
-						.insertAfter($attachmentA);
-					var $morepics = $('<div>').appendTo($container);
-					var max = response.pics.length > dgte.home.productPreviews ? dgte.home.productPreviews : response.pics.length;
-					for(var i = 0; i < max; ++i) {
-						$('<a>').attr('href', response.pics[i].imgurPage).appendTo($morepics).append(
-						$('<img class="product-attachment-img">')
-							.attr('src', response.pics[i].smallSquare)
-							.attr('title', response.pics[i].title ? response.pics[i].title : response.product.name)
-						);
-					}
-					
-					if(response.morepics > 0) {
-						var $morelink = $('<div class="product-attachment-morepics">').appendTo($morepics);
-						$('<a>').attr('href', urls.product + post.attachmentIdentifier).text(response.morepics + ' more...').appendTo($morelink);
-					}
-				}
-				break;
-			default:
-				debug(response);
-			}
-		});
-		break;
-	case 'link':
-		var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-		var $linkImgContainer = $('<div class="link-preview-images">').appendTo($container);
-		$('<img>').attr('src', post.attachmentImgurHash).appendTo($linkImgContainer);
-		
-		var $linkInfoContainer = $('<div class="link-info-container">').appendTo($container);
-		$('<div class="bold">').html(post.attachmentTitle).appendTo($linkInfoContainer);
-		$('<a>').attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier).html(post.attachmentIdentifier).appendTo($linkInfoContainer);
-		$('<p class="linkdescription">').html(post.attachmentDescription).appendTo($linkInfoContainer);
-		break;
-	case 'none':
-	default:
-		//debug('No attachment.');
-	}
-	
-	//footnote
-	var link;
-	switch(post.type) {
-		case 'user':
-			link = urls.user + post.posterIdentifier;
-			break;
-		case 'business':
-			link = urls.business + post.posterIdentifier;
-			break;
-		default:
-			debug('Illegal post type: ' + post.type);
-			return;
-	}
-	var $footnote = $('<div class="fromnow post-time">').html(moment(parseInt(post.postTime)).fromNow() + ' by ').appendTo($dataContainer);
-	$('<a>').attr('href', link).text(post.posterTitle).appendTo($footnote);
-});
-</script>
-
-<div id="fb-root"></div>
-<script>
-(function(d, s, id) {
-	var js, fjs = d.getElementsByTagName(s)[0];
-	if (d.getElementById(id))
-		return;
-	js = d.createElement(s);
-	js.id = id;
-	js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
-	fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-
-window.fbAsyncInit = function() {
-	FB.Event.subscribe('comment.create', function(event) {
-		debug(event);
-		FB.getLoginStatus(function(loginStatus) {
-			if (loginStatus.status === 'connected') {
-					//user is logged in. get details and notify poster of new comment
-				FB.api('/me', function(response) {
-						$.post(urls.commentNotify + post.id + '/json', {
-						name : response.name,
-						providerUserId : response.id,
-						providerUsername : response.name
-					}, function(response) {
-						//do nothing for now
-					});
-				});
-			} else {
-				debug('Somebody has commented with Yahoo!, AOL, or some other non-Facebook account');
-				$.post(urls.commentNotify + post.id + '/json', {
-					name : 'Somebody',
-					providerUserId : 'none',
-					providerUsername : 'none'
-				});
-			}
-		});
-	});
-	
-	FB.Event.subscribe('edge.create', function() {
-		FB.getLoginStatus(function(loginStatus) {
-			if (loginStatus.status === 'connected') {
-					//user is logged in. get details and notify poster of new comment
-				FB.api('/me', function(response) {
-						$.post(urls.likeNotify + post.id + '/json', {
-						name : response.name,
-						providerUserId : response.id,
-						providerUsername : response.name
-					}, function(response) {
-						//do nothing for now
-					});
-				});
-			} else {
-				debug('Somebody has commented with Yahoo!, AOL, or some other non-Facebook account');
-				$.post(urls.likeNotify + post.id + '/json', {
-					name : 'Somebody',
-					providerUserId : 'none',
-					providerUsername : 'none'
-				});
-			}
-		});
-	});
+	commentRemove: '<spring:url value="/i/commentremove/post/" />',
+	likeNotify: '<spring:url value="/i/likenotify/post/" />',
+	unlike: '<spring:url value="/i/unlike/post/" />'
 }
 </script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/posts/post.js' />" ></script>

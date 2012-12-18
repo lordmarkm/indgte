@@ -116,4 +116,10 @@ public class BusinessService {
 	public void delete(Long id) {
 		dao.delete(id);
 	}
+	public void editInfo(String username, String domain, String info) {
+		dao.editInfo(username, domain, info);
+	}
+	public String getInfo(String domain) {
+		return dao.getInfo(domain);
+	}
 }

@@ -80,7 +80,7 @@ public class User implements Searchable {
 	@Override
 	public Summary summarize() {
 		Summary summary = new Summary(SummaryType.user, id, username, null, username, imageUrl);
-		summary.setRank(extension.getPrefix() + " " + extension.getRank());
+		summary.setRank(extension.getRank() == null ? "" : extension.getRank().toString());
 		return summary;
 	}
 

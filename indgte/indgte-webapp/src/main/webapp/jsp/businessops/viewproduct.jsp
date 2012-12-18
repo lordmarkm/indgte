@@ -458,15 +458,3 @@ window.urls.topTenLeader = '<spring:url value="/i/toptens/leader/" />',
 window.urls.topTensPage = '<spring:url value="/i/toptens/" />'
 </script>
 <script src="${jsTopTens }"></script>
-
-<spring:url var="jsApplication" value="/resources/javascript/application.js" />
-<script type="text/javascript" src="${jsApplication }"></script>
-
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>

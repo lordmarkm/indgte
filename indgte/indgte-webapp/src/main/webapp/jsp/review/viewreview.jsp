@@ -5,7 +5,6 @@
 <%@include file="../tiles/links.jsp" %>
 
 <title>Review for ${review.revieweeSummary.title }</title>
-<script type="text/javascript" src="${jsApplication }"></script>
 
 <div class="grid_8 review">
 	<div class="page-header">Review for ${review.revieweeSummary.title }</div>
@@ -195,12 +194,3 @@ $(function(){
 	}, '.link-disagree');
 });
 </script>
-
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>

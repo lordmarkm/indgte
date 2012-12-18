@@ -50,4 +50,8 @@ public interface NotificationsDao {
 	public Collection<TopTenVoteNotification> topTenVote(TopTenCandidate candidate);
 
 	public Collection<NewBidNotification> newBid(long itemId);
+
+	public void commentRemove(InteractableType type, long targetId);
+
+	public void unlike(InteractableType type, long targetId);
 }

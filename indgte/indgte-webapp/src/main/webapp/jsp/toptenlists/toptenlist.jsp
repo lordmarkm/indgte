@@ -6,14 +6,12 @@
 
 <title>Top Ten Lists In Dumaguete</title>
 <link rel="stylesheet" href="<spring:url value='/resources/css/topten/toptenlist.css' />" />
-<script type="text/javascript" src="${jsApplication }"></script>
 <link rel="stylesheet" href="<spring:url value='/resources/css/autocomplete.css' />" />
 <script type="text/javascript" src="${jsAutocomplete }"></script>
 
 <div class="grid_8 maingrid">
-
+<div class="page-header">${topten.title }</div>
 <section class="list-details-head">
-	<h1 class="list-title">${topten.title }</h1>
 	<div class="list-description embedded-images-200">${topten.description }</div>
 	<div class="list-editdescription-container hide">
 		<textarea class="list-editdescription-box" rows="4" cols="80">${topten.description }</textarea>
@@ -35,7 +33,7 @@
 			<c:if test="${not empty candidate.attachment }">
 				<c:choose>
 					<c:when test="${candidate.attachmentType eq 'business' }">
-						<div class="candidate-title"><a href="${urlProfile }${candidate.attachment.id}">${candidate.attachment.name }</a></div>
+						<div class="candidate-title"><a href="${urlProfile }${candidate.attachment.domain}">${candidate.attachment.name }</a></div>
 					</c:when>
 					<c:when test="${candidate.attachmentType eq 'category' }">
 						<div class="candidate-title"><a href="${urlCategories }${candidate.attachment.id }">${candidate.attachment.name }</a></div>
@@ -117,6 +115,10 @@
 	</sec:authorize>
 </section>
 
+<section class="mt10">
+	<div class="fb-comments" data-href="${baseURL}/i/toptens/${topten.id}" data-width="620"></div>
+</section>
+
 </div>
 
 <!-- Image upload -->
@@ -145,7 +147,7 @@ window.urls = {
 	listdescription : '<spring:url value="/i/toptens/listdescription/" />',
 	
 	//grids
-	business : '<spring:url value="/p/" />',
+	business : '<spring:url value="/" />',
 }
 
 window.topten = {
@@ -445,18 +447,39 @@ $(function(){
 });
 </script>
 
+<!-- Notifications -->
+<div class="notifications-container grid_4 sidebar-section">
+	<div class="sidebar-container">
+		<div class="notifications-container relative">
+			<img src="${logo }" />
+			<span class="msg-uptodate">You're completely up to date. Yey!</span>
+			<ul class="notifications hasnotifs"></ul>
+		</div>
+		<div class="old-notifications-container hide relative">
+			<div class="sidebar-section-header">Previous notifications</div>
+			<span class="msg-clearhistory hide">You're notification history is empty. Yey!</span>
+			<ul class="old-notifications hasnotifs"></ul>
+		</div>
+		<a class="link-showoldnotifs" href="javascript:;">Show old notifications...</a>
+		<a class="link-clearoldnotifs hide" href="javascript:;">Clear all</a>
+	</div>
+</div>
+<link rel="stylesheet" href="<spring:url value='/resources/css/grids/notifs.css' />" />
+<!-- Notifications -->
+
 <!-- Top Tens -->
 <div class="toptens-container grid_4 sidebar-section">
-<div class="sidebar-section-header">Other Top Tens</div>
-	<div class="toptens">
-		Popular:
-		<ul class="popular"></ul>
-		Recent:
-		<ul class="recent"></ul>
-		
-		<a href="<spring:url value='/i/toptens/' />">View all...</a>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Other Top Tens</div>
+		<div class="toptens">
+			Popular:
+			<ul class="popular"></ul>
+			Recent:
+			<ul class="recent"></ul>
+			
+			<a href="<spring:url value='/i/toptens/' />">View all...</a>
+		</div>
 	</div>
-	<div class="sidebar-divider"></div>
 </div>
 <link rel="stylesheet" href="<spring:url value='/resources/css/grids/toptens.css' />" />
 <script>

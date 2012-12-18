@@ -15,8 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AdminMaker implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
-	static Logger log = LoggerFactory.getLogger(AdminMaker.class);
+public class AuthenticationSuccessListener implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
+	static Logger log = LoggerFactory.getLogger(AuthenticationSuccessListener.class);
 
 	@Override
     public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
@@ -25,7 +25,7 @@ public class AdminMaker implements ApplicationListener<InteractiveAuthentication
 		log.info("Auth success! {}", principal);
 		
 		//Make Mark Martinez an admin
-		if(principal instanceof String && ((String)principal).equals("Mark Martinez")) {
+		if(principal instanceof String && ((String)principal).equals("mark.martinez.986")) {
 			Authentication authentication = event.getAuthentication();
 			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(authentication.getAuthorities());
 			authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));

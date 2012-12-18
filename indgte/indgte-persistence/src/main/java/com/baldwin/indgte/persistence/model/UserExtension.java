@@ -9,8 +9,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -22,13 +22,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreType;
 import org.hibernate.annotations.IndexColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.baldwin.indgte.persistence.constants.Background;
-import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.dto.Summarizable;
 import com.baldwin.indgte.persistence.dto.Summary;
 
@@ -39,6 +37,7 @@ import com.baldwin.indgte.persistence.dto.Summary;
 
 @Entity
 @Table(name="userextensions")
+@JsonIgnoreType
 public class UserExtension implements Summarizable {
 	static Logger log = LoggerFactory.getLogger(UserExtension.class);
 	
@@ -49,20 +48,6 @@ public class UserExtension implements Summarizable {
 	@MapsId
 	@JoinColumn(name="userId", nullable=false, unique=true)
 	private User user;
-	
-	@Column
-	private String prefix = "";
-	
-	@Column
-	private String rank = "Dumagueteño";
-	
-	@Enumerated
-	@Column
-	private Theme theme = Theme.flick;
-	
-	@Enumerated
-	@Column
-	private Background background = Background.grass;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "reviewer")
 	private Set<BusinessReview> businessReviews;
@@ -134,6 +119,15 @@ public class UserExtension implements Summarizable {
 	@Column(name="userId")
 	private Set<Long> userSubscriptions;	
 	
+	@Embedded
+	private BillingInformation billingInfo;
+	
+	@Embedded
+	private AppearanceSettings appearanceSettings;
+	
+	@Embedded
+	private Rank rank;
+	
 	public boolean inWishlist(Product product) {
 		for(Wish wish : wishlist) {
 			if(product.equals(wish.getProduct())) return true;
@@ -166,7 +160,6 @@ public class UserExtension implements Summarizable {
 		this.id = id;
 	}
 
-	@JsonIgnore
 	public User getUser() {
 		return user;
 	}
@@ -175,7 +168,6 @@ public class UserExtension implements Summarizable {
 		this.user = user;
 	}
 
-	@JsonIgnore
 	public List<Wish> getWishlist() {
 		if(null == wishlist) {
 			wishlist = new ArrayList<Wish>();
@@ -187,7 +179,6 @@ public class UserExtension implements Summarizable {
 		this.wishlist = wishlist;
 	}
 
-	@JsonIgnore
 	public List<BusinessProfile> getForReview() {
 		return forReview;
 	}
@@ -200,7 +191,6 @@ public class UserExtension implements Summarizable {
 		this.neverReview = neverReview;
 	}
 	
-	@JsonIgnore
 	public Set<Long> getNeverReview() {
 		if(null == neverReview) {
 			neverReview = new HashSet<Long>();
@@ -208,7 +198,6 @@ public class UserExtension implements Summarizable {
 		return neverReview;
 	}
 
-	@JsonIgnore
 	public Set<UserReview> getReviewsReceived() {
 		if(null == reviewsReceived) {
 			reviewsReceived = new HashSet<UserReview>();
@@ -220,7 +209,6 @@ public class UserExtension implements Summarizable {
 		this.reviewsReceived = reviewsReceived;
 	}
 
-	@JsonIgnore
 	public Set<UserReview> getReviewsWritten() {
 		if(null == reviewsWritten) {
 			reviewsWritten = new HashSet<UserReview>();
@@ -230,14 +218,6 @@ public class UserExtension implements Summarizable {
 
 	public void setReviewsWritten(Set<UserReview> reviewsWritten) {
 		this.reviewsWritten = reviewsWritten;
-	}
-
-	public String getRank() {
-		return rank;
-	}
-
-	public void setRank(String rank) {
-		this.rank = rank;
 	}
 
 	public String getUsername() {
@@ -252,7 +232,6 @@ public class UserExtension implements Summarizable {
 		return user.getProfileUrl();
 	}
 	
-	@JsonIgnore
 	public Set<BusinessReview> getBusinessReviews() {
 		if(null == businessReviews) {
 			businessReviews = new HashSet<BusinessReview>();
@@ -264,7 +243,6 @@ public class UserExtension implements Summarizable {
 		this.businessReviews = businessReviews;
 	}
 	
-	@JsonIgnore
 	public Set<TopTenCandidate> getVotes() {
 		if(null == votes) {
 			votes = new HashSet<TopTenCandidate>();
@@ -276,7 +254,6 @@ public class UserExtension implements Summarizable {
 		this.votes = votes;
 	}
 
-	@JsonIgnore
 	public Set<TopTenList> getCreatedToptens() {
 		if(null == createdToptens) {
 			createdToptens = new HashSet<TopTenList>();
@@ -288,7 +265,6 @@ public class UserExtension implements Summarizable {
 		this.createdToptens = createdToptens;
 	}
 
-	@JsonIgnore
 	public Set<Tag> getWatchedTags() {
 		if(null == watchedTags) {
 			watchedTags = new HashSet<Tag>();
@@ -305,7 +281,6 @@ public class UserExtension implements Summarizable {
 		return user.summarize();
 	}
 	
-	@JsonIgnore
 	public Set<BuyAndSellItem> getBuyAndSellItems() {
 		if(null == buyAndSellItems) {
 			this.buyAndSellItems = new HashSet<BuyAndSellItem>();
@@ -317,7 +292,6 @@ public class UserExtension implements Summarizable {
 		this.buyAndSellItems = buyAndSellItems;
 	}
 	
-	@JsonIgnore
 	public Set<BusinessProfile> getBusinesses() {
 		if(null == businesses) {
 			businesses = new HashSet<BusinessProfile>();
@@ -329,7 +303,6 @@ public class UserExtension implements Summarizable {
 		this.businesses = businesses;
 	}
 	
-	@JsonIgnore
 	public Set<Long> getBusinessSubscriptions() {
 		if(null == businessSubscriptions) {
 			businessSubscriptions = new HashSet<Long>();
@@ -341,7 +314,6 @@ public class UserExtension implements Summarizable {
 		this.businessSubscriptions = businessSubscriptions;
 	}
 	
-	@JsonIgnore
 	public Set<Long> getUserSubscriptions() {
 		if(null == userSubscriptions) {
 			this.userSubscriptions = new HashSet<>();
@@ -351,15 +323,6 @@ public class UserExtension implements Summarizable {
 
 	public void setUserSubscriptions(Set<Long> userSubscriptions) {
 		this.userSubscriptions = userSubscriptions;
-	}
-
-	@JsonIgnore
-	public Theme getTheme() {
-		return theme;
-	}
-
-	public void setTheme(Theme theme) {
-		this.theme = theme;
 	}
 
 	@Override
@@ -384,20 +347,36 @@ public class UserExtension implements Summarizable {
 		return true;
 	}
 
-	@JsonIgnore
-	public Background getBackground() {
-		return background;
+	public BillingInformation getBillingInfo() {
+		if(null == billingInfo) {
+			billingInfo = new BillingInformation();
+		}
+		return billingInfo;
 	}
 
-	public void setBackground(Background background) {
-		this.background = background;
+	public void setBillingInfo(BillingInformation billingInfo) {
+		this.billingInfo = billingInfo;
 	}
 
-	public String getPrefix() {
-		return prefix;
+	public AppearanceSettings getAppearanceSettings() {
+		if(null == appearanceSettings) {
+			appearanceSettings = new AppearanceSettings();
+		}
+		return appearanceSettings;
 	}
 
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
+	public void setAppearanceSettings(AppearanceSettings appearanceSettings) {
+		this.appearanceSettings = appearanceSettings;
+	}
+
+	public Rank getRank() {
+		if(null == rank) {
+			rank = new Rank();
+		}
+		return rank;
+	}
+
+	public void setRank(Rank rank) {
+		this.rank = rank;
 	}
 }

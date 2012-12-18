@@ -1,9 +1,6 @@
 package com.baldwin.indgte.persistence.service;
 
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.business;
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.category;
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.product;
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.user;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.*;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -57,6 +54,9 @@ public class SearchService {
 				break;
 			case product:
 				results.put(product, dao.search(term, firstResult, maxResults, Product.class, ownername));
+				break;
+			case buyandsellitem:
+				results.put(buyandsellitem, dao.search(term, firstResult, maxResults, BuyAndSellItem.class, ownername));
 				break;
 			default:
 				//throw new IllegalArgumentException("Illegal type: " + type);

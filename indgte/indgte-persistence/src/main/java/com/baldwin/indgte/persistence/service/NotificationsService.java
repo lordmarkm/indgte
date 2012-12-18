@@ -41,6 +41,10 @@ public class NotificationsService {
 		return dao.commentNotif(name, type, targetId, providerUserId, providerUsername);
 	}
 
+	public void commentRemove(InteractableType type, long targetId) {
+		dao.commentRemove(type, targetId);
+	}
+	
 	public void delete(String username, Long[] notifIds) {
 		dao.delete(username, notifIds);
 	}
@@ -52,6 +56,10 @@ public class NotificationsService {
 		return dao.likeNotif(name, type, targetId, providerUserId, providerUsername);
 	}
 
+	public void unlike(InteractableType type, long targetId) {
+		dao.unlike(type, targetId);
+	}
+	
 	public ReviewReactNotification reviewReactNotif(String reactorName, String mode, Review review) {
 		return dao.reviewReactNotif(reactorName, mode, review);
 	}
@@ -67,4 +75,5 @@ public class NotificationsService {
 	public Collection<NewBidNotification> newBid(long itemId) {
 		return dao.newBid(itemId);
 	}
+
 }

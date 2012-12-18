@@ -102,8 +102,9 @@ public class TradeControllerImpl implements TradeController {
 		}
 		
 		if(null != principal) {
-			UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist);
-			builder.put("inwishlist", user.inWishlist(item))
+			UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist, Initializable.watchedtags);
+			builder.put("user", user)
+				.put("inwishlist", user.inWishlist(item))
 				.put("owner", item.getOwner().equals(user));
 		}
 		

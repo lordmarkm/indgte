@@ -1,9 +1,6 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.business;
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.category;
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.product;
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.user;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.*;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
@@ -109,7 +106,7 @@ public class SearchControllerImpl implements SearchController {
 	public @ResponseBody JSON autocomplete(Principal principal, @PathVariable String term) {
 		long startTime = System.currentTimeMillis();
 		int maxresults = -1;
-		SummaryType[] supportedTypes = new SummaryType[] {business, category, product};
+		SummaryType[] supportedTypes = new SummaryType[] {business, category, product, buyandsellitem};
 
 		JSON results = search(principal, term, supportedTypes, maxresults, null);
 		return results.put("searchtime", System.currentTimeMillis() - startTime);
@@ -119,7 +116,7 @@ public class SearchControllerImpl implements SearchController {
 	public @ResponseBody JSON autocompleteOwn(Principal principal, @PathVariable String term) {
 		long startTime = System.currentTimeMillis();
 		int maxresults = -1;
-		SummaryType[] supportedTypes = new SummaryType[] {business, category, product};
+		SummaryType[] supportedTypes = new SummaryType[] {business, category, product, buyandsellitem};
 		
 		JSON results = search(principal, term, supportedTypes, maxresults, principal.getName());
 		return results.put("searchtime", System.currentTimeMillis() - startTime);

@@ -167,7 +167,20 @@ public class NotificationsDaoImpl implements NotificationsDao {
 		case post:
 			return processPostComment(targetId, commenterName, providerUserId);
 		default:
-			throw new IllegalStateException("Unsupported comment type: " + commentableType);
+			throw new IllegalStateException("Unsupported comment location: " + commentableType);
+		}
+	}
+	
+	@Override
+	public void commentRemove(InteractableType type, long targetId) {
+		switch(type) {
+		case post:
+			Post post = interact.getPost(targetId);
+			int newcomments = post.getComments() - 1;
+			post.setComments(newcomments < 0 ? 0 : newcomments);
+			break;
+		default:
+			throw new IllegalStateException("Unsupported comment location: " + type);
 		}
 	}
 	
@@ -184,6 +197,19 @@ public class NotificationsDaoImpl implements NotificationsDao {
 		}
 	}
 	
+	@Override
+	public void unlike(InteractableType type, long targetId) {
+		switch(type) {
+		case post:
+			Post post = interact.getPost(targetId);
+			int newlikes = post.getLikes() - 1;
+			post.setLikes(newlikes < 0 ? 0 : newlikes);
+			break;
+		default:
+			throw new IllegalStateException("Unsupported like type: " + type);
+		}
+	}
+	
 	private LikeNotification processPostLike(long postId, String likerName, String likerId) {
 		log.debug("Creating notification for post with id {}, from commenter {}", postId, likerName);
 		
@@ -195,9 +221,10 @@ public class NotificationsDaoImpl implements NotificationsDao {
 				.add(Restrictions.eq(NOTIF_COMMENTORLIKE_TARGETID, postId))
 				.add(Restrictions.eq(NOTIF_SEEN, false))
 				.uniqueResult();
-				
+		
+		Post post = interact.getPost(postId);
+		
 		if(null == notification) {
-			Post post = interact.getPost(postId);
 			UserExtension notified = null;
 			
 			switch(post.getType()) {
@@ -234,6 +261,10 @@ public class NotificationsDaoImpl implements NotificationsDao {
 		notification.setLastLikerId(likerId);
 		notification.setTime(new Date());
 		session.saveOrUpdate(notification);
+		
+		//fame
+		post.setLikes(post.getLikes() + 1);
+		fame.computeFame(notification.getNotified());
 		
 		return notification;
 	}
@@ -474,5 +505,5 @@ public class NotificationsDaoImpl implements NotificationsDao {
 		
 		return notifs;
 	}
-	
+
 }

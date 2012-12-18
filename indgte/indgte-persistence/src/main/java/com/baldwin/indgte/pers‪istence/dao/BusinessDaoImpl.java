@@ -1,5 +1,7 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
+import static com.baldwin.indgte.pers‪istence.dao.TableConstants.*;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -50,18 +52,11 @@ public class BusinessDaoImpl implements BusinessDao {
 	
 	@Override
 	public BusinessProfile get(String domain) {
-		return get(domain, null);
-	}
-	
-	private BusinessProfile get(String domain, Session session) {
-		if(null == session) {
-			session = sessions.getCurrentSession();
-		}
-		return (BusinessProfile) session.createCriteria(BusinessProfile.class)
+		return (BusinessProfile) sessions.getCurrentSession().createCriteria(BusinessProfile.class)
 				.add(Restrictions.eq(TableConstants.BUSINESS_DOMAIN, domain))
 				.uniqueResult();
 	}
-
+	
 	@Override
 	public BusinessProfile get(long businessId) {
 		return (BusinessProfile) sessions.getCurrentSession().get(BusinessProfile.class, businessId);
@@ -152,7 +147,7 @@ public class BusinessDaoImpl implements BusinessDao {
 	@Override
 	public void saveProfilepic(String domain, Imgur profilepic) {
 		Session session = sessions.getCurrentSession();
-		BusinessProfile business = get(domain, session);
+		BusinessProfile business = get(domain);
 		if(null != business.getProfilepic()) {
 			session.delete(business.getProfilepic());
 		}
@@ -165,7 +160,7 @@ public class BusinessDaoImpl implements BusinessDao {
 	@Override
 	public void saveCoverpic(String domain, Imgur coverpic) {
 		Session session = sessions.getCurrentSession();
-		BusinessProfile business = get(domain, session);
+		BusinessProfile business = get(domain);
 		if(null != business.getCoverpic()) {
 			session.delete(business.getCoverpic());
 		}
@@ -188,7 +183,7 @@ public class BusinessDaoImpl implements BusinessDao {
 		
 		Session session = sessions.getCurrentSession();
 
-		BusinessProfile business = get(domain, session);
+		BusinessProfile business = get(domain);
 		Hibernate.initialize(business.getCategories());
 		
 		Category category = new Category();
@@ -365,5 +360,18 @@ public class BusinessDaoImpl implements BusinessDao {
 		sessions.getCurrentSession().createQuery("update BusinessProfile set deleted = true where id = :id")
 			.setLong(TableConstants.ID, id)
 			.executeUpdate();
+	}
+
+	@Override
+	public void editInfo(String username, String domain, String info) {
+		get(domain).setInfo(info);
+	}
+
+	@Override
+	public String getInfo(String domain) {
+		return (String) sessions.getCurrentSession().createCriteria(BusinessProfile.class)
+			.add(Restrictions.eq(BUSINESS_DOMAIN, domain))
+			.setProjection(Projections.property(BUSINESS_INFO))
+			.uniqueResult();
 	}
 }

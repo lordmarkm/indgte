@@ -15,6 +15,9 @@ import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 
 public class MavBuilder {
 	
+	public static String PAGE_DESCRIPTION = "page_description";
+	public static String PAGE_THUMBNAIL = "page_thumbnail";
+	
 	ModelAndView mav;
 	
 	public static MavBuilder render(User user) {
@@ -60,8 +63,8 @@ public class MavBuilder {
 		m.put("themes", Theme.values());
 		m.put("backgrounds", Background.values());
 		m.put("imgurKey", DgteConstants.IMGUR_DEVKEY);
-		m.put("page_thumbnail", DgteConstants.SITE_THUMBNAIL);
-		m.put("page_description", DgteConstants.SITE_DESCRIPTION);
+		m.put(PAGE_THUMBNAIL, DgteConstants.SITE_THUMBNAIL);
+		m.put(PAGE_DESCRIPTION, DgteConstants.SITE_DESCRIPTION);
 	}
 	
 	public MavBuilder put(String name, Object object) {

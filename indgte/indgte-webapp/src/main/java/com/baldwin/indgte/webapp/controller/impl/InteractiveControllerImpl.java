@@ -33,6 +33,7 @@ import com.baldwin.indgte.persistence.constants.WishType;
 import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.CommentNotification;
 import com.baldwin.indgte.persistence.model.Imgur;
@@ -50,6 +51,7 @@ import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BusinessService;
 import com.baldwin.indgte.persistence.service.InteractiveService;
 import com.baldwin.indgte.persistence.service.NotificationsService;
+import com.baldwin.indgte.persistence.service.TradeService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.pers‪istence.dao.InteractiveDao;
 import com.baldwin.indgte.webapp.controller.InteractiveController;
@@ -81,15 +83,18 @@ public class InteractiveControllerImpl implements InteractiveController {
 	private NotificationsService notifs;
 	
 	@Autowired
+	private TradeService trade;
+	
+	@Autowired
 	private Comet comet;
 	
 	@Override
-	public @ResponseBody JSON subposts(Principal principal, @RequestParam int start, @RequestParam int howmany, @RequestParam boolean subsonly) {
-		
-		Collection<Post> feedposts = (principal == null || !subsonly)? interact.getPosts(start, howmany) : interact.getSubposts(principal.getName(), start, howmany);
-		
+	public @ResponseBody JSON subposts(Principal principal, @RequestParam int start, @RequestParam int howmany, @RequestParam String sort, boolean hasSticky) {
 		try {
-			return JSON.ok().put("posts", feedposts);
+			return JSON.ok()
+						.put("posts", interact.getPosts(principal == null ? null : principal.getName(), start,  howmany, sort))
+						.put("featured", hasSticky ? null : interact.getRandomFeaturedPost());
+			
 		} catch (Exception e) {
 			log.error("Exception getting subposts", e);
 			return JSON.status500(e);
@@ -97,8 +102,10 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 
 	@Override
-	public @ResponseBody JSON lastPosts(long posterId, PostType type, int start, int howmany) {
-		return JSON.ok().put("posts", postDao.getById(posterId, type, start, howmany));
+	public @ResponseBody JSON lastPosts(long posterId, PostType type, int start, int howmany, boolean hasSticky) {
+		return JSON.ok()
+					.put("posts", postDao.getById(posterId, type, start, howmany))
+					.put("featured", hasSticky ? null : interact.getRandomFeaturedPost());
 	}
 
 	@Override
@@ -110,7 +117,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 		
 		if(null != principal) {
 			UserExtension user = users.getExtended(principal.getName());
-			mav.put("user", user);
+			mav.put("user", user)
+			   .put("owner", interact.isPostOwner(post, user));
 		}
 		
 		return mav.mav();
@@ -150,13 +158,25 @@ public class InteractiveControllerImpl implements InteractiveController {
 			embed = Jsoup.clean(embed, DgteTagWhitelist.videos());
 			attachment = new Summary(attachmentType, null, null, null, embed, null);
 			break;
+		case business:
+			log.debug("Attaching business with id {}", request.getParameter("entityId"));
+			BusinessProfile business = businesses.get(Long.parseLong(request.getParameter("entityId")));
+			attachment = business.summarize();
+			break;
+		case category:
+			log.debug("Attaching category with id {}", request.getParameter("entityId"));
+			Category category = businesses.getCategory(Long.parseLong(request.getParameter("entityId")));
+			attachment = category.summarize();
+			break;
 		case product:
+			log.debug("Attaching product with id {}", request.getParameter("entityId"));
 			Product product = businesses.getProduct(Long.parseLong(request.getParameter("entityId")));
 			attachment = product.summarize();
 			break;
-		case category:
-			Category category = businesses.getCategory(Long.parseLong(request.getParameter("entityId")));
-			attachment = category.summarize();
+		case buyandsellitem:
+			log.debug("Attaching buy and sell item with id {}", request.getParameter("entityId"));
+			BuyAndSellItem bas = trade.get(null, Long.parseLong(request.getParameter("entityId")));
+			attachment = bas.summarize();
 			break;
 		case link:
 			String link = request.getParameter("link");
@@ -624,6 +644,18 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
+	
+	@Override
+	public @ResponseBody JSON commentRemove(@PathVariable InteractableType type, @PathVariable long targetId) {
+		log.debug("Someone has removed his comment from {} with id {}", type, targetId);
+		try {
+			notifs.commentRemove(type, targetId);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Ex", e);
+			return JSON.status500(e);
+		}
+	}
 
 	@Override
 	public @ResponseBody JSON likeNotify(Principal principal, 
@@ -639,7 +671,19 @@ public class InteractiveControllerImpl implements InteractiveController {
 			if(null != notif) comet.fireNotif(notif);
 			return JSON.ok();
 		} catch (Exception e) {
-			log.error("Error adding comment notif", e);
+			log.error("Error adding like notif", e);
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON unlike(@PathVariable InteractableType type, @PathVariable long targetId) {
+		log.debug("Someone has 'Unliked' {} with id {}", type, targetId);
+		try {
+			notifs.unlike(type, targetId);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Ex", e);
 			return JSON.status500(e);
 		}
 	}
@@ -654,4 +698,5 @@ public class InteractiveControllerImpl implements InteractiveController {
 			return JSON.status500(e);
 		}
 	}
+
 }

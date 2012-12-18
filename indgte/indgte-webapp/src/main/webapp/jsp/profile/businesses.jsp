@@ -5,7 +5,7 @@
 
 <title>Your Businesses</title>
 
-<section class="grid_9">
+<section class="grid_9 maingrid">
 	<div class="page-header">Your Pages</div>
 	<p>Manage your pages. Warning: Editing a page domain will reset the number of likes for that page. That's just how Facebook works. Sorry.
 	
@@ -62,14 +62,16 @@
 <div class="dialog-delete"></div>
 
 <div class="grid_3 sidebar-section">
-	<div class="sidebar-section-header">Menu</div>
-	<a class="btn-register button" href="${urlRegister }"><spring:message code="businesses.register" /></a>
-	<div class="sidebar-divider"></div>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Menu</div>
+		<a class="btn-register button" href="${urlRegister }"><spring:message code="businesses.register" /></a>
+	</div>
 </div>
 
 <div class="grid_3 sidebar-section">
-	<div class="sidebar-section-header">Help</div>
-	<div class="sidebar-divider"></div>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Help</div>
+	</div>
 </div>
 
 <style>
@@ -230,5 +232,3 @@ $(function(){
 	}, '.delete-business');
 });
 </script>
-
-<script type="text/javascript" src="${jsApplication }"></script>

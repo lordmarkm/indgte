@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -274,6 +275,14 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 			removeChatter(username);
 		}
 
-		response.sendRedirect("//");
+		clearCookie(response);
+		response.sendRedirect("/");
+	}
+	
+	private void clearCookie(HttpServletResponse response) {
+		Cookie cookie = new Cookie("dgte-chat", null);
+		cookie.setMaxAge(0);
+		cookie.setPath("/");
+		response.addCookie(cookie);
 	}
 }

@@ -23,6 +23,13 @@ import com.baldwin.indgte.persistence.model.Product;
 @RequestMapping("/b/")
 @SessionAttributes(types = Product.class)
 public interface BusinessController {
+	
+	@RequestMapping(value="/getinfo/{domain}", method = RequestMethod.GET)
+	public JSON getInfo(String domain);
+	
+	@RequestMapping(value="/editinfo/{domain}", method = RequestMethod.POST)
+	public String editInfo(Principal principal, String domain, String info);
+	
 	/*
 	 * Category operations for domain
 	 */

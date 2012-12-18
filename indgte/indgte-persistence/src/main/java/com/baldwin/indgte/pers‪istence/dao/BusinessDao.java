@@ -44,4 +44,6 @@ public interface BusinessDao {
 	Category getCategoryWithProducts(long categoryId);
 	String getDomain(long id);
 	void delete(Long id);
+	void editInfo(String username, String domain, String info);
+	String getInfo(String domain);
 }

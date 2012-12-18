@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="<spring:url value='/resources/css/lists.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/feed.css' />" />
 
-<script src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
+<script src="${jsValidator }"></script>
 
 <div class="grid_8 maingrid">
 
@@ -126,7 +126,6 @@
 		<button class="loadmore" style="width: 50%; margin-top: 50px;">Load 10 more</button>
 	</div>
 </section>
-
 </div>
 
 <div class="dgte-preview"></div>
@@ -138,7 +137,7 @@ window.constants = {
 }
 window.urls = {
 	status : '<spring:url value="/i/newstatus.json" />',
-	subposts : '<spring:url value="/i/subposts.json" />',
+	subposts : '<spring:url value="/i/subposts/json" />',
 	postdetails : '<spring:url value="/i/posts/" />',
 	linkpreview : '<spring:url value="/i/linkpreview/" />',
 	user : '<spring:url value="/p/user/" />',
@@ -148,6 +147,7 @@ window.urls = {
 	getproducts: '<spring:url value="/b/products/" />',
 	product: '<spring:url value="/b/products/" />',
 	productwithpics: '<spring:url value="/b/products/withpics/" />',
+	buyandsellitem: '<spring:url value="/t/" />',
 	imgur : 'http://i.imgur.com/',
 	imgurPage : 'http://imgur.com/',
 	searchOwn: '<spring:url value="/s/own/" />'
@@ -181,7 +181,7 @@ $(function(){
 		$btnPost = $('.btn-post'),
 		$loadmoreContainer = $('.loadmoreContainer'),
 		$loadmore = $('.loadmore'),
-		$chkSubsonly = $('#subsonly'),
+		$rdoSortPosts = $('#rdo-post-sort').buttonset(),
 		$linkpreview = $('.link-preview-container'),
 		$linkpreviewImg = $('.link-preview-images');
 	
@@ -511,9 +511,9 @@ $(function(){
 					$('<img class="autocomplete-img">').attr('src', result.thumbnailHash ? urls.imgur + result.thumbnailHash + 's.jpg' : dgte.urls.blackSquareSmall).appendTo($auto);
 					$('<div class="autocomplete-title">').text(result.title).appendTo($auto);
 					
-					if(result.description.length < 80) {
+					if(result.description && result.description.length < 80) {
 						$('<div class="autocomplete-description">').text(result.description).appendTo($auto);
-					} else {
+					} else if(result.description) {
 						$('<div class="autocomplete-description">').text(result.description.substring(0, 80) + '... ').appendTo($auto);
 					}
 					++visibleResults;
@@ -537,6 +537,13 @@ $(function(){
 					$('<div class="ui-widget-header">').text('Products').appendTo($entitySuggestions);
 					for(var i = 0, length = response.product.length; i < length; i++) {
 						makeAutocompleteResult(response.product[i], urls.product);
+					}
+				}
+				
+				if(response.buyandsellitem && response.buyandsellitem.length > 0) {
+					$('<div class="ui-widget-header">').text('Buy and Sell').appendTo($entitySuggestions);
+					for(var i = 0, len = response.buyandsellitem.length; i < len; ++i) {
+						makeAutocompleteResult(response.buyandsellitem[i], urls.buyandsellitem);
 					}
 				}
 				
@@ -690,17 +697,33 @@ $(function(){
 	//posts
 	var startPostIndex = 0;
 	function getPosts() {
-		$.get(urls.subposts, {start: startPostIndex, howmany: dgte.constants.postsPerPage, subsonly: $chkSubsonly.is(':checked')}, function(response){
-			switch(response.status) {
-			case '200':
-				for(var i = 0, length = response.posts.length; i < length; ++i) {
-					addPost(response.posts[i], false, startPostIndex != 0);
+		var sort = $rdoSortPosts.length ? $rdoSortPosts.find(':checked').val() : 'popularity';
+		var hasSticky = $('.post.sticky').length != 0;
+		debug('Gonna be sorting by: ' + sort + ' has sticky? ' + hasSticky);
+		
+		$.get(urls.subposts, 
+			{
+				start: startPostIndex, 
+				howmany: dgte.constants.postsPerPage, 
+				sort: sort,
+				hasSticky: hasSticky
+			}, 
+			
+			function(response){
+				switch(response.status) {
+				case '200':
+					debug('has featured? ' + JSON.stringify(response.featured));
+					if(response.featured) {
+						addPost(response.featured, true, startPostIndex != 0, true);
+					}
+					for(var i = 0, length = response.posts.length; i < length; ++i) {
+						addPost(response.posts[i], false, startPostIndex != 0);
+					}
+					startPostIndex += response.posts.length;
+					break;
+				default:
+					debug(response);
 				}
-				startPostIndex += response.posts.length;
-				break;
-			default:
-				debug(response);
-			}
 		}).complete(function(){
 			$posts.parent().fadeSpinner();
 		});
@@ -712,14 +735,14 @@ $(function(){
 		$posts.html('');
 	}
 	
-	$chkSubsonly.change(function(){
+	$rdoSortPosts.change(function(){
 		startPostIndex = 0;
 		$posts.parent().spinner(true);
 		clearPosts();
 		getPosts();
 	});
 	
-	function addPost(post, prepend, fadein) {
+	function addPost(post, prepend, fadein, sticky) {
 		var posterImgSrc;
 		var link;
 		switch(post.type) {
@@ -737,9 +760,15 @@ $(function(){
 		}
 		
 		var $post = $('<li class="post">').attr('postId', post.id);
+		if(sticky) {
+			$post.addClass('sticky');
+			$('<div class="sticky-pin">')
+				.attr('title', 'This is a featured post :)')
+				.appendTo($post);
+		}
 		
-		if(prepend) {
-			$post.prependTo($posts).hide();
+		if(prepend || sticky) {
+			$post.prependTo($posts);
 		} else {
 			$post.appendTo($posts);
 		}
@@ -790,11 +819,20 @@ $(function(){
 				}
 			});
 			break;
+		case 'business':
+			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
+			var $attachmentA = $('<a>').attr('href', urls.business + post.attachmentIdentifier).appendTo($container);
+			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
+			$('<p class="attachment-description">').text(post.attachmentDescription).appendTo($container);
+			//main category pic
+			var $a2 = $('<a>').attr('href', urls.business + post.attachmentIdentifier).appendTo($container);
+			$('<img class="category-attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($a2);
+			break;
 		case 'category':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
 			//title
 			var $attachmentA = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
-			$('<h4>').text(post.attachmentTitle).appendTo($attachmentA);
+			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
 			//main category pic
 			var $a2 = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
 			$('<img class="category-attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($a2);
@@ -802,7 +840,7 @@ $(function(){
 				switch(response.status) {
 				case '200':
 					var description = response.category.description.length < dgte.home.attchDescLength ? response.category.description : response.category.description.substring(0, dgte.home.attchDescLength) + '...';
-					$('<div class="attachment-description">')
+					$('<p class="attachment-description">')
 						.text(description)
 						.insertAfter($attachmentA);
 					
@@ -841,7 +879,7 @@ $(function(){
 			
 			//title
 			var $attachmentA = $('<a>').attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
-			$('<h4>').text(post.attachmentTitle).appendTo($attachmentA);
+			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
 			//mainpicproduct
 			if(post.attachmentImgurHash) {
 				var $attachmentImgA = $('<a>').attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
@@ -853,7 +891,7 @@ $(function(){
 				case '200':
 					if(response.pics.length > 0) {
 						var description = response.product.description.length < dgte.home.attchDescLength ? response.product.description : response.product.description.substring(0, dgte.home.attchDescLength) + '...';
-						$('<div class="attachment-description">')
+						$('<p class="attachment-description">')
 							.text(description)
 							.insertAfter($attachmentA);
 						var $morepics = $('<div>').appendTo($container);
@@ -877,6 +915,15 @@ $(function(){
 				}
 			});
 			break;
+		case 'buyandsellitem':
+			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
+			var $attachmentA = $('<a>').attr('href', urls.buyandsellitem + post.attachmentIdentifier).appendTo($container);
+			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
+			$('<p class="attachment-description">').text(post.attachmentDescription).appendTo($container);
+			//main category pic
+			var $a2 = $('<a>').attr('href', urls.business + post.attachmentIdentifier).appendTo($container);
+			$('<img class="category-attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($a2);
+			break;
 		case 'link':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
 			var $linkImgContainer = $('<div class="link-preview-images">').appendTo($container);
@@ -899,6 +946,8 @@ $(function(){
 		$('<a class="fatlink dgte-previewlink">')
 			.attr('previewtype', post.type)
 			.attr('href', link).text(post.posterTitle).appendTo($footnote);
+		
+		$('<span>').text(' (' + post.id + ') ').appendTo($footnote);
 		
 		//comments
 		var $comments = $('<div class="post-comments">').appendTo($dataContainer);
@@ -940,32 +989,30 @@ $(function(){
 });
 </script>
 
+<sec:authorize ifNotGranted="ROLE_USER">
+<div class="grid_4 sidebar-section">
+	<div class="sidebar-container">
+		<img src="${logo }" />
+	</div>
+</div> 
+</sec:authorize>
+
 <sec:authorize access="hasRole('ROLE_USER')">
-<!-- Notifications -->
 <div class="grid_4 sidebar-section">
 	<div class="sidebar-container">
 		<div class="sidebar-section-header">Home</div>
-		<input type="checkbox" id="subsonly" checked /><label for="subsonly">Show posts from subscriptions only</label>
+		
+		Order posts by:
+		<div id="rdo-post-sort">
+			<input type="radio" name="rdo-sort-order" value="subs" id="rdo-subs" checked="checked"/> <label for="rdo-subs">Subscriptions</label>
+			<input type="radio" name="rdo-sort-order" value="newest" id="rdo-newest" /> <label for="rdo-newest">Newest</label>
+			<input type="radio" name="rdo-sort-order" value="popularity" id="rdo-popularity" /> <label for="rdo-popularity">Popularity</label>
+		</div>
 	</div>
 </div>
 
-<div class="notifications-container grid_4 sidebar-section">
-	<div class="sidebar-container">
-		<div class="notifications-container relative">
-			<div class="sidebar-section-header">Notifications</div>
-			<span class="msg-uptodate">You're completely up to date. Yey!</span>
-			<ul class="notifications hasnotifs"></ul>
-		</div>
-		<div class="old-notifications-container hide relative">
-			<div class="sidebar-section-header">Previous notifications</div>
-			<span class="msg-clearhistory hide">You're notification history is empty. Yey!</span>
-			<ul class="old-notifications hasnotifs"></ul>
-		</div>
-		<a class="link-showoldnotifs" href="javascript:;">Show old notifications...</a>
-		<a class="link-clearoldnotifs hide" href="javascript:;">Clear all</a>
-	</div>
-</div>
-<link rel="stylesheet" href="<spring:url value='/resources/css/grids/notifs.css' />" />
+<!-- Notifications -->
+<%@include file="./grids/notifications4.jsp"  %>
 <!-- Notifications -->
 
 <!-- Reviews -->
@@ -1010,12 +1057,3 @@ window.urls.topTensPage = '<spring:url value="/i/toptens/" />'
 </script>
 <script src="${jsTopTens }"></script>
 <!-- End Top Tens -->
-
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>

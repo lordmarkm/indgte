@@ -58,6 +58,8 @@
 				<value>com.baldwin.indgte.persistence.model.ReviewNotification</value>
 				<value>com.baldwin.indgte.persistence.model.TopTenVoteNotification</value>
 				<value>com.baldwin.indgte.persistence.model.NewBidNotification</value>
+				<value>com.baldwin.indgte.persistence.model.BillingTransaction</value>
+				<value>com.baldwin.indgte.persistence.model.SidebarFeature</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

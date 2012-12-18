@@ -5,14 +5,14 @@
 	<sec:authorize access="hasRole('ROLE_USER')">
 	<div class="footer-container subtitle">
 		<div>Account settings (${user.username })</div>
-		<label for="sel-theme">Theme</label>
-		<select id="sel-theme">
+		<label for="sel-theme-footer">Theme</label>
+		<select class="sel-theme" id="sel-theme-footer">
 			<c:forEach items="${themes }" var="theme">
 				<option value="${theme }">${theme.name }</option>
 			</c:forEach>
 		</select>
-		<label for="sel-bgs">Background</label>
-		<select id="sel-bgs">
+		<label for="sel-bgs-footer">Background</label>
+		<select class="sel-bgs" id="sel-bgs-footer">
 			<c:forEach items="${backgrounds }" var="bg">
 				<option value="${bg.filename }">${bg.name }</option>
 			</c:forEach>
@@ -41,15 +41,15 @@
 <script>
 window.themes = {
 	changeUrl : '<c:url value="/i/themechange/" />',
-	current : '${user.theme}'
+	current : '${user.appearanceSettings.theme}'
 }
 window.backgrounds = {
 	changeUrl : '<c:url value="/i/bgchange/" />',
-	current : '${user.background}'
+	current : '${user.appearanceSettings.background}'
 }
 $(function(){
 	//theme change
-	var $selTheme = $('#sel-theme');
+	var $selTheme = $('.sel-theme');
 	
 	if(themes.current) {
 		$selTheme.val(themes.current);
@@ -67,7 +67,7 @@ $(function(){
 	});
 	
 	//bg change
-	var $selBg = $('#sel-bgs');
+	var $selBg = $('.sel-bgs');
 	
 	if(backgrounds.current) {
 		$selBg.val(backgrounds.current);
@@ -85,3 +85,12 @@ $(function(){
 	});
 });
 </script>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=270450549726411";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
