@@ -1,7 +1,9 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
 import java.util.Date;
+import java.util.List;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,13 +91,15 @@ public class BillingDaoImpl implements BillingDao {
 		transaction.setUser(user);
 		
 		BillingTransactionDetails details = transaction.getDetails();
-		details.setPost(post);
+		details.setFeaturedPost(post);
 		
 		sessions.getCurrentSession().save(transaction);
 	}
 
 	@Override
 	public void promoteSidebar(String username, SummaryType type, long id, Date start, Date end, int coconutCost) {
+		Session session = sessions.getCurrentSession();
+		
 		//billing
 		UserExtension promoter = users.getExtended(username);
 		int currentCoconuts = promoter.getBillingInfo().getCoconuts();
@@ -114,6 +118,7 @@ public class BillingDaoImpl implements BillingDao {
 		transaction.setUser(promoter);
 		
 		BillingTransactionDetails details = transaction.getDetails();
+		session.save(transaction);
 		
 		switch(type) {
 		case business:
@@ -144,7 +149,14 @@ public class BillingDaoImpl implements BillingDao {
 			throw new IllegalArgumentException("Illegal feature type: " + type);
 		}
 		
-		sessions.getCurrentSession().save(feature);
+		session.save(feature);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<SidebarFeature> getSidebarPromos() {
+		return sessions.getCurrentSession().createCriteria(SidebarFeature.class)
+				.list();
 	}
 	
 }

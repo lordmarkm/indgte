@@ -42,6 +42,9 @@ body {
 	/* fonts */
 .italic {font-style: italic;}
 .capitalize {text-transform: capitalize;}
+.description {
+	font-size: 0.9em;
+}
 .subtitle {
 	font-size: 0.8em;
 	color: #202020;

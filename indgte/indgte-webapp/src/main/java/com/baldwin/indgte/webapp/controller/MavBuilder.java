@@ -2,6 +2,8 @@ package com.baldwin.indgte.webapp.controller;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -19,6 +21,11 @@ public class MavBuilder {
 	public static String PAGE_THUMBNAIL = "page_thumbnail";
 	
 	ModelAndView mav;
+	
+	public MavBuilder viewName(String viewName) {
+		mav.setViewName(viewName);
+		return this;
+	}
 	
 	public static MavBuilder render(User user) {
 		return new MavBuilder()
@@ -115,4 +122,5 @@ public class MavBuilder {
 			return StringEscapeUtils.escapeHtml(dirty);
 		}
 	}
+
 }

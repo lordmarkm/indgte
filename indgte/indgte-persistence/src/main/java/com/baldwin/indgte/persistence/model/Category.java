@@ -82,7 +82,9 @@ public class Category implements Searchable, Attachable {
 	
 	@Override
 	public Summary summarize() {
-		return new Summary(SummaryType.category, id, name, description, business.getDomain() + "/" + id, mainpic == null ? null : mainpic.getHash());
+		Summary s = new Summary(SummaryType.category, id, name, description, business.getDomain() + "/" + id, mainpic == null ? null : mainpic.getHash());
+		s.setImgur(mainpic);
+		return s;
 	}
 	
 	public long getId() {

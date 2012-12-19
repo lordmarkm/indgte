@@ -4,7 +4,7 @@
 
 <link rel="stylesheet" href="<c:url value='/resources/css/businessops.css' />" />
 
-<title><spring:message code="category.title" arguments="${category.name },${business.domain }"/></title>
+<title>${category.name } &mdash; Dumaguete</title>
 
 <div class="category-container grid_8 maingrid">
 	<section class="category-welcome">
@@ -15,13 +15,6 @@
 			<h3>${category.name }</h3>
 			<div class="category-welcome-description italic">${category.description }</div>
 		</div>
-		<c:if test="${owner }">
-		<div class="category-owner-operations">
-			<button class="btn-edit-category">Edit</button>
-			<button class="btn-create-product">New product</button>
-			<button class="btn-promote">Promote</button>
-		</div>
-		</c:if>
 		<div class="category-welcome-provider">
 			<img class="category-provider-image" />
 			<div class="category-provider-info">
@@ -158,6 +151,34 @@ $(function(){
 </script>
 
 <c:if test="${owner }">
+
+<div class="owner-operations-container grid_4 sidebar-section">
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Category operations</div>
+		<button class="btn-edit-category">Edit</button>
+		<button class="btn-create-product">New product</button>
+		<button class="btn-promote">Promote</button>
+		<div class="dialog-promote hide" title="Promote this Category">
+			<span><spring:message code="entity.promote.dialog" arguments="${user.billingInfo.coconuts },${user.billingInfo.coconuts / 10 },${category.name }" /></span>
+			<form class="form-promote" method="post" action="<c:url value='/o/sidebar/category/${category.id }' />" >
+				<table>
+					<tr>
+						<td><label for="start-date">Promote from</label></td>
+						<td><input type="date" id="start-date" name="start" readonly="readonly" placeholder="Click to choose" /></td>
+					</tr>
+					<tr>
+						<td><label for="end-date">Promote until</label></td>
+						<td><input type="date" id="end-date" name="end" readonly="readonly" placeholder="Click to choose"/></td>
+					</tr>
+				</table>
+			</form>
+			<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
+		</div>
+	</div>
+</div>
+<script src="<spring:url value='/resources/javascript/promote.js' />" ></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
+
 <!-- Image upload -->
 <div id="image-upload" style="display: none;">
 	<div class="form-pic">
@@ -190,8 +211,9 @@ div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
 	display:none;	
 }
 
-.category-owner-operations {
-	margin: 10px 0 5px 178px;	
+.owner-operations-container button {
+	margin-top: 5px;
+	width: 100%;
 }
 
 .newproduct-pic-container {
@@ -235,6 +257,10 @@ div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
 </style>
 
 <script>
+window.user = {
+	coconuts: '${user.billingInfo.coconuts}'
+}
+
 $(function(){
 	//WARNING: Owner-only script!
 	var businessDomain = '${business.domain}',
@@ -389,6 +415,3 @@ $(function(){
 });
 </script>
 </c:if>
-
-<spring:url var="jsApplication" value="/resources/javascript/application.js" />
-<script type="text/javascript" src="${jsApplication }"></script>

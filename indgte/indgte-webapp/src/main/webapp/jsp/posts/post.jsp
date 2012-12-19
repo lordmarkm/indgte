@@ -56,22 +56,24 @@
 		<form class="form-promote" method="post" action="<c:url value='/o/promotepost/${post.id }' />" >
 			<table>
 				<tr>
-					<td><label for="startDate">Promote from</label></td>
+					<td><label for="start-date">Promote from</label></td>
 					<td><input type="date" id="start-date" name="startDate" readonly="readonly" placeholder="Click to choose" /></td>
 				</tr>
 				<tr>
-					<td><label for="endDate">Promote until</label></td>
+					<td><label for="end-date">Promote until</label></td>
 					<td><input type="date" id="end-date" name="endDate" readonly="readonly" placeholder="Click to choose"/></td>
 				</tr>
 			</table>
 		</form>
-		<span class="coconut-cost"><spring:message code="post.promote.dialog.comp" /></span>
+		<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
 	</div>
 </c:if>
 
 <!-- Notifications -->
 <%@include file="../grids/notifications4.jsp"  %>
-<!-- Notifications -->
+
+<!-- Sidebar Featured promos -->
+<%@include file="../grids/sidebarpromos.jsp" %>
 
 <style>
 .owner-menu button {

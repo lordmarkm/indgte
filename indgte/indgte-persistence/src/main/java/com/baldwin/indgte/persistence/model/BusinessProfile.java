@@ -127,12 +127,14 @@ public class BusinessProfile implements Searchable, Attachable {
 
 	@Override
 	public Summary summarize() {
-		return new Summary(Summary.SummaryType.business, 
+		Summary s = new Summary(Summary.SummaryType.business, 
 				id,
 				fullName, 
 				description, 
 				domain, 
 				profilepic == null ? null : profilepic.getHash());
+		s.setImgur(profilepic);
+		return s;
 	}
 	
 	public long getId() {

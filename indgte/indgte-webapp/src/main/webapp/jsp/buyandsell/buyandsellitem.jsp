@@ -95,6 +95,9 @@
 
 <section>
 	<div class="section-header">Comments</div>
+	<div class="mt5">
+		<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+	</div>
 	<div class="fb-comments" data-href="${baseURL}/t/${item.id}" data-width="620"></div>
 </section>
 
@@ -109,9 +112,29 @@
 </sec:authorize>
 
 <sec:authorize access="hasRole('ROLE_USER')">
-<div class="buyandsell-controls grid_4 ui-widget sidebar-section">
+<div class="buyandsell-controls grid_4 sidebar-section">
 	<div class="sidebar-container">
 		<div class="sidebar-section-header">Buy&Sell Item Actions</div>
+		
+		<c:if test="${owner }">
+			<button class="btn-promote">Promote</button>
+			<div class="dialog-promote hide" title="Promote this Item">
+				<span><spring:message code="entity.promote.dialog" arguments="${user.billingInfo.coconuts },${user.billingInfo.coconuts / 10 },${item.name }" /></span>
+				<form class="form-promote" method="post" action="<c:url value='/o/sidebar/buyandsellitem/${item.id }' />" >
+					<table>
+						<tr>
+							<td><label for="start-date">Promote from</label></td>
+							<td><input type="date" id="start-date" name="start" readonly="readonly" placeholder="Click to choose" /></td>
+						</tr>
+						<tr>
+							<td><label for="end-date">Promote until</label></td>
+							<td><input type="date" id="end-date" name="end" readonly="readonly" placeholder="Click to choose"/></td>
+						</tr>
+					</table>
+				</form>
+				<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
+			</div>
+		</c:if>
 		
 		<div class="item-controls-container">
 			<c:if test="${item.buyAndSellMode eq 'auction' && !finished }">
@@ -134,18 +157,19 @@
 				<c:if test="${!inwishlist }">
 				<button class="btn-wishlist-add">Add to Wishlist</button>
 				</c:if>
-				<div class="mt5">
-					<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
-				</div>
 			</div>
 		</div>	
 	</div>
 </div>
 </sec:authorize>
-
+<script src="<spring:url value='/resources/javascript/promote.js' />" ></script>
 <link rel="stylesheet" href="<c:url value='/resources/css/buyandsell/buyandsellitem.css' />" />
 
 <script>
+window.user = {
+	coconuts: '${user.billingInfo.coconuts}'
+}
+
 window.constants = {
 	bidIncrement: '${bidIncrement}'
 }

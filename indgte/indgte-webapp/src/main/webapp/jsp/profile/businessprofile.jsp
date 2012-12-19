@@ -217,13 +217,30 @@
 </div>
 
 <c:if test="${owner }">
-<div class="grid_3 sidebar-section owner-operations">
-	<div class="sidebar-container">
-		<div class="sidebar-section-header">Page Owner Operations</div>
-		<a class="button" href="${urlEdit }${business.domain}">Edit</a>
-		<a class="button btn-promote" href="javascript:;">Promote</a>
+	<div class="grid_3 sidebar-section owner-operations">
+		<div class="sidebar-container">
+			<div class="sidebar-section-header">Page Owner Operations</div>
+			<a class="button" href="${urlEdit }${business.domain}">Edit</a>
+			<a class="button btn-promote" href="javascript:;">Promote</a>
+		</div>
 	</div>
-</div>
+	<div class="dialog-promote hide" title="Promote this business">
+		<span><spring:message code="entity.promote.dialog" arguments="${user.billingInfo.coconuts },${user.billingInfo.coconuts / 10 },${business.fullName }" /></span>
+		<form class="form-promote" method="post" action="<c:url value='/o/sidebar/business/${business.id }' />" >
+			<table>
+				<tr>
+					<td><label for="start-date">Promote from</label></td>
+					<td><input type="date" id="start-date" name="start" readonly="readonly" placeholder="Click to choose" /></td>
+				</tr>
+				<tr>
+					<td><label for="end-date">Promote until</label></td>
+					<td><input type="date" id="end-date" name="end" readonly="readonly" placeholder="Click to choose"/></td>
+				</tr>
+			</table>
+		</form>
+		<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
+	</div>
+	<script src="<c:url value='/resources/javascript/promote.js' />" ></script>
 </c:if>
 
 <div class="grid_3 sidebar-section">
@@ -278,7 +295,8 @@ window.urls = {
 window.user = {
 	id: '${user.id}',
 	username: '${user.username}',
-	rank: '${user.rank}'
+	rank: '${user.rank}',
+	coconuts: '${user.billingInfo.coconuts}'
 }
 
 window.business = {

@@ -59,6 +59,7 @@ import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.MavBuilder;
 import com.baldwin.indgte.webapp.dto.TopTenForm;
 import com.baldwin.indgte.webapp.misc.Comet;
+import com.baldwin.indgte.webapp.misc.ConstantsInserterBean;
 import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 import com.baldwin.indgte.webapp.misc.URLScraper;
 
@@ -87,6 +88,9 @@ public class InteractiveControllerImpl implements InteractiveController {
 	
 	@Autowired
 	private Comet comet;
+	
+	@Autowired
+	private ConstantsInserterBean constants;
 	
 	@Override
 	public @ResponseBody JSON subposts(Principal principal, @RequestParam int start, @RequestParam int howmany, @RequestParam String sort, boolean hasSticky) {
@@ -121,6 +125,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			   .put("owner", interact.isPostOwner(post, user));
 		}
 		
+		constants.insertConstants(mav);
 		return mav.mav();
 	}
 	

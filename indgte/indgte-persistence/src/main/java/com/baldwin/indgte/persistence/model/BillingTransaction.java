@@ -49,10 +49,6 @@ public class BillingTransaction {
 		@JoinColumn(name="buyAndSellId")
 		private BuyAndSellItem advertisedItem;
 		
-		@ManyToOne
-		@JoinColumn(name="postId")
-		private Post post;
-		
 		public UserExtension getGrantingAdmin() {
 			return grantingAdmin;
 		}
@@ -88,12 +84,6 @@ public class BillingTransaction {
 		}
 		public void setAdvertisedItem(BuyAndSellItem advertisedItem) {
 			this.advertisedItem = advertisedItem;
-		}
-		public void setPost(Post post) {
-			this.post = post;
-		}
-		public Post getPost() {
-			return post;
 		}
 	}
 	

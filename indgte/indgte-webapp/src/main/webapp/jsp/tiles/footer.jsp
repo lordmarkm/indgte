@@ -19,7 +19,7 @@
 		</select>
 	</div>
 	</sec:authorize>
-	<div>Made by Mark</div>
+	<div>Made by <a class="dgte-previewlink fatlink" previewtype="user" href="<c:url value='/p/user/mark.martinez.986' />">Mark</a></div>
 </section>
 
 <style>

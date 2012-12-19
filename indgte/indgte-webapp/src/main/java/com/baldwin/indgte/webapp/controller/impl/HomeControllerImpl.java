@@ -21,6 +21,7 @@ import com.baldwin.indgte.persistence.service.InteractiveService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.HomeController;
 import com.baldwin.indgte.webapp.controller.MavBuilder;
+import com.baldwin.indgte.webapp.misc.ConstantsInserterBean;
 
 @Component
 public class HomeControllerImpl implements HomeController {
@@ -36,20 +37,24 @@ public class HomeControllerImpl implements HomeController {
 	@Autowired
 	private InteractiveService interact;
 	
+	@Autowired
+	private ConstantsInserterBean constants;
+	
 	@Override
 	public ModelAndView home(Principal principal) {
 		MavBuilder mav = render("home");
-		
+
 		if(null != principal) {
 			UserExtension user = users.getExtended(principal.getName(), Initializable.businesses);
 			mav.put("user", user);
 		}
 		
+		constants.insertConstants(mav);
 		return mav.mav();
 	}
 	
 	@Override
-	public ModelAndView businessProfile(Principal principal, @PathVariable String domain) {
+	public ModelAndView businessProfile(Principal principal, @PathVariable("domain") String domain) {
 		log.debug("Profile requested for {}", domain);
 
 		if(null == principal) {

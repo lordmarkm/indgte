@@ -1,7 +1,13 @@
 package com.baldwin.indgte.persistence.dto;
 
+import com.baldwin.indgte.persistence.model.Imgur;
+
 
 public class Summary {
+	public static final String urlBusiness = "/";
+	public static final String urlCategory = "/b/categories/";
+	public static final String urlBas = "/t/";
+	
 	public enum SummaryType {
 		none,
 		
@@ -23,6 +29,7 @@ public class Summary {
 	private String description;
 	private String thumbnailHash;
 	private String rank;
+	private Imgur imgur;
 	
 	/**
 	 * User: username
@@ -101,4 +108,26 @@ public class Summary {
 	public void setRank(String rank) {
 		this.rank = rank;
 	}
+
+	public Imgur getImgur() {
+		return imgur;
+	}
+
+	public void setImgur(Imgur imgur) {
+		this.imgur = imgur;
+	}
+
+	public String getUrl() {
+		switch(type) {
+		case business:
+			return urlBusiness + identifier;
+		case category:
+			return urlCategory + identifier;
+		case buyandsellitem:
+			return urlBas + identifier;
+		default: 
+			return "";
+		}
+	}
+
 }

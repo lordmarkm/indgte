@@ -193,6 +193,7 @@ public class BuyAndSellItem implements Searchable {
 		summary.setThumbnailHash(imgur.getHash());
 		summary.setTitle(name);
 		summary.setType(SummaryType.buyandsellitem);
+		summary.setImgur(imgur);
 		return summary;
 	}
 

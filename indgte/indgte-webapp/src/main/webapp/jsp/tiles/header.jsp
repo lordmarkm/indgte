@@ -38,7 +38,7 @@
 		<c:set var="theme" value="${user.appearanceSettings.theme.name }" />
 	</c:when>
 	<c:otherwise>
-		<c:set var="theme" value="flick" />
+		<c:set var="theme" value="redmond" />
 	</c:otherwise>
 </c:choose>
 
