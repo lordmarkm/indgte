@@ -113,4 +113,9 @@ public class HomeControllerImpl implements HomeController {
 					.mav();
 		}
 	}
+
+	@Override
+	public String failedPermissionsRedirect() {
+		return "redirect:/login/";
+	}
 }

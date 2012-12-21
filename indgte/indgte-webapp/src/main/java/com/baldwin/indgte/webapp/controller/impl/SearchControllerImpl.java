@@ -1,6 +1,10 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.*;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.business;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.buyandsellitem;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.category;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.product;
+import static com.baldwin.indgte.persistence.dto.Summary.SummaryType.user;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
@@ -30,6 +34,7 @@ import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.MavBuilder;
 import com.baldwin.indgte.webapp.controller.SearchController;
+import com.baldwin.indgte.webapp.misc.ConstantsInserterBean;
 import com.baldwin.indgte.webapp.misc.DgteConstants;
 
 @Component
@@ -42,6 +47,9 @@ public class SearchControllerImpl implements SearchController {
 	
 	@Autowired
 	private SearchService search;
+
+	@Autowired
+	private ConstantsInserterBean constants;
 	
 	@Override
 	public void reindex() {
@@ -73,7 +81,7 @@ public class SearchControllerImpl implements SearchController {
 	@Override
 	public ModelAndView search(Principal principal, @PathVariable String term) {
 		long start = System.currentTimeMillis();
-		
+
 		MavBuilder mav = render("fullsearch")
 				.put("term", term)
 				.put("maxresults", DgteConstants.FULLSEARCH_MAXRESULTS);
@@ -99,6 +107,8 @@ public class SearchControllerImpl implements SearchController {
 		}
 		
 		log.debug("Search took {} ms", System.currentTimeMillis() - start);
+		
+		constants.insertConstants(mav);
 		return mav.mav();
 	}
 	

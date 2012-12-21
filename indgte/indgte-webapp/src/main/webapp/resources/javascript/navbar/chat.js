@@ -32,6 +32,15 @@ $(function(){
 		} else {
 			channelOpen('#dumaguete', true);
 		}
+		
+		//if chat window spawns outside of screen, just recenter it
+		if($('.chat-dialog:in-viewport').length == 0) {
+			$dialog.parent().position({
+				my: 'center',
+				at: 'center',
+				of: window
+			});
+		}
 	}
 	
 	function isChatOpen() {

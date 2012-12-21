@@ -254,6 +254,8 @@ $.fn.extend({
     preview: function() {
     	debug('starting preview');
     	
+    	var $this = this;
+    	var toppo = this.offset().top;
     	var href = this.attr('href');
     	var type = this.attr('previewtype');
 
@@ -277,6 +279,7 @@ $.fn.extend({
     	
     	var oldhref = $preview.attr('href');
     	if(href === oldhref) {
+    		shouldPopTop();
     		return;
     	}
     	$preview.attr('href', href);
@@ -355,6 +358,8 @@ $.fn.extend({
     			debug('Error opening chat.');
     			debug(preview);
     		}
+    		
+    		shouldPopTop();
     	}
     	
     	$preview.find('.preview-cover-image').hide().end()
@@ -378,6 +383,31 @@ $.fn.extend({
 		    	}
     		}
     	)
+    	
+    	function shouldPopTop() {
+        	var bottom = $(window).scrollTop() + $(window).height();
+        	var dialogbottom = toppo + $preview.height(); 
+        	var poptop = dialogbottom > bottom;
+        	debug('should pop top: ' + dialogbottom + ':' + bottom + ' ' + poptop);
+        	
+        	if(poptop) {
+        		var ofs = $preview.offset();
+        		ofs.top = toppo - $preview.height();
+        		
+        		var $img = $this.find('img');
+        		if($img.length) {
+        			debug('image height: ' + $img.height());
+        			ofs.top = ofs.top - ($img.height() - $this.height());
+        		}
+        		
+        		$preview.offset(ofs);
+        		$preview.find('.arrow').remove();
+        		$('<div class="white-arrow-down arrow">').appendTo($preview);
+        	} else {
+        		$preview.find('.arrow').remove();
+        		$('<div class="white-arrow-up arrow">').prependTo($preview);
+        	}
+    	}
     	
     	return this;
     }

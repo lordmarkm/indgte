@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,7 @@ import com.baldwin.indgte.webapp.controller.BusinessController;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.MavBuilder;
 import com.baldwin.indgte.webapp.misc.ConstantsInserterBean;
+import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 
 @Component
 public class BusinessControllerImpl implements BusinessController {
@@ -58,7 +58,7 @@ public class BusinessControllerImpl implements BusinessController {
 	@Override
 	public String editInfo(Principal principal, @PathVariable String domain, @RequestParam String info) {
 		log.debug("Edit info request received for {}", domain);
-		info = Jsoup.clean(info, Whitelist.relaxed());
+		info = Jsoup.clean(info, DgteTagWhitelist.relaxed());
 		businesses.editInfo(principal.getName(), domain, info);
 		return "redirect:/" + domain;
 	}

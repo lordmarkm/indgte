@@ -20,4 +20,9 @@ public interface HomeController {
 	@RequestMapping("/{domain}")
 	public ModelAndView businessProfile(Principal principal, @PathVariable String domain);
 	
+	/**
+	 * Redirect when user denies permission on 3rd party and
+	 */
+	@RequestMapping("/signin")
+	public String failedPermissionsRedirect();
 }

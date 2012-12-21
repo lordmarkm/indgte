@@ -4,6 +4,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/1.7.0/moment.min.js"></script>
+<script src="<spring:url value='/resources/jquery-viewport/jquery.viewport.mini.js' />" ></script>
 
 <!-- 
     base: Google CDN, Microsoft CDN

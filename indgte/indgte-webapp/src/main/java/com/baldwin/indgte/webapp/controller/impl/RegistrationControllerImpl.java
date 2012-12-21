@@ -5,6 +5,8 @@ import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +73,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 	@Override
 	public @ResponseBody boolean isDomainTaken(@RequestParam String domain, @RequestParam String editDomain) {
 		log.debug("Checking uniqueness of domain [{}]", domain);
+		if(isSpecial(domain)) return true;
 		return domain.equals(editDomain) || null == businesses.get(domain);
 	}
 	
@@ -104,7 +107,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 		}
 		businesses.saveOrUpdate(business, principal.getName());
 		
-		return redirect("/p/" + regform.getDomain())
+		return redirect("/" + regform.getDomain())
 				.mav();
 	}
 
@@ -116,5 +119,10 @@ public class RegistrationControllerImpl implements RegistrationController {
 		} catch(Exception e) {
 			return JSON.status500(e);
 		}
+	}
+	
+	final List<String> special = Arrays.asList(new String[]{"signin", "login", "news"});
+	private boolean isSpecial(String domain) {
+		return special.contains(domain);
 	}
 }

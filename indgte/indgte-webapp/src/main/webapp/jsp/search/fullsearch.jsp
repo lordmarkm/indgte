@@ -109,6 +109,32 @@
 		</section>
 	</c:if>
 	
+	<c:if test="${not empty BUYANDSELLITEM }">
+		<section class="result-group">
+			<div class="section-header">Buy & Sell</div>
+			<ul>
+			<c:forEach items="${BUYANDSELLITEM }" var="b">
+				<li class="result" type="buyandsellitem" identifier="${b.identifier }">
+					<c:choose>
+						<c:when test="${not empty b.thumbnailHash }">
+							<img class="result-img" src="${urlImgRoot }${b.thumbnailHash }.jpg">
+						</c:when>
+						<c:otherwise>
+							<img class="result-img" src="${noimage50 }">
+						</c:otherwise>
+					</c:choose>
+					<div class="result-info">
+						<div class="result-title bold">${b.title }</div>
+						<div class="result-description subtitle">
+							${fn:substring(b.description, 0, 80) }<c:if test="${fn:length(b.description) > 80 }">...</c:if>
+						</div>
+					</div>
+				</li>
+			</c:forEach>
+			</ul>
+		</section>
+	</c:if>
+	
 </div>
 
 <style>
@@ -157,7 +183,8 @@ window.urls = {
 	businessprofile : '<spring:url value="/" />',
 	userprofile : '<spring:url value="/p/user/" />',
 	categoryprofile : '<spring:url value="/b/categories/" />',
-	productprofile : '<spring:url value="/b/products/" />'
+	productprofile : '<spring:url value="/b/products/" />',
+	buyandsellitem : '<spring:url value="/t/" />'
 }
 
 $(function(){
@@ -196,6 +223,9 @@ $(function(){
 			case 'product':
 				window.location.href = urls.productprofile + identifier;
 				break;
+			case 'buyandsellitem':
+				window.location.href = urls.buyandsellitem + identifier;
+				break;
 			default:
 				debug('Unsupported type: ' + type);
 			}
@@ -203,3 +233,12 @@ $(function(){
 	}, '.result');
 });
 </script>
+
+<!-- Notifications -->
+<%@include file="../grids/notifications4.jsp"  %>
+
+<!-- Sidebar Featured promos -->
+<%@include file="../grids/sidebarpromos.jsp" %>
+
+<!-- Top Tens -->
+<%@include file="../grids/toptens.jsp" %>

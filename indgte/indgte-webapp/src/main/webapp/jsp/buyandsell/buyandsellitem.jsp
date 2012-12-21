@@ -85,7 +85,9 @@
 
 <section class="seller-details">
 	<div class="section-header">Seller</div>
-	<a class="dgte-previewlink" previewtype="user" href="${urlUserProfile }${item.owner.username}"><img class="seller-img" src="${item.owner.imageUrl }" /></a>
+	<div style="display: inline-block;">
+		<a class="dgte-previewlink" previewtype="user" href="${urlUserProfile }${item.owner.username}"><img class="seller-img" src="${item.owner.imageUrl }" /></a>
+	</div>
 	<ul class="trade-seller-details">
 		<li><a class="dgte-previewlink fatlink" previewtype="user" href="${urlUserProfile }${item.owner.username}">${item.owner.username }</a></li>
 		<li>${item.owner.rank }</li>

@@ -2,8 +2,6 @@ package com.baldwin.indgte.webapp.controller;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;

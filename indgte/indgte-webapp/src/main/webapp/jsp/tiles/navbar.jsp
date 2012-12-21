@@ -98,21 +98,25 @@ window.navbar = {
 <sec:authorize access="hasRole('ROLE_ANONYMOUS')">
 <script>
 $(function(){
-	$('.navigation.chat').click(function(){
+	function loginToChat() {
 		$('<div>').attr('title', 'Must be logged in to chat')
-			.text('Sorry, you must be logged in to chat')
-			.dialog({
-				buttons: {
-					'Login': function(){
-						window.location.href = '${urlLogin}';
-					},
-					'Nevermind': function(){
-						$(this).dialog('close');
-					}
+		.text('Sorry, you must be logged in to chat')
+		.dialog({
+			buttons: {
+				'Login': function(){
+					window.location.href = '${urlLogin}';
+				},
+				'Nevermind': function(){
+					$(this).dialog('close');
 				}
-			});
+			}
+		});
 		return false;
-	});
+	}
+	
+	$('.navigation.chat').click(loginToChat);
+	window.openChat = loginToChat;
+	window.openChatWithUser = loginToChat;
 });
 </script>
 </sec:authorize>
