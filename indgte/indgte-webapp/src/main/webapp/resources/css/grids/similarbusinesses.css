@@ -1,0 +1,57 @@
+.suggestion {
+	padding: 5px;
+}
+
+.suggestion-img-container {
+	vertical-align: top;
+	display: inline-block;
+}
+
+.suggestion-img {
+	vertical-align: bottom;
+	width:50px;
+	height:50px;
+}
+
+.suggestion-info {
+	vertical-align: top;
+	display: inline-block;
+}
+
+.grid_3 .suggestion-info {
+	width: 145px;
+}
+
+.grid_4 .suggestion-info {
+	width: 218px;
+}
+
+.suggestion-description {
+	overflow: hidden;
+}
+
+.grid_3 .suggestion-description {
+	max-height: 112px;
+}
+
+.grid_4 .suggestion-description {
+	max-height: 64px;
+}
+
+.rating * {
+	vertical-align: middle;
+}
+
+.star {
+	background-image: url("../../images/icons/review-stars.png");
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	margin: 2px;
+}
+.nullstar {
+	background-position: -20px 0;
+}
+.halfstar {
+	background-position: -40px 0;
+}

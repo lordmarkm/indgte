@@ -88,7 +88,15 @@ public class Product implements Searchable, Attachable {
 
 	@Override
 	public Summary summarize() {
-		return new Summary(SummaryType.product, id, name, description, category.getBusiness().getDomain() + "/" + id, mainpic == null ? null : mainpic.getHash());
+		Summary s = new Summary();
+		s.setDescription(description);
+		s.setIdentifier(category.getBusiness().getDomain() + "/" + id);
+		s.setImgur(mainpic);
+		s.setThumbnailHash(mainpic == null ? null : mainpic.getHash());
+		s.setTitle(name);
+		s.setType(SummaryType.product);
+		return s;
+		//return new Summary(SummaryType.product, id, name, description, category.getBusiness().getDomain() + "/" + id, mainpic == null ? null : mainpic.getHash());
 	}
 	
 	public long getId() {

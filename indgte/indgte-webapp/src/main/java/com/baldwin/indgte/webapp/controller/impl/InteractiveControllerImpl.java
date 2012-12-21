@@ -131,90 +131,94 @@ public class InteractiveControllerImpl implements InteractiveController {
 	
 	@Override
 	public @ResponseBody JSON newstatus(Principal principal, WebRequest request) {
-		log.debug("Poster id: [{}]", request.getParameter("posterId"));
-		log.debug("Poster type: [{}]", request.getParameter("posterType"));
-		log.debug("Text: [{}]", request.getParameter("text"));
-
-		log.debug("Attachment? {}", request.getParameter("attachmentType"));
-
-		Summary poster;
-		PostType postType = PostType.valueOf(request.getParameter("posterType"));
-		switch(postType) {
-		case user:
-			UserExtension user = users.getExtended(principal.getName());
-			poster = user.summarize();
-			break;
-		case business:
-			BusinessProfile business = businesses.get(Long.parseLong(request.getParameter("posterId")));
-			poster = business.summarize();
-			break;
-		default:
-			throw new IllegalArgumentException("Illegal post type " + postType);
+		try {
+			log.debug("Poster id: [{}]", request.getParameter("posterId"));
+			log.debug("Poster type: [{}]", request.getParameter("posterType"));
+			log.debug("Text: [{}]", request.getParameter("text"));
+			log.debug("Attachment? {}", request.getParameter("attachmentType"));
+	
+			Summary poster;
+			PostType postType = PostType.valueOf(request.getParameter("posterType"));
+			switch(postType) {
+			case user:
+				UserExtension user = users.getExtended(principal.getName());
+				poster = user.summarize();
+				break;
+			case business:
+				BusinessProfile business = businesses.get(Long.parseLong(request.getParameter("posterId")));
+				poster = business.summarize();
+				break;
+			default:
+				throw new IllegalArgumentException("Illegal post type " + postType);
+			}
+	
+			Summary attachment;
+			SummaryType attachmentType = SummaryType.valueOf(request.getParameter("attachmentType"));
+			switch(attachmentType) {
+			case imgur:
+				attachment = new Summary(attachmentType, null, null, null, null, request.getParameter("hash"));
+				break;
+			case video:
+				String embed = request.getParameter("embed");
+				embed = Jsoup.clean(embed, DgteTagWhitelist.videos());
+				attachment = new Summary(attachmentType, null, null, null, embed, null);
+				break;
+			case business:
+				log.debug("Attaching business with id {}", request.getParameter("entityId"));
+				BusinessProfile business = businesses.get(Long.parseLong(request.getParameter("entityId")));
+				attachment = business.summarize();
+				break;
+			case category:
+				log.debug("Attaching category with id {}", request.getParameter("entityId"));
+				Category category = businesses.getCategory(Long.parseLong(request.getParameter("entityId")));
+				attachment = category.summarize();
+				break;
+			case product:
+				log.debug("Attaching product with id {}", request.getParameter("entityId"));
+				Product product = businesses.getProduct(Long.parseLong(request.getParameter("entityId")));
+				attachment = product.summarize();
+				break;
+			case buyandsellitem:
+				log.debug("Attaching buy and sell item with id {}", request.getParameter("entityId"));
+				BuyAndSellItem bas = trade.get(null, Long.parseLong(request.getParameter("entityId")));
+				attachment = bas.summarize();
+				break;
+			case link:
+				String link = request.getParameter("link");
+				log.debug("Trying to get data from {}", link);
+				
+				String linkTitle = request.getParameter("attachmentTitle");
+				String linkDescription = request.getParameter("attachmentDescription");
+				String linkUrl = request.getParameter("attachmentIdentifier");
+				String imgUrl = request.getParameter("attachmentImgurHash");
+	
+				attachment = new Summary(attachmentType, null, linkTitle, linkDescription, linkUrl, imgUrl);
+				break;
+			case none:
+				attachment = null;
+				break;
+			default:
+				throw new IllegalArgumentException("Illegal attachment type " + attachmentType);
+			}
+	
+			Post post = new Post(poster, attachment);
+	
+			String title = clean(request.getParameter("title"));
+			String text = clean(request.getParameter("text"));
+	
+			post.setType(postType);
+			post.setPostTime(new Date());
+			post.setTitle(title);
+			post.setText(text);
+	
+			interact.saveOrUpdate(post);
+			log.debug("Post: {} text: {}", post);
+	
+			return JSON.ok().put("post", post);
+		} catch (Exception e) {
+			log.error("Error creating post.", e);
+			return JSON.status500(e);
 		}
-
-		Summary attachment;
-		SummaryType attachmentType = SummaryType.valueOf(request.getParameter("attachmentType"));
-		switch(attachmentType) {
-		case imgur:
-			attachment = new Summary(attachmentType, null, null, null, null, request.getParameter("hash"));
-			break;
-		case video:
-			String embed = request.getParameter("embed");
-			embed = Jsoup.clean(embed, DgteTagWhitelist.videos());
-			attachment = new Summary(attachmentType, null, null, null, embed, null);
-			break;
-		case business:
-			log.debug("Attaching business with id {}", request.getParameter("entityId"));
-			BusinessProfile business = businesses.get(Long.parseLong(request.getParameter("entityId")));
-			attachment = business.summarize();
-			break;
-		case category:
-			log.debug("Attaching category with id {}", request.getParameter("entityId"));
-			Category category = businesses.getCategory(Long.parseLong(request.getParameter("entityId")));
-			attachment = category.summarize();
-			break;
-		case product:
-			log.debug("Attaching product with id {}", request.getParameter("entityId"));
-			Product product = businesses.getProduct(Long.parseLong(request.getParameter("entityId")));
-			attachment = product.summarize();
-			break;
-		case buyandsellitem:
-			log.debug("Attaching buy and sell item with id {}", request.getParameter("entityId"));
-			BuyAndSellItem bas = trade.get(null, Long.parseLong(request.getParameter("entityId")));
-			attachment = bas.summarize();
-			break;
-		case link:
-			String link = request.getParameter("link");
-			log.debug("Trying to get data from {}", link);
-			
-			String linkTitle = request.getParameter("attachmentTitle");
-			String linkDescription = request.getParameter("attachmentDescription");
-			String linkUrl = request.getParameter("attachmentIdentifier");
-			String imgUrl = request.getParameter("attachmentImgurHash");
-
-			attachment = new Summary(attachmentType, null, linkTitle, linkDescription, linkUrl, imgUrl);
-			break;
-		case none:
-			attachment = null;
-			break;
-		default:
-			throw new IllegalArgumentException("Illegal attachment type " + attachmentType);
-		}
-
-		Post post = new Post(poster, attachment);
-
-		String title = clean(request.getParameter("title"));
-		String text = clean(request.getParameter("text"));
-
-		post.setType(postType);
-		post.setPostTime(new Date());
-		post.setTitle(title);
-		post.setText(text);
-
-		interact.saveOrUpdate(post);
-		log.debug("Post: {} text: {}", post);
-
-		return JSON.ok().put("post", post);
 	}
 
 	@Override

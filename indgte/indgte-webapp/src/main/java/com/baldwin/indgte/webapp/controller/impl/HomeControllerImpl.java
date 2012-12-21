@@ -4,6 +4,7 @@ import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,8 +69,11 @@ public class HomeControllerImpl implements HomeController {
 				}
 			}
 			
+			List<BusinessProfile> suggestions = businesses.getSuggestions(business);
+			
 			MavBuilder mav = render("businessprofile")
 					.put("business", business)
+					.put("suggestions", suggestions)
 					.put("subscribed", false)
 					.put("owner", false)
 					.put(MavBuilder.PAGE_DESCRIPTION, business.getDescription());
@@ -99,9 +103,11 @@ public class HomeControllerImpl implements HomeController {
 			
 			UserExtension userExtension = (UserExtension) profileObjects[0];
 			BusinessProfile business = (BusinessProfile) profileObjects[1];
+			List<BusinessProfile> suggestions = businesses.getSuggestions(business);
 			
 			return render(userExtension, "businessprofile")
 					.put("business", business)
+					.put("suggestions", suggestions)
 					.put("subscribed", interact.isSubscribed(principal.getName(), business.getId(), PostType.business))
 					.put("owner", business.getOwner().equals(userExtension))
 					.mav();

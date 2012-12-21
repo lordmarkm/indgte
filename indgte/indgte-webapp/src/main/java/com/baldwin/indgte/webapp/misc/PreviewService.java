@@ -10,8 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baldwin.indgte.persistence.model.BusinessProfile;
+import com.baldwin.indgte.persistence.model.BuyAndSellItem;
+import com.baldwin.indgte.persistence.model.Category;
+import com.baldwin.indgte.persistence.model.Imgur;
+import com.baldwin.indgte.persistence.model.Product;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.pers‪istence.dao.BusinessDao;
+import com.baldwin.indgte.pers‪istence.dao.TradeDao;
 import com.baldwin.indgte.pers‪istence.dao.UserDao;
 import com.baldwin.indgte.webapp.dto.Preview;
 import com.baldwin.indgte.webapp.dto.Preview.Cover;
@@ -28,12 +33,21 @@ public class PreviewService {
 	@Autowired
 	private BusinessDao businesses;
 	
+	@Autowired
+	private TradeDao trade;
+	
 	public Preview preview(PreviewType type, String href) {
 		switch(type) {
 		case user:
 			return makeUserPreview(href);
 		case business:
 			return makeBusinessPreview(href);
+		case category:
+			return makeCategoryPreview(href);
+		case product:
+			return makeProductPreview(href);
+		case buyandsellitem:
+			return makeBasPreview(href);
 		}
 		
 		return null;
@@ -48,20 +62,25 @@ public class PreviewService {
 		preview.setTitle(user.getUsername());
 		preview.setType(PreviewType.user);
 		preview.setDescription(user.getRank().toString());
+		preview.setCover(getUserCover(user));
 		
+		//chat
+		preview.setP2pName(username);
+		
+		return preview;
+	}
+	
+	private Cover getUserCover(UserExtension user) {
 		String provider = user.getUser().getProviderId();
 		switch(provider) {
 		case "facebook":
-			preview.setCover(getCoverFromFacebook(user.getUser().getProviderUserId()));
-			break;
+			return getCoverFromFacebook(user.getUser().getProviderUserId());
 		case "twitter":
-			preview.setCover(getCoverFromTwitter(user.getUser().getProviderUserId()));
-			break;
+			return getCoverFromTwitter(user.getUser().getProviderUserId());
 		default:
 			log.error("Unknown provider: {}", provider);
+			return null;
 		}
-		
-		return preview;
 	}
 	
 	private Cover getCoverFromFacebook(String id) {
@@ -104,6 +123,75 @@ public class PreviewService {
 		Cover cover = new Cover();
 		cover.setSource(business.getCoverpic() != null ? business.getCoverpic().getSmallSquare() : "");
 		preview.setCover(cover);
+		
+		//chat
+		preview.setP2pName(business.getOwner().getUsername());
+		preview.setBusinessChannel(domain);
+		
+		return preview;
+	}
+	
+	private Preview makeCategoryPreview(String href) {
+		Long id = Long.parseLong(extractId(href));
+		
+		Category category = businesses.getCategory(id);
+		BusinessProfile business = category.getBusiness();
+		
+		Preview preview = new Preview();
+		preview.setDescription(category.getDescription());
+		preview.setImage(category.getImgur() == null ? "" : category.getImgur().getSmallSquare());
+		preview.setTitle(category.getName());
+		preview.setType(PreviewType.category);
+		
+		Cover cover = new Cover();
+		cover.setSource(business.getCoverpic() != null ? business.getCoverpic().getSmallSquare() : "");
+		preview.setCover(cover);
+		
+		//chat
+		preview.setP2pName(business.getOwner().getUsername());
+		preview.setBusinessChannel(business.getDomain());
+		
+		return preview;
+	}
+	
+	private Preview makeProductPreview(String href) {
+		Long id = Long.parseLong(extractId(href));
+		
+		Product product = businesses.getProduct(id);
+		BusinessProfile business = product.getCategory().getBusiness();
+		
+		Preview preview = new Preview();
+		preview.setDescription(product.getDescription());
+		preview.setImage(product.getImgur() == null ? "" : product.getImgur().getSmallSquare());
+		preview.setTitle(product.getName());
+		preview.setType(PreviewType.product);
+		
+		Cover cover = new Cover();
+		Imgur imgur = product.getCategory().getBusiness().getImgur();
+		cover.setSource(imgur == null ? "" : imgur.getSmallSquare());
+		preview.setCover(cover);
+		
+		//chat
+		preview.setP2pName(business.getOwner().getUsername());
+		preview.setBusinessChannel(business.getDomain());
+		
+		return preview;
+	}
+	
+	private Preview makeBasPreview(String href) {
+		Long id = Long.parseLong(extractId(href));
+		
+		BuyAndSellItem item = trade.get(id);
+		
+		Preview preview = new Preview();
+		preview.setDescription(item.getDescription());
+		preview.setImage(item.getImgur() == null ? "" : item.getImgur().getSmallSquare());
+		preview.setTitle(item.getName());
+		preview.setType(PreviewType.buyandsellitem);
+		preview.setCover(getUserCover(item.getOwner()));
+
+		//chat
+		preview.setP2pName(item.getOwner().getUsername());
 		
 		return preview;
 	}

@@ -11,7 +11,7 @@
 
 <title><spring:message code="product.title" arguments="${product.name },${business.domain }"/></title>
 
-<div class="viewproduct grid_8">
+<div class="viewproduct grid_8 maingrid">
 	<section class="product-welcome">
 		<div class="product-welcome-product">
 			<div class="product-welcome-image-container">
@@ -51,10 +51,28 @@
 	<div class="product-owner-operations">
 		<a href="${urlEditProduct}${business.domain}/${product.id}" class="button btn-edit-product"><spring:message code="generics.edit" /></a>
 		<button class="btn-product-add-photo"><spring:message code="product.addphotos.button" /></button>
-		<button class="btn-product-promote"><spring:message code="generics.promote" /></button>
+		<button class="btn-promote"><spring:message code="generics.promote" /></button>
+		<div class="dialog-promote hide" title="Promote this Product">
+			<span><spring:message code="entity.promote.dialog" arguments="${user.billingInfo.coconuts },${user.billingInfo.coconuts / 10 },${category.name }" /></span>
+			<form class="form-promote" method="post" action="<c:url value='/o/sidebar/product/${product.id }' />" >
+				<table>
+					<tr>
+						<td><label for="start-date">Promote from</label></td>
+						<td><input type="date" id="start-date" name="start" readonly="readonly" placeholder="Click to choose" /></td>
+					</tr>
+					<tr>
+						<td><label for="end-date">Promote until</label></td>
+						<td><input type="date" id="end-date" name="end" readonly="readonly" placeholder="Click to choose"/></td>
+					</tr>
+				</table>
+			</form>
+			<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
+		</div>
 	</div>
 	<div class="sidebar-divider"></div>
 </div>
+<script src="<spring:url value='/resources/javascript/promote.js' />" ></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 <style>
 .product-owner-operations .button, .product-owner-operations button {
 	margin-top: 5px;
@@ -66,16 +84,17 @@
 
 <!-- product generic controls -->
 <div class="viewproduct-controls grid_4 ui-widget sidebar-section">
-	<div class="sidebar-section-header">Product Actions</div>
-	<div class="product-actions">
-		<sec:authorize access="hasRole('ROLE_USER')">
-		<c:if test="${!inwishlist }">
-		<button class="btn-wishlist-add">Add to Wishlist</button>
-		</c:if>
-		</sec:authorize>
-		<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Product Actions</div>
+		<div class="product-actions">
+			<sec:authorize access="hasRole('ROLE_USER')">
+			<c:if test="${!inwishlist }">
+			<button class="btn-wishlist-add">Add to Wishlist</button>
+			</c:if>
+			</sec:authorize>
+			<div class="fb-like" layout="button_count" data-send="true" data-width="450" data-show-faces="true"></div>
+		</div>
 	</div>
-	<div class="sidebar-divider"></div>
 </div>
 
 <style>
@@ -108,6 +127,10 @@
 	<c:set var="businessPicImgur" value="${business.profilepic.imgurPage }" />
 </c:if>
 <script>
+window.user = {
+	coconuts : '${user.billingInfo.coconuts}'		
+}
+
 window.urls = {
 	products : '${urlProducts}',
 	profile : '${urlProfile}',
@@ -439,22 +462,11 @@ $(function(){
 </script>
 </c:if>
 
+<!-- Notifications -->
+<%@include file="../grids/notifications4.jsp"  %>
+
+<!-- Simillar Businesses -->
+<%@include file="../grids/suggested4.jsp" %>
+
 <!-- Top Tens -->
-<div class="toptens-container grid_4 ui-widget sidebar-section">
-<div class="sidebar-section-header">Top Tens</div>
-<div class="toptens">
-	Popular:
-	<ul class="popular"></ul>
-	Recent:
-	<ul class="recent"></ul>
-	
-	<a href="<spring:url value='/i/toptens/' />">View all...</a>
-</div>
-</div>
-<link rel="stylesheet" href="<spring:url value='/resources/css/grids/toptens.css' />" />
-<script>
-window.urls.topTens = '<spring:url value="/i/toptens.json" />',
-window.urls.topTenLeader = '<spring:url value="/i/toptens/leader/" />',
-window.urls.topTensPage = '<spring:url value="/i/toptens/" />'
-</script>
-<script src="${jsTopTens }"></script>
+<%@include file="../grids/toptens.jsp" %>

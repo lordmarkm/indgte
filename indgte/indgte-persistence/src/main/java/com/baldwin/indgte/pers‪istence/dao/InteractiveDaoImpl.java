@@ -296,7 +296,8 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	@Override
 	public BusinessReview businessReview(String name, long businessId, int score, String justification) {
 		Session session = sessions.getCurrentSession();
-		
+		BusinessProfile business = businesses.get(businessId);
+
 		BusinessReview review = getBusinessReview(name, businessId);
 		if(null == review) {
 			review = new BusinessReview();
@@ -304,7 +305,6 @@ public class InteractiveDaoImpl implements InteractiveDao {
 			UserExtension reviewer = users.getExtended(name);
 			reviewer.getBusinessReviews().add(review);
 			
-			BusinessProfile business = businesses.get(businessId);
 			business.getReviews().add(review);
 			
 			review.setReviewer(reviewer);
@@ -318,6 +318,14 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		review.setTime(new Date()); //last updated
 		
 		session.saveOrUpdate(review);
+		
+		double total = 0;
+		for(Review r : business.getReviews()) {
+			total += r.getScore();
+		}
+
+		double avg = Math.round(2*(total/business.getReviews().size())) / 2d;
+		business.setAverageReviewScore(avg);
 		
 		return review;
 	}

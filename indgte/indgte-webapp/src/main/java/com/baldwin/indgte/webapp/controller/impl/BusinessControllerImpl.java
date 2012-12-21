@@ -35,6 +35,7 @@ import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.BusinessController;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.MavBuilder;
+import com.baldwin.indgte.webapp.misc.ConstantsInserterBean;
 
 @Component
 public class BusinessControllerImpl implements BusinessController {
@@ -45,6 +46,9 @@ public class BusinessControllerImpl implements BusinessController {
 	
 	@Autowired
 	private BusinessService businesses;
+	
+	@Autowired
+	private ConstantsInserterBean constants;
 	
 	@Override
 	public @ResponseBody JSON getInfo(@PathVariable String domain) {
@@ -78,6 +82,8 @@ public class BusinessControllerImpl implements BusinessController {
 			mav.put("user", user)
     		   .put("owner", business.getOwner().equals(user));
 		}
+		
+		constants.insertConstants(mav);
 		
 		return mav.mav();
 	}
@@ -171,9 +177,11 @@ public class BusinessControllerImpl implements BusinessController {
 		
 		BusinessProfile business = businesses.get(domain);
 		Product product = businesses.getProduct(productId);
-		
+		List<BusinessProfile> suggestions = businesses.getSuggestions(business);
+
 		MavBuilder mav = render("viewproduct")
 					.put("business", business)
+					.put("suggestions", suggestions)
 					.put("product", product);
 		
 		if(null != principal) {

@@ -122,4 +122,7 @@ public class BusinessService {
 	public String getInfo(String domain) {
 		return dao.getInfo(domain);
 	}
+	public List<BusinessProfile> getSuggestions(BusinessProfile business) {
+		return dao.getSuggestions(business);
+	}
 }

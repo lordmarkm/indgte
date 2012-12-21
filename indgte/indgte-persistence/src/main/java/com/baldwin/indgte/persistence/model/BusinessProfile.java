@@ -105,6 +105,9 @@ public class BusinessProfile implements Searchable, Attachable {
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="reviewed")
 	private Set<BusinessReview> reviews;
 	
+	@Column
+	private double averageReviewScore = 0;
+	
 	@ManyToMany(mappedBy="forReview")
 	private Set<UserExtension> pendingReviewers;
 	
@@ -364,4 +367,21 @@ public class BusinessProfile implements Searchable, Attachable {
 	public void setInfo(String info) {
 		this.info = info;
 	}
+
+	public BusinessGroup getBusinessGroup() {
+		return businessGroup;
+	}
+
+	public void setBusinessGroup(BusinessGroup businessGroup) {
+		this.businessGroup = businessGroup;
+	}
+
+	public double getAverageReviewScore() {
+		return averageReviewScore;
+	}
+
+	public void setAverageReviewScore(double averageReviewScore) {
+		this.averageReviewScore = averageReviewScore;
+	}
+
 }

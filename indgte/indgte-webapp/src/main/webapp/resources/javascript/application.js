@@ -108,6 +108,16 @@ window.dgte = {
 		var description = item.description.length > dgte.desclength ? item.description.substring(0, dgte.desclength) + '...' : item.description;
 		$('<div class="subtitle">').text(description).appendTo($info);
 		$('<div class="subtitle">').text(moment(item.time).fromNow()).appendTo($info);
+	},
+	
+	error: function(title, text){
+		$('<div>').attr('title', title).html(text).dialog({
+			buttons: {
+				'OK': function() {
+					$(this).dialog('close');
+				}	
+			}
+		});
 	}
 }
 
@@ -258,6 +268,7 @@ $.fn.extend({
     	}
     	
     	var $preview = $('.dgte-preview');
+    	var $actions = $preview.find('.preview-actions');
     	$preview.addClass('dgte-preview-visible');
     	
     	var offset = this.offset();
@@ -286,6 +297,8 @@ $.fn.extend({
     		var $previewInfo = $('<div class="preview-info-container">').appendTo($whiteContainer);
     		$('<div class="preview-title">').appendTo($previewInfo);
     		$('<div class="preview-description subtitle">').appendTo($previewInfo);
+    		
+    		$actions = $('<div class="preview-actions">').appendTo($whiteContainer);
     	}
     	
     	function fillPreview(preview) {
@@ -296,21 +309,51 @@ $.fn.extend({
     		debug('processing cover source: ' + preview.cover.source);
     		var coverSrc = preview.cover.source === 'twitter' ? dgte.domain + dgte.urls.twittercover : preview.cover.source;
     		$preview
-    			.find('.preview-cover-image').attr('src', coverSrc).end()
+    			.find('.preview-cover-image').attr('src', coverSrc).load(function(){$(this).show()}).end()
     			.find('.preview-image').attr('src', preview.image ? preview.image : dgte.urls.noImage50).load(function(){$(this).show()}).end()
     			.find('.preview-title').text(preview.title).end()
     			.find('.preview-description').text(preview.description.length > 80 ? preview.description.substring(0, 80) + '...' : preview.description);
-    		
-    		//set cover offset (facebook only)
-    		if(preview.type == 'user' && preview.cover.offsetY != 0) {
-    			var $cover = $preview.find('.preview-cover-image');
-    			$cover.load(function(){
-    				var height = $cover.height();
-    				var offsetY = preview.cover.offsetY;
-    				var offset = parseInt((preview.cover.offsetY/100)*height);
-    				$cover.css('position', 'absolute').css('top', -(offset));
-    				$cover.show();
-    			})
+    			
+    		switch(preview.type) {
+    		case 'user':
+    			if(preview.cover.offsetY != 0) { //set cover offset (facebook only)
+        			var $cover = $preview.find('.preview-cover-image');
+        			$cover.load(function(){
+        				var height = $cover.height();
+        				var offsetY = preview.cover.offsetY;
+        				var offset = parseInt((preview.cover.offsetY/100)*height);
+        				$cover.css('position', 'absolute').css('top', -(offset));
+        				$cover.show();
+        			})
+    			}
+    			
+    			$('<button>').text('Send message').appendTo($actions).button().click(function(){
+    				$preview.hide();
+					openChatWithUser(preview.p2pName);
+    			});
+    			break;
+    		case 'business':
+    		case 'category':
+    		case 'product':
+    			$('<button class="mr5">')
+    				.attr('title', '#' + preview.businessChannel)
+    				.text('Join channel').appendTo($actions)
+    				.button().click(function(){
+    					$preview.hide();
+    					openChat('#' + preview.businessChannel);
+    				});
+    		case 'buyandsellitem':
+    			$('<button>')
+    				.attr('title', preview.p2pName)
+    				.text('Message owner').appendTo($actions)
+    				.button().click(function(){
+    					$preview.hide();
+    					openChatWithUser(preview.p2pName);
+    				});
+    			break;
+    		default:
+    			debug('Error opening chat.');
+    			debug(preview);
     		}
     	}
     	
@@ -319,6 +362,7 @@ $.fn.extend({
     		.find('.preview-info-container div').text(' ');
     	
     	debug('firing ajax preview request');
+    	$actions.html('');
     	$.get(dgte.domain + dgte.urls.preview + 'json',
     		{
     			href: href,

@@ -6,7 +6,7 @@
 
 <title>Review for ${review.revieweeSummary.title }</title>
 
-<div class="grid_8 review">
+<div class="review grid_8 maingrid">
 	<div class="page-header">Review for ${review.revieweeSummary.title }</div>
 	<section class="reviewee-summary">
 		<c:if test="${review.reviewType eq 'business' }">

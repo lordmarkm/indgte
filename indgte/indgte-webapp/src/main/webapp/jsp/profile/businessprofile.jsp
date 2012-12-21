@@ -249,7 +249,7 @@
 		<sec:authorize access="hasRole('ROLE_USER')">
 			<div class="button btn-subscribe-toggle">Subscribe</div>
 		</sec:authorize>
-		<div class="fb-like" href="${baseURL }/${business.domain}" data-send="true" data-width="450" data-show-faces="true"></div>
+		<div class="fb-like" layout="button_count" href="${baseURL }/${business.domain}" data-send="true" data-width="450" data-show-faces="true"></div>
 	</div>
 </div>
 
@@ -634,4 +634,8 @@ $(function(){
 
 <script src="${jsReviews }"></script>
 
+<!-- Notifications -->
 <%@include file="../grids/notifications3.jsp"  %>
+
+<!-- Simillar Businesses -->
+<%@include file="../grids/suggested3.jsp" %>

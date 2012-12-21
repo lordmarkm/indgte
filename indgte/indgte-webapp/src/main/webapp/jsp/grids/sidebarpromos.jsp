@@ -9,11 +9,11 @@
 			<c:forEach items="${sidebarPromos}" var="promo">
 				<li>
 					<div class="sidebar-promo-image-container">
-						<img src="${promo.summary.imgur == null ? noimage50 : promo.summary.imgur.smallSquare }" />
+						<a href="${promo.summary.url }" class="dgte-previewlink" previewtype="${promo.summary.type}"><img src="${promo.summary.imgur == null ? noimage50 : promo.summary.imgur.smallSquare }" /></a>
 					</div>
 					<div class="sidebar-promo-info">
 						<div class="sidebar-promo-title"><a href="${promo.summary.url }" class="fatlink dgte-previewlink" href="javascript:;" previewtype="${promo.summary.type}">${promo.summary.title }</a> (${promo.type })</div>
-						<div class="sidebar-promo-description description">${fn:substring(promo.summary.description, 0, 140) }<c:if test="${fn:length(promo.summary.description) > 140 }">...</c:if></div>
+						<div class="sidebar-promo-description description">${fn:substring(promo.summary.description, 0, 80) }<c:if test="${fn:length(promo.summary.description) > 80 }">...</c:if></div>
 					</div>
 				</li>
 			</c:forEach>
@@ -36,13 +36,17 @@
 .sidebar-promo-info {
 	width: 200px;
 	display: inline-block;
+	max-height: 77px;
+	overflow-y: hidden;
 }
 
 .sidebar-promos-container img {
 	width: 80px;
 	height: 80px;
+	vertical-align: bottom;
 }
 
-.sidebar-promos-container li {
+.sidebar-promos-container li:not(:first-child) {
+	margin-top: 4px;
 }
 </style>

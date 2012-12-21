@@ -14,10 +14,10 @@
 	<div class="post">
 		<div class="post-pic-container">
 			<c:if test="${post.type eq 'business' }">
-				<img class="post-pic" src="${urlImgRoot }${post.posterImgurHash}s.jpg" />
+				<img class="post-pic" src="${not empty post.posterImgurHash ? urlImgRoot + post.posterImgurHash + 's.jpg' : noimage50}" />
 			</c:if>
 			<c:if test="${post.type eq 'user' }">
-				<img class="post-pic" src="${post.posterImgurHash}" />
+				<img class="post-pic" src="${not empty post.posterImgurHash ? post.posterImgurHash : noimage50}" />
 			</c:if>
 		</div>
 				

@@ -75,13 +75,13 @@ window.products = {
 		}
 		
 		var $title = $('<a id="' + product.id + '">').attr('href', urls.urlProducts + this.domain + '/' + product.id).appendTo($container);
-		var $h3 = $('<h3 class="product-name">').text(product.name).appendTo($title)
+		var $productName = $('<strong class="product-name">').text(product.name).appendTo($title)
 		
 		$.get(urls.urlProducts + constants.domain + '/' + product.id + '/pics/' + constants.previewPicsCount + '.json', function(response){
 			switch(response.status){
 			case '200':
 				for(var i = 0; i < response.imgurs.length; ++i) {
-					$('<img class="product-otherpics-preview">').attr('src', response.imgurs[i].smallSquare).appendTo($h3);
+					$('<img class="product-otherpics-preview">').attr('src', response.imgurs[i].smallSquare).appendTo($productName);
 				}
 				break;
 			default:
@@ -415,3 +415,9 @@ $(function(){
 });
 </script>
 </c:if>
+
+<!-- Notifications -->
+<%@include file="../grids/notifications4.jsp"  %>
+
+<!-- Sidebar Featured promos -->
+<%@include file="../grids/sidebarpromos.jsp" %>

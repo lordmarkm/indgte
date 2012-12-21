@@ -1,8 +1,11 @@
 package com.baldwin.indgte.pers‪istence.dao;
 
-import static com.baldwin.indgte.pers‪istence.dao.TableConstants.*;
+import static com.baldwin.indgte.pers‪istence.dao.TableConstants.BUSINESS_DOMAIN;
+import static com.baldwin.indgte.pers‪istence.dao.TableConstants.BUSINESS_INFO;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -373,5 +376,39 @@ public class BusinessDaoImpl implements BusinessDao {
 			.add(Restrictions.eq(BUSINESS_DOMAIN, domain))
 			.setProjection(Projections.property(BUSINESS_INFO))
 			.uniqueResult();
+	}
+
+	private class ReviewComparator implements Comparator<BusinessProfile> {
+		@Override
+		public int compare(BusinessProfile o1, BusinessProfile o2) {
+			if(o1.getAverageReviewScore() == o2.getAverageReviewScore()) {
+				return o1.getFullName().compareTo(o2.getFullName());
+			}
+			return o1.getAverageReviewScore() - o2.getAverageReviewScore() > 0 ? -1 : 1;
+		}
+	}
+	
+	@Override
+	public List<BusinessProfile> getSuggestions(BusinessProfile business) {
+		return getTopRated(business.getCategory(), business, 5);
+	}
+	
+	private List<BusinessProfile> getTopRated(BusinessGroup group, BusinessProfile exclude, int max) {
+		Criteria crit = sessions.getCurrentSession().createCriteria(BusinessProfile.class)
+			.add(Restrictions.eq("businessGroup", group));
+		
+		if(null != exclude) {
+			crit.add(Restrictions.ne("id", exclude.getId()));
+		}
+		
+		@SuppressWarnings("unchecked")
+		List<BusinessProfile> similar = (List<BusinessProfile>) crit.list();	
+			
+		Collections.sort(similar, new ReviewComparator());
+		if(max != -1 && similar.size() > max) {
+			return similar.subList(0, max);
+		} else {
+			return similar;
+		}
 	}
 }

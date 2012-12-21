@@ -32,7 +32,7 @@ body {
 .hide {display: none;}
 .bold {font-weight: bold;}
 	/* layout */
-.maingrid {min-height: 1000px;}
+.maingrid {min-height: 1400px;}
 .relative {position: relative;}
 .inline {display: inline;}
 .inline-block {display: inline-block;}
@@ -195,4 +195,15 @@ a.fatlink {
 
 .preview-title {
 	font-weight: bold;
+}
+
+.preview-actions {
+	margin: 5px 0 0 30px;
+}
+
+.preview-actions button {
+	max-width: 45%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }

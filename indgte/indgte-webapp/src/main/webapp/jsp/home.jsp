@@ -57,9 +57,15 @@
 		<div class="newpost-errors"></div>
 	</form>
 	<div class="status-options hide">
-		<sec:authorize access="hasRole('ROLE_USER_FACEBOOK')">
-		<input type="checkbox" name="toFacebook" id="toFacebook" value="true"><label for="toFacebook"><spring:message code="home.status.postfb" /></label>
+		<sec:authorize access="hasRole('ROLE_USER_TWITTER')">
+			<input type="checkbox" name="toTwitter" id="toTwitter" value="true">
+			<label for="toTwitter"><spring:message code="home.status.posttwitter" /></label>
 		</sec:authorize>
+		<sec:authorize access="hasRole('ROLE_USER_FACEBOOK')">
+			<input type="checkbox" name="toFacebook" id="toFacebook" value="true">
+			<label for="toFacebook"><spring:message code="home.status.postfb" /></label>
+		</sec:authorize>
+		
 		<div class="floatright">
 			<span class="status-counter"></span>
 			<div class="post-as">
@@ -633,6 +639,12 @@ $(function(){
 		switch(attachType) {
 		case 'imgur':
 			data.attachmentType = 'imgur';
+			if(!$iptFile[0] || !$iptFile[0].files[0]) {
+				dgte.error('You haven\'t attached an image', 'You should attach an image, or select "none" from the attachment type menu');
+				$newpost.find('.overlay').remove();
+				return;
+			}
+			
 			upload($iptFile[0].files[0], function(imgurResponse) {
 				data.hash = imgurResponse.upload.image.hash;
 				postStatus(data);
@@ -686,8 +698,12 @@ $(function(){
 				addPost(response.post, true, true);
 				shrinkStatus();
 				break;
+			case '500':
+				dgte.error('Error creating post', 'There was an error creating this post. Please check your text and attachment (if any) and try again.');
+				break;
 			default:
 				debug(response);
+				dgte.error('Error creating post', 'There was an error creating this post. Please check your text and attachment (if any) and try again.');
 			}
 		});
 		
@@ -751,7 +767,7 @@ $(function(){
 			link = urls.user + post.posterIdentifier;
 			break;
 		case 'business':
-			posterImgSrc = post.posterImgurHash ? urls.imgur + post.posterImgurHash  + 's.jpg' : null; //something like H4qu1
+			posterImgSrc = post.posterImgurHash ? urls.imgur + post.posterImgurHash  + 's.jpg' : dgte.urls.noImage50; //something like H4qu1
 			link = urls.business + post.posterIdentifier;
 			break;
 		default:
@@ -821,7 +837,11 @@ $(function(){
 			break;
 		case 'business':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-			var $attachmentA = $('<a>').attr('href', urls.business + post.attachmentIdentifier).appendTo($container);
+			var $attachmentA = $('<a class="fatlink dgte-previewlink">')
+				.attr('previewtype', 'business')
+				.attr('href', urls.business + post.attachmentIdentifier)
+				.appendTo($container);
+			
 			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
 			$('<p class="attachment-description">').text(post.attachmentDescription).appendTo($container);
 			//main category pic
@@ -831,7 +851,9 @@ $(function(){
 		case 'category':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
 			//title
-			var $attachmentA = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
+			var $attachmentA = $('<a class="fatlink dgte-previewlink">')
+				.attr('previewtype', 'category')
+				.attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
 			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
 			//main category pic
 			var $a2 = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
@@ -850,7 +872,9 @@ $(function(){
 						for(var prodIterator = 0, prodLength = response.products.length; prodIterator < prodLength; ++prodIterator) {
 							var attachedProduct = response.products[prodIterator];
 							if(attachedProduct.mainpic) {
-								var $productA = $('<a>').attr('href', urls.product + attachedProduct.id).appendTo($products);
+								var $productA = $('<a class="dgte-previewlink">')
+									.attr('previewtype', 'product')
+									.attr('href', urls.product + attachedProduct.id).appendTo($products);
 								$('<img class="category-attachment-product-img">')
 									.attr('src', attachedProduct.mainpic.smallSquare)
 									.attr('title', attachedProduct.name)
@@ -878,11 +902,14 @@ $(function(){
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
 			
 			//title
-			var $attachmentA = $('<a>').attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
+			var $attachmentA = $('<a class="fatlink dgte-previewlink">')
+				.attr('previewtype', 'product')
+				.attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
 			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
 			//mainpicproduct
 			if(post.attachmentImgurHash) {
-				var $attachmentImgA = $('<a>').attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
+				var $attachmentImgA = $('<a>')
+					.attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
 				$('<img class="attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($attachmentImgA);
 			}
 				
@@ -917,7 +944,10 @@ $(function(){
 			break;
 		case 'buyandsellitem':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-			var $attachmentA = $('<a>').attr('href', urls.buyandsellitem + post.attachmentIdentifier).appendTo($container);
+			var $attachmentA = $('<a class="fatlink dgte-previewlink">')
+				.attr('previewtype', 'buyandsellitem')
+				.attr('href', urls.buyandsellitem + post.attachmentIdentifier).appendTo($container);
+			
 			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
 			$('<p class="attachment-description">').text(post.attachmentDescription).appendTo($container);
 			//main category pic
@@ -1002,7 +1032,7 @@ $(function(){
 	<div class="sidebar-container">
 		<div class="sidebar-section-header">Home</div>
 		
-		Order posts by:
+		Show
 		<div id="rdo-post-sort">
 			<input type="radio" name="rdo-sort-order" value="subs" id="rdo-subs" checked="checked"/> <label for="rdo-subs">Subscriptions</label>
 			<input type="radio" name="rdo-sort-order" value="newest" id="rdo-newest" /> <label for="rdo-newest">Newest</label>
@@ -1013,7 +1043,6 @@ $(function(){
 
 <!-- Notifications -->
 <%@include file="./grids/notifications4.jsp"  %>
-<!-- Notifications -->
 
 <!-- Reviews -->
 <div class="reviewqueue grid_4 sidebar-section">

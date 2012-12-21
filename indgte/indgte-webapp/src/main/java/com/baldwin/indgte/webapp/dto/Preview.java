@@ -4,7 +4,10 @@ public class Preview {
 
 	public static enum PreviewType {
 		user,
-		business
+		business,
+		category, 
+		product, 
+		buyandsellitem
 	}
 	
 	public static class Cover {
@@ -35,6 +38,8 @@ public class Preview {
 	private Cover cover;
 	private String title;
 	private String description;
+	private String p2pName;
+	private String businessChannel;
 	
 	public String getImage() {
 		return image;
@@ -65,6 +70,18 @@ public class Preview {
 	}
 	public void setType(PreviewType type) {
 		this.type = type;
+	}
+	public String getBusinessChannel() {
+		return businessChannel;
+	}
+	public void setBusinessChannel(String businessChannel) {
+		this.businessChannel = businessChannel;
+	}
+	public String getP2pName() {
+		return p2pName;
+	}
+	public void setP2pName(String p2pName) {
+		this.p2pName = p2pName;
 	}
 	
 }

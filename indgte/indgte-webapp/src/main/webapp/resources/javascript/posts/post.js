@@ -131,7 +131,11 @@ $(function(){
 			return;
 	}
 	var $footnote = $('<div class="fromnow post-time">').html(moment(parseInt(post.postTime)).fromNow() + ' by ').appendTo($dataContainer);
-	$('<a>').attr('href', link).text(post.posterTitle).appendTo($footnote);
+	$('<a class="fatlink dgte-previewlink">')
+		.attr('href', link)
+		.attr('previewtype', post.type)
+		.text(post.posterTitle)
+		.appendTo($footnote);
 	
 	//promote
 	var 

@@ -7,6 +7,7 @@ public class Summary {
 	public static final String urlBusiness = "/";
 	public static final String urlCategory = "/b/categories/";
 	public static final String urlBas = "/t/";
+	public static final String urlProduct = "/b/products/";
 	
 	public enum SummaryType {
 		none,
@@ -123,6 +124,8 @@ public class Summary {
 			return urlBusiness + identifier;
 		case category:
 			return urlCategory + identifier;
+		case product:
+			return urlProduct + identifier;
 		case buyandsellitem:
 			return urlBas + identifier;
 		default: 

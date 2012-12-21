@@ -7,8 +7,13 @@ $(function(){
 		$form = $('#chat-form'),
 		$iptMessage = $('.ipt-message');
 	
+	window.openChatWithUser = function(chattername) {
+		var channel = constructChannelString(chattername);
+		openChat(channel);
+	}
+	
 	//general
-	function openChat(persistentChannel, offset) {
+	window.openChat = function(persistentChannel, offset) {
 		$dialog.dialog({
 			modal: false,
 			resizable: false,
@@ -20,10 +25,6 @@ $(function(){
 			dragStop: updateCookieData
 		});
 		
-		if(offset && offset.left > 0 && offset.top > 0) {
-			$dialog.parent().offset(offset);
-		}
-
 		$btnChat.removeClass('ui-state-highlight').addClass('ui-state-active');
 		
 		if(persistentChannel) {
@@ -287,8 +288,12 @@ $(function(){
 		$chatwindow.show();
 	}
 	
+	function constructChannelString(chatter) {
+		return chatter.indexOf('#') == 0 ? chatter : chatter < chat.user ? chatter + '|' + chat.user : chat.user + '|' + chatter;
+	}
+	
 	function p2pOpen(chatter, switchTo) {
-		var channel = chatter.indexOf('#') == 0 ? chatter : chatter < chat.user ? chatter + '|' + chat.user : chat.user + '|' + chatter;
+		var channel = constructChannelString(chatter);
 		var $chatwindow = findWindow(channel, true);
 		
 		if(switchTo) {
