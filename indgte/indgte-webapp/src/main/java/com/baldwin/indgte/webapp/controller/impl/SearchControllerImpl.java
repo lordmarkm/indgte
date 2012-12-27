@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -79,7 +80,7 @@ public class SearchControllerImpl implements SearchController {
 	 */
 
 	@Override
-	public ModelAndView search(Principal principal, @PathVariable String term) {
+	public ModelAndView search(Principal principal, @PathVariable String term) throws Exception {
 		long start = System.currentTimeMillis();
 
 		MavBuilder mav = render("fullsearch")
@@ -239,5 +240,10 @@ public class SearchControllerImpl implements SearchController {
 		} catch (Exception e) {
 			return JSON.status500(e);
 		}
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public String handleException() {
+		return "redirect:/error/";
 	}
 }

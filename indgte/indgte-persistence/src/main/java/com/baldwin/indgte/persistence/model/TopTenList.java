@@ -26,15 +26,11 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.search.annotations.Boost;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Indexed
 @Entity
 @Table(name="toptenlists")
 public class TopTenList {
-	static Logger log = LoggerFactory.getLogger(TopTenList.class);
-	
 	@Id 
 	@GeneratedValue
 	private long id;
@@ -129,11 +125,6 @@ public class TopTenList {
 	public TopTenCandidate getLeader() {
 		List<TopTenCandidate> ordered = getOrdered();
 		TopTenCandidate leader = ordered.size() > 0 ? ordered.get(0) : null;
-		
-		if(log.isDebugEnabled()) {
-			log.debug("Returning leader {} out of {}", leader, ordered);
-		}
-		
 		return leader;
 	}
 

@@ -77,6 +77,16 @@ public class MavBuilder {
 		return this;
 	}
 	
+	public MavBuilder description(String description) {
+		mav.addObject(PAGE_DESCRIPTION, description);
+		return this;
+	}
+	
+	public MavBuilder thumbnail(String thumbnail) {
+		mav.addObject(PAGE_THUMBNAIL, thumbnail);
+		return this;
+	}
+	
 	public ModelAndView mav() {
 		return mav;
 	}

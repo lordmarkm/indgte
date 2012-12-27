@@ -15,7 +15,7 @@ public interface SearchController {
 	public ModelAndView yellowpages(Principal principal);
 	
 	@RequestMapping("/{term}")
-	public ModelAndView search(Principal principal, String term);
+	public ModelAndView search(Principal principal, String term) throws Exception;
 	
 	@RequestMapping("/{term}/json")
 	public JSON autocomplete(Principal principal, String term);

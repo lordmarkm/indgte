@@ -38,7 +38,7 @@ public class SearchService {
 		dao.reindex();
 	}
 
-	public Map<SummaryType, List<Summary>> search(String term, int firstResult, int maxResults, SummaryType[] supportedTypes, String ownername) {
+	public Map<SummaryType, List<Summary>> search(String term, int firstResult, int maxResults, SummaryType[] supportedTypes, String ownername) throws Exception {
 		Map<SummaryType, List<Summary>> results = new HashMap<SummaryType, List<Summary>>();
 		
 		for(SummaryType type : supportedTypes) {

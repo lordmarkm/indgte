@@ -77,6 +77,14 @@ public class BusinessControllerImpl implements BusinessController {
 				.put("business", business)
 				.put("category", category);
 		
+		//metadata
+		if(null != category.getImgur()) {
+			mav.thumbnail(category.getImgur().getSmallSquare());
+		}
+		if(null != category.getDescription() && category.getDescription().length() > 0) {
+			mav.description(category.getDescription());
+		}
+		
 		if(null != principal) {
 			UserExtension user = users.getExtended(principal.getName());
 			mav.put("user", user)
@@ -183,6 +191,14 @@ public class BusinessControllerImpl implements BusinessController {
 					.put("business", business)
 					.put("suggestions", suggestions)
 					.put("product", product);
+		
+		//metadata
+		if(null != product.getImgur()) {
+			mav.thumbnail(product.getImgur().getSmallSquare());
+		}
+		if(null != product.getDescription() && product.getDescription().length() > 0) {
+			mav.description(product.getDescription());
+		}
 		
 		if(null != principal) {
 			UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist);

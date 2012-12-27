@@ -56,14 +56,13 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 	
 	private Set<Chatter> presence = Collections.synchronizedSet(new HashSet<Chatter>());
 	private ConcurrentMap<String, Set<String>> channels = new ConcurrentHashMap<>();
-	//<username, DeferredResult>
 
 	private List<String> extractUsernamesFromChannel(String channel) {
 		return Arrays.asList(channel.split("\\|"));
 	}
 
 	public void send(String sender, String channel, String message) {
-		log.debug("Posting message [{}] to channel [{}]", message, channel);
+		log.debug("Posting message [{}] from [{}] to channel [{}]", message, sender, channel);
 
 		//[ChatMessage, MessageNotification]
 		Object[] msgAndNotif = dao.newMessage(sender, channel, message);

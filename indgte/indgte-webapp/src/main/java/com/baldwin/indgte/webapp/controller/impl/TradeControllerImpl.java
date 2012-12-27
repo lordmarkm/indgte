@@ -94,6 +94,8 @@ public class TradeControllerImpl implements TradeController {
 		MavBuilder builder = render("buyandsellitem")
 					.put("item", item);
 
+		if(null != item.getDescription()) builder.description(item.getDescription());
+		if(null != item.getImgur()) builder.thumbnail(item.getImgur().getSmallSquare());
 		
 		if(item instanceof AuctionItem) {
 			AuctionItem auctionItem = (AuctionItem)item;

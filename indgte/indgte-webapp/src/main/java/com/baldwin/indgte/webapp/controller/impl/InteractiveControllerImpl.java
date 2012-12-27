@@ -117,7 +117,12 @@ public class InteractiveControllerImpl implements InteractiveController {
 		Post post = interact.getPost(postId);
 
 		MavBuilder mav = render("viewpost")
-				.put("post", post);
+				.put("post", post)
+				.description(post.getText());
+		
+		if(post.getAttachmentImgurHash() != null) {
+			mav.thumbnail(Imgur.getSmallSquare(post.getAttachmentImgurHash()));
+		}
 		
 		if(null != principal) {
 			UserExtension user = users.getExtended(principal.getName());

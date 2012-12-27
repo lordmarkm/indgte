@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -78,8 +79,12 @@ public class HomeControllerImpl implements HomeController {
 					.put("owner", false)
 					.put(MavBuilder.PAGE_DESCRIPTION, business.getDescription());
 			
+			//metadata
 			if(null != business.getImgur()) {
-				mav.put(MavBuilder.PAGE_THUMBNAIL, business.getImgur().getSmallSquare());
+				mav.thumbnail(business.getImgur().getSmallSquare());
+			}
+			if(null != business.getDescription() && business.getDescription().length() > 0) {
+				mav.description(business.getDescription());
 			}
 			
 			return mav.mav();
@@ -117,5 +122,10 @@ public class HomeControllerImpl implements HomeController {
 	@Override
 	public String failedPermissionsRedirect() {
 		return "redirect:/login/";
+	}
+	
+	@ExceptionHandler(IllegalArgumentException.class)
+	public String unknownDomainException() {
+		return "redirect:/error/";
 	}
 }

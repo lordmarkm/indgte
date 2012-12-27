@@ -95,6 +95,10 @@ public class Imgur implements Attachable {
 		return urlSmallSquare + hash + "s.jpg";
 	}
 	
+	public static String getSmallSquare(String hash) {
+		return urlSmallSquare + hash + "s.jpg";
+	}
+	
 	public String getLargeThumbnail() {
 		return urlLargeThumbnail + hash + "l.jpg";
 	}
