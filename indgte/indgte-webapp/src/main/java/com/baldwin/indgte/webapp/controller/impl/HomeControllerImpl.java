@@ -100,7 +100,7 @@ public class HomeControllerImpl implements HomeController {
 					if(null == queriedDomain) {
 						throw new IllegalArgumentException("Unknown domain " + domain);
 					}
-					return redirect("/p/" + queriedDomain).mav();
+					return redirect("/" + queriedDomain).mav();
 				} catch (Exception e) {
 					throw new IllegalArgumentException("Unknown domain " + domain);
 				}
@@ -110,12 +110,21 @@ public class HomeControllerImpl implements HomeController {
 			BusinessProfile business = (BusinessProfile) profileObjects[1];
 			List<BusinessProfile> suggestions = businesses.getSuggestions(business);
 			
-			return render(userExtension, "businessprofile")
+			MavBuilder mav = render(userExtension, "businessprofile")
 					.put("business", business)
 					.put("suggestions", suggestions)
 					.put("subscribed", interact.isSubscribed(principal.getName(), business.getId(), PostType.business))
-					.put("owner", business.getOwner().equals(userExtension))
-					.mav();
+					.put("owner", business.getOwner().equals(userExtension));
+			
+			//metadata
+			if(null != business.getImgur()) {
+				mav.thumbnail(business.getImgur().getSmallSquare());
+			}
+			if(null != business.getDescription() && business.getDescription().length() > 0) {
+				mav.description(business.getDescription());
+			}
+			
+			return mav.mav();
 		}
 	}
 
@@ -124,8 +133,9 @@ public class HomeControllerImpl implements HomeController {
 		return "redirect:/login/";
 	}
 	
-	@ExceptionHandler(IllegalArgumentException.class)
-	public String unknownDomainException() {
+	@ExceptionHandler(Exception.class)
+	public String exception(Exception e) {
+		log.error("Exception!", e);
 		return "redirect:/error/";
 	}
 }

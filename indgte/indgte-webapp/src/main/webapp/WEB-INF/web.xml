@@ -46,4 +46,15 @@
 	<session-config>
 		<tracking-mode>COOKIE</tracking-mode>	    
 	</session-config>
+	
+	<!-- Handle HTTP errors -->
+	<error-page>
+	    <error-code>404</error-code>
+	    <location>/error/</location>
+	</error-page>
+	
+	<error-page>
+	    <error-code>403</error-code>
+	    <location>/error/</location>
+	</error-page>
 </web-app>

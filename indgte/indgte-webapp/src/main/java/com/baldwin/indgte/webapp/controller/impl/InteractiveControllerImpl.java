@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -711,6 +712,12 @@ public class InteractiveControllerImpl implements InteractiveController {
 			log.error("Exception deleting notifs", e);
 			return JSON.status500(e);
 		}
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public String error(Exception e) {
+		log.error("Exception!", e);
+		return "redirect:/error/";
 	}
 
 }
