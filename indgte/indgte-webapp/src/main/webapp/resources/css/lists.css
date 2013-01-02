@@ -50,9 +50,19 @@
 	margin-top: 6px;
 }
 
+.post-text-compressed {
+	max-height: 6em;
+	overflow: hidden;
+}
+
+.showmore {
+	font-size: 0.9em;
+}
+
 .playbutton {
 	margin-bottom: 5px;
 }
+
 .post-attachment {
 	margin: 10px 0 5px 0;
 	border-top: 1px solid #e9e9e9;

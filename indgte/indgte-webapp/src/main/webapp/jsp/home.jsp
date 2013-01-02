@@ -26,7 +26,7 @@
 			<div class="status-title-container">
 				<input name="title" class="status-title ui-state-active hide" maxlength="45" type="text" placeholder="title" />
 			</div>
-			<textarea name="text" class="status-textarea noattachment" maxlength="140" rows="1" placeholder="<spring:message code="home.status.textarea" />"></textarea>	
+			<textarea name="text" class="status-textarea noattachment" maxlength="1000" rows="1" placeholder="<spring:message code="home.status.textarea" />"></textarea>	
 			<div class="attach-input-container">
 				<!-- Hidden -->
 				<input class="posterId" type="hidden" value="${user.id }" />
@@ -603,7 +603,7 @@ $(function(){
 			},
 			text: {
 				required: true,
-				maxlength: 140
+				maxlength: 1000
 			}
 		},
 		messages: {
@@ -806,7 +806,20 @@ $(function(){
 		var $dataContainer = $('<div class="post-data-container">').appendTo($post);
 		var $title = $('<strong class="post-title">').appendTo($dataContainer);
 		$('<a>').attr('href', urls.postdetails + post.id).html(post.title).appendTo($title);
-		var $text = $('<div class="post-text">').html(post.text).appendTo($dataContainer);
+		
+		var $text = $('<div class="post-text">').appendTo($dataContainer);
+		if(post.text.length < 140) {
+			$text.html(post.text);
+		} else {
+			$text.html(post.text)
+				.addClass('post-text-compressed');
+			
+			var $showMore = $('<div class="mt5">').insertAfter($text);
+			$('<a class="showmore">')
+				.text('Show full text...')
+				.attr('href', urls.postdetails + post.id)
+				.appendTo($showMore);
+		}
 		
 		//attachment, if any
 		switch(post.attachmentType) {
@@ -990,6 +1003,16 @@ $(function(){
 		
 	}
 	
+	$(document).on({
+		click: function(){
+			$(this)
+				.parent()
+				.siblings('.post-text-compressed')
+				.removeClass('post-text-compressed');
+			return false;
+		}
+	}, '.showmore');
+	
 	$posts.on({
 		mouseover : function(){
 			$(this).addClass('ui-state-highlight');
@@ -1031,8 +1054,6 @@ $(function(){
 <div class="grid_4 sidebar-section">
 	<div class="sidebar-container">
 		<div class="sidebar-section-header">Home</div>
-		
-		Show
 		<div id="rdo-post-sort">
 			<input type="radio" name="rdo-sort-order" value="subs" id="rdo-subs" checked="checked"/> <label for="rdo-subs">Subscriptions</label>
 			<input type="radio" name="rdo-sort-order" value="newest" id="rdo-newest" /> <label for="rdo-newest">Newest</label>

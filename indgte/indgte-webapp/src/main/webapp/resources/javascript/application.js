@@ -10,7 +10,7 @@ window.dgte = {
 		previewChars: 140
 	},
 	home: {
-		postMaxlength: 140,
+		postMaxlength: 1000,
 		statusColsCollapsed: 30,
 		statusColsExpanded: 60,
 		productPreviews: 5,

@@ -1,0 +1,46 @@
+.yellowpages-content {
+	background-color: #ffffb2;
+	padding: 5px 5px 20px 5px;
+}
+
+h1 {
+	text-transform: capitalize;
+}
+
+.ui-widget {
+	font-size: 1em;
+}
+.name {
+}
+.name a {
+	text-decoration: none;
+}
+.business-details {
+	font-size: 0.9em;
+	position: relative;
+}
+
+.businesses-column {
+	width: 30%;
+	padding: 1.5%;
+	height: 100%;
+	display: inline-block;
+	vertical-align: text-top;
+}
+.businesses-column:not(:first-child) {
+	border-left: 1px solid black;
+}
+
+.businesses {
+	margin-top: 10px;
+}
+
+.business {
+	margin: 0 0 10px 0;
+	padding: 2px;
+}
+.business div {
+	white-space: normal;
+	word-wrap: break-word;
+	word-break: normal|break-all|hyphenate;
+}

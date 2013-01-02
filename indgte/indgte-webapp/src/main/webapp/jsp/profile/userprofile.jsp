@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="<spring:url value='/resources/css/review.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/userprofile/userprofile.css' />" />
 
-<div class="grid_9">
+<div class="grid_9 maingrid">
 
 <section class="userinfo">
 	<div class="section-header">${target.user.username }</div>
@@ -64,11 +64,24 @@
 <section class="businesses">
 	<div class="section-header">Businesses</div>
 	<ul>
-	<c:forEach items="${target.businesses }" var="business">
-		<li>
-			${business.name }
-		</li>
-	</c:forEach>
+		<c:forEach items="${target.businesses }" var="b">
+			<li class="result">
+				<c:choose>
+					<c:when test="${not empty b.profilepic }">
+						<img class="result-img" src="${b.profilepic.smallSquare }">
+					</c:when>
+					<c:otherwise>
+						<img class="result-img" src="${noimage50 }">
+					</c:otherwise>
+				</c:choose>
+				<div class="result-info">
+					<div class="result-title bold">${b.fullName }</div>
+					<div class="result-description subtitle">
+						${fn:substring(b.description, 0, 80) }<c:if test="${fn:length(b.description) > 80 }">...</c:if>
+					</div>
+				</div>
+			</li>
+		</c:forEach>
 	</ul>
 </section>
 </c:if>

@@ -9,11 +9,12 @@ $(function(){
 	
 	window.openChatWithUser = function(chattername) {
 		var channel = constructChannelString(chattername);
+		makeChatterActive($('.chatter[username="' + chattername + '"]'));
 		openChat(channel);
 	}
 	
 	//general
-	window.openChat = function(persistentChannel, offset) {
+	window.openChat = function(chatterOrChannel, offset) {
 		$dialog.dialog({
 			modal: false,
 			resizable: false,
@@ -27,8 +28,8 @@ $(function(){
 		
 		$btnChat.removeClass('ui-state-highlight').addClass('ui-state-active');
 		
-		if(persistentChannel) {
-			p2pOpen(persistentChannel, true);
+		if(chatterOrChannel) {
+			p2pOpen(chatterOrChannel, true);
 		} else {
 			channelOpen('#dumaguete', true);
 		}
@@ -298,7 +299,7 @@ $(function(){
 	}
 	
 	function constructChannelString(chatter) {
-		return chatter.indexOf('#') == 0 ? chatter : chatter < chat.user ? chatter + '|' + chat.user : chat.user + '|' + chatter;
+		return chatter.indexOf('#') == 0 || chatter.indexOf('|') != -1 ? chatter : chatter < chat.user ? chatter + '|' + chat.user : chat.user + '|' + chatter;
 	}
 	
 	function p2pOpen(chatter, switchTo) {
