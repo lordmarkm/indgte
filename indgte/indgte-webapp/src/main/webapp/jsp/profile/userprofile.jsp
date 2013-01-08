@@ -65,19 +65,60 @@
 	<div class="section-header">Businesses</div>
 	<ul>
 		<c:forEach items="${target.businesses }" var="b">
-			<li class="result">
-				<c:choose>
-					<c:when test="${not empty b.profilepic }">
-						<img class="result-img" src="${b.profilepic.smallSquare }">
-					</c:when>
-					<c:otherwise>
-						<img class="result-img" src="${noimage50 }">
-					</c:otherwise>
-				</c:choose>
-				<div class="result-info">
-					<div class="result-title bold">${b.fullName }</div>
-					<div class="result-description subtitle">
+			<li class="userprofile-business-summary">
+				<div class="userprofile-business-summary-img-container">
+					<a href="${urlBusinessProfile }${b.domain}" class="dgte-previewlink fatlink" previewtype="business">
+						<c:choose>
+							<c:when test="${not empty b.profilepic }">
+								<img class="userprofile-business-summary-img" src="${b.profilepic.smallSquare }">
+							</c:when>
+							<c:otherwise>
+								<img class="userprofile-business-summary-img" src="${noimage50 }">
+							</c:otherwise>
+						</c:choose>
+					</a>
+				</div>
+				<div class="userprofile-business-summary-info">
+					<div class="userprofile-business-summary-title bold"><a href="${urlBusinessProfile }${b.domain}" class="dgte-previewlink fatlink" previewtype="business">${b.fullName }</a></div>
+					<div class="userprofile-business-summary-description subtitle">
 						${fn:substring(b.description, 0, 80) }<c:if test="${fn:length(b.description) > 80 }">...</c:if>
+					</div>
+				</div>
+			</li>
+		</c:forEach>
+	</ul>
+</section>
+</c:if>
+
+<c:if test="${not empty target.buyAndSellItems }">
+<section class="businesses">
+	<div class="section-header">Items for Sale</div>
+	<ul>
+		<c:forEach items="${target.buyAndSellItems }" var="item">
+			<li class="userprofile-business-summary">
+				<div class="userprofile-business-summary-img-container">
+					<a href="${urlTrade }${item.id}" class="dgte-previewlink fatlink" previewtype="buyandsellitem">
+						<c:choose>
+							<c:when test="${not empty item.imgur }">
+								<img class="userprofile-business-summary-img" src="${item.imgur.smallSquare }">
+							</c:when>
+							<c:otherwise>
+								<img class="userprofile-business-summary-img" src="${noimage50 }">
+							</c:otherwise>
+						</c:choose>
+					</a>
+				</div>
+				<div class="userprofile-business-summary-info">
+					<div class="userprofile-business-summary-title bold"><a href="${urlTrade }${item.id}" class="dgte-previewlink fatlink" previewtype="buyandsellitem">${item.name }</a></div>
+					<div class="userprofile-business-summary-description subtitle">
+						${fn:substring(item.description, 0, 80) }<c:if test="${fn:length(item.description) > 80 }">...</c:if>
+					</div>
+					<div class="subtitle">
+						Tags:
+						<c:set var="tags" value="${fn:split(item.tags, ' ') }" />
+						<c:forEach items="${tags}" var="tag">
+							<a href="${urlTag }${tag}">${tag }</a>
+						</c:forEach>
 					</div>
 				</div>
 			</li>
@@ -260,3 +301,6 @@ $(function(){
 </script>
 
 <script src="${jsReviews }"></script>
+
+<!-- Notifications -->
+<%@include file="../grids/notifications3.jsp"  %>

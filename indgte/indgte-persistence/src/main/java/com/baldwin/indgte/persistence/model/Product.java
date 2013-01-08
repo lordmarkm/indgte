@@ -81,6 +81,9 @@ public class Product implements Searchable, Attachable {
 	@Column
 	private int sends;
 	
+	@Column
+	private boolean soldout;
+	
 	@Override
 	public String toString() {
 		return name + ": " + description;
@@ -222,5 +225,13 @@ public class Product implements Searchable, Attachable {
 
 	public void setSends(int sends) {
 		this.sends = sends;
+	}
+
+	public boolean isSoldout() {
+		return soldout;
+	}
+
+	public void setSoldout(boolean soldout) {
+		this.soldout = soldout;
 	}
 }

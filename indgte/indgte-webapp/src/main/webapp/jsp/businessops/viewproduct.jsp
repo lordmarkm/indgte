@@ -17,7 +17,10 @@
 			<div class="product-welcome-image-container">
 				<img class="product-welcome-image" />
 			</div>
-			<h3>${product.name }</h3>
+			<h3>
+				${product.name }
+				<c:if test="${product.soldout }"><span class="redtext">(Sold out)</span></c:if>
+			</h3>
 			<div class="product-welcome-description italic">${product.description }</div>
 		</div>
 		<div class="product-welcome-category">
@@ -47,29 +50,37 @@
 <!-- product owner controls -->
 <c:if test="${owner }">
 <div class="viewproduct-controls grid_4 ui-widget sidebar-section">
-	<div class="sidebar-section-header">Product Owner Controls</div>
-	<div class="product-owner-operations">
-		<a href="${urlEditProduct}${business.domain}/${product.id}" class="button btn-edit-product"><spring:message code="generics.edit" /></a>
-		<button class="btn-product-add-photo"><spring:message code="product.addphotos.button" /></button>
-		<button class="btn-promote"><spring:message code="generics.promote" /></button>
-		<div class="dialog-promote hide" title="Promote this Product">
-			<span><spring:message code="entity.promote.dialog" arguments="${user.billingInfo.coconuts },${user.billingInfo.coconuts / 10 },${category.name }" /></span>
-			<form class="form-promote" method="post" action="<c:url value='/o/sidebar/product/${product.id }' />" >
-				<table>
-					<tr>
-						<td><label for="start-date">Promote from</label></td>
-						<td><input type="date" id="start-date" name="start" readonly="readonly" placeholder="Click to choose" /></td>
-					</tr>
-					<tr>
-						<td><label for="end-date">Promote until</label></td>
-						<td><input type="date" id="end-date" name="end" readonly="readonly" placeholder="Click to choose"/></td>
-					</tr>
-				</table>
-			</form>
-			<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Product Owner Controls</div>
+		<div class="product-owner-operations">
+			<a href="${urlEditProduct}${business.domain}/${product.id}" class="button btn-edit-product"><spring:message code="generics.edit" /></a>
+			<button class="btn-product-add-photo"><spring:message code="product.addphotos.button" /></button>
+			<button class="btn-promote"><spring:message code="generics.promote" /></button>
+			<div class="dialog-promote hide" title="Promote this Product">
+				<span><spring:message code="entity.promote.dialog" arguments="${user.billingInfo.coconuts },${user.billingInfo.coconuts / 10 },${category.name }" /></span>
+				<form class="form-promote" method="post" action="<c:url value='/o/sidebar/product/${product.id }' />" >
+					<table>
+						<tr>
+							<td><label for="start-date">Promote from</label></td>
+							<td><input type="date" id="start-date" name="start" readonly="readonly" placeholder="Click to choose" /></td>
+						</tr>
+						<tr>
+							<td><label for="end-date">Promote until</label></td>
+							<td><input type="date" id="end-date" name="end" readonly="readonly" placeholder="Click to choose"/></td>
+						</tr>
+					</table>
+				</form>
+				<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
+			</div>
+			<c:if test="${product.soldout }">
+				<button class="btn-available">Mark as Available</button>
+			</c:if>
+			<c:if test="${!product.soldout }">
+				<button class="btn-soldout">Mark as Sold out</button>
+			</c:if>
+			<button class="btn-delete">Delete product</button>
 		</div>
 	</div>
-	<div class="sidebar-divider"></div>
 </div>
 <script src="<spring:url value='/resources/javascript/promote.js' />" ></script>
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
@@ -136,29 +147,32 @@ window.urls = {
 	profile : '${urlProfile}',
 	noImage : '${noimage}',
 	noImage50 : '${noimage50}',
-	wishlist: '<spring:url value="/i/wishlist/product/" />'
+	wishlist: '<spring:url value="/i/wishlist/product/" />',
+	soldout: '<spring:url value="/b/products/soldout/" />',
+	deleteProduct: '<spring:url value="/b/products/delete/" />',
+	parentcategory: '${urlCategories }${business.domain}/${product.category.id}'
 }
 
 window.constants = {
 	domain: '${business.domain}',
 	categoryId: '${product.category.id}',
-	categoryName: '${product.category.name}',
+	categoryName: "<c:out value='${product.category.name}' />",
 	productId: '${product.id}',
-	productName: '${product.name}',
+	productName: '<c:out value="${product.name}" />',
 	owner : '${owner}' === 'true',
 	imgurKey : '${imgurKey}'
 }
 
 window.product = {
 	id: '${product.id}',
-	name: '${product.name}',
+	name: '<c:out value="${product.name}" />',
 	categoryId: '${product.category.id}',
 	imgur: {
 		hash: '${product.mainpic.hash}',
 		image: '${product.mainpic.largeThumbnail}',
 		thumb: '${product.mainpic.smallSquare}',
 		big: '${product.mainpic.largeThumbnail}',
-		title: '${product.name}',
+		title: '<c:out value="${product.name}" />',
 		link: '${product.mainpic.imgurPage}'
 	}
 }
@@ -323,7 +337,7 @@ $(function(){
 		$uploadPreview.html('');
 		$addPhoto.find('.overlay').remove().end()
 			.dialog({
-				title: '<spring:message code="product.addphotos.title" arguments="${product.name}"/>',
+				title: "<spring:message code='product.addphotos.title' arguments='${product.name}'/>",
 				buttons: {
 					'<spring:message code="generics.done" />' : function(){
 						$addPhoto.dialog('close');
@@ -458,6 +472,108 @@ $(function(){
 	    }
 		xhr.send(fd);		
 	}
+	
+	//sold out
+	var 
+		$btnSoldout = $('.btn-soldout'),
+		$btnAvailable = $('.btn-available');
+	
+	function alertOperationFailed() {
+		$('<div title="Operation failed">')
+			.text('Operation failed. Please try again')
+			.dialog({
+				buttons: {
+					'OK': function(){
+						$(this).dialog('close');
+					}	
+				}
+			});
+	}
+	
+	function alertOperationSuccess(message, refresh) {
+		$('<div title="Operation successful">')
+			.text(message)
+			.dialog({
+				buttons: {
+					'OK': function(){
+						$(this).dialog('close');
+						if(refresh) {
+							window.location.reload();
+						}
+					}	
+				}
+			});
+	}
+	
+	$btnSoldout.click(function(){
+		
+		$.post(urls.soldout + product.id + '/true/json', function(response){
+			switch(response.status) {
+			case '200':
+				alertOperationSuccess('Item marked as sold out.', true);
+				break;
+			default:
+				alertOperationFailed();
+			}
+		}).error(alertOperationFailed);
+
+	});
+	
+	$btnAvailable.click(function(){
+		
+		$.post(urls.soldout + product.id + '/false/json', function(response){
+			switch(response.status) {
+			case '200':
+				alertOperationSuccess('Item marked as available.', true);
+				break;
+			default:
+				alertOperationFailed();
+			}
+		}).error(alertOperationFailed);
+		
+	});
+	
+	//delete
+	var $btnDelete = $('.btn-delete');
+	
+	$btnDelete.click(function(){
+		
+		$('<div>')
+			.attr('title', 'Really delete this product?')
+			.text('Are you sure you want to delete this product? This cannot be undone.')
+			.dialog({
+				buttons: {
+					'Yep': function(){
+						$.post(urls.deleteProduct + product.id + '/json', function(response) {
+							switch(response.status) {
+							case '200':
+								$('<div>')
+									.attr('title', 'Product deleted')
+									.text('Product has been deleted')
+									.dialog({
+										buttons: {
+											'Ok': function(){
+												window.location.replace(urls.parentcategory);
+											}
+										}
+									});
+								break;
+							case '500':
+								alertOperationFailed();
+								break;
+							default:
+								debug(response);
+							}
+						}).error(alertOperationFailed);
+					},
+					
+					'Not really, no': function(){
+						$(this).dialog('close');
+					}
+				}
+			})
+		
+	});
 });
 </script>
 </c:if>

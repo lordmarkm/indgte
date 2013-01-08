@@ -17,6 +17,8 @@ public class DgteTagWhitelist extends Whitelist {
 	public static Whitelist relaxed() {
 		return Whitelist.relaxed()
 					.addTags("iframe")
-					.addAttributes("iframe", "src", "width", "height", "allowfullscreen");
+					.addAttributes("iframe", "src", "width", "height", "allowfullscreen")
+					.addAttributes("span", "style")
+					.addAttributes("div", "style");
 	}
 }

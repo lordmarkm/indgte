@@ -24,4 +24,7 @@ public interface TradeDao {
 	Collection<BuyAndSellItem> getItemsWithTag(String tag, int start, int howmany);
 	Collection<BuyAndSellItem> getWatchedTagItems(String name, String tagString, int start, int howmany);
 	void addToWatchedTags(String name, String tag);
+	void sold(String name, long itemId) throws IllegalAccessException;
+	void delete(String name, long itemId) throws IllegalAccessException;
+	void available(String name, long itemId) throws IllegalAccessException;
 }

@@ -34,8 +34,14 @@ public interface TradeController {
 	@RequestMapping(value = "/bid/{itemId}/{amount}.json", method = RequestMethod.POST)
 	public JSON bid(Principal principal, long itemId, double amount);
 	
-	@RequestMapping(value = "/sold/{itemId}.json", method = RequestMethod.POST)
-	public JSON sold(User user, long itemId);
+	@RequestMapping(value = "/sold/{itemId}/json", method = RequestMethod.POST)
+	public JSON sold(Principal principal, long itemId);
+	
+	@RequestMapping(value = "/available/{itemId}/json", method = RequestMethod.POST)
+	public JSON available(Principal principal, long itemId);
+	
+	@RequestMapping(value = "/delete/{itemId}/json", method = RequestMethod.POST)
+	public JSON delete(Principal principal, long itemId);
 	
 	@RequestMapping(value = "/sidebar.json", method = RequestMethod.GET)
 	public JSON getSidebarContent(UserExtension user);

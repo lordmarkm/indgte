@@ -273,4 +273,14 @@ public class InteractiveService {
 		log.debug("Returning featured post: {}", featured);
 		return featured;
 	}
+
+	public void deletepost(String name, long id) {
+		UserExtension user = users.getExtended(name);
+		Post post = dao.getPost(id);
+		if(isPostOwner(post, user)) {
+			dao.deletepost(id);
+		} else {
+			throw new IllegalArgumentException("You do not own this post.");
+		}
+	}
 }

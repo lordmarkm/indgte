@@ -1,0 +1,22 @@
+#Signin
+application.secureUrl=http://dgteph.tomcathostingservice.com
+
+socialsignin.signUpView=signupform
+socialsignin.defaultAuthenticationSuccessUrl=/
+socialsignin.defaultAccessDeniedUrl=/oauthlogin.jsp
+
+#Dgteph app id/secret (Facebook)
+facebook.clientId=121897737979090
+facebook.clientSecret=cab4c7687e364fd5d0a0167c1f5dff07
+
+#dgte.ph (Twitter)
+twitter.consumerKey=Rz7SxzEB3C0ApNrDJ6cLg
+twitter.consumerSecret=dA40A4agSzPvuXJhiKPN4Y9H2sWhMkU7PkgdpXGZM
+
+#Imgur
+imgur.devkey=1fbac05d6fce25d6a06a7a715b1cb2d8
+imgur.key=db05a4193492c1129b18512740bdaed6050739ea5
+imgur.secret=1ba253b39c8fb0890533bd1eb643fb89
+
+#Google API key for maps
+google.apiKey=AIzaSyCUtkxOf-0LTkZsvCrWEcSPIv4XmPUZX7Y

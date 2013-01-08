@@ -7,7 +7,7 @@
 <spring:url var="noimage50" value="/resources/images/noimage50.png" />
 <spring:url var="spinner" value="/resources/images/spinner.gif" />
 <spring:url var="paperclip" value="/resources/images/icons/paperclip.png" />
-<spring:url var="urlProfileRoot" value="/p/" />
+<spring:url var="urlProfileRoot" value="/" />
 <spring:url var="urlEdit" value="/r/edit/" />
 <spring:url var="urlPosts" value="/i/posts/" />
 <spring:url var="urlBusinessPost" value="/i/posts/business/" />
@@ -209,7 +209,7 @@
 			</div>
 			
 			<div id="comments">
-				<div class="fb-comments" data-href="${baseURL}${business.domain}" data-width="660"></div>
+				<div class="fb-comments" data-href="${baseURL}/${business.domain}" data-width="660"></div>
 			</div>
 		</div>
 		

@@ -1,6 +1,6 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.persistence.constants.Initializable.wishlist;
+import static com.baldwin.indgte.persistence.constants.Initializable.*;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
@@ -84,7 +84,7 @@ public class ProfileControllerImpl implements ProfileController {
 	@Override
 	public ModelAndView userProfile(Principal principal, @PathVariable String targetUsername) {
 		UserExtension user = users.getExtended(principal.getName());
-		UserExtension target = users.getExtended(targetUsername, wishlist, Initializable.businesses);
+		UserExtension target = users.getExtended(targetUsername, wishlist, buyandsellitems, Initializable.businesses);
 
 		return render(user, "userprofile")
 					.put("target", target)

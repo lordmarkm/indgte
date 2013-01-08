@@ -103,6 +103,9 @@
 	<definition name="buyandselltag" extends="default">
 		<put-attribute name="body" value="/jsp/buyandsell/buyandselltag.jsp" />
 	</definition>
+	<definition name="buyandsellnotfound" extends="default">
+	    <put-attribute name="body" value="/jsp/buyandsell/notfound.jsp" />
+	</definition>
 	
 	<!-- Misc -->
 	<definition name="help" extends="default">

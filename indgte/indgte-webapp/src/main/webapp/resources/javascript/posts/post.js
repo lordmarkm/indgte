@@ -195,6 +195,43 @@ $(function(){
 			}
 		});
 	});
+	
+	//delete
+	var $btnDelete = $('.btn-delete');
+	
+	$btnDelete.click(function(){
+		$('<div title="Delete this post?">')
+			.text('Delete this post? This cannot be undone.')
+			.dialog({
+				buttons: {
+					'Yep': function(){
+						$.post(urls.deletepost + post.id + '/json', function(response) {
+							switch(response.status) {
+							case '200':
+								$('<div title="Operation success">')
+									.text('Post deleted')
+									.dialog({
+										buttons: {
+											'Ok': function(){
+												window.location.replace(urls.home);
+											}
+										}
+									});
+								break;
+							case '500':
+								alert(response.message);
+								break;
+							default:
+								debug(response);
+							}
+						});
+					},
+					'Nope': function(){
+						$(this).dialog('close');
+					}
+				}
+			});
+	});
 });
 
 window.fbAsyncInit = function() {

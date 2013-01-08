@@ -228,6 +228,21 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 
 	@Override
+	public @ResponseBody JSON deletepost(Principal principal, @PathVariable long id) {
+		if(null == principal) {
+			return JSON.status500(new IllegalArgumentException("You are not logged in."));
+		}
+		
+		try {
+			interact.deletepost(principal.getName(), id);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Error", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
 	public @ResponseBody JSON linkpreview(@RequestParam String uri) throws IOException {
 		log.debug("Trying to create preview for {}", uri);
 

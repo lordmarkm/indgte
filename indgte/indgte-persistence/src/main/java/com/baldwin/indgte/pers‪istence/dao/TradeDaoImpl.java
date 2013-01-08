@@ -54,6 +54,9 @@ public class TradeDaoImpl implements TradeDao {
 	@Override
 	public BuyAndSellItem get(String name, long itemId) {
 		BuyAndSellItem item = (BuyAndSellItem) sessions.getCurrentSession().get(BuyAndSellItem.class, itemId);
+		if(null == item) {
+			return null;
+		}
 		
 		//do not increment if it's the owner viewing his own item
 		if(!item.getOwner().getUsername().equals(name)) {
@@ -225,5 +228,40 @@ public class TradeDaoImpl implements TradeDao {
 		UserExtension user = users.getExtended(name);
 		Tag tag = getTag(tagString, false);
 		user.getWatchedTags().add(tag);
+	}
+
+	@Override
+	public void sold(String name, long itemId) throws IllegalAccessException {
+		BuyAndSellItem item = get(itemId);
+		
+		if(item.getOwner().getUsername().equals(name)) {
+			item.setSoldout(true);
+		} else {
+			throw new IllegalAccessException(name + " does not own this item and may not mark it as sold");
+		}
+	}
+	
+	@Override
+	public void available(String name, long itemId) throws IllegalAccessException {
+		BuyAndSellItem item = get(itemId);
+		
+		if(item.getOwner().getUsername().equals(name)) {
+			item.setSoldout(false);
+		} else {
+			throw new IllegalAccessException(name + " does not own this item and may not mark it as available");
+		}
+	}
+	
+	@Override
+	public void delete(String name, long itemId) throws IllegalAccessException {
+		BuyAndSellItem item = get(itemId);
+		UserExtension user = users.getExtended(name);
+		
+		if(item.getOwner().equals(user)) {
+			user.getBuyAndSellItems().remove(item);
+			sessions.getCurrentSession().delete(item);
+		} else {
+			throw new IllegalAccessException(name + " does not own this item and may not delete it");
+		}
 	}
 }

@@ -65,6 +65,9 @@ public interface InteractiveController {
 	@RequestMapping(value = "/newstatus.json", method = RequestMethod.POST)
 	public JSON newstatus(Principal principal, WebRequest request);
 	
+	@RequestMapping(value = "/deletepost/{id}/json", method = RequestMethod.POST)
+	public JSON deletepost(Principal principal, long id);
+	
 	@RequestMapping(value = "/linkpreview/", method = RequestMethod.GET)
 	public JSON linkpreview(String uri) throws IOException;
 	

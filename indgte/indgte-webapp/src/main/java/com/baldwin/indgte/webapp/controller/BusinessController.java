@@ -65,6 +65,12 @@ public interface BusinessController {
 	@RequestMapping(value = "/products/{domain}/{productId}", method = RequestMethod.GET)
 	public ModelAndView viewProduct(Principal principal, String domain, long productId);
 	
+	@RequestMapping(value = "/products/soldout/{productId}/{isSoldout}/json", method = RequestMethod.POST)
+	public JSON toggleSoldout(Principal principal, long productId, boolean isSoldout);
+	
+	@RequestMapping(value = "/products/delete/{productId}/json", method = RequestMethod.POST)
+	public JSON delete(Principal principal, long productId);
+	
 	/**
 	 * Redirects to the complete version above
 	 */

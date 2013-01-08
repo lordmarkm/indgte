@@ -9,23 +9,31 @@
 <script src="${jsValidator}"></script>
 
 <c:if test="${item.buyAndSellMode eq 'auction' }">
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-countdown/1.6.0/jquery.countdown.min.js"></script>
-<link rel="stylesheet" href="<spring:url value='/resources/css/jquery-countdown.css' />" />
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-countdown/1.6.0/jquery.countdown.min.js"></script>
+	<link rel="stylesheet" href="<spring:url value='/resources/css/jquery-countdown.css' />" />
 </c:if>
 
 <div class="grid_8 maingrid">
 
-<span class="page-header">${item.name }</span>
+<span class="page-header">
+	${item.name }
+	<c:if test="${item.soldout }">
+		<span class="redtext">(Sold out)</span>
+	</c:if>
+</span>
 
 <section class="item-details">
 	<div class="section-header">Item</div>
 	<a href="${urlImgur }${item.imgur.hash }" target="_blank"><img class="trade-img" src="${item.imgur.largeThumbnail }" /></a>
 	<ul class="trade-item-details">
 		<li>
-			<strong><a href="${urlTrade}${item.id}">${item.name }
-			<c:if test="${item.buyAndSellMode eq 'auction' }">(Auction)</c:if>
-			<c:if test="${item.buyAndSellMode eq 'trade' }">(Trade)</c:if>
-			</a></strong>
+			<strong>
+				<a href="${urlTrade}${item.id}">
+					${item.name }
+					<c:if test="${item.buyAndSellMode eq 'auction' }">(Auction)</c:if>
+					<c:if test="${item.buyAndSellMode eq 'trade' }">(Trade)</c:if>
+				</a>
+			</strong>
 		</li>
 		<li class="italic">${item.description }</li>
 		
@@ -136,6 +144,14 @@
 				</form>
 				<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
 			</div>
+			
+			<c:if test="${item.soldout }">
+				<button class="btn-available">Mark as Available</button>
+			</c:if>
+			<c:if test="${!item.soldout }">
+				<button class="btn-sold">Mark as Sold</button>
+			</c:if>
+			<button class="btn-delete">Delete</button>
 		</c:if>
 		
 		<div class="item-controls-container">
@@ -178,7 +194,10 @@ window.constants = {
 
 window.urls = {
 	bid: '<spring:url value="/t/bid/" />',
-	wishlist: '<spring:url value="/i/wishlist/buyandsell/" />'
+	wishlist: '<spring:url value="/i/wishlist/buyandsell/" />',
+	sold: '<spring:url value="/t/sold/" />',
+	available: '<spring:url value="/t/available/" />',
+	deleteItem: '<spring:url value="/t/delete/" />'
 }
 
 window.item = {
@@ -187,7 +206,6 @@ window.item = {
 
 $(function(){
 	//wishlist
-	
 	$btnWishlistAdd = $('.btn-wishlist-add');
 	
 	$btnWishlistAdd.click(function(){
@@ -209,6 +227,97 @@ $(function(){
 	$('.time').each(function(i, div) {
 		var fromnow = moment(parseInt($(div).text())).fromNow();
 		$(div).text(fromnow);
+	});
+	
+	//mark as sold/delete
+	var 
+		$btnSold = $('.btn-sold'),
+		$btnAvailable = $('.btn-available'),
+		$btnDelete = $('.btn-delete');
+	
+	function alertOperationFailed() {
+		$('<div title="Operation failed">')
+			.text('Operation failed. Please try again')
+			.dialog({
+				buttons: {
+					'OK': function(){
+						$(this).dialog('close');
+					}	
+				}
+			});
+	}
+	
+	function alertOperationSuccess(message, refresh) {
+		$('<div title="Operation successful">')
+			.text(message)
+			.dialog({
+				buttons: {
+					'OK': function(){
+						$(this).dialog('close');
+						if(refresh) {
+							window.location.reload();
+						}
+					}	
+				}
+			});
+	}
+	
+	$btnSold.click(function(){
+		$.post(urls.sold + item.id + '/json', function(response){
+			switch(response.status) {
+			case '200':
+				alertOperationSuccess('Item marked as sold.', true);
+				break;
+			default:
+				alertOperationFailed();
+			}
+		}).error(alertOperationFailed);
+	});
+	
+	$btnAvailable.click(function(){
+		$.post(urls.available + item.id + '/json', function(response){
+			switch(response.status) {
+			case '200':
+				alertOperationSuccess('Item marked as available.', true);
+				break;
+			default:
+				alertOperationFailed();
+			}
+		}).error(alertOperationFailed);
+	});
+	
+	$btnDelete.click(function(){
+		var $dlgConfirmDelete = $('<div title="Confirm delete">')
+			.text('Are you sure you want to delete ' + item.name + '?')
+			.dialog({
+				buttons: {
+					'Yep': function(){
+						$dlgConfirmDelete.dialog('close');
+						$.post(urls.deleteItem + item.id + '/json', function(response){
+							switch(response.status) {
+							case '200':
+								$('<div title="Operation successful">')
+								.text('Item deleted.')
+								.dialog({
+									buttons: {
+										'OK': function(){
+											$(this).dialog('close');
+										}	
+									}
+								});
+								break;
+							default: 
+								alertOperationFailed();
+							}
+						}).error(alertOperationFailed);
+
+					},
+					
+					'Not really, no': function(){
+						$dlgConfirmDelete.dialog('close');
+					}
+				}
+			});
 	});
 });
 
@@ -322,25 +431,5 @@ window.urls.tagweights = '<spring:url value="/s/tags.json" />';
 <!-- End tagcloud -->
 </sec:authorize>
 
-<div class="dgte-preview"></div>
-<sec:authorize access="hasRole('ROLE_USER')">
 <!-- Notifications -->
-<div class="notifications-container grid_4 sidebar-section">
-	<div class="sidebar-container">
-		<div class="notifications-container relative">
-			<img src="${logo }" />
-			<span class="msg-uptodate">You're completely up to date. Yey!</span>
-			<ul class="notifications hasnotifs"></ul>
-		</div>
-		<div class="old-notifications-container hide relative">
-			<div class="sidebar-section-header">Previous notifications</div>
-			<span class="msg-clearhistory hide">You're notification history is empty. Yey!</span>
-			<ul class="old-notifications hasnotifs"></ul>
-		</div>
-		<a class="link-showoldnotifs" href="javascript:;">Show old notifications...</a>
-		<a class="link-clearoldnotifs hide" href="javascript:;">Clear all</a>
-	</div>
-</div>
-<link rel="stylesheet" href="<spring:url value='/resources/css/grids/notifs.css' />" />
-<!-- Notifications -->
-</sec:authorize>
+<%@include file="../grids/notifications4.jsp"  %>

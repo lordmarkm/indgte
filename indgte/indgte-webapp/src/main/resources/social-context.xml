@@ -14,9 +14,9 @@
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>classpath:social.properties</value>
+				<value>classpath:social.properties.dev</value>
 				<value>classpath:business.properties</value>
-				<value>classpath:application.properties</value>
+				<value>classpath:application.properties.dev</value>
 			</list>
 		</property>
 	</bean>
@@ -33,6 +33,7 @@
 	<bean class="org.springframework.social.connect.web.ProviderSignInController" >
         <property name="signUpUrl" value="/signup/" />
         <property name="postSignInUrl" value="/authenticate" />
+        <property name="applicationUrl" value="${application.secureUrl}" />
    	</bean>
    	
    	<!-- Spring Social stock beans -->
@@ -67,8 +68,8 @@
 	-->
 	
 	<bean class="org.springframework.social.connect.web.ConnectController">
-		<!-- Specify callback url if needed 
-		<property name="applicationUrl" value="${application.url}" />
-		-->
+		<!-- Specify callback url if needed -->
+		<property name="applicationUrl" value="${application.secureUrl}" />
+		<!--  -->
 	</bean>
 </beans>

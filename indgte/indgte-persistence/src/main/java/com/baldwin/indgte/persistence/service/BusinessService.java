@@ -113,8 +113,17 @@ public class BusinessService {
 	public String getDomain(long id) {
 		return dao.getDomain(id);
 	}
+	
 	public void delete(Long id) {
 		dao.delete(id);
+	}
+	public void deleteProduct(String name, Long productId) throws IllegalAccessException {
+		Product product = dao.getProduct(productId);
+		if(product.getCategory().getBusiness().getOwner().getUsername().equals(name)) {
+			dao.deleteProduct(productId);
+		} else {
+			throw new IllegalAccessException("You do not have permission to delete this object");
+		}
 	}
 	public void editInfo(String username, String domain, String info) {
 		dao.editInfo(username, domain, info);
@@ -124,5 +133,11 @@ public class BusinessService {
 	}
 	public List<BusinessProfile> getSuggestions(BusinessProfile business) {
 		return dao.getSuggestions(business);
+	}
+	public void setSoldout(String name, long productId, boolean isSoldout) {
+		Product product = dao.getProduct(productId);
+		if(product.getCategory().getBusiness().getOwner().getUsername().equals(name)) {
+			dao.setSoldout(productId, isSoldout);
+		}
 	}
 }

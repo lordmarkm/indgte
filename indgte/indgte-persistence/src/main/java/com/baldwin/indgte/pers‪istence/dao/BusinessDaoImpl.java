@@ -411,4 +411,16 @@ public class BusinessDaoImpl implements BusinessDao {
 			return similar;
 		}
 	}
+	
+	@Override
+	public void setSoldout(long productId, boolean isSoldout) {
+		Product product = getProduct(productId);
+		product.setSoldout(isSoldout);
+	}
+	
+	@Override
+	public void deleteProduct(long productId) {
+		Product product = getProduct(productId);
+		sessions.getCurrentSession().delete(product);
+	}
 }

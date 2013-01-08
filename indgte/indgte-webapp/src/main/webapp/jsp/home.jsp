@@ -736,6 +736,10 @@ $(function(){
 						addPost(response.posts[i], false, startPostIndex != 0);
 					}
 					startPostIndex += response.posts.length;
+					
+					//reparse fb:comment-count
+					FB.XFBML.parse();
+					
 					break;
 				default:
 					debug(response);
@@ -994,18 +998,19 @@ $(function(){
 		
 		//comments
 		var $comments = $('<div class="post-comments">').appendTo($dataContainer);
-		var $aComments = $('<a class="fatlink">').attr('href', dgte.domain + urls.postdetails + post.id).appendTo($comments);
+		var $aComments = $('<a class="fatlink">').attr('href', urls.postdetails + post.id).appendTo($comments);
 
 		$aComments.append('View ')
-		var urlPostDetails = dgte.domain + urls.postdetails + post.id;
+		var urlPostDetails = '${baseURL}${urlPosts}' + post.id;
 		$('<fb:comments-count>').attr('href', urlPostDetails).appendTo($aComments);
-		$aComments.append(' comments');
+		$aComments.append(' comments ');
 		
 	}
 	
 	$(document).on({
 		click: function(){
 			$(this)
+				.hide()
 				.parent()
 				.siblings('.post-text-compressed')
 				.removeClass('post-text-compressed');

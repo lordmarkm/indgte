@@ -1,6 +1,7 @@
 package com.baldwin.indgte.persistence.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -14,6 +15,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -80,6 +82,12 @@ public class BuyAndSellItem implements Searchable {
 	@Column
 	private long views;
 
+	@Column
+	private boolean soldout;
+	
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="buyAndSellItem")
+	private List<Wish> wishlists;
+	
 	@Override
 	public String toString() {
 		return name;
@@ -201,4 +209,21 @@ public class BuyAndSellItem implements Searchable {
 	public String[] getSearchableFields() {
 		return searchableFields;
 	}
+
+	public boolean isSoldout() {
+		return soldout;
+	}
+
+	public void setSoldout(boolean soldout) {
+		this.soldout = soldout;
+	}
+
+	public List<Wish> getWishlists() {
+		return wishlists;
+	}
+
+	public void setWishlists(List<Wish> wishlists) {
+		this.wishlists = wishlists;
+	}
+
 }

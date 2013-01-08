@@ -6,6 +6,8 @@ import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 import java.security.Principal;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +45,15 @@ public class HomeControllerImpl implements HomeController {
 	private ConstantsInserterBean constants;
 	
 	@Override
-	public ModelAndView home(Principal principal) {
+	public ModelAndView home(HttpServletRequest request, Principal principal) {
 		MavBuilder mav = render("home");
 
 		if(null != principal) {
+			log.debug("Home page requested by {}", principal.getName());
 			UserExtension user = users.getExtended(principal.getName(), Initializable.businesses);
 			mav.put("user", user);
+		} else {
+			log.debug("Home page requested by Anonymous, ip = {}", request.getRemoteAddr());
 		}
 		
 		constants.insertConstants(mav);

@@ -1,0 +1,13 @@
+#Persistence
+db.host=localhost
+db.username=dgtephdb
+db.password=dgteinfodbpw
+db.port=3306
+db.schema=dgteinfo
+
+#Hibernate, Hibernate Search
+hibernate.showsql=false
+search.index=/home/tomcat/servers/dgteph/lucene_index
+
+#Reload categories in BusinessCategoryList.java enum? Only true once per db
+categories.reload=false

@@ -61,7 +61,7 @@ window.products = {
 			$parent = this.$products;
 		}
 		var $summaryItem = $('<li>').appendTo(this.$summary);
-		$('<a href="#' + product.id + '">').text(product.name).appendTo($summaryItem);
+		$('<a href="#' + product.id + '">').text(dgte.htmlDecode(product.name)).appendTo($summaryItem);
 		
 		var $actualItem = $('<li class="product">')
 			.on('mouseover', function(){$(this).addClass('ui-state-highlight');})
@@ -75,7 +75,7 @@ window.products = {
 		}
 		
 		var $title = $('<a id="' + product.id + '">').attr('href', urls.urlProducts + this.domain + '/' + product.id).appendTo($container);
-		var $productName = $('<strong class="product-name">').text(product.name).appendTo($title)
+		var $productName = $('<strong class="product-name">').text(dgte.htmlDecode(product.name)).appendTo($title)
 		
 		$.get(urls.urlProducts + constants.domain + '/' + product.id + '/pics/' + constants.previewPicsCount + '.json', function(response){
 			switch(response.status){

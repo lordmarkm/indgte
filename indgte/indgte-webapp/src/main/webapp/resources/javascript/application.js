@@ -1,6 +1,6 @@
 //we give 0 ***** about corrupting the global namespace
 window.dgte = {
-	domain: 'http://testfb.com:8080',
+	domain: document.domain,
 	search: {
 		autocompleteMinlength: 4,
 		letters: letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -118,6 +118,12 @@ window.dgte = {
 				}	
 			}
 		});
+	},
+	
+	htmlDecode: function (input) {
+		var e = document.createElement('div');
+		e.innerHTML = input;
+		return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
 	}
 }
 
@@ -310,7 +316,7 @@ $.fn.extend({
     		}
 
     		debug('processing cover source: ' + preview.cover.source);
-    		var coverSrc = preview.cover.source === 'twitter' ? dgte.domain + dgte.urls.twittercover : preview.cover.source;
+    		var coverSrc = preview.cover.source === 'twitter' ? dgte.urls.twittercover : preview.cover.source;
     		$preview
     			.find('.preview-cover-image').attr('src', coverSrc).load(function(){$(this).show()}).end()
     			.find('.preview-image').attr('src', preview.image ? preview.image : dgte.urls.noImage50).load(function(){$(this).show()}).end()
@@ -368,7 +374,7 @@ $.fn.extend({
     	
     	debug('firing ajax preview request');
     	$actions.html('');
-    	$.get(dgte.domain + dgte.urls.preview + 'json',
+    	$.get(dgte.urls.preview + 'json',
     		{
     			href: href,
     			type: type

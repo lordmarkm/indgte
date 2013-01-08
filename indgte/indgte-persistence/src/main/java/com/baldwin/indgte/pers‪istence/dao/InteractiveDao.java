@@ -115,4 +115,6 @@ public interface InteractiveDao {
 	Collection<Post> getPostsByPopularity(int start, int howmany);
 
 	public Post getRandomFeaturedPost();
+
+	public void deletepost(long id);
 }

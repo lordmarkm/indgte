@@ -1,5 +1,5 @@
 #Signin
-application.secureUrl=http://localhost:8080
+application.secureUrl=http://testfb.com:8080
 
 socialsignin.signUpView=signupform
 socialsignin.defaultAuthenticationSuccessUrl=/

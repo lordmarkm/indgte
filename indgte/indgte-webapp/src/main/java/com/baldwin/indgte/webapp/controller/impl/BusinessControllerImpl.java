@@ -212,6 +212,30 @@ public class BusinessControllerImpl implements BusinessController {
 	}
 
 	@Override
+	public @ResponseBody JSON toggleSoldout(Principal principal, @PathVariable long productId, @PathVariable boolean isSoldout) {
+		try {
+			log.debug("{} wants to mark product with id {} as {}", principal.getName(), productId, isSoldout ? "sold out" : "available");
+			businesses.setSoldout(principal.getName(), productId, isSoldout);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Error toggling soldout", e);
+			return JSON.status500(e);
+		}
+	}
+
+	@Override
+	public @ResponseBody JSON delete(Principal principal, @PathVariable long productId) {
+		try {
+			log.debug("{} wants to delete product with id {}", principal.getName(), productId);
+			businesses.deleteProduct(principal.getName(), productId);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Exception deleting product", e);
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
 	public String viewProduct(@PathVariable long productId) {
 		String domain = businesses.findDomainForProductId(productId);
 		return "redirect:/b/products/" + domain + "/" + productId;

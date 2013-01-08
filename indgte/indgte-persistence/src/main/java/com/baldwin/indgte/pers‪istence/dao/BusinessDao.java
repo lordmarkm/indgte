@@ -47,4 +47,6 @@ public interface BusinessDao {
 	void editInfo(String username, String domain, String info);
 	String getInfo(String domain);
 	List<BusinessProfile> getSuggestions(BusinessProfile business);
+	void setSoldout(long productId, boolean isSoldout);
+	void deleteProduct(long productId);
 }

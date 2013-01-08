@@ -2,11 +2,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="baseURL" value="${fn:replace(pageContext.request.requestURL, pageContext.request.requestURI, pageContext.request.contextPath)}" />
+<c:set var="r" value="${pageContext.request }" />
+<c:set var="baseURL" value="http://dgteph.tomcathostingservice.com" />
 
-<c:set var="domain" value="http://testfb.com:8080" />
-
-<spring:url var="urlCurrent" value="wat" />
 <spring:url var="urlLogin" value="/login/" />
 
 <spring:url var="logo" value="/resources/images/logo.png" />
@@ -22,6 +20,7 @@
 <spring:url var="urlRegister" value="/r/" />
 
 <spring:url var="urlProfile" value="/" />
+<spring:url var="urlBusinessProfile" value="/" />
 <spring:url var="urlOwnProfile" value="/p/" />
 <spring:url var="urlUserProfile" value="/p/user/" />
 

@@ -27,8 +27,8 @@
 		</div>
 		
 		<div class="post-fb">
-			<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
-			<div class="fb-comments" data-href="${domain}${urlPosts }${post.id}" data-width="540"></div>
+			<div class="fb-like" data-href="${baseURL}${urlPosts }${post.id}" data-send="true" data-width="450" data-show-faces="true"></div>
+			<div class="fb-comments" data-href="${baseURL}${urlPosts }${post.id}" data-width="540"></div>
 		</div>
 	</div>
 
@@ -49,6 +49,8 @@
 					<button class="btn-promote">Promote this post</button>
 				</c:otherwise>
 			</c:choose>
+			
+			<button class="btn-delete mt5">Delete this post</button>
 		</div>
 	</div>
 	<div class="dialog-promote hide" title="Promote this post">
@@ -101,6 +103,7 @@ window.post = {
 }
 
 window.urls = {
+	home : '<spring:url value="/" />',
 	user : '<spring:url value="/p/user/" />',
 	business : '<spring:url value="/" />',
 	imgur : 'http://i.imgur.com/',
@@ -110,7 +113,8 @@ window.urls = {
 	commentNotify: '<spring:url value="/i/commentnotify/post/" />',
 	commentRemove: '<spring:url value="/i/commentremove/post/" />',
 	likeNotify: '<spring:url value="/i/likenotify/post/" />',
-	unlike: '<spring:url value="/i/unlike/post/" />'
+	unlike: '<spring:url value="/i/unlike/post/" />',
+	deletepost: '<spring:url value="/i/deletepost/" />'
 }
 </script>
 <script type="text/javascript" src="<c:url value='/resources/javascript/posts/post.js' />" ></script>

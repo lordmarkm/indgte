@@ -869,5 +869,11 @@ public class InteractiveDaoImpl implements InteractiveDao {
 			return null;
 		}
 	}
+
+	@Override
+	public void deletepost(long id) {
+		Post p = getPost(id);
+		sessions.getCurrentSession().delete(p);
+	}
 	
 }

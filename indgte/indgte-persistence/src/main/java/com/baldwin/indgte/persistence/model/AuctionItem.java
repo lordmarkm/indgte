@@ -37,6 +37,9 @@ public class AuctionItem extends BuyAndSellItem {
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="item")
 	private List<Bid> bids;
 
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="item")
+	private List<NewBidNotification> newBidNotifications;
+	
 	@JsonIgnore
 	public Bid getWinning() {
 		if(getBids().size() == 0) {
@@ -96,5 +99,13 @@ public class AuctionItem extends BuyAndSellItem {
 
 	public void setBids(Stack<Bid> bids) {
 		this.bids = bids;
+	}
+
+	public List<NewBidNotification> getNewBidNotifications() {
+		return newBidNotifications;
+	}
+
+	public void setNewBidNotifications(List<NewBidNotification> newBidNotifications) {
+		this.newBidNotifications = newBidNotifications;
 	}
 }

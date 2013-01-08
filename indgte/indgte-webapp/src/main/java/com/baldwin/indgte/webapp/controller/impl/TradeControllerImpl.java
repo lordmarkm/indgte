@@ -32,6 +32,7 @@ import com.baldwin.indgte.webapp.controller.TradeController;
 import com.baldwin.indgte.webapp.dto.BuyAndSellForm;
 import com.baldwin.indgte.webapp.misc.Comet;
 
+@SuppressWarnings("unused")
 @Component
 @SessionAttributes(value={"user"})
 public class TradeControllerImpl implements TradeController {
@@ -91,26 +92,32 @@ public class TradeControllerImpl implements TradeController {
 		log.debug("{} viewing item with id {}", null == principal ? "Anonymous" : principal.getName(), itemId);
 		BuyAndSellItem item = trade.get(null == principal ? null : principal.getName(), itemId);
 		
-		MavBuilder builder = render("buyandsellitem")
+		if(null != item) {
+			MavBuilder builder = render("buyandsellitem")
 					.put("item", item);
-
-		if(null != item.getDescription()) builder.description(item.getDescription());
-		if(null != item.getImgur()) builder.thumbnail(item.getImgur().getSmallSquare());
-		
-		if(item instanceof AuctionItem) {
-			AuctionItem auctionItem = (AuctionItem)item;
-			builder.put("bidIncrement", trade.getBidIncrement());
-			builder.put("finished", System.currentTimeMillis() - auctionItem.getBiddingEnds().getTime() > 0);
+			
+			if(null != item.getDescription()) builder.description(item.getDescription());
+			if(null != item.getImgur()) builder.thumbnail(item.getImgur().getSmallSquare());
+			
+			if(item instanceof AuctionItem) {
+				AuctionItem auctionItem = (AuctionItem)item;
+				builder.put("bidIncrement", trade.getBidIncrement());
+				builder.put("finished", System.currentTimeMillis() - auctionItem.getBiddingEnds().getTime() > 0);
+			}
+			
+			if(null != principal) {
+				UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist, Initializable.watchedtags);
+				builder.put("user", user)
+					.put("inwishlist", user.inWishlist(item))
+					.put("owner", item.getOwner().equals(user));
+			}
+			
+			return builder.mav();
 		}
 		
-		if(null != principal) {
-			UserExtension user = users.getExtended(principal.getName(), Initializable.wishlist, Initializable.watchedtags);
-			builder.put("user", user)
-				.put("inwishlist", user.inWishlist(item))
-				.put("owner", item.getOwner().equals(user));
+		else {
+			return render("buyandsellnotfound").mav();
 		}
-		
-		return builder.mav();
 	}
 	
 	@Override
@@ -135,9 +142,33 @@ public class TradeControllerImpl implements TradeController {
 	}
 
 	@Override
-	public @ResponseBody JSON sold(User user, long itemId) {
-		// TODO Auto-generated method stub
-		return null;
+	public @ResponseBody JSON sold(Principal principal, @PathVariable long itemId) {
+		try {
+			trade.sold(principal.getName(), itemId);
+			return JSON.ok();
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON available(Principal principal, @PathVariable long itemId) {
+		try {
+			trade.available(principal.getName(), itemId);
+			return JSON.ok();
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
+	}
+	
+	@Override
+	public @ResponseBody JSON delete(Principal principal, @PathVariable long itemId) {
+		try {
+			trade.delete(principal.getName(), itemId);
+			return JSON.ok();
+		} catch (Exception e) {
+			return JSON.status500(e);
+		}
 	}
 
 	@Override
