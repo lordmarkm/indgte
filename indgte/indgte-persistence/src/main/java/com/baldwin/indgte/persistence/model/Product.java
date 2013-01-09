@@ -1,6 +1,7 @@
 package com.baldwin.indgte.persistence.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -17,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.search.annotations.Field;
@@ -37,7 +40,7 @@ import com.baldwin.indgte.persistence.dto.Summary.SummaryType;
 @Indexed
 @Entity
 @Table(name="products")
-public class Product implements Searchable, Attachable {
+public class Product implements Searchable, Attachable, Comparable<Product> {
 	
 	public static final String[] searchableFields = new String[]{"name", "description"};
 	
@@ -84,6 +87,9 @@ public class Product implements Searchable, Attachable {
 	@Column
 	private boolean soldout;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date time;
+	
 	@Override
 	public String toString() {
 		return name + ": " + description;
@@ -98,8 +104,8 @@ public class Product implements Searchable, Attachable {
 		s.setThumbnailHash(mainpic == null ? null : mainpic.getHash());
 		s.setTitle(name);
 		s.setType(SummaryType.product);
+		s.setTime(time);
 		return s;
-		//return new Summary(SummaryType.product, id, name, description, category.getBusiness().getDomain() + "/" + id, mainpic == null ? null : mainpic.getHash());
 	}
 	
 	public long getId() {
@@ -233,5 +239,18 @@ public class Product implements Searchable, Attachable {
 
 	public void setSoldout(boolean soldout) {
 		this.soldout = soldout;
+	}
+
+	@Override
+	public int compareTo(Product o) {
+		return name.compareTo(o.name);
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
 	}
 }

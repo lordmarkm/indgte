@@ -424,6 +424,7 @@ $(function(){
 </div>
 <script>
 window.urls.tagweights = '<spring:url value="/s/tags.json" />';
+window.urls.tag = '<spring:url value="/t/tags/" />';
 </script>
 <script src="${jsTagcloud }"></script>
 <script src="${jsDgteTagCloud }"></script>

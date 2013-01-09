@@ -3,6 +3,7 @@ package com.baldwin.indgte.pers‪istence.dao;
 import static com.baldwin.indgte.pers‪istence.dao.TableConstants.BUSINESS_DOMAIN;
 import static com.baldwin.indgte.pers‪istence.dao.TableConstants.BUSINESS_INFO;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +17,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -25,9 +27,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
+import com.baldwin.indgte.persistence.model.BuyAndSellItem;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Product;
@@ -249,6 +253,7 @@ public class BusinessDaoImpl implements BusinessDao {
 		Category category = getCategory(categoryId, session);
 		category.getProducts().add(product);
 		product.setCategory(category);
+		product.setTime(new Date());
 		session.update(category);
 	}
 
@@ -422,5 +427,42 @@ public class BusinessDaoImpl implements BusinessDao {
 	public void deleteProduct(long productId) {
 		Product product = getProduct(productId);
 		sessions.getCurrentSession().delete(product);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Summary> getLatestEntities() {
+		Session session = sessions.getCurrentSession();
+		
+		List<Product> products = session.createCriteria(Product.class)
+			.addOrder(Order.desc("time"))
+			.setMaxResults(5)
+			.list();
+		
+		List<BuyAndSellItem> bass = session.createCriteria(BuyAndSellItem.class)
+				.addOrder(Order.desc("time"))
+				.setMaxResults(5)
+				.list();
+		
+		List<Summary> summaries = new ArrayList<>();
+		for(Product product : products) {
+			summaries.add(product.summarize());
+		}
+		for(BuyAndSellItem bas : bass) {
+			summaries.add(bas.summarize());
+		}
+		
+		Collections.sort(summaries, new Comparator<Summary>(){
+			@Override
+			public int compare(Summary o1, Summary o2) {
+				return -1 * o1.getTime().compareTo(o2.getTime());
+			}
+		});
+		
+		if(summaries.size() > 5) {
+			return summaries.subList(0, 5);
+		} else {
+			return summaries;
+		}
 	}
 }

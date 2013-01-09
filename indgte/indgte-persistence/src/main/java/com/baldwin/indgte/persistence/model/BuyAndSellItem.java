@@ -202,6 +202,7 @@ public class BuyAndSellItem implements Searchable {
 		summary.setTitle(name);
 		summary.setType(SummaryType.buyandsellitem);
 		summary.setImgur(imgur);
+		summary.setTime(time);
 		return summary;
 	}
 
@@ -218,6 +219,7 @@ public class BuyAndSellItem implements Searchable {
 		this.soldout = soldout;
 	}
 
+	@JsonIgnore
 	public List<Wish> getWishlists() {
 		return wishlists;
 	}

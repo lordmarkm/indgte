@@ -3,6 +3,7 @@ package com.baldwin.indgte.pers‪istence.dao;
 import java.util.Collection;
 import java.util.List;
 
+import com.baldwin.indgte.persistence.dto.Summary;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
@@ -49,4 +50,5 @@ public interface BusinessDao {
 	List<BusinessProfile> getSuggestions(BusinessProfile business);
 	void setSoldout(long productId, boolean isSoldout);
 	void deleteProduct(long productId);
+	List<Summary> getLatestEntities();
 }

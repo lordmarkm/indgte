@@ -7,7 +7,7 @@
 <spring:url var="noimage50" value="/resources/images/noimage50.png" />
 <spring:url var="spinner" value="/resources/images/spinner.gif" />
 <spring:url var="paperclip" value="/resources/images/icons/paperclip.png" />
-<spring:url var="urlProfileRoot" value="/" />
+<spring:url var="urlProfileRoot" value="/p/" />
 <spring:url var="urlEdit" value="/r/edit/" />
 <spring:url var="urlPosts" value="/i/posts/" />
 <spring:url var="urlBusinessPost" value="/i/posts/business/" />
@@ -47,10 +47,10 @@
 			<div class="profilepic-inner-container">
 				<c:choose>
 				<c:when test="${not empty business.profilepic }">
-				<a href="http://imgur.com/${business.profilepic.hash }"><img class="profilepic" src="${urlSmallProfilepic }" /></a>
+					<a href="http://imgur.com/${business.profilepic.hash }"><img class="profilepic" src="${urlSmallProfilepic }" /></a>
 				</c:when>
 				<c:otherwise>
-				<img class="profilepic" src="${noimage }" />
+					<img class="profilepic" src="${noimage }" />
 				</c:otherwise>
 				</c:choose>
 			</div>
@@ -95,7 +95,15 @@
 								
 								<!-- Video and link -->
 								<input class="iptUrl" type="text" placeholder="Paste URL"/>
-								
+								<div class="link-preview-container ui-state-default">
+									<div class="link-preview-images"></div>
+									<div class="inline-block">
+										<div class="link-preview-title"></div>
+										<div class="link-preview-description"></div>
+										<div class="link-preview-url"></div>
+									</div>
+								</div>
+																
 								<!-- Entity -->
 								<input class="iptEntity" type="text" placeholder="Enter Entity name" />
 								<div class="entity-preview hide"></div> 
@@ -254,14 +262,6 @@
 </div>
 
 <script>
-//clear the annoying spring soc sec #_=_ hash... it affects the FB like button
-(function(){
-	if(window.location.hash === '#_=_') {
-		window.location.hash = ''; //for older browsers
-	    history.pushState('', document.title, window.location.pathname);
-	}
-})();
-
 window.constants = {
 	owner : '${owner}' === 'true',
 	imgurKey : '${imgurKey}'
@@ -279,7 +279,7 @@ window.urls = {
 	postdetails : '<spring:url value="/i/posts/" />',
 	linkpreview : '<spring:url value="/i/linkpreview/" />',
 	user : '<spring:url value="/p/user/" />',
-	business : '<spring:url value="/p/" />',
+	business : '<spring:url value="/" />',
 	category: '<spring:url value="/b/categories/" />',
 	categoryWithProducts: '<spring:url value="/b/categories/" />',
 	getproducts: '<spring:url value="/b/products/" />',
@@ -396,23 +396,16 @@ $(function(){
 		debug('ontab. id: ' + ui.panel.id);
 		switch(ui.panel.id) {
 		case 'feed':
-			//reloadPosts();
-			window.location.hash = 0;
 			break;
 		case 'catalog':
 			onCatalog();
-			window.location.hash = 1;
 			break;
 		case 'map':
 			onMap();
-			window.location.hash = 2;
 			break;
 		case 'reviews':
-			//onReview();
-			window.location.hash = 3;
 			break;
 		case 'comments':
-			window.location.hash = 4;
 			break;
 		}
 	}
@@ -545,7 +538,8 @@ $(function(){
 
 	var hasPic = '${not empty business.profilepic }' === 'true';
 
-	var urlProfileRoot = '${urlProfileRoot}',
+	var urlProfileRoot = '${urlProfileRoot}', //no /p/
+		urlProfile = '${urlProfile}', //has /p/
 		urlSpinner = '${spinner}',
 		urlPosts = '${urlPosts}',
 		urlBusinessPost = '${urlBusinessPost}',
@@ -622,7 +616,7 @@ $(function(){
 		        		}
 		        		, function(){
 		        	//only now do we update the user's profile pic
-	        		window.location.replace(urlProfileRoot + domain);
+	        		window.location.replace(urlProfile + domain);
 		        });
 	        }, 2000);
 	    }

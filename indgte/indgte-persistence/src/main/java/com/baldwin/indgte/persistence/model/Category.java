@@ -1,6 +1,8 @@
 package com.baldwin.indgte.persistence.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -64,7 +66,7 @@ public class Category implements Searchable, Attachable {
 	private Set<Imgur> pics;
 	
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="category")
-	private Set<Product> products;
+	private List<Product> products;
 
 	@Column
 	private int comments;
@@ -140,14 +142,14 @@ public class Category implements Searchable, Attachable {
 	}
 	
 	@JsonIgnore
-	public Set<Product> getProducts() {
+	public List<Product> getProducts() {
 		if(null == products) {
-			products = new HashSet<Product>();
+			products = new ArrayList<Product>();
 		}
 		return products;
 	}
 
-	public void setProducts(Set<Product> products) {
+	public void setProducts(List<Product> products) {
 		this.products = products;
 	}
 	

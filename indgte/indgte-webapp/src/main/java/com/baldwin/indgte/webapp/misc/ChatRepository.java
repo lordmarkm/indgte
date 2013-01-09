@@ -146,7 +146,7 @@ public class ChatRepository implements ApplicationListener<InteractiveAuthentica
 	}
 
 	public List<ChatMessage> getMessages(String username, String[] subscriptions, long lastReceivedId) {
-		log.debug("Finding messages to user [{}] on channels [{}] who last received id {}", username, Arrays.asList(subscriptions), lastReceivedId);
+		//log.debug("Finding messages to user [{}] on channels [{}] who last received id {}", username, Arrays.asList(subscriptions), lastReceivedId);
 
 		//if user is not subscribed to the channel, add him
 		//if channel does not exist, create it

@@ -7,6 +7,7 @@ import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -153,7 +154,8 @@ public class BusinessControllerImpl implements BusinessController {
 	public @ResponseBody JSON getProductsJSON(Principal principal, @PathVariable String domain, @PathVariable long categoryId) {
 		log.debug("JSON getProducts(...) called. Domain: {}, categoryId: {}", domain, categoryId);
 		try {
-			Collection<Product> products = businesses.getProducts(categoryId);
+			List<Product> products = (List<Product>) businesses.getProducts(categoryId);
+			Collections.sort(products);
 			log.debug("Found {} results", products.size());
 			return JSON.ok().put("products", products);
 		} catch (Exception e) {

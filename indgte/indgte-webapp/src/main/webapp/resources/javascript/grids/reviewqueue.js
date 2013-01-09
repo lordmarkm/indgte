@@ -62,7 +62,7 @@ $(function(){
 		var $li = $('<li class="review-request">').attr('businessId', summary.id).appendTo($container);
 		
 		//img
-		var $imgLink = $('<a>').attr('href', urls.business + summary.identifier + '#3').appendTo($li);
+		var $imgLink = $('<a>').attr('href', urls.business + summary.identifier).appendTo($li);
 		var imageUrl = summary.thumbnailHash ? dgte.urls.imgur + summary.thumbnailHash + 's.jpg' : dgte.urls.blackSquareSmall;
 		$('<img class="review-request-img">').attr('src', imageUrl).appendTo($imgLink);
 
@@ -71,7 +71,7 @@ $(function(){
 		
 		//fullname
 		var $name = $('<div class="review-request-name">').appendTo($infocontainer);
-		$('<a>').attr('href', urls.business + summary.identifier + '#3').text(summary.title).appendTo($name);
+		$('<a class="dgte-previewlink fatlink" previewtype="business">').attr('href', urls.business + summary.identifier).text(summary.title).appendTo($name);
 		//description
 		var description = summary.description.length > dgte.review.previewChars ?
 				summary.description.substring(0, dgte.review.previewChars) + '...' :
@@ -79,7 +79,7 @@ $(function(){
 		$('<div class="subtitle">').text(description).appendTo($infocontainer);
 		
 		var $decline = $('<div class="review-decline-container">').appendTo($infocontainer);
-		$('<a class="review-accede">').attr('href', urls.business + summary.identifier + '#3').text('Review').appendTo($decline);
+		$('<a class="review-accede">').attr('href', urls.business + summary.identifier).text('Review').appendTo($decline);
 		$('<a href="javascript:;" class="review-decline noreview">').text('Not now').appendTo($decline);
 		$('<a href="javascript:;" class="review-decline neverreview">').text('Don\'t show again').appendTo($decline);
 	}

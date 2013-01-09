@@ -968,7 +968,7 @@ $(function(){
 			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
 			$('<p class="attachment-description">').text(post.attachmentDescription).appendTo($container);
 			//main category pic
-			var $a2 = $('<a>').attr('href', urls.business + post.attachmentIdentifier).appendTo($container);
+			var $a2 = $('<a>').attr('href', urls.buyandsellitem + post.attachmentIdentifier).appendTo($container);
 			$('<img class="category-attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($a2);
 			break;
 		case 'link':

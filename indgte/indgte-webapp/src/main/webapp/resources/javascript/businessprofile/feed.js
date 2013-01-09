@@ -20,6 +20,8 @@ $(function(){
 		$attachVisibles = $('.attach-visibles'),
 		$attachMenu = $('.attach-menu').hide(),
 		$btnPost = $('.btn-post'),
+		$linkpreview = $('.link-preview-container'),
+		$linkpreviewImg = $('.link-preview-images'),
 		$loadmoreContainer = $('.loadmoreContainer'),
 		$loadmore = $('.loadmore');
 	
@@ -126,6 +128,7 @@ $(function(){
 	function hideAttachInputs() {
 		$attachInputContainer.find('input').hide();
 		$entityPreview.hide();
+		$linkpreview.hide();
 	}
 	
 	$('.attach-option').click(function(){
@@ -156,6 +159,7 @@ $(function(){
 		$attachType.val('link');
 		$status.removeClass('noattachment');
 		$iptUrl.attr('placeholder', 'Paste link URL').show();
+		$linkpreview.show();
 		matchWidths();
 	});
 	
@@ -191,6 +195,7 @@ $(function(){
 				break;
 			case 'link':
 				$iptUrl.attr('placeholder', 'Paste link URL').show();
+				$linkpreview.show();
 				break;
 			case 'entity':
 				$iptEntity.show().blur();
@@ -226,9 +231,41 @@ $(function(){
 	//link
 	$iptUrl.change(function(){
 		if($attachType.val() != 'link') return;
-		
-		$.get(urls.linkpreview, {uri:$iptUrl.val()}, function(response) {
+		$linkpreview.find('.inline-block div,.link-preview-images').text('');
+		var url = $iptUrl.val();
+		$.get(urls.linkpreview, {uri: url}, function(response) {
 			debug(response);
+			
+			switch(response.status) {
+			case '200':
+				$linkpreview
+					.find('.link-preview-title').text(response.title).end()
+					.find('.link-preview-description').text(response.description).end()
+					.find('.link-preview-url').text(response.url);
+			
+				if(response.ogImage) {
+					$('<img>').attr('src', response.ogImage).appendTo($linkpreviewImg);
+				} else {
+					if(response.images.length > 0) {
+						$('<img>').attr('src', response.images[0]).appendTo($linkpreviewImg);
+					}
+					
+					//for(var i = 0, len = response.images.length; i < len; ++i) {
+					//	$('<img>').attr('src', response.images[i]).appendTo($linkpreviewImg);
+					//}
+				}
+				break;
+			case '500':
+				$linkpreview
+					.find('.link-preview-title').text(url).end()
+					.find('.link-preview-description').text('').end()
+					.find('.link-preview-url').text(url);
+				$('<img>').attr('src', '${noimage50	}').appendTo($linkpreviewImg);
+				break;
+			default:
+				debug('wat');
+				debug(response);
+			}
 		});
 	});
 	
@@ -291,6 +328,13 @@ $(function(){
 					$('<div class="ui-widget-header">').text('Products').appendTo($entitySuggestions);
 					for(var i = 0, length = response.product.length; i < length; i++) {
 						makeAutocompleteResult(response.product[i], urls.product);
+					}
+				}
+				
+				if(response.buyandsellitem && response.buyandsellitem.length > 0) {
+					$('<div class="ui-widget-header">').text('Buy and Sell').appendTo($entitySuggestions);
+					for(var i = 0, len = response.buyandsellitem.length; i < len; ++i) {
+						makeAutocompleteResult(response.buyandsellitem[i], urls.buyandsellitem);
 					}
 				}
 				
@@ -380,6 +424,12 @@ $(function(){
 		switch(attachType) {
 		case 'imgur':
 			data.attachmentType = 'imgur';
+			if(!$iptFile[0] || !$iptFile[0].files[0]) {
+				dgte.error('You haven\'t attached an image', 'You should attach an image, or select "none" from the attachment type menu');
+				$newpost.find('.overlay').remove();
+				return;
+			}
+			
 			upload($iptFile[0].files[0], function(imgurResponse) {
 				data.hash = imgurResponse.upload.image.hash;
 				postStatus(data);
@@ -392,6 +442,10 @@ $(function(){
 		case 'link':
 			data.attachmentType = 'link';
 			data.link = encodeURI($iptUrl.val());
+			data.attachmentImgurHash = $linkpreview.find('.link-preview-images img:first').attr('src');
+			data.attachmentTitle = $linkpreview.find('.link-preview-title').text();
+			data.attachmentDescription = $linkpreview.find('.link-preview-description').text();
+			data.attachmentIdentifier = $linkpreview.find('.link-preview-url').text();
 			break;
 		case 'entity':
 			data.attachmentType = $iptEntity.attr('entitytype');
@@ -429,8 +483,12 @@ $(function(){
 				addPost(response.post, true, true);
 				shrinkStatus();
 				break;
+			case '500':
+				dgte.error('Error creating post', 'There was an error creating this post. Please check your text and attachment (if any) and try again.');
+				break;
 			default:
 				debug(response);
+				dgte.error('Error creating post', 'There was an error creating this post. Please check your text and attachment (if any) and try again.');
 			}
 		});
 		
@@ -440,6 +498,10 @@ $(function(){
 	//posts
 	var startPostIndex = 0;
 	function getPosts() {
+		var sort = 'popularity';
+		var hasSticky = $('.post.sticky').length != 0;
+		debug('Gonna be sorting by: ' + sort + ' has sticky? ' + hasSticky);
+		
 		$.get(urls.businessPosts, 
 			{
 				posterId: business.id, 
@@ -447,31 +509,62 @@ $(function(){
 				start: startPostIndex, 
 				howmany: dgte.constants.postsPerPage
 			}, 
+			
 			function(response){
 				switch(response.status) {
 				case '200':
+					debug('has featured? ' + JSON.stringify(response.featured));
+					if(response.featured) {
+						addPost(response.featured, true, startPostIndex != 0, true);
+					}
 					for(var i = 0, length = response.posts.length; i < length; ++i) {
 						addPost(response.posts[i], false, startPostIndex != 0);
 					}
 					startPostIndex += response.posts.length;
+					
+					//reparse fb:comment-count
+					FB.XFBML.parse();
+					
 					break;
 				default:
 					debug(response);
 				}
-			}
-		);
+		}).complete(function(){
+			$posts.parent().fadeSpinner();
+		});
 		$loadmoreContainer.find('.overlay').delay(800).fadeOut(200, function() { $(this).remove(); });
 	}
 	getPosts();
 	
-	function addPost(post, prepend, fadein) {
-		var posterImgSrc = post.posterImgurHash ? urls.imgur + post.posterImgurHash  + 's.jpg' : dgte.urls.blackSquareSmall; //something like H4qu1
-		var link = urls.business + post.posterIdentifier;
+	function addPost(post, prepend, fadein, sticky) {
+		debug('adding post');
+		
+		var posterImgSrc;
+		var link;
+		switch(post.type) {
+		case 'user':
+			posterImgSrc = post.posterImgurHash; //probably something like http://graph.facebook.com/123/picture
+			link = urls.user + post.posterIdentifier;
+			break;
+		case 'business':
+			posterImgSrc = post.posterImgurHash ? urls.imgur + post.posterImgurHash  + 's.jpg' : dgte.urls.noImage50; //something like H4qu1
+			link = urls.business + post.posterIdentifier;
+			break;
+		default:
+			debug('Illegal post type: ' + post.type);
+			return;
+		}
 		
 		var $post = $('<li class="post">').attr('postId', post.id);
+		if(sticky) {
+			$post.addClass('sticky');
+			$('<div class="sticky-pin">')
+				.attr('title', 'This is a featured post :)')
+				.appendTo($post);
+		}
 		
-		if(prepend) {
-			$post.prependTo($posts).hide();
+		if(prepend || sticky) {
+			$post.prependTo($posts);
 		} else {
 			$post.appendTo($posts);
 		}
@@ -482,14 +575,31 @@ $(function(){
 		
 		if(posterImgSrc) {
 			var $picContainer = $('<div class="post-pic-container">').appendTo($post);
-			$('<img class="post-pic">').attr('src', posterImgSrc).appendTo($picContainer);	
+			var $aPostPic = $('<a class="dgte-previewlink">')
+				.attr('previewtype', post.type)
+				.attr('href', link)
+				.appendTo($picContainer);
+			$('<img class="post-pic">').attr('src', posterImgSrc).appendTo($aPostPic);	
 		}
 		
 		//title and text
 		var $dataContainer = $('<div class="post-data-container">').appendTo($post);
 		var $title = $('<strong class="post-title">').appendTo($dataContainer);
 		$('<a>').attr('href', urls.postdetails + post.id).html(post.title).appendTo($title);
-		var $text = $('<div class="post-text">').html(post.text).appendTo($dataContainer);
+		
+		var $text = $('<div class="post-text">').appendTo($dataContainer);
+		if(post.text.length < 140) {
+			$text.html(post.text);
+		} else {
+			$text.html(post.text)
+				.addClass('post-text-compressed');
+			
+			var $showMore = $('<div class="mt5">').insertAfter($text);
+			$('<a class="showmore">')
+				.text('Show full text...')
+				.attr('href', urls.postdetails + post.id)
+				.appendTo($showMore);
+		}
 		
 		//attachment, if any
 		switch(post.attachmentType) {
@@ -518,20 +628,34 @@ $(function(){
 				}
 			});
 			break;
+		case 'business':
+			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
+			var $attachmentA = $('<a class="fatlink dgte-previewlink">')
+				.attr('previewtype', 'business')
+				.attr('href', urls.business + post.attachmentIdentifier)
+				.appendTo($container);
+			
+			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
+			$('<p class="attachment-description">').text(post.attachmentDescription).appendTo($container);
+			//main category pic
+			var $a2 = $('<a>').attr('href', urls.business + post.attachmentIdentifier).appendTo($container);
+			$('<img class="category-attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($a2);
+			break;
 		case 'category':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
 			//title
-			var $attachmentA = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
-			$('<h4>').text(post.attachmentTitle).appendTo($attachmentA);
+			var $attachmentA = $('<a class="fatlink dgte-previewlink">')
+				.attr('previewtype', 'category')
+				.attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
+			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
 			//main category pic
 			var $a2 = $('<a>').attr('href', urls.category + post.attachmentIdentifier).appendTo($container);
 			$('<img class="category-attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($a2);
-			//product previews			
 			$.get(urls.categoryWithProducts + post.attachmentIdentifier + '/' + dgte.home.productPreviews + '.json', function(response) {
 				switch(response.status) {
 				case '200':
 					var description = response.category.description.length < dgte.home.attchDescLength ? response.category.description : response.category.description.substring(0, dgte.home.attchDescLength) + '...';
-					$('<div class="attachment-description">')
+					$('<p class="attachment-description">')
 						.text(description)
 						.insertAfter($attachmentA);
 					
@@ -541,7 +665,9 @@ $(function(){
 						for(var prodIterator = 0, prodLength = response.products.length; prodIterator < prodLength; ++prodIterator) {
 							var attachedProduct = response.products[prodIterator];
 							if(attachedProduct.mainpic) {
-								var $productA = $('<a>').attr('href', urls.product + attachedProduct.id).appendTo($products);
+								var $productA = $('<a class="dgte-previewlink">')
+									.attr('previewtype', 'product')
+									.attr('href', urls.product + attachedProduct.id).appendTo($products);
 								$('<img class="category-attachment-product-img">')
 									.attr('src', attachedProduct.mainpic.smallSquare)
 									.attr('title', attachedProduct.name)
@@ -569,11 +695,14 @@ $(function(){
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
 			
 			//title
-			var $attachmentA = $('<a>').attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
-			$('<h4>').text(post.attachmentTitle).appendTo($attachmentA);
+			var $attachmentA = $('<a class="fatlink dgte-previewlink">')
+				.attr('previewtype', 'product')
+				.attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
+			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
 			//mainpicproduct
 			if(post.attachmentImgurHash) {
-				var $attachmentImgA = $('<a>').attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
+				var $attachmentImgA = $('<a>')
+					.attr('href', urls.product + post.attachmentIdentifier).appendTo($container);
 				$('<img class="attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($attachmentImgA);
 			}
 				
@@ -582,7 +711,7 @@ $(function(){
 				case '200':
 					if(response.pics.length > 0) {
 						var description = response.product.description.length < dgte.home.attchDescLength ? response.product.description : response.product.description.substring(0, dgte.home.attchDescLength) + '...';
-						$('<div class="attachment-description">')
+						$('<p class="attachment-description">')
 							.text(description)
 							.insertAfter($attachmentA);
 						var $morepics = $('<div>').appendTo($container);
@@ -606,10 +735,29 @@ $(function(){
 				}
 			});
 			break;
+		case 'buyandsellitem':
+			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
+			var $attachmentA = $('<a class="fatlink dgte-previewlink">')
+				.attr('previewtype', 'buyandsellitem')
+				.attr('href', urls.buyandsellitem + post.attachmentIdentifier).appendTo($container);
+			
+			$('<strong>').text(post.attachmentTitle).appendTo($attachmentA);
+			$('<p class="attachment-description">').text(post.attachmentDescription).appendTo($container);
+			//main category pic
+			var $a2 = $('<a>').attr('href', urls.buyandsellitem + post.attachmentIdentifier).appendTo($container);
+			$('<img class="category-attachment-img">').attr('src', urls.imgur + post.attachmentImgurHash + 'l.jpg').appendTo($a2);
+			break;
 		case 'link':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-			$('<strong>').text('Attachment title: ' + post.attachmentTitle).appendTo($dataContainer);
-			$('<a>').attr('href', post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($container);
+			var $linkImgContainer = $('<div class="link-preview-images">').appendTo($container);
+			$('<img>').attr('src', post.attachmentImgurHash).appendTo($linkImgContainer);
+			
+			var $linkInfoContainer = $('<div class="link-info-container">').appendTo($container);
+			$('<div class="bold">').text(post.attachmentTitle).appendTo($linkInfoContainer);
+			if(post.attachmentIdentifier) {
+				$('<a>').attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($linkInfoContainer);
+			}
+			$('<p class="linkdescription">').text(post.attachmentDescription).appendTo($linkInfoContainer);
 			break;
 		case 'none':
 		default:
@@ -618,8 +766,33 @@ $(function(){
 		
 		//footnote
 		var $footnote = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow() + ' by ').appendTo($dataContainer);
-		$('<a class="fatlink">').attr('href', link).text(post.posterTitle).appendTo($footnote);
+		$('<a class="fatlink dgte-previewlink">')
+			.attr('previewtype', post.type)
+			.attr('href', link).text(post.posterTitle).appendTo($footnote);
+		
+		$('<span>').text(' (' + post.id + ') ').appendTo($footnote);
+		
+		//comments
+		var $comments = $('<div class="post-comments">').appendTo($dataContainer);
+		var $aComments = $('<a class="fatlink">').attr('href', urls.postdetails + post.id).appendTo($comments);
+
+		$aComments.append('View ')
+		var urlPostDetails = '${baseURL}${urlPosts}' + post.id;
+		$('<fb:comments-count>').attr('href', urlPostDetails).appendTo($aComments);
+		$aComments.append(' comments ');
+		
 	}
+	
+	$(document).on({
+		click: function(){
+			$(this)
+				.hide()
+				.parent()
+				.siblings('.post-text-compressed')
+				.removeClass('post-text-compressed');
+			return false;
+		}
+	}, '.showmore');
 	
 	$posts.on({
 		mouseover : function(){

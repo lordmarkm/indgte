@@ -1,5 +1,7 @@
 package com.baldwin.indgte.persistence.dto;
 
+import java.util.Date;
+
 import com.baldwin.indgte.persistence.model.Imgur;
 
 
@@ -31,6 +33,7 @@ public class Summary {
 	private String thumbnailHash;
 	private String rank;
 	private Imgur imgur;
+	private Date time;
 	
 	/**
 	 * User: username
@@ -131,6 +134,14 @@ public class Summary {
 		default: 
 			return "";
 		}
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
 	}
 
 }
