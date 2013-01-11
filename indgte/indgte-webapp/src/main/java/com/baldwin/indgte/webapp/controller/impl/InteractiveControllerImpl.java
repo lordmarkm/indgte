@@ -16,6 +16,9 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -234,7 +237,9 @@ public class InteractiveControllerImpl implements InteractiveController {
 		}
 		
 		try {
-			interact.deletepost(principal.getName(), id);
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			boolean moderator = isModerator(auth);
+			interact.deletepost(moderator, principal.getName(), id);
 			return JSON.ok();
 		} catch (Exception e) {
 			log.error("Error", e);
@@ -727,6 +732,14 @@ public class InteractiveControllerImpl implements InteractiveController {
 			log.error("Exception deleting notifs", e);
 			return JSON.status500(e);
 		}
+	}
+
+	private boolean isModerator(Authentication auth) {
+		log.debug("Checking authentication. Authorities: {}", auth.getAuthorities());
+		for(GrantedAuthority g : auth.getAuthorities()) {
+			if(g.getAuthority().equals("ROLE_MODERATOR")) return true;
+		}
+		return false;
 	}
 	
 	@ExceptionHandler(Exception.class)

@@ -21,7 +21,7 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
-<spring:url var="jsFeed" value="/resources/javascript/businessprofile/feed.js" />
+<spring:url var="jsFeed" value="/resources/javascript/feed/feed.js" />
 <script type="text/javascript" src="${jsFeed }"></script>
 
 <c:choose>
@@ -75,7 +75,7 @@
 			</div>
 			
 			<!-- Business's feed - shows posts by the business -->
-			<div id="feed">
+			<div id="feed" type="business">
 				<c:if test="${owner }">
 				<div class="newpost">
 					<form id="form-newpost">
@@ -113,9 +113,6 @@
 						<div class="newpost-errors"></div>
 					</form>
 					<div class="status-options hide">
-						<sec:authorize access="hasRole('ROLE_USER_FACEBOOK')">
-						<input type="checkbox" name="toFacebook" id="toFacebook" value="true"><label for="toFacebook"><spring:message code="home.status.postfb" /></label>
-						</sec:authorize>
 						<div class="floatright">
 							<span class="status-counter"></span>
 							<div class="post-as">
@@ -150,6 +147,7 @@
 							</div>
 							<div class="button btn-post">Post</div>
 						</div>
+						<div class="clear"></div>
 					</div>
 				</div>
 				</c:if>
@@ -289,7 +287,7 @@ window.urls = {
 	searchOwn: '<spring:url value="/s/own/" />',
 	
 	//posts
-	businessPosts: '<spring:url value="/i/posts/" />' //get the last posts by this business
+	targetPosts: '<spring:url value="/i/posts/" />' //get the last posts by this business
 }
 
 window.user = {
@@ -297,6 +295,10 @@ window.user = {
 	username: '${user.username}',
 	rank: '${user.rank}',
 	coconuts: '${user.billingInfo.coconuts}'
+}
+
+window.poster = {
+	id : '${business.id}'
 }
 
 window.business = {

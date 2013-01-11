@@ -40,6 +40,7 @@ import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.constants.ReviewType;
 import com.baldwin.indgte.persistence.constants.Theme;
 import com.baldwin.indgte.persistence.constants.WishType;
+import com.baldwin.indgte.persistence.model.BillingTransaction;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
@@ -872,8 +873,17 @@ public class InteractiveDaoImpl implements InteractiveDao {
 
 	@Override
 	public void deletepost(long id) {
+		Session session = sessions.getCurrentSession();
+		
 		Post p = getPost(id);
-		sessions.getCurrentSession().delete(p);
+		
+		List<BillingTransaction> transactions = p.getTransactions();
+		for(BillingTransaction b : transactions) {
+			b.getDetails().setFeaturedPost(null);
+			session.update(b);
+		}
+		
+		session.delete(p);
 	}
 	
 }

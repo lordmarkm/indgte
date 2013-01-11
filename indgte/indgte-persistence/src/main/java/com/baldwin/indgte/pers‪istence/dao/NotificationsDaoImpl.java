@@ -77,7 +77,7 @@ public class NotificationsDaoImpl implements NotificationsDao {
 				.add(Restrictions.eq(ALIAS_USER_USERNAME, username))
 				.add(Restrictions.eq(TableConstants.NOTIF_SEEN, false))
 				.add(Restrictions.gt(TableConstants.ID, lastNotifId))
-				.addOrder(Order.desc(TableConstants.TIME))
+				.addOrder(Order.asc(TableConstants.TIME))
 				.list();
 	}
 

@@ -1,6 +1,7 @@
 package com.baldwin.indgte.persistence.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -9,9 +10,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.baldwin.indgte.persistence.constants.PostType;
 import com.baldwin.indgte.persistence.dto.Summary;
@@ -87,6 +91,9 @@ public class Post {
 	
 	@Column
 	private int timesFeatured = 0;
+	
+	@OneToMany(mappedBy="details.featuredPost")
+	private List<BillingTransaction> transactions;
 	
 	@Override
 	public String toString() {
@@ -278,6 +285,15 @@ public class Post {
 
 	public void setTimesFeatured(int timesFeatured) {
 		this.timesFeatured = timesFeatured;
+	}
+
+	@JsonIgnore
+	public List<BillingTransaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(List<BillingTransaction> transactions) {
+		this.transactions = transactions;
 	}
 
 }

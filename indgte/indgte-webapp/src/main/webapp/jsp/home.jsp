@@ -8,6 +8,7 @@
 <title>Dumaguete</title>
 <link rel="stylesheet" href="<spring:url value='/resources/css/lists.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/feed.css' />" />
+<link rel="stylesheet" href="<spring:url value='/resources/css/home.css' />" />
 
 <script src="${jsValidator }"></script>
 
@@ -57,15 +58,6 @@
 		<div class="newpost-errors"></div>
 	</form>
 	<div class="status-options hide">
-		<sec:authorize access="hasRole('ROLE_USER_TWITTER')">
-			<input type="checkbox" name="toTwitter" id="toTwitter" value="true">
-			<label for="toTwitter"><spring:message code="home.status.posttwitter" /></label>
-		</sec:authorize>
-		<sec:authorize access="hasRole('ROLE_USER_FACEBOOK')">
-			<input type="checkbox" name="toFacebook" id="toFacebook" value="true">
-			<label for="toFacebook"><spring:message code="home.status.postfb" /></label>
-		</sec:authorize>
-		
 		<div class="floatright">
 			<span class="status-counter"></span>
 			<div class="post-as">
@@ -120,6 +112,7 @@
 			</div>
 			<div class="button btn-post">Post</div>
 		</div>
+		<div class="clear"></div>
 	</div>
 </section>
 </sec:authorize>

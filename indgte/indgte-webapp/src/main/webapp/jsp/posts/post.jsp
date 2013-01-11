@@ -2,6 +2,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
 <title>${post.title }</title>
@@ -40,6 +41,44 @@
 		<div class="sidebar-container">	
 			<div class="sidebar-section-header">Post Actions</div>
 			
+			<jsp:useBean id="nowPost" class="java.util.Date" />
+			<fmt:formatDate value="${nowPost }" pattern="yyyy-MM-dd" var="formattedNow" /> 
+			<c:choose>
+				<c:when test="${not empty post.featureEnd && post.featureEnd >= formattedNow }" >
+					<div class="ui-state-highlight pd5">This post is featured from <strong>${post.featureStart }</strong> to <strong>${post.featureEnd }</strong></div>
+				</c:when>
+				<c:otherwise>
+					<button class="btn-promote">Promote this post</button>
+				</c:otherwise>
+			</c:choose>
+			
+			<button class="btn-delete mt5">Delete this post</button>
+		</div>
+	</div>
+	<div class="dialog-promote hide" title="Promote this post">
+		<span><spring:message code="post.promote.dialog" arguments="${user.billingInfo.coconuts }" /></span>
+		<form class="form-promote" method="post" action="<c:url value='/o/promotepost/${post.id }' />" >
+			<table>
+				<tr>
+					<td><label for="start-date">Promote from</label></td>
+					<td><input type="date" id="start-date" name="startDate" readonly="readonly" placeholder="Click to choose" /></td>
+				</tr>
+				<tr>
+					<td><label for="end-date">Promote until</label></td>
+					<td><input type="date" id="end-date" name="endDate" readonly="readonly" placeholder="Click to choose"/></td>
+				</tr>
+			</table>
+		</form>
+		<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
+	</div>
+</c:if>
+
+<sec:authorize access="hasRole('ROLE_MODERATOR')">
+	<div class="grid_4 sidebar-section owner-menu">
+		<div class="sidebar-container">	
+			<div class="sidebar-section-header">Moderator Actions</div>
+			<div class="ui-state-highlight mb5 pd2">Enjoy your moderator powers. Don't be an asshole.</div>
+			
 			<jsp:useBean id="now" class="java.util.Date" />
 			<fmt:formatDate value="${now }" pattern="yyyy-MM-dd" var="formattedNow" /> 
 			<c:choose>
@@ -70,7 +109,7 @@
 		</form>
 		<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
 	</div>
-</c:if>
+</sec:authorize>
 
 <!-- Notifications -->
 <%@include file="../grids/notifications4.jsp"  %>
@@ -109,7 +148,9 @@ window.urls = {
 	business : '<spring:url value="/" />',
 	imgur : 'http://i.imgur.com/',
 	imgurPage : 'http://imgur.com/',
+	category: '<spring:url value="/b/categories/" />',
 	categoryWithProducts: '<spring:url value="/b/categories/" />',
+	product : '<spring:url value="/b/products/" />',
 	productwithpics: '<spring:url value="/b/products/withpics/" />',
 	commentNotify: '<spring:url value="/i/commentnotify/post/" />',
 	commentRemove: '<spring:url value="/i/commentremove/post/" />',

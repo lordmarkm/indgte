@@ -24,11 +24,22 @@ public class AuthenticationSuccessListener implements ApplicationListener<Intera
     	
 		log.info("Auth success! {}", principal);
 		
-		//Make Mark Martinez an admin
+		//Make Mark Martinez an user, mod, admin
 		if(principal instanceof String && ((String)principal).equals("mark.martinez.986")) {
 			Authentication authentication = event.getAuthentication();
 			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(authentication.getAuthorities());
 			authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_MODERATOR"));
+			
+			Authentication adminAuthentication = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), authorities);
+			SecurityContextHolder.getContext().setAuthentication(adminAuthentication);
+		} 
+		
+		//Gemgem is user, mod
+		else if(principal instanceof String && ((String)principal).equals("van.martinez")) {
+			Authentication authentication = event.getAuthentication();
+			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(authentication.getAuthorities());
+			authorities.add(new SimpleGrantedAuthority("ROLE_MODERATOR"));
 			
 			Authentication adminAuthentication = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), authorities);
 			SecurityContextHolder.getContext().setAuthentication(adminAuthentication);

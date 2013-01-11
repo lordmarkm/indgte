@@ -113,14 +113,6 @@
 
 </div>
 
-<sec:authorize ifNotGranted="ROLE_USER">
-<div class="grid_4 sidebar-section">
-	<div class="sidebar-container">
-		<img src="${logo }" />
-	</div>
-</div> 
-</sec:authorize>
-
 <sec:authorize access="hasRole('ROLE_USER')">
 <div class="buyandsell-controls grid_4 sidebar-section">
 	<div class="sidebar-container">
@@ -197,11 +189,13 @@ window.urls = {
 	wishlist: '<spring:url value="/i/wishlist/buyandsell/" />',
 	sold: '<spring:url value="/t/sold/" />',
 	available: '<spring:url value="/t/available/" />',
-	deleteItem: '<spring:url value="/t/delete/" />'
+	deleteItem: '<spring:url value="/t/delete/" />',
+	trade: '${urlTrade}'
 }
 
 window.item = {
-	id: '${item.id}'
+	id: '${item.id}',
+	name: '${item.name}'
 }
 
 $(function(){
@@ -301,7 +295,7 @@ $(function(){
 								.dialog({
 									buttons: {
 										'OK': function(){
-											$(this).dialog('close');
+											window.location.replace(urls.trade);
 										}	
 									}
 								});

@@ -131,6 +131,10 @@ window.debug = function(m) {
 	console.debug(m);
 }
 
+window.error = function(m) {
+	console.error(m);
+}
+
 window.unescapeBrs2 = function(string) {
 	return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\<br\s*\>/g, '').replace(/\<br\s*\/\>/g, '');
 }

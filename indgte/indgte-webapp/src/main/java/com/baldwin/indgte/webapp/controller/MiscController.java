@@ -2,9 +2,12 @@ package com.baldwin.indgte.webapp.controller;
 
 import java.security.Principal;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -16,15 +19,16 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public interface MiscController {
 
-	@RequestMapping("/help/")
-	public ModelAndView help(Principal principal);
+	@RequestMapping(value = "/etc/help/", method = RequestMethod.GET)
+	public ModelAndView help(HttpServletRequest request, Principal principal);
 
-	@ExceptionHandler(Exception.class)
-	public String redirectToError(Exception e);
-	
 	@RequestMapping("/error/")
 	public String error();
 	
 	@RequestMapping("/logout/")
 	public String logout();
+	
+	@ExceptionHandler(Exception.class)
+	public String redirectToError(Exception e);
+	
 }

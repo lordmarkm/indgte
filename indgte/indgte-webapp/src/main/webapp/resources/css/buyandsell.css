@@ -78,6 +78,7 @@ ul {
 	margin-right: 5px;
 	display:inline-block;
 	width: 30%;
+	white-space: nowrap;
 }
 
 .buyandsell-search {

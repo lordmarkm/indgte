@@ -274,10 +274,19 @@ public class InteractiveService {
 		return featured;
 	}
 
-	public void deletepost(String name, long id) {
+	public void deletepost(boolean moderator, String name, long id) {
 		UserExtension user = users.getExtended(name);
 		Post post = dao.getPost(id);
-		if(isPostOwner(post, user)) {
+		
+		boolean owner = isPostOwner(post, user);
+		
+		if(owner) {
+			log.info("{} has deleted post with id {} ({})", name, id, post.getTitle());
+		} else if(moderator) {
+			log.info("{} has deleted post with id {} ({}) using moderator powers.", name, id, post.getTitle());
+		}
+		
+		if(moderator || owner) {
 			dao.deletepost(id);
 		} else {
 			throw new IllegalArgumentException("You do not own this post.");

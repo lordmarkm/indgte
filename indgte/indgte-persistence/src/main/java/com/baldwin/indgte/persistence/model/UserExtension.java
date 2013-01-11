@@ -104,10 +104,9 @@ public class UserExtension implements Summarizable {
 	@ElementCollection
 	@CollectionTable(
 		name = "businessSubs",
-		joinColumns = {@JoinColumn(name = "userId")}
+		joinColumns = {@JoinColumn(name = "businessId")}
 	)
-	@OrderColumn(name="order")
-	@Column(name="businessId")
+	@Column(name="userId")
 	private Set<Long> businessSubscriptions;
 		
 	@ElementCollection

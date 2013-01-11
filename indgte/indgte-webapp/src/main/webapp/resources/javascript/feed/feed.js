@@ -26,8 +26,7 @@ $(function(){
 		$loadmore = $('.loadmore');
 	
 	//posts
-	var 
-		$feedcontainer = $('.feedcontainer'),
+	var $feedcontainer = $('.feedcontainer'),
 		$posts = $('.posts');
 	
 	var feedType = $('#feed').attr('type');
@@ -509,9 +508,9 @@ $(function(){
 		var hasSticky = $('.post.sticky').length != 0;
 		debug('Gonna be sorting by: ' + sort + ' has sticky? ' + hasSticky);
 		
-		$.get(urls.businessPosts, 
+		$.get(urls.targetPosts, 
 			{
-				posterId: business.id, 
+				posterId: poster.id, 
 				type: feedType,
 				start: startPostIndex, 
 				howmany: dgte.constants.postsPerPage,

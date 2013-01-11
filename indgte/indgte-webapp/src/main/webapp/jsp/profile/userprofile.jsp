@@ -6,6 +6,8 @@
 
 <title>${target.user.username } InDumaguete</title>
 <script src="${jsValidator}"></script>
+<script type="text/javascript" src="<spring:url value="/resources/javascript/feed/feed.js" />"></script>
+<link rel="stylesheet" href="<spring:url value='/resources/css/lists.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/review.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/userprofile/userprofile.css' />" />
 
@@ -161,6 +163,90 @@
 	</div>
 </section>
 
+<section class="feed" id="feed" type="user">
+	<div class="section-header">Feed</div>
+	<c:if test="${target.username == user.username }">
+		<div class="newpost">
+			<form id="form-newpost">
+				<div class="border-provider ui-state-active inline-block">
+					<div class="status-title-container">
+						<input name="title" class="status-title ui-state-active hide" maxlength="45" type="text" placeholder="title" />
+					</div>
+					<textarea name="text" class="status-textarea noattachment" maxlength="140" rows="1" placeholder="<spring:message code="home.status.textarea" />"></textarea>	
+					<div class="attach-input-container">
+						<!-- Hidden -->
+						<input class="posterId" type="hidden" value="${user.id }" />
+						<input class="posterType" type="hidden" value="user" />
+						<input class="iptType" type="hidden" value="none"/>
+						
+						<!-- Image -->
+						<input class="iptFile" type="file" />
+						
+						<!-- Video and link -->
+						<input class="iptUrl" type="text" placeholder="Paste URL"/>
+						<div class="link-preview-container ui-state-default">
+							<div class="link-preview-images"></div>
+							<div class="inline-block">
+								<div class="link-preview-title"></div>
+								<div class="link-preview-description"></div>
+								<div class="link-preview-url"></div>
+							</div>
+						</div>
+																
+						<!-- Entity -->
+						<input class="iptEntity" type="text" placeholder="Enter Entity name" />
+						<div class="entity-preview hide"></div> 
+						<div class="entity-suggestions ui-state-default"></div>
+					</div>
+				</div>
+				<div class="newpost-errors"></div>
+			</form>
+			<div class="status-options hide">
+				<div class="floatright">
+					<span class="status-counter"></span>
+					<div class="post-as">
+						<div class="menubutton post-as-visibles" title="Posting as ${user.username }">
+							<img src="${user.imageUrl }" />
+						</div>
+					</div>
+					<div class="attach">
+						<div class="menubutton attach-visibles" title="Attach a product or image">
+							<img src="${paperclip }" style="max-width: 15px; max-height: 15px;" />
+							<div class="ui-icon ui-icon-triangle-1-s attach-triangle"></div>
+						</div>
+						<div class="attach-menu">
+							<div class="attach-option image">
+								<div class="name"><span class="ui-icon ui-icon-image inline-block mr5"></span>Image</div>
+							</div>
+							<div class="attach-option video">
+								<div class="name"><span class="ui-icon ui-icon-video inline-block mr5"></span>Video</div>
+							</div>
+							<div class="attach-option link">
+								<div class="name"><span class="ui-icon ui-icon-link inline-block mr5"></span>Link</div>
+							</div>
+							<div class="attach-option entity">
+								<div class="name"><span class="ui-icon ui-icon-cart inline-block mr5"></span> Indgte Entity</div>
+							</div>
+							<div class="attach-option none">
+								<div class="name"><span class="ui-icon ui-icon-cancel inline-block mr5"></span>None</div>
+							</div>
+						</div>			
+					</div>
+					<div class="button btn-post">Post</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</c:if>
+	
+	<div class="feed-container">
+		<ul class="posts"></ul>
+		<div class="loadmoreContainer" style="text-align: center; height: 100px; position: relative;">
+			<button class="loadmore" style="width: 50%; margin-top: 50px;">Load 10 more</button>
+		</div>
+	</div>
+</section>
+
 </div><!-- grid_8 -->
 
 <sec:authorize access="hasRole('ROLE_ADMIN')">
@@ -235,7 +321,29 @@ window.urls = {
 	subscribe: '<spring:url value="/i/subscribe/user/${target.id}.json" />',
 	unsubscribe: '<spring:url value="/i/unsubscribe/user/${target.id}.json" />',
 	review: '<spring:url value="/i/review/user/" />',
-	allReviews: '<spring:url value="/i/allreviews/user/" />'
+	allReviews: '<spring:url value="/i/allreviews/user/" />',
+	targetPosts: '<spring:url value="/i/posts/" />', //get the last posts by this user
+	
+	//copied from businessprofile for feed
+	getProducts : '<spring:url value="/b/products/" />',
+	product : '<spring:url value="/b/products/" />',
+	status : '<spring:url value="/i/newstatus.json" />',
+	subposts : '<spring:url value="/i/subposts.json" />',
+	postdetails : '<spring:url value="/i/posts/" />',
+	linkpreview : '<spring:url value="/i/linkpreview/" />',
+	user : '<spring:url value="/p/user/" />',
+	business : '<spring:url value="/" />',
+	category: '<spring:url value="/b/categories/" />',
+	categoryWithProducts: '<spring:url value="/b/categories/" />',
+	getproducts: '<spring:url value="/b/products/" />',
+	productwithpics: '<spring:url value="/b/products/withpics/" />',
+	imgur : 'http://i.imgur.com/',
+	imgurPage : 'http://imgur.com/',
+	searchOwn: '<spring:url value="/s/own/" />'
+}
+
+window.poster = {
+	id: '${target.id}'
 }
 
 window.target = {
