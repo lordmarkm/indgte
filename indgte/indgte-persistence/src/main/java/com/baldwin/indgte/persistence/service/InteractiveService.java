@@ -283,13 +283,28 @@ public class InteractiveService {
 		if(owner) {
 			log.info("{} has deleted post with id {} ({})", name, id, post.getTitle());
 		} else if(moderator) {
-			log.info("{} has deleted post with id {} ({}) using moderator powers.", name, id, post.getTitle());
+			log.info("[moderator] {} is deleting post with id {} ({})", name, id, post.getTitle());
 		}
 		
 		if(moderator || owner) {
 			dao.deletepost(id);
 		} else {
 			throw new IllegalArgumentException("You do not own this post.");
+		}
+	}
+
+	public void deleteReview(boolean moderator, String name, ReviewType type, long reviewId) throws IllegalAccessException {
+		Review review = dao.getReview(type, reviewId, false);
+		String reviewer = review.getReviewerSummary().getIdentifier();
+		String reviewee = review.getRevieweeSummary().getIdentifier();
+		if(reviewer.equals(name)) {
+			log.info("{} is deleting his review of {}", name, review.getRevieweeSummary().getIdentifier());
+			dao.deleteReview(type, reviewId);
+		} else if(moderator) {
+			log.info("[moderator] {} is deleting {}'s review of {}", name, reviewer, reviewee);
+			dao.deleteReview(type, reviewId);
+		} else {
+			throw new IllegalAccessException(name + " does not have permission to delete this review.");
 		}
 	}
 }

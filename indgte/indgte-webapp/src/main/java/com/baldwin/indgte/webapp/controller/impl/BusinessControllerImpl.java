@@ -14,6 +14,9 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -149,6 +152,20 @@ public class BusinessControllerImpl implements BusinessController {
 		}
 		return JSON.ok();
 	}
+
+	@Override
+	public @ResponseBody JSON deleteCategory(Principal principal, @PathVariable long categoryId) {
+		try {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			boolean moderator = isModerator(auth);
+			businesses.deleteCategory(moderator, principal.getName(), categoryId);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Error deleting category.", e);
+			return JSON.status500(e);
+		}
+	}
+
 	
 	@Override
 	public @ResponseBody JSON getProductsJSON(Principal principal, @PathVariable String domain, @PathVariable long categoryId) {
@@ -381,6 +398,14 @@ public class BusinessControllerImpl implements BusinessController {
 			log.error("Exception deleting business", e);
 			return JSON.status500(e);
 		}
+	}
+	
+	private boolean isModerator(Authentication auth) {
+		log.debug("Checking authentication. Authorities: {}", auth.getAuthorities());
+		for(GrantedAuthority g : auth.getAuthorities()) {
+			if(g.getAuthority().equals("ROLE_MODERATOR")) return true;
+		}
+		return false;
 	}
 	
 	@ExceptionHandler(Exception.class)

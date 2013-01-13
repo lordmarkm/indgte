@@ -3,7 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="r" value="${pageContext.request }" />
-<c:set var="baseURL" value="http://dgteph.tomcathostingservice.com" />
+<c:set var="baseURL" value="http://dgte.info" />
 
 <spring:url var="urlLogin" value="/login/" />
 

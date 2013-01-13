@@ -172,6 +172,41 @@
 	</div>
 </div>
 </sec:authorize>
+
+<sec:authorize access="hasRole('ROLE_MODERATOR')">
+<div class="buyandsell-controls grid_4 sidebar-section">
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Moderator Actions</div>
+		<div class="ui-state-highlight mb5 pd2"><spring:message code="mod.warning" /></div>
+		
+		<button class="btn-promote">Promote</button>
+		<div class="dialog-promote hide" title="Promote this Item">
+			<span><spring:message code="entity.promote.dialog" arguments="${user.billingInfo.coconuts },${user.billingInfo.coconuts / 10 },${item.name }" /></span>
+			<form class="form-promote" method="post" action="<c:url value='/o/sidebar/buyandsellitem/${item.id }' />" >
+				<table>
+					<tr>
+						<td><label for="start-date">Promote from</label></td>
+						<td><input type="date" id="start-date" name="start" readonly="readonly" placeholder="Click to choose" /></td>
+					</tr>
+					<tr>
+						<td><label for="end-date">Promote until</label></td>
+						<td><input type="date" id="end-date" name="end" readonly="readonly" placeholder="Click to choose"/></td>
+					</tr>
+				</table>
+			</form>
+			<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
+		</div>
+		<c:if test="${item.soldout }">
+			<button class="btn-available">Mark as Available</button>
+		</c:if>
+		<c:if test="${!item.soldout }">
+			<button class="btn-sold">Mark as Sold</button>
+		</c:if>
+		<button class="btn-delete">Delete</button>
+	</div>
+</div>
+</sec:authorize>
+
 <script src="<spring:url value='/resources/javascript/promote.js' />" ></script>
 <link rel="stylesheet" href="<c:url value='/resources/css/buyandsell/buyandsellitem.css' />" />
 
@@ -195,7 +230,7 @@ window.urls = {
 
 window.item = {
 	id: '${item.id}',
-	name: '${item.name}'
+	name: '<c:out value="${item.name}" />'
 }
 
 $(function(){
@@ -282,7 +317,7 @@ $(function(){
 	
 	$btnDelete.click(function(){
 		var $dlgConfirmDelete = $('<div title="Confirm delete">')
-			.text('Are you sure you want to delete ' + item.name + '?')
+			.text('Are you sure you want to delete ' + dgte.htmlDecode(item.name) + '?')
 			.dialog({
 				buttons: {
 					'Yep': function(){

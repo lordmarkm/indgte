@@ -12,7 +12,7 @@
 			<div class="category-welcome-image-container">
 				<img class="category-welcome-image" />
 			</div>
-			<h3>${category.name }</h3>
+			<h3 class="category-name">${category.name }</h3>
 			<div class="category-welcome-description italic">${category.description }</div>
 		</div>
 		<div class="category-welcome-provider">
@@ -44,7 +44,8 @@
 </c:if>
 <script>
 window.urls = {
-	urlProducts : '${urlProducts}'	
+	urlProducts : '${urlProducts}',
+	deleteCategory: '<spring:url value="/b/categories/delete/" />'
 }
 
 window.constants = {
@@ -174,6 +175,7 @@ $(function(){
 			</form>
 			<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
 		</div>
+		<button class="btn-delete">Delete</button>
 	</div>
 </div>
 <script src="<spring:url value='/resources/javascript/promote.js' />" ></script>
@@ -261,6 +263,11 @@ window.user = {
 	coconuts: '${user.billingInfo.coconuts}'
 }
 
+window.category = {
+	id : '${category.id}',
+	urlParent : '${urlProfile}${category.business.domain}'
+}
+
 $(function(){
 	//WARNING: Owner-only script!
 	var businessDomain = '${business.domain}',
@@ -290,6 +297,8 @@ $(function(){
 		$newproductPicField = $('.newproduct-pic'),
 		$newproductHashField = $('.newproduct-pic-hash'),
 		$newproductDeletehashField = $('.newproduct-pic-deletehash');
+	
+	var $btnDelete = $('.btn-delete');
 	
 	//override jquery ui dialog defaults
 	$.extend($.ui.dialog.prototype.options, {
@@ -412,6 +421,43 @@ $(function(){
 	    }
 		xhr.send(fd);		
 	}
+	
+	//delete
+	$btnDelete.click(function() {
+		var $deleteDialog = $('<div>')
+			.attr('title', 'Really delete this category?')
+			.html('Are you sure you want to delete ' + $('.category-name').text() + '? This cannot be undone. <strong>This will also delete all products in this category.</strong>')
+			.dialog({
+				buttons : {
+					'Yep': function(){
+						$.post(urls.deleteCategory + category.id + '/json', function(response) {
+							switch(response.status) {
+							case '200':
+								dgte.operationSuccess('Category deleted.', false, function(){
+									$deleteDialog.dialog('close');
+									window.location.replace(category.urlParent);
+								});
+								break;
+							case '500':
+								dgte.operationFailed(response.message);
+								$deleteDialog.dialog('close');
+								break;
+							default:
+								dgte.operationFailed();
+								$deleteDialog.dialog('close');
+							}
+						}).error(function(){
+							dgte.operationFailed();
+							$deleteDialog.dialog('close');
+						});
+					},
+					
+					'Not really, no': function(){
+						$(this).dialog('close');
+					}
+				}
+			});
+	});
 });
 </script>
 </c:if>

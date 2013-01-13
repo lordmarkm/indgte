@@ -28,6 +28,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baldwin.indgte.persistence.dto.Summary;
+import com.baldwin.indgte.persistence.model.BillingTransaction;
 import com.baldwin.indgte.persistence.model.BusinessGroup;
 import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.BusinessReview;
@@ -426,6 +427,14 @@ public class BusinessDaoImpl implements BusinessDao {
 	@Override
 	public void deleteProduct(long productId) {
 		Product product = getProduct(productId);
+		deleteProduct(product);
+	}
+	
+	private void deleteProduct(Product product) {
+		for(BillingTransaction b : product.getTransactions()) {
+			b.getDetails().setAdvertisedProduct(null);
+		}
+		
 		sessions.getCurrentSession().delete(product);
 	}
 
@@ -464,5 +473,21 @@ public class BusinessDaoImpl implements BusinessDao {
 		} else {
 			return summaries;
 		}
+	}
+
+	@Override
+	public void deleteCategory(long categoryId) {
+		Category category = getCategory(categoryId);
+		
+		List<BillingTransaction> transactions = category.getTransactions();
+		for(BillingTransaction b : transactions) {
+			b.getDetails().setAdvertisedCategory(null);
+		}
+		
+		for(Product product : category.getProducts()) {
+			deleteProduct(product);
+		}
+		
+		sessions.getCurrentSession().delete(category);
 	}
 }

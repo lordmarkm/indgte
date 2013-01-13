@@ -4,6 +4,9 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
+<link rel="stylesheet" href="<spring:url value='/resources/css/review/review.css' />" />
+<script src="<spring:url value='/resources/javascript/review/review.js' />" ></script>
+
 <title>Review for ${review.revieweeSummary.title }</title>
 
 <div class="review grid_8 maingrid">
@@ -47,6 +50,7 @@
 	
 	<div class="clear"></div>
 	
+	<c:if test="${!review.reviewer.username eq user.username }">
 	<section>
 		<div class="section-header">React</div>
 		<div class="react-agree-disagree hide"></div>
@@ -63,6 +67,7 @@
 			</sec:authorize>
 		</div>
 	</section>
+	</c:if>
 	
 	<section>
 		<div class="section-header">Comment</div>
@@ -70,30 +75,11 @@
 	</section>
 </div>
 
-<style>
-.review section:not(:first-child) {
-	margin-top: 20px;
-}
-
-.reviewee-img {
-	padding: 5px;
-}
-
-.reviewer-summary {
-	text-align: right;
-}
-.reviewer-container {
-	display: inline-block;
-	text-align: left;
-}
-.reviewer-container > div {
-	display: inline-block;
-	vertical-align: text-top;
-}
-</style>
-
 <script>
 window.review = {
+	id: '${review.id}',
+	type: '${review.reviewType}',
+	revieweeIdentifier: '${review.revieweeSummary.identifier}',
 	agree: '${agree}' === 'true',
 	disagree: '${disagree}' === 'true',
 	agreeCount: '${review.agreeCount}',
@@ -101,96 +87,43 @@ window.review = {
 }
 
 window.urls = {
+	deleteReview: '<spring:url value="/i/deletereview/" />',
+	user: '${urlUserProfile}',
+	business: '${urlProfile}',
 	reviewAgree: '<spring:url value="/i/reviewreact/${review.reviewType}/agree/${review.id}.json" />',
 	reviewDisagree: '<spring:url value="/i/reviewreact/${review.reviewType}/disagree/${review.id}.json" />'
 }
-
-$(function(){
-	var 
-		$agreeDisagree = $('.react-agree-disagree'),
-		$react = $('.react')
-		$btnAgree = $('.btn-agree'),
-		$btnDisagree = $('.btn-disagree'),
-		$agreeCount = $('.agreeCount'),
-		$disagreeCount = $('.disagreeCount'),
-		initial = true;
-	
-	function updateCounts(review) {
-		$agreeCount.text(review.agreeCount).dgteFadeIn();
-		$disagreeCount.text(review.disagreeCount).dgteFadeIn();
-	}
-	
-	function showAgree(review) {
-		$react.hide();
-		$agreeDisagree.hide().text('You agree with this review.');
-		var $flip = $('<div class="link-disagree">').appendTo($agreeDisagree);
-		$('<a>').attr('href', 'javascript:;').text('Disagree instead.').appendTo($flip);
-		if(initial) {
-			$agreeDisagree.show();
-			initial = false;
-		} else {
-			$agreeDisagree.dgteFadeIn();
-		}
-		updateCounts(review);
-	}
-	
-	function showDisagree(review) {
-		$react.hide();
-		$agreeDisagree.hide().text('You disagree with this review.');
-		var $flip = $('<div class="link-agree">').appendTo($agreeDisagree);
-		$('<a>').attr('href', 'javascript:;').text('Agree instead.').appendTo($flip);
-		if(initial) {
-			$agreeDisagree.show();
-			initial = false;
-		} else {
-			$agreeDisagree.dgteFadeIn();
-		}
-		updateCounts(review);
-	}
-	
-	function agreeDisagree(agree) {
-		$.post(agree ? urls.reviewAgree : urls.reviewDisagree, function(response) {
-			switch(response.status) {
-			case '200':
-				if(agree) {
-					showAgree(response.review);
-				} else {
-					showDisagree(response.review);
-				}
-				break;
-			default:
-				debug('error reacting to review');
-				debug(response);
-			}
-		});
-	}
-	
-	$('.btn-react').click(function(){
-		var agree = $(this).hasClass('agree');
-		agreeDisagree(agree);
-	});
-	
-	if(review.agree || review.disagree) {
-		$react.hide();
-		if(review.agree) {
-			showAgree(review);
-		} else {
-			showDisagree(review);
-		}
-	}
-	
-	$(document).on({
-		'click' : function(){
-			agreeDisagree(true);
-			$(this).hide();
-		}
-	}, '.link-agree')
-	
-	.on({
-		'click' : function(){
-			agreeDisagree(false);
-			$(this).hide();
-		}
-	}, '.link-disagree');
-});
 </script>
+
+<!-- Review menu -->
+<sec:authorize access="hasRole('ROLE_USER')">
+<c:if test="${review.reviewer.username eq user.username }">
+<div class="review-menu sidebar-section grid_4">
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Review Menu</div>
+		<button class="btn-delete-review">Delete review</button>
+	</div>
+</div>
+</c:if>
+</sec:authorize>
+
+<sec:authorize access="hasRole('ROLE_MODERATOR')">
+<div class="review-menu sidebar-section grid_4">
+	<div class="sidebar-container">
+		<div class="sidebar-section-header">Moderator Actions</div>
+		<div class="ui-state-highlight mb5 pd2"><spring:message code="mod.warning" /></div>
+		<button class="btn-delete-review">Delete review</button>
+	</div>
+</div>
+</sec:authorize>
+
+<!-- Notifications -->
+<%@include file="../grids/notifications4.jsp"  %>
+
+<sec:authorize access="hasRole('ROLE_USER')">
+<!-- Reviews -->
+<%@include file="../grids/reviewqueue.jsp" %>
+</sec:authorize>
+
+<!-- Sidebar Featured promos -->
+<%@include file="../grids/sidebarpromos.jsp" %>

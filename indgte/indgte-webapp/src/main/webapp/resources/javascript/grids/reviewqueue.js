@@ -8,23 +8,23 @@ $(function(){
 	
 	function valid() {
 		if($reviewqueue.length === 0) {
-			debug('Review queue container not available.');
+			error('Review queue container not available.');
 			return false;
 		}
 		if(!urls) {
-			debug('URLs not available in containing page');
+			error('URLs not available in containing page');
 			return false;
 		}
 		if(!urls.reviewqueue) {
-			debug('Review queue url not available');
+			error('Review queue url not available');
 			return false;
 		}
 		if(!urls.business) {
-			debug('Business Profile url not available');
+			error('Business Profile url not available');
 			return false;
 		}
 		if(!dgte.urls.imgur) {
-			debug('Imgur url (dgte.urls.imgur) not available');
+			error('Imgur url (dgte.urls.imgur) not available');
 			return false;
 		}
 		return true;

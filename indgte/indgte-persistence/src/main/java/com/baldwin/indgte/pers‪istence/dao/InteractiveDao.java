@@ -117,4 +117,6 @@ public interface InteractiveDao {
 	public Post getRandomFeaturedPost();
 
 	public void deletepost(long id);
+
+	public void deleteReview(ReviewType type, long reviewId);
 }

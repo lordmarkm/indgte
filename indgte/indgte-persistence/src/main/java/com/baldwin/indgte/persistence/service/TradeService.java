@@ -72,16 +72,16 @@ public class TradeService {
 		dao.addToWatchedTags(name, tag);
 	}
 
-	public void sold(String name, long itemId) throws IllegalAccessException {
-		dao.sold(name, itemId);
+	public void sold(boolean moderator, String name, long itemId) throws IllegalAccessException {
+		dao.sold(moderator, name, itemId);
 	}
 
-	public void available(String name, long itemId) throws IllegalAccessException {
-		dao.available(name, itemId);
+	public void available(boolean moderator, String name, long itemId) throws IllegalAccessException {
+		dao.available(moderator, name, itemId);
 	}
 	
-	public void delete(String name, long itemId) throws IllegalAccessException {
-		dao.delete(name, itemId);
+	public void delete(boolean moderator, String name, long itemId) throws IllegalAccessException {
+		dao.delete(moderator, name, itemId);
 	}
 
 }

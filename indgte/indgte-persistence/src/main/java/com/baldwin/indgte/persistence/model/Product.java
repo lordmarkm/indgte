@@ -75,6 +75,12 @@ public class Product implements Searchable, Attachable, Comparable<Product> {
 	@OneToMany(mappedBy="product", cascade=CascadeType.ALL)
 	private List<Wish> wishes;
 	
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="details.advertisedProduct")
+	private List<BillingTransaction> transactions;
+	
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="product")
+	private List<SidebarFeature> sidebarFeatures;
+	
 	@Column
 	private int comments;
 	
@@ -252,5 +258,23 @@ public class Product implements Searchable, Attachable, Comparable<Product> {
 
 	public void setTime(Date time) {
 		this.time = time;
+	}
+
+	@JsonIgnore
+	public List<BillingTransaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(List<BillingTransaction> transactions) {
+		this.transactions = transactions;
+	}
+
+	@JsonIgnore
+	public List<SidebarFeature> getSidebarFeatures() {
+		return sidebarFeatures;
+	}
+
+	public void setSidebarFeatures(List<SidebarFeature> sidebarFeatures) {
+		this.sidebarFeatures = sidebarFeatures;
 	}
 }

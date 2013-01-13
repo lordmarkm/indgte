@@ -376,6 +376,7 @@ public class NotificationsDaoImpl implements NotificationsDao {
 		
 		if(null == notif) {
 			notif = new ReviewReactNotification();
+			notif.setReviewId(review.getId());
 			notif.setMode(mode);
 			notif.setNotified(review.getReviewer());
 			notif.setReactors(reactorName);

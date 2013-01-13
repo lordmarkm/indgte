@@ -121,6 +121,10 @@ $(function(){
 		makestars($starContainer, review.score);
 		$reviewJustification.html(review.justification);
 		$iptJustification.val(removeBrs(review.justification));
+		var $agreeDisagree = $('<div class="agree-disagree-preview-container">').insertAfter($reviewJustification);
+		if(review.agreeCount) $('<span class="agree-disagree-preview greentext">').text(review.agreeCount + ' agree').appendTo($agreeDisagree);
+		if(review.disagreeCount) $('<span class="agree-disagree-preview redtext">').text(review.disagreeCount + ' disagree').appendTo($agreeDisagree);
+		$('<a>').attr('href', urls.review + review.id).text('Full review and comments').insertAfter($reviewJustification);
 	}
 	
 	function processReviewSuccess(response) {

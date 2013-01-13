@@ -17,4 +17,5 @@ public interface Review {
 	public int getDisagreeCount();
 	public void setDisagreeCount(int disagreeCount);
 	public int getScore();
+	public long getId();
 }

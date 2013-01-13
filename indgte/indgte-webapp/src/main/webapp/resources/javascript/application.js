@@ -31,6 +31,7 @@ window.dgte = {
 		noImage50 : '/resources/images/noimage50.png',
 		imgurUpload : 'http://api.imgur.com/2/upload.json',
 		imgur : 'http://i.imgur.com/',
+		review: '/i/review/',
 		preview : '/live/preview/',
 		twittercover : '/resources/images/preview/twittercover.jpg'
 	},
@@ -124,6 +125,37 @@ window.dgte = {
 		var e = document.createElement('div');
 		e.innerHTML = input;
 		return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+	},
+	
+	operationSuccess: function(message, refresh, callback) {
+		$('<div title="Operation successful">')
+			.text(message)
+			.dialog({
+				buttons: {
+					'OK': function(){
+						$(this).dialog('close');
+						if(refresh) {
+							window.location.reload();
+						}
+						
+						if(!refresh && typeof callback === 'function') {
+							callback();
+						}
+					}	
+				}
+			});
+	},
+	
+	operationFailed: function(message) {
+		$('<div title="Operation failed">')
+			.text(message ? message : 'Operation failed. Please try again')
+			.dialog({
+				buttons: {
+					'OK': function(){
+						$(this).dialog('close');
+					}	
+				}
+			});
 	}
 }
 

@@ -1,5 +1,5 @@
 #Signin
-application.secureUrl=http://dgteph.tomcathostingservice.com
+application.secureUrl=http://dgte.info
 
 socialsignin.signUpView=signupform
 socialsignin.defaultAuthenticationSuccessUrl=/

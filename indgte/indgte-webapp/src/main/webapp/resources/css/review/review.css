@@ -1,0 +1,22 @@
+.review section:not(:first-child) {
+	margin-top: 20px;
+}
+
+.reviewee-img {
+	padding: 5px;
+}
+
+.reviewer-summary {
+	text-align: right;
+}
+.reviewer-container {
+	display: inline-block;
+	text-align: left;
+}
+.reviewer-container > div {
+	display: inline-block;
+	vertical-align: text-top;
+}
+.btn-delete-review {
+	width: 100%;
+}

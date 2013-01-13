@@ -581,7 +581,7 @@ $(function(){
 <!-- Notifications -->
 <%@include file="../grids/notifications4.jsp"  %>
 
-<!-- Simillar Businesses -->
+<!-- Similar Businesses -->
 <%@include file="../grids/suggested4.jsp" %>
 
 <!-- Top Tens -->

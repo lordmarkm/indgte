@@ -77,7 +77,7 @@
 	<div class="grid_4 sidebar-section owner-menu">
 		<div class="sidebar-container">	
 			<div class="sidebar-section-header">Moderator Actions</div>
-			<div class="ui-state-highlight mb5 pd2">Enjoy your moderator powers. Don't be an asshole.</div>
+			<div class="ui-state-highlight mb5 pd2"><spring:message code="mod.warning" /></div>
 			
 			<jsp:useBean id="now" class="java.util.Date" />
 			<fmt:formatDate value="${now }" pattern="yyyy-MM-dd" var="formattedNow" /> 

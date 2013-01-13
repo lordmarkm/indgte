@@ -231,10 +231,14 @@ public class TradeDaoImpl implements TradeDao {
 	}
 
 	@Override
-	public void sold(String name, long itemId) throws IllegalAccessException {
+	public void sold(boolean moderator, String name, long itemId) throws IllegalAccessException {
 		BuyAndSellItem item = get(itemId);
 		
-		if(item.getOwner().getUsername().equals(name)) {
+		if(moderator) {
+			log.info("Moderator {} has deleted item with id itemId {}", name, itemId);
+		}
+		
+		if(moderator || item.getOwner().getUsername().equals(name)) {
 			item.setSoldout(true);
 		} else {
 			throw new IllegalAccessException(name + " does not own this item and may not mark it as sold");
@@ -242,10 +246,14 @@ public class TradeDaoImpl implements TradeDao {
 	}
 	
 	@Override
-	public void available(String name, long itemId) throws IllegalAccessException {
+	public void available(boolean moderator, String name, long itemId) throws IllegalAccessException {
 		BuyAndSellItem item = get(itemId);
 		
-		if(item.getOwner().getUsername().equals(name)) {
+		if(moderator) {
+			log.info("Moderator {} has deleted item with id itemId {}", name, itemId);
+		}
+			
+		if(moderator || item.getOwner().getUsername().equals(name)) {
 			item.setSoldout(false);
 		} else {
 			throw new IllegalAccessException(name + " does not own this item and may not mark it as available");
@@ -253,12 +261,12 @@ public class TradeDaoImpl implements TradeDao {
 	}
 	
 	@Override
-	public void delete(String name, long itemId) throws IllegalAccessException {
+	public void delete(boolean moderator, String name, long itemId) throws IllegalAccessException {
 		BuyAndSellItem item = get(itemId);
 		UserExtension user = users.getExtended(name);
 		
-		if(item.getOwner().equals(user)) {
-			user.getBuyAndSellItems().remove(item);
+		if(moderator || item.getOwner().equals(user)) {
+			item.getOwner().getBuyAndSellItems().remove(item);
 			sessions.getCurrentSession().delete(item);
 		} else {
 			throw new IllegalAccessException(name + " does not own this item and may not delete it");

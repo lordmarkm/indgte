@@ -736,7 +736,7 @@ $(function(){
 	function addReviewReactNotification(notification, $notif) {
 		$('<img class="notifimg">').attr('src', notification.lastReactorImageUrl).appendTo($notif);
 		var names = presentNames(notification.reactors);
-		var $notiftxt = $('<div class="notiftxt">').html('<strong>' + names + '</strong> ' + notification.mode + (names.indexOf(' and ') == -1 ? 's' : '') + ' with your review of ').appendTo($notif);
+		var $notiftxt = $('<div class="notiftxt">').html('<strong>' + names + '</strong> ' + notification.mode + (names.indexOf(' and ') == -1 ? 's' : '') + ' with your <a href="' + dgte.urls.review + notification.reviewType + '/' + notification.reviewId + '">review</a> of ').appendTo($notif);
 		var url = '#';
 		switch(notification.reviewType) {
 		case 'user':

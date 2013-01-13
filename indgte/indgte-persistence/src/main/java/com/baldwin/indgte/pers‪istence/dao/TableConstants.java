@@ -72,6 +72,9 @@ public class TableConstants {
 	public static final String REVIEW_REVIEWER = "reviewer";
 	public static final String REVIEW_AGREERS = "agreers";
 	public static final String REVIEW_DISAGREERS = "disagreers";
+
+	public static final String REVIEWREACT_REVIEWID = "reviewId";
+	
 	public static final String CHAT_CHANNEL = "channel";
 	
 	public static final String NOTIF_NOTIFIED = "notified";

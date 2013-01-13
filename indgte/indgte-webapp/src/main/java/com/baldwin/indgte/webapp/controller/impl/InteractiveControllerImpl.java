@@ -616,6 +616,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 		Review review = interact.getReview(type, reviewId, true);
 		MavBuilder mav = render("viewreview")
 				.put("review", review);
+		constants.insertConstants(mav);
 		
 		if(null != principal) {
 			UserExtension user = users.getExtended(principal.getName());
@@ -625,6 +626,19 @@ public class InteractiveControllerImpl implements InteractiveController {
 		}
 		
 		return mav.mav();
+	}
+
+	@Override
+	public @ResponseBody JSON deleteReview(Principal principal, @PathVariable ReviewType reviewType, @PathVariable long reviewId) {
+		try {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			boolean moderator = isModerator(auth);
+			interact.deleteReview(moderator, principal.getName(), reviewType, reviewId);
+			return JSON.ok();
+		} catch (Exception e) {
+			log.error("Error deleting review.", e);
+			return JSON.status500(e);
+		}
 	}
 
 	@Override

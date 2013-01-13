@@ -68,6 +68,12 @@ public class Category implements Searchable, Attachable {
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="category")
 	private List<Product> products;
 
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="details.advertisedCategory")
+	private List<BillingTransaction> transactions;
+	
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="category")
+	private List<SidebarFeature> sidebarFeatures;
+	
 	@Column
 	private int comments;
 	
@@ -191,5 +197,23 @@ public class Category implements Searchable, Attachable {
 
 	public void setSends(int sends) {
 		this.sends = sends;
+	}
+
+	@JsonIgnore
+	public List<BillingTransaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(List<BillingTransaction> transactions) {
+		this.transactions = transactions;
+	}
+
+	@JsonIgnore
+	public List<SidebarFeature> getSidebarFeatures() {
+		return sidebarFeatures;
+	}
+
+	public void setSidebarFeatures(List<SidebarFeature> sidebarFeatures) {
+		this.sidebarFeatures = sidebarFeatures;
 	}
 }

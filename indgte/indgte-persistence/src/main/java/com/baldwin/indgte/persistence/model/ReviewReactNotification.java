@@ -19,6 +19,9 @@ public class ReviewReactNotification extends Notification {
 	}
 	
 	@Column
+	private long reviewId;
+	
+	@Column
 	@Enumerated
 	private ReactionMode mode;
 
@@ -90,6 +93,14 @@ public class ReviewReactNotification extends Notification {
 
 	public void setRevieweeIdentifier(String revieweeIdentifier) {
 		this.revieweeIdentifier = revieweeIdentifier;
+	}
+
+	public long getReviewId() {
+		return reviewId;
+	}
+
+	public void setReviewId(long reviewId) {
+		this.reviewId = reviewId;
 	}
 
 

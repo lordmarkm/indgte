@@ -51,4 +51,5 @@ public interface BusinessDao {
 	void setSoldout(long productId, boolean isSoldout);
 	void deleteProduct(long productId);
 	List<Summary> getLatestEntities();
+	void deleteCategory(long categoryId);
 }

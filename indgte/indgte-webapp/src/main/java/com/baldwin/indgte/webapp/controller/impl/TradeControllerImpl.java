@@ -9,7 +9,11 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -143,8 +147,11 @@ public class TradeControllerImpl implements TradeController {
 
 	@Override
 	public @ResponseBody JSON sold(Principal principal, @PathVariable long itemId) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		boolean moderator = isModerator(auth);
+		
 		try {
-			trade.sold(principal.getName(), itemId);
+			trade.sold(moderator, principal.getName(), itemId);
 			return JSON.ok();
 		} catch (Exception e) {
 			return JSON.status500(e);
@@ -153,8 +160,11 @@ public class TradeControllerImpl implements TradeController {
 	
 	@Override
 	public @ResponseBody JSON available(Principal principal, @PathVariable long itemId) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		boolean moderator = isModerator(auth);
+		
 		try {
-			trade.available(principal.getName(), itemId);
+			trade.available(moderator, principal.getName(), itemId);
 			return JSON.ok();
 		} catch (Exception e) {
 			return JSON.status500(e);
@@ -164,7 +174,10 @@ public class TradeControllerImpl implements TradeController {
 	@Override
 	public @ResponseBody JSON delete(Principal principal, @PathVariable long itemId) {
 		try {
-			trade.delete(principal.getName(), itemId);
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			boolean moderator = isModerator(auth);
+			
+			trade.delete(moderator, principal.getName(), itemId);
 			return JSON.ok();
 		} catch (Exception e) {
 			return JSON.status500(e);
@@ -235,5 +248,19 @@ public class TradeControllerImpl implements TradeController {
 			log.error("Error adding watched tag", e);
 			return JSON.status500(e);
 		}
+	}
+	
+	private boolean isModerator(Authentication auth) {
+		log.debug("Checking authentication. Authorities: {}", auth.getAuthorities());
+		for(GrantedAuthority g : auth.getAuthorities()) {
+			if(g.getAuthority().equals("ROLE_MODERATOR")) return true;
+		}
+		return false;
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public String error(Exception e) {
+		log.error("Exception!", e);
+		return "redirect:/error/";
 	}
 }

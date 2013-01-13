@@ -885,5 +885,29 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		
 		session.delete(p);
 	}
+
+	@Override
+	public void deleteReview(ReviewType type, long reviewId) {
+		Session session = sessions.getCurrentSession();
+		
+		String deleteNotifsQuery = "delete from ReviewReactNotification where type = :type and reviewId = :reviewId";
+		session.createQuery(deleteNotifsQuery)
+			.setParameter(TYPE, type)
+			.setLong(REVIEWREACT_REVIEWID, reviewId)
+			.executeUpdate();
+		
+		switch(type) {
+		case business:
+			BusinessReview bReview = (BusinessReview) getReview(type, reviewId, false);
+			session.delete(bReview);
+			break;
+		case user:
+			UserReview uReview = (UserReview) getReview(type, reviewId, false);
+			session.delete(uReview);
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid review type: " + type);
+		}
+	}
 	
 }

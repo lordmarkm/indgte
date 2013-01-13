@@ -104,6 +104,9 @@ public interface InteractiveController {
 	@RequestMapping(value = "/review/{type}/{reviewId}", method = RequestMethod.GET)
 	public ModelAndView viewReview(Principal principal, ReviewType type, long reviewId);
 	
+	@RequestMapping(value = "/deletereview/{reviewType}/{reviewId}/json", method = RequestMethod.POST)
+	public JSON deleteReview(Principal principal, ReviewType reviewType, long reviewId);
+	
 	@RequestMapping(value = "/allreviews/{type}/{targetId}.json", method = RequestMethod.GET)
 	public JSON getAllReviews(Principal principal, ReviewType type, long targetId);
 	

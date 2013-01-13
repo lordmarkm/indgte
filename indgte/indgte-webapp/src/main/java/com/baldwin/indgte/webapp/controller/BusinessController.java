@@ -49,6 +49,9 @@ public interface BusinessController {
 	@RequestMapping(value = "/categories/{domain}/{categoryId}/mainpic/", method = RequestMethod.POST)
 	public JSON uploadCategoryPic(String domain, long categoryId, Imgur mainpic);
 	
+	@RequestMapping(value = "/categories/delete/{categoryId}/json", method = RequestMethod.POST)
+	public JSON deleteCategory(Principal principal, long categoryId);
+	
 	@RequestMapping(value = "/newcategory/{domain}", method = RequestMethod.GET)
 	public ModelAndView createCategoryPage(Principal principal, String domain, WebRequest request);
 	

@@ -3,6 +3,8 @@ package com.baldwin.indgte.persistence.service;
 import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import com.baldwin.indgte.pers‪istence.dao.BusinessGroupDao;
 
 @Service
 public class BusinessService {
+	static Logger log = LoggerFactory.getLogger(BusinessService.class);
+	
 	@Autowired BusinessDao dao;
 	@Autowired BusinessGroupDao cDao;
 	public BusinessProfile get(String domain) {
@@ -138,6 +142,15 @@ public class BusinessService {
 		Product product = dao.getProduct(productId);
 		if(product.getCategory().getBusiness().getOwner().getUsername().equals(name)) {
 			dao.setSoldout(productId, isSoldout);
+		}
+	}
+	public void deleteCategory(boolean moderator, String name, long categoryId) {
+		Category category = dao.getCategory(categoryId);
+		if(moderator) {
+			log.info("Moderator {} is deleting category {} in {}", category.getName(), category.getBusiness().getName());
+		}
+		if(moderator || category.getBusiness().getOwner().getUsername().equals(name)) {
+			dao.deleteCategory(category.getId());
 		}
 	}
 }
