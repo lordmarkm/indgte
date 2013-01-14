@@ -35,10 +35,10 @@
 	border: 0 !important;
 }
 
-.status-textarea:-moz-placeholder, .status-title:-moz-placeholder{
+.status-textarea:-moz-placeholder, .status-title:-moz-placeholder, .ipt-tags:-moz-placeholder{
 	color: grey;
 }
-.status-textarea:-webkit-input-placeholder, .status-title:-webkit-input-placeholder  {
+.status-textarea:-webkit-input-placeholder, .status-title:-webkit-input-placeholder, .ipt-tags:-webkit-input-plceholder  {
 	color: grey
 }
 

@@ -8,7 +8,6 @@
 <link rel="icon" href="<c:url value='/resources/images/favicon.ico?v=4' />" type="image/x-icon" />
 <title>Connect &mdash; Dumaguete</title>
 
-<link rel="stylesheet" href="<c:url value='/resources/css/login.css' />" />
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 
 </head>

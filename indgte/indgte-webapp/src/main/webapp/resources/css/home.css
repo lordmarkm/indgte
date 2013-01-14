@@ -1,3 +1,8 @@
 #rdo-post-sort label {
 	max-width: 39%;
 }
+
+.ipt-tags {
+	border: 1px solid rgb(204, 204, 204);
+	margin-top: 5px;
+}

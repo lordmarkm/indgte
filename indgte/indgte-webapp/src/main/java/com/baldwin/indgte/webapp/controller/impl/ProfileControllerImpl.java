@@ -5,6 +5,8 @@ import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.baldwin.indgte.persistence.constants.Initializable;
 import com.baldwin.indgte.persistence.constants.PostType;
+import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.persistence.service.BillingService;
@@ -61,7 +64,7 @@ public class ProfileControllerImpl implements ProfileController {
 	
 	@Override
 	public ModelAndView profile(Principal principal) {
-		log.debug("Profile page requested by {}", principal);
+		log.info("{} has requested Profile page", principal.getName());
 		
 		UserExtension user = users.getExtended(principal.getName());
 		
@@ -72,7 +75,7 @@ public class ProfileControllerImpl implements ProfileController {
 	
 	@Override
 	public ModelAndView myBusinesses(Principal principal, WebRequest request) {
-		log.debug("Profile page requested by {}", principal);
+		log.info("{} has requested business management page", principal.getName());
 		
 		UserExtension user = users.getExtended(principal.getName(), Initializable.businesses);
 		
@@ -84,10 +87,22 @@ public class ProfileControllerImpl implements ProfileController {
 	@Override
 	public ModelAndView userProfile(Principal principal, @PathVariable String targetUsername) {
 		UserExtension user = users.getExtended(principal.getName());
-		UserExtension target = users.getExtended(targetUsername, wishlist, buyandsellitems, Initializable.businesses);
+		UserExtension target = users.getExtended(targetUsername, subscriptions, wishlist, buyandsellitems, Initializable.businesses);
 
+		List<BusinessProfile> businessSubscriptions = new ArrayList<BusinessProfile>();
+		for(Long id : target.getBusinessSubscriptions()) {
+			businessSubscriptions.add(businesses.get(id));
+		}
+		
+		List<UserExtension> userSubscriptions = new ArrayList<UserExtension>();
+		for(Long id : target.getUserSubscriptions()) {
+			userSubscriptions.add(users.getExtended(id));
+		}
+		
 		return render(user, "userprofile")
 					.put("target", target)
+					.put("businessSubscriptions", businessSubscriptions)
+					.put("userSubscriptions", userSubscriptions)
 					.put("subscribed", posts.isSubscribed(principal.getName(), target.getId(), PostType.user))
 					.mav();
 	}
@@ -111,9 +126,24 @@ public class ProfileControllerImpl implements ProfileController {
 
 	@Override
 	public ModelAndView manageAccount(Principal principal) {
-		UserExtension user = users.getExtended(principal.getName());
+		log.info("{} has requested account management screen", principal.getName());
+		
+		UserExtension user = users.getExtended(principal.getName(), Initializable.subscriptions);
+		
+		List<BusinessProfile> businessSubscriptions = new ArrayList<BusinessProfile>();
+		for(Long id : user.getBusinessSubscriptions()) {
+			businessSubscriptions.add(businesses.get(id));
+		}
+		
+		List<UserExtension> userSubscriptions = new ArrayList<UserExtension>();
+		for(Long id : user.getUserSubscriptions()) {
+			userSubscriptions.add(users.getExtended(id));
+		}
+		
 		return render(user, "manage")
 					.put("languages", Language.values())
+					.put("businessSubscriptions", businessSubscriptions)
+					.put("userSubscriptions", userSubscriptions)
 					.mav();
 	}
 
@@ -121,6 +151,8 @@ public class ProfileControllerImpl implements ProfileController {
 	public ModelAndView changeLocale(Principal principal, 
 			HttpServletRequest request, HttpServletResponse response, 
 			@PathVariable String localeStr) {
+		
+		log.info("{} has changed locale to {}", principal.getName(), localeStr);
 		
 		localeResolver.setLocale(request, response, Language.determineLocale(localeStr));
 		users.changeLocale(principal.getName(), localeStr);

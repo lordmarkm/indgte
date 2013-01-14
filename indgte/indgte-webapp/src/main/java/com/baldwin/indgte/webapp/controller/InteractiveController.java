@@ -39,6 +39,12 @@ public interface InteractiveController {
 	public JSON changebg(Principal principal, Background newbg);
 	
 	/**
+	 * Get most recent posts of businesses in a business group
+	 */
+	@RequestMapping(value = "/groupposts/json", method = RequestMethod.GET)
+	public JSON groupPosts(Principal principal, long groupId, int start, int howmany);
+	
+	/**
 	 * Get most recent posts of entities principal is subscribed to
 	 */
 	@RequestMapping(value = "/subposts/json", method = RequestMethod.GET)

@@ -1,0 +1,47 @@
+div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
+	display:none;	
+}
+
+.owner-operations-container button {
+	margin-top: 5px;
+	width: 100%;
+}
+
+.newproduct-pic-container {
+	float: left;
+	width: 250px;
+	height: 250px;
+	border: 1px dotted grey;
+	text-align: center;
+	position: relative;
+}
+
+.newproduct-pic-display {
+	vertical-align: middle;
+	max-width: 230px;
+	max-height: 230px;
+	margin: 10px;
+	cursor: pointer;
+}
+
+.newproduct-form {
+	margin-left: 270px;
+}
+
+.newproduct-form button {
+	margin-top: 5px;
+}
+
+.newproduct-field {
+	font-size: 0.8em;
+	margin-top: 5px;
+}
+
+.newproduct-pic {
+	left: 0;
+	top: 0;
+	position: absolute;
+    opacity:0;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: alpha(opacity=0);
+}

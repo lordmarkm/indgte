@@ -33,7 +33,9 @@ window.dgte = {
 		imgur : 'http://i.imgur.com/',
 		review: '/i/review/',
 		preview : '/live/preview/',
-		twittercover : '/resources/images/preview/twittercover.jpg'
+		twittercover : '/resources/images/preview/twittercover.jpg',
+		unsubscribe: '/i/unsubscribe'
+			
 	},
 	
 	upload: function(file, onComplete, title, caption) {
@@ -142,7 +144,8 @@ window.dgte = {
 							callback();
 						}
 					}	
-				}
+				},
+				modal: true
 			});
 	},
 	
@@ -154,7 +157,8 @@ window.dgte = {
 					'OK': function(){
 						$(this).dialog('close');
 					}	
-				}
+				},
+				modal: true
 			});
 	}
 }

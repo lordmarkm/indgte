@@ -9,7 +9,7 @@
 <table class="tbl-business-info">
 	<tr><td>Group</td>			 <td class="capitalize">${business.category.name }</td></tr>
 	<tr><td>Description</td>     <td>${business.description }</td></tr>
-	<tr><td>URL</td>		 	 <td>www.indumaguete.com/${business.domain } </td>
+	<tr><td>URL</td>		 	 <td><a class="fatlink" href="http://dgte.info/${business.domain }">http://dgte.info/${business.domain }</a></td>
 	<tr><td>Owner</td>           <td><a class="dgte-previewlink fatlink" previewtype="user" href="${urlProfileRoot}user/${business.owner.username}">${business.owner.username }</a></td></tr>
 </table>
 </div>

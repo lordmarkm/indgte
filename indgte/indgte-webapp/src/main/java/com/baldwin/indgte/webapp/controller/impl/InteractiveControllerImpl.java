@@ -4,6 +4,7 @@ import static com.baldwin.indgte.webapp.controller.MavBuilder.basicWithImages;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
 import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
+import static com.baldwin.indgte.webapp.misc.DgteConstants.REVIEW_PREVIEW_LENGTH;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -136,6 +137,20 @@ public class InteractiveControllerImpl implements InteractiveController {
 		
 		constants.insertConstants(mav);
 		return mav.mav();
+	}
+	
+	@Override
+	public @ResponseBody JSON groupPosts(Principal principal, long groupId, int start, int howmany) {
+		try {
+			List<Post> posts = interact.getBusinessGroupPosts(groupId, start, howmany);
+			Post featured = interact.getBusinessGroupFeaturedPost(groupId);
+			return JSON.ok()
+						.put("posts", posts)
+						.put("featured", featured);
+		} catch (Exception e) {
+			log.error("Exception getting business group posts", e);
+			return JSON.status500(e);
+		}
 	}
 	
 	@Override
@@ -614,8 +629,21 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public ModelAndView viewReview(Principal principal, @PathVariable ReviewType type, @PathVariable long reviewId) {
 		Review review = interact.getReview(type, reviewId, true);
+		
+		String thumbnail = review.getRevieweeSummary().getImgur() != null ? review.getRevieweeSummary().getImgur().getSmallSquare() : null;
+		String pageDescription = review.getReviewer().getUsername() + "'s review of " + review.getRevieweeSummary().getTitle();
+		String justification = review.getJustification();
+		
+		if(justification.length() > REVIEW_PREVIEW_LENGTH) {
+			pageDescription += " - " + justification.substring(0, REVIEW_PREVIEW_LENGTH);
+		} else {
+			pageDescription += " - " + justification;
+		}
+		
 		MavBuilder mav = render("viewreview")
-				.put("review", review);
+				.put("review", review)
+				.put(MavBuilder.PAGE_DESCRIPTION, pageDescription)
+				.put(MavBuilder.PAGE_THUMBNAIL, thumbnail);
 		constants.insertConstants(mav);
 		
 		if(null != principal) {

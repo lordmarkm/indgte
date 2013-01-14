@@ -7,6 +7,7 @@ public class TableConstants {
 	public static final String TIME = "time";
 	public static final String TYPE = "type";
 	public static final String USER = "user";
+	public static final String BUSINESS = "business";
 
 	//for scoring
 	public static final String LIKES = "likes";

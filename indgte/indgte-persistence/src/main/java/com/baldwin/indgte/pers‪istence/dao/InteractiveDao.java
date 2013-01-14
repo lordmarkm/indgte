@@ -119,4 +119,8 @@ public interface InteractiveDao {
 	public void deletepost(long id);
 
 	public void deleteReview(ReviewType type, long reviewId);
+
+	public List<Post> getBusinessGroupPosts(long groupId, int start,	int howmany);
+
+	public Post getBusinessGroupFeaturedPost(long groupId);
 }

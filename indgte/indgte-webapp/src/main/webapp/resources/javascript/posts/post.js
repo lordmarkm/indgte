@@ -183,18 +183,21 @@ $(function(){
 		}
 	}
 	
-	$btnPromote.click(function(){
-		$dlgPromote.dialog({
-			buttons: {
-				'OK'	 : function(){
-					$frmPromote.submit();
-				},
-				'Cancel' : function(){
-					$(this).dialog('close');
+	$(document).on({
+		click: function() {
+			debug('promote button clicked.');
+			$dlgPromote.dialog({
+				buttons: {
+					'OK'	 : function(){
+						$frmPromote.submit();
+					},
+					'Cancel' : function(){
+						$(this).dialog('close');
+					}
 				}
-			}
-		});
-	});
+			});
+		}
+	}, '.btn-promote');
 	
 	//delete
 	var $btnDelete = $('.btn-delete');

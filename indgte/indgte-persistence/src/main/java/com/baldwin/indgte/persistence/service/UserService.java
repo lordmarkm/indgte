@@ -13,6 +13,10 @@ public class UserService {
 	@Autowired
 	private UserDao dao;
 	
+	public UserExtension getExtended(Long id, Initializable... initializables) {
+		return dao.getExtended(id, initializables);
+	}
+	
 	public UserExtension getExtended(String username, Initializable... initializables) {
 		return dao.getExtended(username, initializables);
 	}

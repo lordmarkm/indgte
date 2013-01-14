@@ -7,4 +7,5 @@ public class DgteConstants {
 	public final static int FULLSEARCH_MAXRESULTS = 10;
 	public static final String SITE_THUMBNAIL = "http://i.imgur.com/unfvF.png";
 	public static final String SITE_DESCRIPTION = "Your first destination in Dumaguete City";
+	public static final int REVIEW_PREVIEW_LENGTH = 80;
 }

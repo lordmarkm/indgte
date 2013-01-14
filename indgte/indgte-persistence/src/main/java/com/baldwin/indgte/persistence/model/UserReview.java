@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,6 +36,9 @@ public class UserReview implements Review {
 	@Id
 	@GeneratedValue
 	private long id;
+	
+	@OneToOne(optional=true, mappedBy="userReview", cascade={CascadeType.ALL})
+	private ReviewNotification notification;
 	
 	@ManyToOne(optional=false)
 	@JoinColumn(name="revieweeId", nullable=false, updatable=false)
@@ -198,5 +203,13 @@ public class UserReview implements Review {
 
 	public void setComments(int comments) {
 		this.comments = comments;
+	}
+
+	public ReviewNotification getNotification() {
+		return notification;
+	}
+
+	public void setNotification(ReviewNotification notification) {
+		this.notification = notification;
 	}
 }

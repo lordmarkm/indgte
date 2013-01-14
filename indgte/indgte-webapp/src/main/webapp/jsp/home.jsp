@@ -55,6 +55,7 @@
 			</div>
 		</div>
 		
+		<input type="text" name="tags" class="ipt-tags ui-state-active" placeholder="Tags 'news buglasan pics-2012' (space-delimited, 3 max)" />
 		<div class="newpost-errors"></div>
 	</form>
 	<div class="status-options hide">
@@ -182,7 +183,8 @@ $(function(){
 		$loadmore = $('.loadmore'),
 		$rdoSortPosts = $('#rdo-post-sort').buttonset(),
 		$linkpreview = $('.link-preview-container'),
-		$linkpreviewImg = $('.link-preview-images');
+		$linkpreviewImg = $('.link-preview-images'),
+		$iptTags = $('.ipt-tags');
 	
 	//posts
 	var $feedcontainer = $('.feedcontainer'),
@@ -210,12 +212,16 @@ $(function(){
 		//entity
 		$iptEntity.removeAttr('entitytype').removeAttr('entityid');
 		$entityPreview.html('');
+		
+		//tags
+		$iptTags.hide();
 	}
 	
 	function matchWidths() {
 		$title.css('width', $status.width());
 		$errors.css('width', $status.width() + 4);
-		$attachInputContainer.css('width', $status.width() + 4)
+		$attachInputContainer.css('width', $status.width() + 4);
+		$iptTags.css('width', $status.width() + 8);
 	}
 	
 	function expandStatus() {
@@ -227,6 +233,7 @@ $(function(){
 		$statusOptions.show();
 		$title.show();
 		$errors.show();
+		$iptTags.show();
 		checkActiveAttachment();
 		checkPoster();
 		matchWidths();

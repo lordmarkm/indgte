@@ -307,4 +307,12 @@ public class InteractiveService {
 			throw new IllegalAccessException(name + " does not have permission to delete this review.");
 		}
 	}
+
+	public List<Post> getBusinessGroupPosts(long groupId, int start, int howmany) {
+		return dao.getBusinessGroupPosts(groupId, start, howmany);
+	}
+
+	public Post getBusinessGroupFeaturedPost(long groupId) {
+		return dao.getBusinessGroupFeaturedPost(groupId);
+	}
 }

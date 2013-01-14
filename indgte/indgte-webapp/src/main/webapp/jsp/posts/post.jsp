@@ -93,22 +93,6 @@
 			<button class="btn-delete mt5">Delete this post</button>
 		</div>
 	</div>
-	<div class="dialog-promote hide" title="Promote this post">
-		<span><spring:message code="post.promote.dialog" arguments="${user.billingInfo.coconuts }" /></span>
-		<form class="form-promote" method="post" action="<c:url value='/o/promotepost/${post.id }' />" >
-			<table>
-				<tr>
-					<td><label for="start-date">Promote from</label></td>
-					<td><input type="date" id="start-date" name="startDate" readonly="readonly" placeholder="Click to choose" /></td>
-				</tr>
-				<tr>
-					<td><label for="end-date">Promote until</label></td>
-					<td><input type="date" id="end-date" name="endDate" readonly="readonly" placeholder="Click to choose"/></td>
-				</tr>
-			</table>
-		</form>
-		<span class="coconut-cost"><spring:message code="promote.dialog.comp" /></span>
-	</div>
 </sec:authorize>
 
 <!-- Notifications -->

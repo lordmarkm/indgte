@@ -27,6 +27,13 @@ body {
 .mt5 {margin-top: 5px;}
 .mb5 {margin-bottom: 5px;}
 .mt10 {margin-top: 10px;}
+.mt20 {margin-top: 20px;}
+
+/* limit height */
+.mh40 {
+	overflow-y:  hidden;
+	max-height: 40px;
+}
 
 .pd2{padding:2px;}
 .pd5{padding:5px;}

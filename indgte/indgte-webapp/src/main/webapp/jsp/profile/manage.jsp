@@ -70,8 +70,56 @@
 			</tr>
 		</table>
 	</section>
+	
+	<c:if test="${not empty businessSubscriptions && fn:length(businessSubscriptions) > 0 }">
+		<section class="subscriptions">
+			<div class="section-header">Business Subscriptions</div>
+			<table class="subscription-table">
+				<c:forEach items="${businessSubscriptions }" var="bSub">
+					<tr>
+						<td><a class="fatlink dgte-previewlink" previewtype="business" href="${urlProfile}${bSub.domain}"><img class="preview-image" src="${bSub.profilepic != null ? bSub.profilepic.smallSquare : noimage50 }" /></a></td>
+						<td>
+							<a class="fatlink dgte-previewlink" previewtype="business" href="${urlProfile}${bSub.domain}">${bSub.fullName }</a>
+							<div class="subtitle mh40">${fn:substring(bSub.description,0,140) }<c:if test="${fn:length(bSub.description) > 80 }">...</c:if></div>
+						</td>
+						<td>
+							<button class="btn-unsubscribe" subsType="business" subsId="${bSub.id }">Unsubscribe</button>
+						</td>
+					</tr>
+				</c:forEach>
+			</table>
+		</section>
+	</c:if>
+	
+	<c:if test="${not empty userSubscriptions && fn:length(userSubscriptions) > 0 }">
+		<section class="subscriptions">
+			<div class="section-header">User Subscriptions</div>
+			<table class="subscription-table">
+				<c:forEach items="${userSubscriptions }" var="uSub">
+					<tr>
+						<td><a class="fatlink dgte-previewlink" previewtype="user" href="${urlUserProfile}${uSub.username}"><img class="preview-image" src="${uSub.imageUrl }" /></a></td>
+						<td>
+							<a class="fatlink dgte-previewlink" previewtype="user" href="${urlUserProfile}${uSub.username}">${uSub.username }</a>
+							<div class="subtitle">${uSub.rank }</div>
+						</td>
+						<td>
+							<button class="btn-unsubscribe" subsType="user" subsId="${uSub.id }">Unsubscribe</button>
+						</td>
+					</tr>
+				</c:forEach>
+			</table>
+		</section>
+	</c:if>
 </div>
 <!-- grid_9 -->
+
+<script src="<spring:url value='/resources/javascript/userprofile/manage.js' />" ></script>
+<script>
+window.manage = {
+	locale : '${user.appearanceSettings.locale}',
+	urlChangeLocale : '<spring:url value="/p/manage/lang/" />'
+}
+</script>
 
 <style>
 section:not(.manage-appearance) {
@@ -83,20 +131,5 @@ section:not(.manage-appearance) {
 	min-width: 100px;
 }
 </style>
-
-<script>
-window.manage = {
-	locale : '${user.appearanceSettings.locale}',
-	urlChangeLocale : '<spring:url value="/p/manage/lang/" />'
-}
-
-$(function(){
-	$('#sel-lang')
-		.val(manage.locale)
-		.change(function(){
-			window.location.href = manage.urlChangeLocale + $(this).val();
-		});
-});
-</script>
 
 <%@include file="../grids/notifications4.jsp"  %>

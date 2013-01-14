@@ -45,6 +45,14 @@
 			<button class="galleria-fullscreen">Fullscreen</button>
 		</div>
 	</section>
+	
+	<section>
+		<div class="section-header">Comments</div>
+		<div class="mt5">
+			<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+		</div>
+		<div class="fb-comments" data-href="${baseURL}/b/products/${product.category.business.domain}/${product.id}" data-width="620"></div>
+	</section>
 </div>
 
 <!-- product owner controls -->

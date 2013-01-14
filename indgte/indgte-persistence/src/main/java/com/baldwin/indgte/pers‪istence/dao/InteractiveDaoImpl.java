@@ -145,6 +145,26 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	}
 	
 	@Override
+	public List<Post> getBusinessGroupPosts(long groupId, int start, int howmany) {
+		String query = "select id from BusinessProfile where businessGroup.id = :groupId";
+		
+		@SuppressWarnings("unchecked")
+		List<Long> businessIds = sessions.getCurrentSession().createQuery(query)
+			.setLong("groupId", groupId)
+			.list();
+		
+		@SuppressWarnings("unchecked")
+		List<Post> posts = sessions.getCurrentSession().createCriteria(Post.class)
+			.add(Restrictions.eq(TableConstants.TYPE, PostType.business))
+			.add(Restrictions.in(TableConstants.POST_POSTERID, businessIds))
+			.setFirstResult(start).setMaxResults(howmany)
+			.addOrder(Order.desc(TableConstants.POST_TIME))
+			.list();
+
+		return posts;
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<Post> getById(long posterId, PostType type, int start, int howmany) {
 		return sessions.getCurrentSession().createCriteria(Post.class)
@@ -870,6 +890,36 @@ public class InteractiveDaoImpl implements InteractiveDao {
 			return null;
 		}
 	}
+	
+	@Override
+	public Post getBusinessGroupFeaturedPost(long groupId) {
+		String query = "select id from BusinessProfile where businessGroup.id = :groupId";
+		
+		@SuppressWarnings("unchecked")
+		List<Long> businessIds = sessions.getCurrentSession().createQuery(query)
+			.setLong("groupId", groupId)
+			.list();
+
+		Date now = new Date();
+		@SuppressWarnings("unchecked")
+		List<Post> featuredPosts = (List<Post>) sessions.getCurrentSession().createCriteria(Post.class)
+			.add(Restrictions.le("featureStart", now))
+			.add(Restrictions.ge("featureEnd", now))
+			.add(Restrictions.eq(TableConstants.TYPE, PostType.business))
+			.add(Restrictions.in(TableConstants.POST_POSTERID, businessIds))
+			.list();
+		
+		Post featuredPost;
+		if(featuredPosts.size() > 0) {
+			int size = featuredPosts.size();
+			int rand = random.nextInt(size);
+			log.debug("Featured posts: {}, returning {}-th element", size, rand);
+			featuredPost = featuredPosts.get(rand);
+			return featuredPost;
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public void deletepost(long id) {
@@ -890,7 +940,7 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	public void deleteReview(ReviewType type, long reviewId) {
 		Session session = sessions.getCurrentSession();
 		
-		String deleteNotifsQuery = "delete from ReviewReactNotification where type = :type and reviewId = :reviewId";
+		String deleteNotifsQuery = "delete from ReviewReactNotification where reviewType = :type and reviewId = :reviewId";
 		session.createQuery(deleteNotifsQuery)
 			.setParameter(TYPE, type)
 			.setLong(REVIEWREACT_REVIEWID, reviewId)
@@ -909,5 +959,5 @@ public class InteractiveDaoImpl implements InteractiveDao {
 			throw new IllegalArgumentException("Invalid review type: " + type);
 		}
 	}
-	
+
 }

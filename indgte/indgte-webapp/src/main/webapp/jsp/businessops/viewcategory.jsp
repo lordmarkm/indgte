@@ -1,8 +1,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
 <link rel="stylesheet" href="<c:url value='/resources/css/businessops.css' />" />
+<link rel="stylesheet" href="<spring:url value='/resources/css/category/viewcategory.css' />" />
 
 <title>${category.name } &mdash; Dumaguete</title>
 
@@ -32,6 +34,14 @@
 	<div class="products-container">
 		<ol class="products"></ol>
 	</div>
+	
+	<section>
+		<div class="section-header">Comments</div>
+		<div class="mt5">
+			<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+		</div>
+		<div class="fb-comments" data-href="${baseURL}/b/categories/${category.business.domain}/${category.id}" data-width="620"></div>
+	</section>
 </div>
 
 <c:if test="${not empty category.mainpic }">
@@ -151,11 +161,18 @@ $(function(){
 });
 </script>
 
-<c:if test="${owner }">
+<sec:authorize access="hasRole('ROLE_MODERATOR')">
+	<c:set var="moderator" value="true" />
+</sec:authorize>
+
+<c:if test="${owner || moderator}">
 
 <div class="owner-operations-container grid_4 sidebar-section">
 	<div class="sidebar-container">
 		<div class="sidebar-section-header">Category operations</div>
+		<c:if test="${moderator }">
+			<div class="ui-state-highlight"><spring:message code="mod.warning" /></div>
+		</c:if>
 		<button class="btn-edit-category">Edit</button>
 		<button class="btn-create-product">New product</button>
 		<button class="btn-promote">Promote</button>
@@ -207,56 +224,6 @@ $(function(){
 		<input type="hidden" class="newproduct-pic-deletehash" />
 	</div>
 </div>
-
-<style>
-div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
-	display:none;	
-}
-
-.owner-operations-container button {
-	margin-top: 5px;
-	width: 100%;
-}
-
-.newproduct-pic-container {
-	float: left;
-	width: 250px;
-	height: 250px;
-	border: 1px dotted grey;
-	text-align: center;
-	position: relative;
-}
-
-.newproduct-pic-display {
-	vertical-align: middle;
-	max-width: 230px;
-	max-height: 230px;
-	margin: 10px;
-	cursor: pointer;
-}
-
-.newproduct-form {
-	margin-left: 270px;
-}
-
-.newproduct-form button {
-	margin-top: 5px;
-}
-
-.newproduct-field {
-	font-size: 0.8em;
-	margin-top: 5px;
-}
-
-.newproduct-pic {
-	left: 0;
-	top: 0;
-	position: absolute;
-    opacity:0;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-    filter: alpha(opacity=0);
-}
-</style>
 
 <script>
 window.user = {

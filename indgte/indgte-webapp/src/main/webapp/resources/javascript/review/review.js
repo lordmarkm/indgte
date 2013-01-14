@@ -96,16 +96,20 @@ $(function(){
 				buttons: {
 					'Yup': function(){
 						$reviewDeleteDialog.parent().spinner();
-						$.post(urls.deleteReview + review.id + '/json', function(response) {
+						$.post(urls.deleteReview + review.type + '/' + review.id + '/json', function(response) {
 							switch(response.status) {
 							case '200':
 								$reviewDeleteDialog.dialog('close');
 								switch(review.type) {
 								case 'business':
-									window.location.replace(urls.business + review.revieweeIdentifier);
+									dgte.operationSuccess('Review deleted', false, function(){
+										window.location.replace(urls.business + review.revieweeIdentifier);
+									});
 									break;
 								case 'user':
-									window.location.replace(urls.user + review.revieweeIdentifier);
+									dgte.operationSuccess('Review deleted', false, function(){
+										window.location.replace(urls.user + review.revieweeIdentifier);
+									});
 									break;
 								default:
 									window.location.replace('/');

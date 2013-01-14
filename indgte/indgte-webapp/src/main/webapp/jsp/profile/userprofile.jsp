@@ -163,6 +163,18 @@
 	</div>
 </section>
 
+<c:if test="${(not empty businessSubscriptions && fn:length(businessSubscriptions) > 0) || (not empty userSubscriptions && fn:length(userSubscriptions) > 0) }">
+	<section>
+		<div class="section-header">Subscriptions</div>
+		<c:forEach items="${businessSubscriptions }" var="bSub">
+			<a class="fatlink dgte-previewlink" previewtype="business" href="${urlProfile}${bSub.domain}"><img class="preview-image" src="${bSub.profilepic != null ? bSub.profilepic.smallSquare : noimage50 }" /></a>
+		</c:forEach>
+		<c:forEach items="${userSubscriptions }" var="uSub">
+			<a class="fatlink dgte-previewlink" previewtype="user" href="${urlUserProfile}${uSub.username}"><img class="preview-image" src="${uSub.imageUrl }" /></a>
+		</c:forEach>
+	</section>
+</c:if>
+
 <section class="feed" id="feed" type="user">
 	<div class="section-header">Feed</div>
 	<c:if test="${target.username == user.username }">

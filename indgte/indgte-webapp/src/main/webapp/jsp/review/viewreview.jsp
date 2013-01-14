@@ -12,12 +12,17 @@
 <div class="review grid_8 maingrid">
 	<div class="page-header">Review for ${review.revieweeSummary.title }</div>
 	<section class="reviewee-summary">
-		<c:if test="${review.reviewType eq 'business' }">
+		<c:choose>
+		<c:when test="${review.reviewType eq 'business' && not empty review.revieweeSummary.thumbnailHash}">
 			<img class="reviewee-img floatleft" src="${urlImgur }${review.revieweeSummary.thumbnailHash }s.jpg" />
-		</c:if>
-		<c:if test="${review.reviewType eq 'user' }">
+		</c:when>
+		<c:when test="${review.reviewType eq 'user' && not empty review.revieweeSummary.thumbnailHash}">
 			<img class="reviewee-img floatleft" src="${review.revieweeSummary.thumbnailHash }" />
-		</c:if>
+		</c:when>
+		<c:otherwise>
+			<img class="reviewee-img floatleft" src="${noimage50 }" />
+		</c:otherwise>
+		</c:choose>
 		<div class="reviewee-info">
 			<div><strong>${review.revieweeSummary.title }</strong></div>
 			<div>${review.revieweeSummary.description }</div>
@@ -50,7 +55,7 @@
 	
 	<div class="clear"></div>
 	
-	<c:if test="${!review.reviewer.username eq user.username }">
+	<c:if test="${review.reviewerSummary.identifier != user.username }">
 	<section>
 		<div class="section-header">React</div>
 		<div class="react-agree-disagree hide"></div>
