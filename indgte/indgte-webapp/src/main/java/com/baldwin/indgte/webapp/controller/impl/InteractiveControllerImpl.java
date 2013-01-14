@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,6 +161,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 			log.debug("Poster type: [{}]", request.getParameter("posterType"));
 			log.debug("Text: [{}]", request.getParameter("text"));
 			log.debug("Attachment? {}", request.getParameter("attachmentType"));
+			log.debug("Tags: [{}]", request.getParameter("tags"));
 	
 			Summary poster;
 			PostType postType = PostType.valueOf(request.getParameter("posterType"));
@@ -229,11 +231,13 @@ public class InteractiveControllerImpl implements InteractiveController {
 	
 			String title = clean(request.getParameter("title"));
 			String text = clean(request.getParameter("text"));
-	
+			String tags = Jsoup.clean(request.getParameter("tags"), Whitelist.none());
+			
 			post.setType(postType);
 			post.setPostTime(new Date());
 			post.setTitle(title);
 			post.setText(text);
+			post.setTags(tags);
 	
 			interact.saveOrUpdate(post);
 			log.debug("Post: {} text: {}", post);

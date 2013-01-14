@@ -95,6 +95,9 @@ public class Post {
 	@OneToMany(mappedBy="details.featuredPost")
 	private List<BillingTransaction> transactions;
 	
+	@Column
+	private String tags;
+	
 	@Override
 	public String toString() {
 		return title + ": " + text;
@@ -294,6 +297,14 @@ public class Post {
 
 	public void setTransactions(List<BillingTransaction> transactions) {
 		this.transactions = transactions;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 
 }
