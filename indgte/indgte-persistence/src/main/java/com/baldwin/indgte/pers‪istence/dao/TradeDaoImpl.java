@@ -235,10 +235,13 @@ public class TradeDaoImpl implements TradeDao {
 		BuyAndSellItem item = get(itemId);
 		
 		if(moderator) {
-			log.info("Moderator {} has deleted item with id itemId {}", name, itemId);
+			log.info("[moderator] {} has marked Buy and Sell item {} as sold", name, item.getName());
+		} else {
+			log.info("{} has marked Buy and Sell item {} as sold", name, item.getName());
 		}
 		
 		if(moderator || item.getOwner().getUsername().equals(name)) {
+			
 			item.setSoldout(true);
 		} else {
 			throw new IllegalAccessException(name + " does not own this item and may not mark it as sold");
@@ -250,7 +253,9 @@ public class TradeDaoImpl implements TradeDao {
 		BuyAndSellItem item = get(itemId);
 		
 		if(moderator) {
-			log.info("Moderator {} has deleted item with id itemId {}", name, itemId);
+			log.info("[moderator] {} has marked Buy and Sell item {} as available", name, item.getName());
+		} else {
+			log.info("[moderator] {} has marked Buy and Sell item {} as available", name, item.getName());
 		}
 			
 		if(moderator || item.getOwner().getUsername().equals(name)) {
@@ -264,6 +269,12 @@ public class TradeDaoImpl implements TradeDao {
 	public void delete(boolean moderator, String name, long itemId) throws IllegalAccessException {
 		BuyAndSellItem item = get(itemId);
 		UserExtension user = users.getExtended(name);
+		
+		if(moderator) {
+			log.info("[moderator] {} has deleted Buy and Sell item {}", name, item.getName());
+		} else {
+			log.info("{} has deleted Buy and Sell item {}", name, item.getName());
+		}
 		
 		if(moderator || item.getOwner().equals(user)) {
 			item.getOwner().getBuyAndSellItems().remove(item);

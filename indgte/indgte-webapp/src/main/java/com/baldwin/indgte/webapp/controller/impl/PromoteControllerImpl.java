@@ -23,7 +23,7 @@ public class PromoteControllerImpl implements PromoteController {
 	public String promotePost(Principal principal, @PathVariable long postId, 
 			@RequestParam @DateTimeFormat(pattern="MM/dd/yyyy") Date startDate, 
 			@RequestParam @DateTimeFormat(pattern="MM/dd/yyyy") Date endDate) {
-		
+
 		billing.promotePost(principal.getName(), postId, startDate, endDate);
 		return "redirect:/i/posts/" + postId;
 	}

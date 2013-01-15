@@ -89,6 +89,8 @@ public class ProfileControllerImpl implements ProfileController {
 		UserExtension user = users.getExtended(principal.getName());
 		UserExtension target = users.getExtended(targetUsername, subscriptions, wishlist, buyandsellitems, Initializable.businesses);
 
+		log.info("{}'s profile page requested by {}", target.getUsername(), principal == null ? "Anonymous" : principal.getName());
+		
 		List<BusinessProfile> businessSubscriptions = new ArrayList<BusinessProfile>();
 		for(Long id : target.getBusinessSubscriptions()) {
 			businessSubscriptions.add(businesses.get(id));

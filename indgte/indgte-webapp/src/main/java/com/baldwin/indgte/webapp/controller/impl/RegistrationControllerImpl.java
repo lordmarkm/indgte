@@ -41,7 +41,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 	
 	@Override
 	public ModelAndView regform(Principal principal, RegistrationForm regform) {
-		log.debug("Registration form requested by {}", principal);
+		log.info("Registration form requested by {}", principal);
 		UserExtension user = userService.getExtended(principal.getName());
 		
 		if(null != regform) {
@@ -58,7 +58,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 	
 	@Override
 	public ModelAndView editform(Principal principal, RegistrationForm regform, @PathVariable String domain) {
-		log.debug("Edit form requested by {} for {}", principal.getName(), domain);
+		log.info("Edit form requested by {} for {}", principal.getName(), domain);
 		
 		UserExtension user = userService.getExtended(principal.getName());
 		BusinessProfile business = businesses.get(domain);
@@ -87,7 +87,7 @@ public class RegistrationControllerImpl implements RegistrationController {
 	}
 	
 	public ModelAndView savePageTwo(Principal principal, @ModelAttribute RegistrationForm regform) {
-		log.debug("Registration flow, Page 2 save request form domain {}. Category is now [{}]", regform.getDomain(), regform.getCategory());
+		log.info("Registration flow, Page 2 save request form domain {}. Category is now [{}]", regform.getDomain(), regform.getCategory());
 		UserExtension user = userService.getExtended(principal.getName());
 		String name = clean(regform.getRegformCategory(), false);
 		BusinessGroup category = businesses.getCategory(name);

@@ -57,6 +57,8 @@ public class TradeControllerImpl implements TradeController {
 	
 	@Override
 	public ModelAndView landing(Principal principal) {
+		log.info("Trade page requested by {}", principal == null ? "Anonymous" : principal.getName());
+		
 		Collection<BuyAndSellItem> popular = trade.getPopular(0, 9);
 		Collection<BuyAndSellItem> recent = trade.getRecent(0, 9);
 		
@@ -78,6 +80,9 @@ public class TradeControllerImpl implements TradeController {
 	@Override
 	public ModelAndView newItem(Principal principal, BuyAndSellForm form) {
 		BuyAndSellItem item = form.getItem();
+		
+		log.info("New Buy and Sell item {} created by {}", item.getName(), principal.getName());
+		
 		UserExtension user = users.getExtended(principal.getName());
 		if(null != item) {
 			trade.save(principal.getName(), item);
@@ -93,8 +98,10 @@ public class TradeControllerImpl implements TradeController {
 	
 	@Override
 	public ModelAndView viewItem(Principal principal, @PathVariable long itemId) {
-		log.debug("{} viewing item with id {}", null == principal ? "Anonymous" : principal.getName(), itemId);
+		
 		BuyAndSellItem item = trade.get(null == principal ? null : principal.getName(), itemId);
+		
+		log.info("View request for buy and sell item {} from {}", item.getName(), null == principal ? "Anonymous" : principal.getName());
 		
 		if(null != item) {
 			MavBuilder builder = render("buyandsellitem")
@@ -126,6 +133,9 @@ public class TradeControllerImpl implements TradeController {
 	
 	@Override
 	public @ResponseBody JSON bid(Principal principal, @PathVariable long itemId, @PathVariable double amount) {
+
+		log.info("New bid on item with id {} ({}) from {}", itemId, amount, principal.getName());
+		
 		try {
 			double minimum = trade.bid(principal.getName(), itemId, amount);
 			

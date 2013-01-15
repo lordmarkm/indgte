@@ -93,6 +93,8 @@ public class BillingDaoImpl implements BillingDao {
 		BillingTransactionDetails details = transaction.getDetails();
 		details.setFeaturedPost(post);
 		
+		log.info("{} is promoting post {} from {} to {}", username, post.getTitle(), startDate, endDate);
+		
 		sessions.getCurrentSession().save(transaction);
 	}
 
@@ -120,34 +122,42 @@ public class BillingDaoImpl implements BillingDao {
 		BillingTransactionDetails details = transaction.getDetails();
 		session.save(transaction);
 		
+		String entityTitle;
+		
 		switch(type) {
 		case business:
 			BusinessProfile business = businesses.get(id);
 			feature.setBusiness(business);
 			transaction.setOperation(BillingOperation.advertise_business);
 			details.setAdvertisedBusiness(business);
+			entityTitle = business.getDomain();
 			break;
 		case category:
 			Category category = businesses.getCategory(id);
 			feature.setCategory(category);
 			transaction.setOperation(BillingOperation.advertise_category);
 			details.setAdvertisedCategory(category);
+			entityTitle = category.getName();
 			break;
 		case product:
 			Product product = businesses.getProduct(id);
 			feature.setProduct(product);
 			transaction.setOperation(BillingOperation.advertise_product);
 			details.setAdvertisedProduct(product);
+			entityTitle = product.getName();
 			break;
 		case buyandsellitem:
 			BuyAndSellItem bas = trade.get(id);
 			feature.setBas(bas);
 			transaction.setOperation(BillingOperation.advertise_buyandsell);
 			details.setAdvertisedItem(bas);
+			entityTitle = bas.getName();
 			break;
 		default:
 			throw new IllegalArgumentException("Illegal feature type: " + type);
 		}
+		
+		log.info("{} is promoting entity {} from {} to {}", username, entityTitle, start, end);
 		
 		session.save(feature);
 	}

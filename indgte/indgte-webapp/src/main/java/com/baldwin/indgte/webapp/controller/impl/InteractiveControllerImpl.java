@@ -119,6 +119,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 	public ModelAndView viewpost(Principal principal, @PathVariable long postId) {
 		Post post = interact.getPost(postId);
 
+		log.info("Post {} requested by {}", post.getTitle(), principal == null ? "Anonymous" : principal.getName());
+		
 		MavBuilder mav = render("viewpost")
 				.put("post", post)
 				.description(post.getText());
@@ -154,6 +156,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public @ResponseBody JSON newstatus(Principal principal, WebRequest request) {
 		try {
+			log.info("New post with title {} by {}", principal.getName(), request.getParameter("title"));
+			
 			log.debug("Poster id: [{}]", request.getParameter("posterId"));
 			log.debug("Poster type: [{}]", request.getParameter("posterType"));
 			log.debug("Text: [{}]", request.getParameter("text"));
@@ -443,6 +447,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 
 	@Override
 	public ModelAndView toptens(Principal principal) {
+		log.info("Toptens page requested by {}", principal == null ? "Anonymous" : principal.getName());
+		
 		Collection<TopTenList> recentLists = interact.getRecentToptens(0, 8);
 		Collection<TopTenList> popularLists = interact.getPopularToptens(0, 8);
 		//Collection<TopTenList> userLists = interact.getUserToptens(principal.getName());
@@ -481,6 +487,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 	public ModelAndView topten(Principal principal, @PathVariable long toptenId) {
 		TopTenList topten = interact.getTopten(toptenId);
 		TopTenCandidate userVoted = null;
+		
+		log.info("Topten {} requested by {}", topten.getTitle(), principal == null ? "Anonymous" : principal.getName());
 		
 //		if(log.isDebugEnabled()) {
 //			StringBuilder candidateIds = new StringBuilder();
@@ -536,6 +544,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 		TopTenList topten = form.getList();
 		interact.saveTopTenList(principal.getName(), topten);
 
+		log.info("Topten list {} created by {}", topten.getTitle(), principal == null ? "Anonymous" : principal.getName());
+		
 		return redirect("/i/toptens/" + topten.getId()).mav();
 	}
 
@@ -623,6 +633,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public @ResponseBody JSON changetheme(Principal principal, @PathVariable Theme newtheme) {
 		try {
+			log.info("{} has changed theme to {}", principal.getName(), newtheme);
 			interact.changetheme(principal.getName(), newtheme);
 			return JSON.ok();
 		} catch (Exception e) {
@@ -633,6 +644,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public @ResponseBody JSON changebg(Principal principal, @PathVariable Background newbg) {
 		try {
+			log.info("{} has changed background to {}", principal.getName(), newbg);
 			interact.changebg(principal.getName(), newbg);
 			return JSON.ok();
 		} catch (Exception e) {
@@ -643,6 +655,8 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public ModelAndView viewReview(Principal principal, @PathVariable ReviewType type, @PathVariable long reviewId) {
 		Review review = interact.getReview(type, reviewId, true);
+		
+		log.info("Review of {} by {} requested by {}", review.getRevieweeSummary().getTitle(), review.getReviewerSummary().getTitle(), principal == null ? "Anonymous" : principal.getName());
 		
 		String thumbnail = review.getRevieweeSummary().getImgur() != null ? review.getRevieweeSummary().getImgur().getSmallSquare() : null;
 		String pageDescription = review.getReviewer().getUsername() + "'s review of " + review.getRevieweeSummary().getTitle();

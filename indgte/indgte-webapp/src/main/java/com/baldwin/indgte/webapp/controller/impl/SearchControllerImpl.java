@@ -59,7 +59,7 @@ public class SearchControllerImpl implements SearchController {
 
 	@Override
 	public ModelAndView yellowpages(Principal principal) {
-		log.debug("Yellowpages requested. Principal: {}", principal == null ? "Anonymous" : principal);
+		log.info("Yellowpages requested. Principal: {}", principal == null ? "Anonymous" : principal);
 		
 		MultiValueMap<String, Number> count = search.getYellowPagesIndex();
 		log.debug("Business count: {}", count);
@@ -83,6 +83,8 @@ public class SearchControllerImpl implements SearchController {
 	public ModelAndView search(Principal principal, @PathVariable String term) throws Exception {
 		long start = System.currentTimeMillis();
 
+		log.info("Search for term {} from {}", term, principal == null ? "Anonymous" : principal.getName());
+		
 		MavBuilder mav = render("fullsearch")
 				.put("term", term)
 				.put("maxresults", DgteConstants.FULLSEARCH_MAXRESULTS);
@@ -183,6 +185,8 @@ public class SearchControllerImpl implements SearchController {
 	public ModelAndView viewCategory(Principal principal, @PathVariable long groupId) {
 		BusinessGroup group = search.getBusinessGroup(groupId);
 		List<YellowPagesEntry> businesses = search.getYellowPagesEntries(groupId);
+
+		log.info("Business group page for group {} with {} businesses requested by {}", group.getName(), businesses.size(), principal == null ? "Anonymous" : principal.getName());
 		
 		MavBuilder mav = render("yellowpage")
 				.put("group", group)

@@ -78,6 +78,12 @@ public class BusinessControllerImpl implements BusinessController {
 		BusinessProfile business = businesses.get(domain);
 		Category category = businesses.getCategory(categoryId);
 		
+		if(null == principal) {
+			log.info("Category {} ({}) view requested", category.getName(), domain);
+		} else {
+			log.info("Category {} ({}) view requested by {}", category.getName(), domain, principal.getName());
+		}
+		
 		MavBuilder mav = render("viewcategory")
 				.put("business", business)
 				.put("category", category);
@@ -123,6 +129,8 @@ public class BusinessControllerImpl implements BusinessController {
 	
 	@Override
 	public ModelAndView createCategoryPage(Principal principal, @PathVariable String domain, WebRequest request) {
+		log.info("Category creation page for domain {} requested by {}", domain, principal.getName());
+		
 		BusinessProfile business = businesses.get(domain);
 		UserExtension user = users.getExtended(principal.getName());
 		return render(user, "createcategory")
@@ -183,7 +191,7 @@ public class BusinessControllerImpl implements BusinessController {
 	
 	@Override
 	public ModelAndView createProductPage(Principal principal, @PathVariable String domain, @PathVariable long categoryId, WebRequest request) {
-		log.debug("Product creation page requested?");
+		log.info("Product creation page for domain {} requested by {}", domain, principal.getName());
 		
 		UserExtension user = users.getExtended(principal.getName());
 		return render(user, "createproduct").mav();
@@ -191,8 +199,6 @@ public class BusinessControllerImpl implements BusinessController {
 
 	@Override
 	public @ResponseBody JSON createProduct(Principal principal, @PathVariable String domain, @PathVariable long categoryId, @RequestBody Product product) {
-		log.debug("JSON createProduct(...) called. Product: {}", product);
-		
 		product.setName(clean(product.getName()));
 		product.setDescription(clean(product.getDescription()));
 		businesses.createProduct(categoryId, product);
@@ -201,12 +207,12 @@ public class BusinessControllerImpl implements BusinessController {
 
 	@Override
 	public ModelAndView viewProduct(Principal principal, @PathVariable String domain, @PathVariable long productId) {
-		log.debug("ModelAndView for Product with id {} requested by {}.", productId, principal == null ? "Anonymous" : principal);
-		
 		BusinessProfile business = businesses.get(domain);
 		Product product = businesses.getProduct(productId);
 		List<BusinessProfile> suggestions = businesses.getSuggestions(business);
 
+		log.info("Product {} requested by {}.", product.getName(), principal == null ? "Anonymous" : principal);
+		
 		MavBuilder mav = render("viewproduct")
 					.put("business", business)
 					.put("suggestions", suggestions)
@@ -319,7 +325,7 @@ public class BusinessControllerImpl implements BusinessController {
 		Product product = businesses.getProduct(productId);
 		model.addAttribute("product", product);
 		
-		log.debug("Edit product requested for {}-{}", product.getId(), product.getName());
+		log.info("Edit product requested for {} ({}) by {}", product.getName(), domain, principal.getName());
 		
 		return render(user, "editproduct")
 					.put("business", business)
@@ -329,7 +335,8 @@ public class BusinessControllerImpl implements BusinessController {
 
 	@Override
 	public ModelAndView editProduct(Principal principal, @PathVariable String domain, @PathVariable long productId, @ModelAttribute("product") Product product) {
-		log.debug("Edit form submitted for {}-{}", product.getId(), product.getName());
+		log.info("Edit form submitted for {} ({}) by {}", product.getName(), domain, principal.getName());
+		
 		product.setName(clean(product.getName()));
 		product.setDescription(clean(product.getDescription()));
 		businesses.update(product);

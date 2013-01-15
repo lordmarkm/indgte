@@ -49,11 +49,11 @@ public class HomeControllerImpl implements HomeController {
 		MavBuilder mav = render("home");
 
 		if(null != principal) {
-			log.debug("Home page requested by {}", principal.getName());
+			log.info("Home page requested by {}", principal.getName());
 			UserExtension user = users.getExtended(principal.getName(), Initializable.businesses);
 			mav.put("user", user);
 		} else {
-			log.debug("Home page requested by Anonymous, ip = {}", request.getRemoteAddr());
+			log.info("Home page requested by Anonymous, ip = {}", request.getRemoteAddr());
 		}
 		
 		constants.insertConstants(mav);
@@ -62,7 +62,11 @@ public class HomeControllerImpl implements HomeController {
 	
 	@Override
 	public ModelAndView businessProfile(Principal principal, @PathVariable("domain") String domain) {
-		log.debug("Profile requested for {}", domain);
+		if(null == principal) {
+			log.info("Profile requested for {}", domain);	
+		} else {
+			log.info("Profile requested for {} by {}", domain, principal.getName());
+		}
 
 		if(null == principal) {
 			//user is anon

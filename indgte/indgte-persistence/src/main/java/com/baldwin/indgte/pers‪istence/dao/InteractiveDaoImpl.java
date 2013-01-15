@@ -612,10 +612,12 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		case product:
 			Product product = businesses.getProduct(id);
 			wish.setProduct(product);
+			log.info("{} has added {} to wishlist.", name, product.getName());
 			break;
 		case buyandsell:
 			BuyAndSellItem tradeItem = trade.get(id);
 			wish.setBuyAndSellItem(tradeItem);
+			log.info("{} has added {} to wishlist.", name, tradeItem.getName());
 			break;
 		default:
 			throw new IllegalStateException("Unknown type: " + type);
@@ -632,7 +634,7 @@ public class InteractiveDaoImpl implements InteractiveDao {
 		for(int i = 0; i < wishlist.size(); i++) {
 			wishlist.get(i).setWishOrder(i);
 		}
-		
+
 		sessions.getCurrentSession().save(wish);
 		return true;
 	}
@@ -740,9 +742,6 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	 */
 	@Override
 	public void addEntityToList(String name, long listId, AttachmentType type,	long attachmentId) {
-		log.debug("Attaching candidate of type {} with id {} to list with id {}, requested by {}",
-				type, attachmentId, listId, name);
-		
 		UserExtension creator = users.getExtended(name);
 		TopTenList list = (TopTenList) sessions.getCurrentSession().get(TopTenList.class, listId);
 		TopTenCandidate candidate = new TopTenCandidate();
@@ -758,6 +757,8 @@ public class InteractiveDaoImpl implements InteractiveDao {
 			log.debug("Entity already existed in list. No action taken.");
 		}
 		
+		log.debug("Attaching {} with id {} to list {}, requested by {}",
+				type, attachmentId, list.getTitle(), name);
 		sessions.getCurrentSession().save(candidate);
 	}
 
@@ -815,7 +816,7 @@ public class InteractiveDaoImpl implements InteractiveDao {
 
 	@Override
 	public Review reviewReact(String name, ReviewType type, String mode, long reviewId) {
-		log.debug("{} {}s with {} review with id {}", name, mode, type, reviewId);
+		log.info("{} {}s with {} review with id {}", name, mode, type, reviewId);
 		
 		UserExtension user = users.getExtended(name);
 		Review review = getReview(type, reviewId, false);
