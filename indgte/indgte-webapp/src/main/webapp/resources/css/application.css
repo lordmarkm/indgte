@@ -41,7 +41,7 @@ body {
 .hide {display: none;}
 .bold {font-weight: bold;}
 	/* layout */
-.maingrid {min-height: 1400px;}
+.maingrid {min-height: 1800px;}
 .relative {position: relative;}
 .inline {display: inline;}
 .inline-block {display: inline-block;}
@@ -123,6 +123,7 @@ a.fatlink {
 
 .sidebar-section {
 	font-size: 0.9em !important;
+	float: right;
 }
 .sidebar-section:not(:first-child) {
 	margin-top: 5px;

@@ -48,13 +48,13 @@ public interface InteractiveController {
 	 * Get most recent posts of entities principal is subscribed to
 	 */
 	@RequestMapping(value = "/subposts/json", method = RequestMethod.GET)
-	public JSON subposts(Principal principal, int start, int howmany, String sort, boolean hasSticky);
+	public JSON subposts(Principal principal, int start, int howmany, String sort, String tagFilter, boolean hasSticky);
 	
 	/**
 	 * Get most recent posts of a single entity
 	 */
 	@RequestMapping(value = "/posts/", method = RequestMethod.GET)
-	public JSON lastPosts(long posterId, PostType type, int start, int howmany, boolean hasSticky);
+	public JSON lastPosts(long posterId, PostType type, int start, int howmany, boolean hasSticky, String tagFilter);
 	
 	@RequestMapping(value = "/posts/{postId}", method = RequestMethod.GET)
 	public ModelAndView viewpost(Principal principal, long postId);

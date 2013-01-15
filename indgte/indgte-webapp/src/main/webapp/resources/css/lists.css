@@ -112,7 +112,6 @@
 }
 
 .post-time {
-	margin-top: 5px;
 	font-size: 0.8em;
 	color: #202020;
 	display: inline-block;
@@ -131,11 +130,15 @@ li.ui-state-default {
 }
 
 .post-comments {
-	margin: 5px 0 0 5px;
+	margin: 0 0 0 5px;
 	display: inline-block;
 	font-size: 0.8em;
 }
 
 .post-fb {
 	margin: 20px 10px 10px 60px;
+}
+
+.post-tags {
+	margin-top: 5px;
 }

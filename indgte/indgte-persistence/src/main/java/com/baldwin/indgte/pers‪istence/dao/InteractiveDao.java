@@ -28,13 +28,13 @@ public interface InteractiveDao {
 	@Deprecated
 	public Set<Post> getByDomain(String domain, int start, int howmany);
 
-	public Collection<Post> getById(long posterId, PostType type, int start, int howmany);
+	public Collection<Post> getById(long posterId, PostType type, int start, int howmany, String tagFilter);
 
 	public Post newPost(long posterId, PostType type, String title, String text);
 
 	public void subscribeToBusiness(String username, Long id);
 
-	public List<Post> getSubposts(String username, int start, int howmany);
+	public List<Post> getSubposts(String username, int start, int howmany, String tagFilter);
 
 	public void unsubscribeFromBusiness(String username, Long id);
 
@@ -108,11 +108,11 @@ public interface InteractiveDao {
 
 	public int subscount(PostType type, Long id);
 
-	public Collection<Post> getPosts(int start, int howmany);
+	public Collection<Post> getPosts(int start, int howmany, String tagFilter);
 
 	public void changebg(String name, Background newBg);
 
-	Collection<Post> getPostsByPopularity(int start, int howmany);
+	Collection<Post> getPostsByPopularity(int start, int howmany, String tagFilter);
 
 	public Post getRandomFeaturedPost();
 
@@ -120,7 +120,7 @@ public interface InteractiveDao {
 
 	public void deleteReview(ReviewType type, long reviewId);
 
-	public List<Post> getBusinessGroupPosts(long groupId, int start,	int howmany);
+	public List<Post> getBusinessGroupPosts(long groupId, int start,	int howmany, String tagFilter);
 
 	public Post getBusinessGroupFeaturedPost(long groupId);
 }

@@ -69,7 +69,7 @@ public class AdminControllerImpl implements AdminController {
 			case postsGetSubposts:
 				String username = request.getParameter("username");
 				try{
-					Collection<Post> subPosts = postDao.getSubposts(username, 0, 15);
+					Collection<Post> subPosts = postDao.getSubposts(username, 0, 15, null);
 					if(null == subPosts) {
 						return JSON.status404().put("message", username + " not found.");
 					}

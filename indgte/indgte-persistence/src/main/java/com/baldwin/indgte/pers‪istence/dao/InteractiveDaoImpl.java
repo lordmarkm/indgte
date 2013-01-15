@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
@@ -79,26 +80,35 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public Collection<Post> getPosts(int start, int howmany) {
-		return sessions.getCurrentSession().createCriteria(Post.class)
+	public Collection<Post> getPosts(int start, int howmany, String tagFilter) {
+		Criteria crit = sessions.getCurrentSession().createCriteria(Post.class)
 				.setFirstResult(start)
 				.setMaxResults(howmany)
-				.addOrder(Order.desc(POST_TIME))
-				.list();
+				.addOrder(Order.desc(POST_TIME));
+		if(null != tagFilter && tagFilter.length()>0) {
+			crit.add(Restrictions.like(TAGS, "% " + tagFilter + " %"));
+		}
+		return crit.list();
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public Collection<Post> getPostsByPopularity(int start, int howmany) {
+	public Collection<Post> getPostsByPopularity(int start, int howmany, String tagFilter) {
 		long startTime = System.currentTimeMillis();
 		
 		String queryString = "select *, (p.likes*10 + p.comments + 3) * 10/(timestampdiff(HOUR,p.postTime,now())^1.4) as 'quotient'" +
 				" from posts p order by quotient desc, postId desc limit :start, :howmany";
 		
-		List<Post> results = sessions.getCurrentSession().createSQLQuery(queryString)
-			.addEntity(Post.class)
-			.setInteger("start", start).setInteger("howmany", howmany)
-			.list();
+		if(null != tagFilter && tagFilter.length()>0) {
+			queryString =  "select *, (p.likes*10 + p.comments + 3) * 10/(timestampdiff(HOUR,p.postTime,now())^1.4) as 'quotient'" +
+					" from posts p where tags like '% " + tagFilter + " %' order by quotient desc, postId desc limit :start, :howmany";
+		}
+		
+		Query query = sessions.getCurrentSession().createSQLQuery(queryString)
+				.addEntity(Post.class)
+				.setInteger("start", start).setInteger("howmany", howmany);
+		
+		List<Post> results = query.list();
 		
 		log.debug("Find posts by popularity query completed in {} ms", System.currentTimeMillis() - startTime);
 
@@ -107,7 +117,7 @@ public class InteractiveDaoImpl implements InteractiveDao {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Post> getSubposts(String username, int start, int howmany) {
+	public List<Post> getSubposts(String username, int start, int howmany, String tagFilter) {
 		Session session = sessions.getCurrentSession();
 		
 		final PostType[] supportedTypes = new PostType[] {PostType.business, PostType.user};
@@ -136,44 +146,56 @@ public class InteractiveDaoImpl implements InteractiveDao {
 			return new ArrayList<Post>();
 		}
 		
-		return session.createCriteria(Post.class)
+		Criteria crit = session.createCriteria(Post.class)
 			.add(orJunction)
 			.setFirstResult(start)
 			.setMaxResults(howmany)
-			.addOrder(Order.desc(TableConstants.POST_TIME))
-			.list();
+			.addOrder(Order.desc(TableConstants.POST_TIME));
+		
+		if(null != tagFilter && tagFilter.length()>0) {
+			crit.add(Restrictions.like(TAGS, "% " + tagFilter + " %"));
+		}
+		
+		return crit	.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Post> getBusinessGroupPosts(long groupId, int start, int howmany) {
+	public List<Post> getBusinessGroupPosts(long groupId, int start, int howmany, String tagFilter) {
 		String query = "select id from BusinessProfile where businessGroup.id = :groupId";
 		
-		@SuppressWarnings("unchecked")
 		List<Long> businessIds = sessions.getCurrentSession().createQuery(query)
 			.setLong("groupId", groupId)
 			.list();
 		
-		@SuppressWarnings("unchecked")
-		List<Post> posts = sessions.getCurrentSession().createCriteria(Post.class)
+		Criteria crit = sessions.getCurrentSession().createCriteria(Post.class)
 			.add(Restrictions.eq(TableConstants.TYPE, PostType.business))
 			.add(Restrictions.in(TableConstants.POST_POSTERID, businessIds))
 			.setFirstResult(start).setMaxResults(howmany)
-			.addOrder(Order.desc(TableConstants.POST_TIME))
-			.list();
+			.addOrder(Order.desc(TableConstants.POST_TIME));
 
-		return posts;
+		if(null != tagFilter && tagFilter.length()>0) {
+			crit.add(Restrictions.like(TAGS, "% " + tagFilter + " %"));
+		}
+		
+		return crit.list();
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public Collection<Post> getById(long posterId, PostType type, int start, int howmany) {
-		return sessions.getCurrentSession().createCriteria(Post.class)
+	public Collection<Post> getById(long posterId, PostType type, int start, int howmany, String tagFilter) {
+		Criteria crit = sessions.getCurrentSession().createCriteria(Post.class)
 				.add(Restrictions.eq("posterId", posterId))
 				.add(Restrictions.eq("type", type))
 				.setFirstResult(start)
 				.setMaxResults(howmany)
-				.addOrder(Order.desc(TableConstants.POST_TIME))
-				.list();
+				.addOrder(Order.desc(TableConstants.POST_TIME));
+		
+		if(null != tagFilter && tagFilter.length()>0) {
+			crit.add(Restrictions.like(TAGS, "% " + tagFilter + " %"));
+		}
+		
+		return crit.list();
 	}
 	
 	/**

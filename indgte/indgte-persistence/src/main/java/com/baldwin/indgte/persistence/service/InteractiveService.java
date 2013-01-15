@@ -76,7 +76,7 @@ public class InteractiveService {
 	}
 	
 	public Collection<Post> getSubposts(String username, int start, int end) {
-		return dao.getSubposts(username, start, end);
+		return dao.getSubposts(username, start, end, null);
 	}
 	public boolean isSubscribed(String name, long targetId, PostType type) {
 		return dao.isSubscribed(name, targetId, type);
@@ -230,24 +230,24 @@ public class InteractiveService {
 	}
 
 	public Collection<Post> getPosts(int start, int howmany) {
-		return dao.getPosts(start, howmany);
+		return dao.getPosts(start, howmany, null);
 	}
 
 	public void initializeAttachment(TopTenCandidate candidate) {
 		dao.initializeAttachment(candidate);
 	}
 
-	public Collection<Post> getPosts(String username, int start, int howmany, String sort) {
+	public Collection<Post> getPosts(String username, int start, int howmany, String tagFilter, String sort) {
 		Collection<Post> results;
 		switch(sort) {
 		case "subs":
-			results = dao.getSubposts(username, start, howmany);
+			results = dao.getSubposts(username, start, howmany, tagFilter);
 			break;
 		case "newest":
-			results = dao.getPosts(start, howmany);
+			results = dao.getPosts(start, howmany, tagFilter);
 			break;
 		case "popularity":
-			results = dao.getPostsByPopularity(start, howmany);
+			results = dao.getPostsByPopularity(start, howmany, tagFilter);
 			break;
 		default:
 			throw new IllegalArgumentException("Illegal sort order: " + sort);
@@ -308,8 +308,8 @@ public class InteractiveService {
 		}
 	}
 
-	public List<Post> getBusinessGroupPosts(long groupId, int start, int howmany) {
-		return dao.getBusinessGroupPosts(groupId, start, howmany);
+	public List<Post> getBusinessGroupPosts(long groupId, int start, int howmany, String filterTag) {
+		return dao.getBusinessGroupPosts(groupId, start, howmany, filterTag);
 	}
 
 	public Post getBusinessGroupFeaturedPost(long groupId) {

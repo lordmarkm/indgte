@@ -6,3 +6,31 @@
 	border: 1px solid rgb(204, 204, 204);
 	margin-top: 5px;
 }
+
+div.posts-by-tags:not(.ui-state-highlight) {
+	border: 1px solid transparent;
+}
+div.posts-by-tags {
+	padding: 2px;
+	min-width: 48px;
+	height: 64px;
+	display: inline-block;
+	cursor: pointer;
+	text-align: center;
+	font-weight: bold;
+	background-position: center 16px;
+	background-repeat: no-repeat;
+}
+
+div.posts-by-tags.news {
+	background-image: url("../images/tagicons/news.png");
+}
+div.posts-by-tags.events {
+	background-image: url("../images/tagicons/events.png");
+}
+div.posts-by-tags.pics {
+	background-image: url("../images/tagicons/pics.png");
+}
+div.posts-by-tags.questions {
+	background-image: url("../images/tagicons/questions.png");
+}

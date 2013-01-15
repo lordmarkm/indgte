@@ -32,7 +32,7 @@
 		<div class="details hide">
 			<ul>
 				<li>Domain: ${business.domain }</li>
-				<li>URL: <a href="http://indgte.com/${business.domain }">http://indgte.com/${business.domain }</a></li>
+				<li>URL: <a href="http://dgte.info/${business.domain }">http://dgte.info/${business.domain }</a></li>
 				<li>Group: <span class="capitalize">${business.category.name }</span></li>
 				<li>Subscribers: <span class="business-subscribers">Querying Indgte...</span></li>
 				<li>Likes: <span class="business-likes">Querying Facebook...</span></li>
@@ -113,7 +113,7 @@
 
 <script>
 window.urls = {
-	profile: 'http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}' + '<spring:url value="/p/" />',
+	profile: '${baseURL}',
 	edit : '<spring:url value="/r/edit/" />',
 	countSubscribers : '<spring:url value="/i/countsubs/business/" />',
 	deleteBusiness : '<spring:url value="/b/deletebusiness/" />'
@@ -147,7 +147,7 @@ $(function(){
 			var $details = $business.find('.details').show();
 			
 			var domain = $business.attr('domain');
-			var url = urls.profile + domain;
+			var url = urls.profile + '/' + domain;
 			var id = $business.attr('businessId');
 
 			debug('Querying facebook likes for id ' + url);

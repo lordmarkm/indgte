@@ -23,10 +23,13 @@ $(function(){
 		$linkpreview = $('.link-preview-container'),
 		$linkpreviewImg = $('.link-preview-images'),
 		$loadmoreContainer = $('.loadmoreContainer'),
-		$loadmore = $('.loadmore');
+		$loadmore = $('.loadmore'),
+		$alert = $('.alert-container'),
+		$iptTags = $('.ipt-tags');
 	
 	//posts
-	var $feedcontainer = $('.feedcontainer'),
+	var 
+		$feedcontainer = $('.feedcontainer'),
 		$posts = $('.posts');
 	
 	var feedType = $('#feed').attr('type');
@@ -57,12 +60,16 @@ $(function(){
 		//entity
 		$iptEntity.removeAttr('entitytype').removeAttr('entityid');
 		$entityPreview.html('');
+		
+		//tags
+		$iptTags.hide();
 	}
 	
 	function matchWidths() {
 		$title.css('width', $status.width());
 		$errors.css('width', $status.width() + 4);
-		$attachInputContainer.css('width', $status.width() + 4)
+		$attachInputContainer.css('width', $status.width() + 4);
+		$iptTags.css('width', $status.width() + 8);
 	}
 	
 	function expandStatus() {
@@ -74,6 +81,7 @@ $(function(){
 		$statusOptions.show();
 		$title.show();
 		$errors.show();
+		$iptTags.show();
 		checkActiveAttachment();
 		checkPoster();
 		matchWidths();
@@ -276,13 +284,13 @@ $(function(){
 	});
 	
 	//entity
-	var searchtimeout;
 	$iptEntity.bind({
 		keyup: startTimeout,
 		paste: startTimeout,
 		focus: startTimeout
 	});
 	
+	var searchtimeout;
 	function startTimeout() {
 		if(searchtimeout) {
 			clearTimeout(searchtimeout);
@@ -394,7 +402,7 @@ $(function(){
 			},
 			text: {
 				required: true,
-				maxlength: 140
+				maxlength: 1000
 			}
 		},
 		messages: {
@@ -424,7 +432,8 @@ $(function(){
 			posterId: $posterId.val(), //user.id or business.id
 			posterType : $posterType.val(), //user or business
 			title: $title.val(),
-			text: $status.val()
+			text: $status.val(),
+			tags: $iptTags.val()
 		}
 		
 		switch(attachType) {
@@ -503,6 +512,7 @@ $(function(){
 	
 	//posts
 	var startPostIndex = 0;
+	var tagFilter = null;
 	function getPosts() {
 		var sort = 'popularity';
 		var hasSticky = $('.post.sticky').length != 0;
@@ -514,7 +524,8 @@ $(function(){
 				type: feedType,
 				start: startPostIndex, 
 				howmany: dgte.constants.postsPerPage,
-				hasSticky: hasSticky
+				hasSticky: hasSticky,
+				tagFilter: tagFilter
 			}, 
 			
 			function(response){
@@ -543,9 +554,11 @@ $(function(){
 	}
 	getPosts();
 	
+	function clearPosts() {
+		$posts.html('');
+	}
+	
 	function addPost(post, prepend, fadein, sticky) {
-		debug('adding post');
-		
 		var posterImgSrc;
 		var link;
 		switch(post.type) {
@@ -771,6 +784,16 @@ $(function(){
 			//debug('No attachment.');
 		}
 		
+		//tags
+		if(post.tags) {
+			var $tags = $('<div class="subtitle post-tags">').text('Tags: ').appendTo($dataContainer);
+			var tags = post.tags.split(' ');
+			for(var i = 0, len = tags.length; i < len; ++i) {
+				$('<a class="posts-by-tags">').attr('href', 'javascript:;').text(tags[i]).appendTo($tags);
+				if(i < len - 1) $tags.append(' ');
+			}
+		} 
+		
 		//footnote
 		var $footnote = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow() + ' by ').appendTo($dataContainer);
 		$('<a class="fatlink dgte-previewlink">')
@@ -800,6 +823,37 @@ $(function(){
 			return false;
 		}
 	}, '.showmore');
+	
+	function filterAlert(message) {
+		$alert.text(message).show();
+		$('<a class="fatlink ml5">')
+			.text('[Clear filter]')
+			.attr('href', 'javascript:;')
+			.appendTo($alert).click(function(){
+				clearTagFilter();
+		});
+	}
+	
+	function clearTagFilter() {
+		tagFilter = null;
+		$alert.html('').hide();
+		startPostIndex = 0;
+		$posts.parent().spinner(true);
+		clearPosts();
+		getPosts();
+	}
+	
+	$(document).on({
+		click: function(){
+			var tag = $(this).html();
+			filterAlert('You are filtering posts by the tag "' + tag + '"');
+			tagFilter = tag;
+			startPostIndex = 0;
+			$posts.parent().spinner(true);
+			clearPosts();
+			getPosts();
+		}
+	}, '.posts-by-tags');
 	
 	$posts.on({
 		mouseover : function(){

@@ -1,10 +1,7 @@
 package com.baldwin.indgte.webapp.controller.impl;
 
-import static com.baldwin.indgte.webapp.controller.MavBuilder.basicWithImages;
-import static com.baldwin.indgte.webapp.controller.MavBuilder.clean;
-import static com.baldwin.indgte.webapp.controller.MavBuilder.redirect;
-import static com.baldwin.indgte.webapp.controller.MavBuilder.render;
-import static com.baldwin.indgte.webapp.misc.DgteConstants.REVIEW_PREVIEW_LENGTH;
+import static com.baldwin.indgte.webapp.controller.MavBuilder.*;
+import static com.baldwin.indgte.webapp.misc.DgteConstants.*;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -99,10 +96,10 @@ public class InteractiveControllerImpl implements InteractiveController {
 	private ConstantsInserterBean constants;
 	
 	@Override
-	public @ResponseBody JSON subposts(Principal principal, @RequestParam int start, @RequestParam int howmany, @RequestParam String sort, boolean hasSticky) {
+	public @ResponseBody JSON subposts(Principal principal, @RequestParam int start, @RequestParam int howmany, @RequestParam String sort, @RequestParam String tagFilter, boolean hasSticky) {
 		try {
 			return JSON.ok()
-						.put("posts", interact.getPosts(principal == null ? null : principal.getName(), start,  howmany, sort))
+						.put("posts", interact.getPosts(principal == null ? null : principal.getName(), start,  howmany, tagFilter, sort))
 						.put("featured", hasSticky ? null : interact.getRandomFeaturedPost());
 			
 		} catch (Exception e) {
@@ -112,9 +109,9 @@ public class InteractiveControllerImpl implements InteractiveController {
 	}
 
 	@Override
-	public @ResponseBody JSON lastPosts(long posterId, PostType type, int start, int howmany, boolean hasSticky) {
+	public @ResponseBody JSON lastPosts(long posterId, PostType type, int start, int howmany, boolean hasSticky, String tagFilter) {
 		return JSON.ok()
-					.put("posts", postDao.getById(posterId, type, start, howmany))
+					.put("posts", postDao.getById(posterId, type, start, howmany, tagFilter))
 					.put("featured", hasSticky ? null : interact.getRandomFeaturedPost());
 	}
 
@@ -143,7 +140,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public @ResponseBody JSON groupPosts(Principal principal, long groupId, int start, int howmany) {
 		try {
-			List<Post> posts = interact.getBusinessGroupPosts(groupId, start, howmany);
+			List<Post> posts = interact.getBusinessGroupPosts(groupId, start, howmany, null);
 			Post featured = interact.getBusinessGroupFeaturedPost(groupId);
 			return JSON.ok()
 						.put("posts", posts)
@@ -231,13 +228,26 @@ public class InteractiveControllerImpl implements InteractiveController {
 	
 			String title = clean(request.getParameter("title"));
 			String text = clean(request.getParameter("text"));
-			String tags = Jsoup.clean(request.getParameter("tags"), Whitelist.none());
+			
+			String tags = request.getParameter("tags");
+			if(null != tags && tags.trim().length() > 0) {
+				log.debug("Tags: {}, trimmed length: {}", tags, tags.trim().length());
+				tags = Jsoup.clean(tags, Whitelist.none()).toLowerCase();
+				if(tags.length() > 0) {
+					String[] tagArray = tags.trim().split("\\s+");
+					StringBuilder newTagStringBuilder = new StringBuilder();
+					for(int i = 0; i < (POST_TAGS_MAX < tagArray.length ? POST_TAGS_MAX : tagArray.length) ; i++) {
+						newTagStringBuilder.append(" " + tagArray[i] + " ");
+					}
+					tags = newTagStringBuilder.toString();
+					post.setTags(tags);
+				}
+			}
 			
 			post.setType(postType);
 			post.setPostTime(new Date());
 			post.setTitle(title);
 			post.setText(text);
-			post.setTags(tags);
 	
 			interact.saveOrUpdate(post);
 			log.debug("Post: {} text: {}", post);

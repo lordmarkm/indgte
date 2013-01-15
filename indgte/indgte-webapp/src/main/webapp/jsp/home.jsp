@@ -55,7 +55,7 @@
 			</div>
 		</div>
 		
-		<input type="text" name="tags" class="ipt-tags ui-state-active" placeholder="Tags 'news buglasan pics-2012' (space-delimited, 3 max)" />
+		<input type="text" name="tags" class="ipt-tags ui-state-active" placeholder="tags 'news buglasan pics-2012' (space-delimited, 3 max)" />
 		<div class="newpost-errors"></div>
 	</form>
 	<div class="status-options hide">
@@ -119,6 +119,15 @@
 </sec:authorize>
 
 <section class="feedcontainer">
+	
+	<div class="filter mb5">
+		<div class="posts-by-tags news" title="Display posts tagged 'news'">news</div>
+		<div class="posts-by-tags events" title="Display posts tagged 'events'">events</div>
+		<div class="posts-by-tags pics" title="Display posts tagged 'pics'">pics</div>
+		<div class="posts-by-tags questions" title="Display posts tagged 'question'">question</div>
+	</div>
+	
+	<div class="alert-container ui-state-highlight hide pd5"></div>
 	<div class="posts-container relative">
 		<ul class="posts"></ul>
 	</div>
@@ -184,6 +193,7 @@ $(function(){
 		$rdoSortPosts = $('#rdo-post-sort').buttonset(),
 		$linkpreview = $('.link-preview-container'),
 		$linkpreviewImg = $('.link-preview-images'),
+		$alert = $('.alert-container'),
 		$iptTags = $('.ipt-tags');
 	
 	//posts
@@ -633,7 +643,8 @@ $(function(){
 			posterId: $posterId.val(), //user.id or business.id
 			posterType : $posterType.val(), //user or business
 			title: $title.val(),
-			text: $status.val()
+			text: $status.val(),
+			tags: $iptTags.val()
 		}
 		
 		switch(attachType) {
@@ -712,6 +723,7 @@ $(function(){
 	
 	//posts
 	var startPostIndex = 0;
+	var tagFilter = null;
 	function getPosts() {
 		var sort = $rdoSortPosts.length ? $rdoSortPosts.find(':checked').val() : 'popularity';
 		var hasSticky = $('.post.sticky').length != 0;
@@ -722,7 +734,8 @@ $(function(){
 				start: startPostIndex, 
 				howmany: dgte.constants.postsPerPage, 
 				sort: sort,
-				hasSticky: hasSticky
+				hasSticky: hasSticky,
+				tagFilter: tagFilter
 			}, 
 			
 			function(response){
@@ -988,6 +1001,16 @@ $(function(){
 			//debug('No attachment.');
 		}
 		
+		//tags
+		if(post.tags) {
+			var $tags = $('<div class="subtitle post-tags">').text('Tags: ').appendTo($dataContainer);
+			var tags = post.tags.split(' ');
+			for(var i = 0, len = tags.length; i < len; ++i) {
+				$('<a class="posts-by-tags">').attr('href', 'javascript:;').text(tags[i]).appendTo($tags);
+				if(i < len - 1) $tags.append(' ');
+			}
+		}
+		
 		//footnote
 		var $footnote = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow() + ' by ').appendTo($dataContainer);
 		$('<a class="fatlink dgte-previewlink">')
@@ -1017,6 +1040,46 @@ $(function(){
 			return false;
 		}
 	}, '.showmore');
+
+	function filterAlert(message) {
+		$alert.text(message).show();
+		$('<a class="fatlink ml5">')
+			.text('[Clear filter]')
+			.attr('href', 'javascript:;')
+			.appendTo($alert).click(function(){
+				clearTagFilter();
+		});
+	}
+	
+	function clearTagFilter() {
+		tagFilter = null;
+		$alert.html('').hide();
+		startPostIndex = 0;
+		$posts.parent().spinner(true);
+		clearPosts();
+		getPosts();
+	}
+	
+	$(document).on({
+		click: function(){
+			var tag = $(this).html();
+			filterAlert('You are filtering posts by the tag "' + tag + '"');
+			tagFilter = tag;
+			startPostIndex = 0;
+			$posts.parent().spinner(true);
+			clearPosts();
+			getPosts();
+		}
+	}, '.posts-by-tags');
+	
+	$(document).on({
+		mouseenter: function(){
+			$(this).addClass('ui-state-highlight');
+		},
+		mouseleave: function(){
+			$(this).removeClass('ui-state-highlight');
+		}
+	}, 'div.posts-by-tags');
 	
 	$posts.on({
 		mouseover : function(){

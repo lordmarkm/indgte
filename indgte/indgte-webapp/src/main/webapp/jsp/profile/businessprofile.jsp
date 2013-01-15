@@ -111,6 +111,8 @@
 							</div>
 						</div>
 						<div class="newpost-errors"></div>
+						
+						<input type="text" name="tags" class="ipt-tags ui-state-active" placeholder="tags 'news buglasan pics-2012' (space-delimited, 3 max)" />
 					</form>
 					<div class="status-options hide">
 						<div class="floatright">
@@ -153,6 +155,7 @@
 				</c:if>
 			
 				<div class="feed-container">
+					<div class="alert-container ui-state-highlight hide pd5"></div>
 					<ul class="posts"></ul>
 					<div class="loadmoreContainer" style="text-align: center; height: 100px; position: relative;">
 						<button class="loadmore" style="width: 50%; margin-top: 50px;">Load 10 more</button>
