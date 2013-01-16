@@ -70,6 +70,7 @@ public class MavBuilder {
 		m.put("imgurKey", DgteConstants.IMGUR_DEVKEY);
 		m.put(PAGE_THUMBNAIL, DgteConstants.SITE_THUMBNAIL);
 		m.put(PAGE_DESCRIPTION, DgteConstants.SITE_DESCRIPTION);
+		m.put("facebookClientId", DgteConstants.FACEBOOK_CLIENT_ID);
 	}
 	
 	public MavBuilder put(String name, Object object) {

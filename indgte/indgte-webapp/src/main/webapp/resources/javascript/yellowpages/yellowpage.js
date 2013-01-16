@@ -22,7 +22,7 @@ $(function(){
 	function getPosts() {
 		var hasSticky = $('.post.sticky').length != 0;
 
-		$.get(urls.groupPosts, 
+		$.get(urls.groupPosts + '?time=' + new Date().getTime(), 
 			{
 				groupId: group.id,
 				start: startPostIndex, 
@@ -274,7 +274,11 @@ $(function(){
 			$('<img>').attr('src', post.attachmentImgurHash).appendTo($linkImgContainer);
 			
 			var $linkInfoContainer = $('<div class="link-info-container">').appendTo($container);
-			$('<div class="bold">').text(post.attachmentTitle).appendTo($linkInfoContainer);
+			var $titlecontainer = $('<div>').appendTo($linkInfoContainer);
+			$('<a class="fatlink">')
+				.text(post.attachmentTitle)
+				.attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier)
+				.appendTo($titlecontainer);
 			if(post.attachmentIdentifier) {
 				$('<a>').attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($linkInfoContainer);
 			}

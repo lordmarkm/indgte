@@ -1,0 +1,44 @@
+.sidebar-promos-container ul,
+.sidebar-new-container ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0 0 0 5px;
+}
+
+.sidebar-promo-image-container,
+.sidebar-new-image-container {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.sidebar-promo-info,
+.sidebar-new-info {
+	display: inline-block;
+	max-height: 77px;
+	overflow-y: hidden;
+}
+
+.sidebar-promo-info {
+	width: 200px;
+}
+
+.sidebar-new-info {
+	width: 230px;
+}
+
+.sidebar-promos-container img {
+	width: 80px;
+	height: 80px;
+	vertical-align: bottom;
+}
+
+.sidebar-new-container img {
+	width: 50px;
+	height: 50px;
+	vertical-align: bottom;
+}
+
+.sidebar-promos-container li:not(:first-child),
+.sidebar-new-container li:not(:first-child) {
+	margin-top: 4px;
+}

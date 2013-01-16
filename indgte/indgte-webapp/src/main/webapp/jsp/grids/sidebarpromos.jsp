@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
+<link rel="stylesheet" href="<spring:url value='/resources/css/grids/sidebarpromos.css' />" />
+
 <div class="sidebar-promos-container grid_4 sidebar-section">
 	<div class="sidebar-container">
 		<div class="sidebar-section-header">Featured</div>
@@ -12,7 +14,7 @@
 						<a href="${promo.summary.url }" class="dgte-previewlink" previewtype="${promo.summary.type}"><img src="${promo.summary.imgur == null ? noimage50 : promo.summary.imgur.smallSquare }" /></a>
 					</div>
 					<div class="sidebar-promo-info">
-						<div class="sidebar-promo-title"><a href="${promo.summary.url }" class="fatlink dgte-previewlink" href="javascript:;" previewtype="${promo.summary.type}">${promo.summary.title }</a> (${promo.type })</div>
+						<div class="sidebar-promo-title"><a href="${promo.summary.url }" class="fatlink dgte-previewlink" href="javascript:;" previewtype="${promo.summary.type}">${promo.summary.title }</a></div>
 						<div class="sidebar-promo-description description">${fn:substring(promo.summary.description, 0, 80) }<c:if test="${fn:length(promo.summary.description) > 80 }">...</c:if></div>
 					</div>
 				</li>
@@ -40,53 +42,6 @@
 		</ul>
 	</div>
 </div>
-
-<style>
-.sidebar-promos-container ul,
-.sidebar-new-container ul {
-	list-style-type: none;
-	padding: 0;
-	margin: 0 0 0 5px;
-}
-
-.sidebar-promo-image-container,
-.sidebar-new-image-container {
-	display: inline-block;
-	vertical-align: top;
-}
-
-.sidebar-promo-info,
-.sidebar-new-info {
-	display: inline-block;
-	max-height: 77px;
-	overflow-y: hidden;
-}
-
-.sidebar-promo-info {
-	width: 200px;
-}
-
-.sidebar-new-info {
-	width: 230px;
-}
-
-.sidebar-promos-container img {
-	width: 80px;
-	height: 80px;
-	vertical-align: bottom;
-}
-
-.sidebar-new-container img {
-	width: 50px;
-	height: 50px;
-	vertical-align: bottom;
-}
-
-.sidebar-promos-container li:not(:first-child),
-.sidebar-new-container li:not(:first-child) {
-	margin-top: 4px;
-}
-</style>
 
 <script>
 $(function(){

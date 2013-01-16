@@ -253,7 +253,7 @@
 		</div>
 	</c:if>
 	
-	<div class="feed-container">
+	<div class="feed-container relative">
 		<div class="alert-container ui-state-highlight hide pd5"></div>
 		<ul class="posts"></ul>
 		<div class="loadmoreContainer" style="text-align: center; height: 100px; position: relative;">
@@ -354,7 +354,9 @@ window.urls = {
 	productwithpics: '<spring:url value="/b/products/withpics/" />',
 	imgur : 'http://i.imgur.com/',
 	imgurPage : 'http://imgur.com/',
-	searchOwn: '<spring:url value="/s/own/" />'
+	searchOwn: '<spring:url value="/s/own/" />',
+	noimage50: '${noimage50	}',
+	fbCommentsUrl: '${baseURL}${urlPosts}'
 }
 
 window.poster = {

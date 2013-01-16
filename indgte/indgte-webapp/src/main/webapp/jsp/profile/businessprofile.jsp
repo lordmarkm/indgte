@@ -288,7 +288,9 @@ window.urls = {
 	imgur : 'http://i.imgur.com/',
 	imgurPage : 'http://imgur.com/',
 	searchOwn: '<spring:url value="/s/own/" />',
-	
+	noimage50: '${noimage50	}',
+	fbCommentsUrl: '${baseURL}${urlPosts}',
+
 	//posts
 	targetPosts: '<spring:url value="/i/posts/" />' //get the last posts by this business
 }

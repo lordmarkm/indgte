@@ -11,7 +11,7 @@
 <div class="category-container grid_8 maingrid">
 	<section class="category-welcome">
 		<div class="category-welcome-category">
-			<div class="category-welcome-image-container">
+			<div class="category-welcome-image-container relative">
 				<img class="category-welcome-image" />
 			</div>
 			<h3 class="category-name">${category.name }</h3>
@@ -85,7 +85,7 @@ window.products = {
 			$('<img class="product-pic">').attr('src', product.mainpic.smallSquare).appendTo($picContainer);
 		}
 		
-		var $title = $('<a id="' + product.id + '">').attr('href', urls.urlProducts + this.domain + '/' + product.id).appendTo($container);
+		var $title = $('<a class="fatlink dgte-previewlink"id="' + product.id + '">').attr('previewtype', 'product').attr('href', urls.urlProducts + this.domain + '/' + product.id).appendTo($container);
 		var $productName = $('<strong class="product-name">').text(dgte.htmlDecode(product.name)).appendTo($title)
 		
 		$.get(urls.urlProducts + constants.domain + '/' + product.id + '/pics/' + constants.previewPicsCount + '.json', function(response){

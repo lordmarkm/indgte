@@ -20,10 +20,10 @@ $(function(){
 		$attachVisibles = $('.attach-visibles'),
 		$attachMenu = $('.attach-menu').hide(),
 		$btnPost = $('.btn-post'),
-		$linkpreview = $('.link-preview-container'),
-		$linkpreviewImg = $('.link-preview-images'),
 		$loadmoreContainer = $('.loadmoreContainer'),
 		$loadmore = $('.loadmore'),
+		$linkpreview = $('.link-preview-container'),
+		$linkpreviewImg = $('.link-preview-images'),
 		$alert = $('.alert-container'),
 		$iptTags = $('.ipt-tags');
 	
@@ -274,7 +274,7 @@ $(function(){
 					.find('.link-preview-title').text(url).end()
 					.find('.link-preview-description').text('').end()
 					.find('.link-preview-url').text(url);
-				$('<img>').attr('src', '${noimage50	}').appendTo($linkpreviewImg);
+				$('<img>').attr('src', urls.noimage50).appendTo($linkpreviewImg);
 				break;
 			default:
 				debug('wat');
@@ -316,9 +316,9 @@ $(function(){
 					$('<img class="autocomplete-img">').attr('src', result.thumbnailHash ? urls.imgur + result.thumbnailHash + 's.jpg' : dgte.urls.blackSquareSmall).appendTo($auto);
 					$('<div class="autocomplete-title">').text(result.title).appendTo($auto);
 					
-					if(result.description.length < 80) {
+					if(result.description && result.description.length < 80) {
 						$('<div class="autocomplete-description">').text(result.description).appendTo($auto);
-					} else {
+					} else if(result.description) {
 						$('<div class="autocomplete-description">').text(result.description.substring(0, 80) + '... ').appendTo($auto);
 					}
 					++visibleResults;
@@ -518,7 +518,7 @@ $(function(){
 		var hasSticky = $('.post.sticky').length != 0;
 		debug('Gonna be sorting by: ' + sort + ' has sticky? ' + hasSticky);
 		
-		$.get(urls.targetPosts, 
+		$.get(urls.targetPosts + '?time=' + new Date().getTime(), 
 			{
 				posterId: poster.id, 
 				type: feedType,
@@ -773,7 +773,11 @@ $(function(){
 			$('<img>').attr('src', post.attachmentImgurHash).appendTo($linkImgContainer);
 			
 			var $linkInfoContainer = $('<div class="link-info-container">').appendTo($container);
-			$('<div class="bold">').text(post.attachmentTitle).appendTo($linkInfoContainer);
+			var $titlecontainer = $('<div>').appendTo($linkInfoContainer);
+			$('<a class="fatlink">')
+				.text(post.attachmentTitle)
+				.attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier)
+				.appendTo($titlecontainer);
 			if(post.attachmentIdentifier) {
 				$('<a>').attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($linkInfoContainer);
 			}
@@ -807,7 +811,7 @@ $(function(){
 		var $aComments = $('<a class="fatlink">').attr('href', urls.postdetails + post.id).appendTo($comments);
 
 		$aComments.append('View ')
-		var urlPostDetails = '${baseURL}${urlPosts}' + post.id;
+		var urlPostDetails = urls.fbCommentsUrl + post.id;
 		$('<fb:comments-count>').attr('href', urlPostDetails).appendTo($aComments);
 		$aComments.append(' comments ');
 		
@@ -838,8 +842,8 @@ $(function(){
 		tagFilter = null;
 		$alert.html('').hide();
 		startPostIndex = 0;
-		$posts.parent().spinner(true);
 		clearPosts();
+		$posts.parent().spinner(true);
 		getPosts();
 	}
 	
@@ -849,8 +853,8 @@ $(function(){
 			filterAlert('You are filtering posts by the tag "' + tag + '"');
 			tagFilter = tag;
 			startPostIndex = 0;
-			$posts.parent().spinner(true);
 			clearPosts();
+			$posts.parent().spinner(true);
 			getPosts();
 		}
 	}, '.posts-by-tags');

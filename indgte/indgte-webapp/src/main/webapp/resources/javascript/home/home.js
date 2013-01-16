@@ -16,27 +16,25 @@ $(function(){
 		$entitySuggestions = $('.entity-suggestions').hide(),
 		$statusCounter = $('.status-counter'),
 		$statusOptions = $('.status-options'),
+		$menubutton = $('.menubutton'),
+		$postas = $('.post-as'),
+		$postasVisibles = $('.post-as-visibles'),
+		$postasMenu = $('.post-as-menu').hide(),
 		$attach = $('.attach'),
 		$attachVisibles = $('.attach-visibles'),
 		$attachMenu = $('.attach-menu').hide(),
 		$btnPost = $('.btn-post'),
-		$linkpreview = $('.link-preview-container'),
-		$linkpreviewImg = $('.link-preview-images'),
 		$loadmoreContainer = $('.loadmoreContainer'),
 		$loadmore = $('.loadmore'),
+		$rdoSortPosts = $('#rdo-post-sort').buttonset(),
+		$linkpreview = $('.link-preview-container'),
+		$linkpreviewImg = $('.link-preview-images'),
 		$alert = $('.alert-container'),
 		$iptTags = $('.ipt-tags');
 	
 	//posts
-	var 
-		$feedcontainer = $('.feedcontainer'),
+	var $feedcontainer = $('.feedcontainer'),
 		$posts = $('.posts');
-	
-	var feedType = $('#feed').attr('type');
-	if(!feedType) {
-		error('[feed.js] feedType is null!');
-		return;
-	}
 	
 	//newpost
 	function shrinkStatus() {
@@ -95,7 +93,7 @@ $(function(){
 			expandStatus();
 		}
 	}
-	checkStatus();
+	if(constants.auth) checkStatus();
 	
 	$status.focus(function(){
 		expandStatus();
@@ -121,9 +119,58 @@ $(function(){
 		resizeVertical();
 	});
 	
+	//post-as
+	$menubutton.mouseenter(function(){
+		var $this = $(this);
+		if(!$this.hasClass('ui-state-active')) $this.addClass('ui-state-highlight');
+	});
+	$menubutton.mouseleave(function(){
+		var $this = $(this);
+		$this.removeClass('ui-state-highlight');
+	});
+	
+	$postasVisibles.click(function(event){
+		event.stopPropagation();
+		hideAttachMenu();
+		if($postasVisibles.hasClass('ui-state-active')) hidePostasMenu();
+		else showPostasMenu();
+	});
+	
+	function showPostasMenu() {
+		$postasVisibles.removeClass('ui-state-highlight');
+		$postasVisibles.addClass('ui-state-active');
+		$postasMenu.show().addClass('ui-state-active');
+	}
+	
+	function hidePostasMenu() {
+		$postasVisibles.removeClass('ui-state-active');
+		$postasMenu.hide();
+	}
+	
+	$postasMenu.on({
+		mouseenter: function(event){
+			event.stopPropagation();
+			$(this).addClass('ui-state-highlight');
+		},
+		mouseleave: function(event) {
+			event.stopPropagation();
+			$(this).removeClass('ui-state-highlight');
+		},
+		click: function() {
+			var $this = $(this);
+			var imgSrc = $this.find('img').attr('src');
+			var name = $this.find('.name').text();
+			$posterId.val($this.attr('posterId'));
+			$posterType.val($this.attr('posterType'));
+			$postasVisibles.attr('title', 'Posting as ' + name).children('img').attr('src', imgSrc ? imgSrc : dgte.urls.blackSquareSmall);
+			hidePostasMenu();
+		},
+	}, '.post-as-option');
+	
 	//attach
 	$attachVisibles.click(function(event){
 		event.stopPropagation();
+		hidePostasMenu();
 		if($attachVisibles.hasClass('ui-state-active')) hideAttachMenu();
 		else showAttachMenu();
 	});
@@ -274,7 +321,7 @@ $(function(){
 					.find('.link-preview-title').text(url).end()
 					.find('.link-preview-description').text('').end()
 					.find('.link-preview-url').text(url);
-				$('<img>').attr('src', '${noimage50	}').appendTo($linkpreviewImg);
+				$('<img>').attr('src', urls.noimage50).appendTo($linkpreviewImg);
 				break;
 			default:
 				debug('wat');
@@ -316,9 +363,9 @@ $(function(){
 					$('<img class="autocomplete-img">').attr('src', result.thumbnailHash ? urls.imgur + result.thumbnailHash + 's.jpg' : dgte.urls.blackSquareSmall).appendTo($auto);
 					$('<div class="autocomplete-title">').text(result.title).appendTo($auto);
 					
-					if(result.description.length < 80) {
+					if(result.description && result.description.length < 80) {
 						$('<div class="autocomplete-description">').text(result.description).appendTo($auto);
-					} else {
+					} else if(result.description) {
 						$('<div class="autocomplete-description">').text(result.description.substring(0, 80) + '... ').appendTo($auto);
 					}
 					++visibleResults;
@@ -514,16 +561,15 @@ $(function(){
 	var startPostIndex = 0;
 	var tagFilter = null;
 	function getPosts() {
-		var sort = 'popularity';
+		var sort = $rdoSortPosts.length ? $rdoSortPosts.find(':checked').val() : 'popularity';
 		var hasSticky = $('.post.sticky').length != 0;
 		debug('Gonna be sorting by: ' + sort + ' has sticky? ' + hasSticky);
 		
-		$.get(urls.targetPosts, 
+		$.get(urls.subposts + '?time=' + new Date().getTime(), 
 			{
-				posterId: poster.id, 
-				type: feedType,
 				start: startPostIndex, 
-				howmany: dgte.constants.postsPerPage,
+				howmany: dgte.constants.postsPerPage, 
+				sort: sort,
 				hasSticky: hasSticky,
 				tagFilter: tagFilter
 			}, 
@@ -554,9 +600,18 @@ $(function(){
 	}
 	getPosts();
 	
+	function clearPosts() {
+		$posts.html('');
+	}
+	
+	$rdoSortPosts.change(function(){
+		startPostIndex = 0;
+		clearPosts();
+		$posts.parent().spinner(true);
+		getPosts();
+	});
+	
 	function addPost(post, prepend, fadein, sticky) {
-		debug('adding post');
-		
 		var posterImgSrc;
 		var link;
 		switch(post.type) {
@@ -771,7 +826,11 @@ $(function(){
 			$('<img>').attr('src', post.attachmentImgurHash).appendTo($linkImgContainer);
 			
 			var $linkInfoContainer = $('<div class="link-info-container">').appendTo($container);
-			$('<div class="bold">').text(post.attachmentTitle).appendTo($linkInfoContainer);
+			var $titlecontainer = $('<div>').appendTo($linkInfoContainer);
+			$('<a class="fatlink">')
+				.text(post.attachmentTitle)
+				.attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier)
+				.appendTo($titlecontainer);
 			if(post.attachmentIdentifier) {
 				$('<a>').attr('href', post.attachmentIdentifier.indexOf('http') == 0 ? post.attachmentIdentifier : 'http://' + post.attachmentIdentifier).text(post.attachmentIdentifier).appendTo($linkInfoContainer);
 			}
@@ -784,14 +843,13 @@ $(function(){
 		
 		//tags
 		if(post.tags) {
-			debug('tags: ' + post.tags);
-			var $tags = $('<div class="subtitle post-tags">').text('tags: ').appendTo($dataContainer);
+			var $tags = $('<div class="subtitle post-tags">').text('Tags: ').appendTo($dataContainer);
 			var tags = post.tags.split(' ');
 			for(var i = 0, len = tags.length; i < len; ++i) {
 				$('<a class="posts-by-tags">').attr('href', 'javascript:;').text(tags[i]).appendTo($tags);
 				if(i < len - 1) $tags.append(' ');
 			}
-		} 
+		}
 		
 		//footnote
 		var $footnote = $('<div class="fromnow post-time">').html(moment(post.postTime).fromNow() + ' by ').appendTo($dataContainer);
@@ -806,7 +864,7 @@ $(function(){
 		var $aComments = $('<a class="fatlink">').attr('href', urls.postdetails + post.id).appendTo($comments);
 
 		$aComments.append('View ')
-		var urlPostDetails = '${baseURL}${urlPosts}' + post.id;
+		var urlPostDetails = urls.fbCommentsUrl + post.id;
 		$('<fb:comments-count>').attr('href', urlPostDetails).appendTo($aComments);
 		$aComments.append(' comments ');
 		
@@ -822,7 +880,7 @@ $(function(){
 			return false;
 		}
 	}, '.showmore');
-	
+
 	function filterAlert(message) {
 		$alert.text(message).show();
 		$('<a class="fatlink ml5">')
@@ -837,8 +895,8 @@ $(function(){
 		tagFilter = null;
 		$alert.html('').hide();
 		startPostIndex = 0;
-		$posts.parent().spinner(true);
 		clearPosts();
+		$posts.parent().spinner(true);
 		getPosts();
 	}
 	
@@ -848,11 +906,20 @@ $(function(){
 			filterAlert('You are filtering posts by the tag "' + tag + '"');
 			tagFilter = tag;
 			startPostIndex = 0;
-			$posts.parent().spinner(true);
 			clearPosts();
+			$posts.parent().spinner(true);
 			getPosts();
 		}
 	}, '.posts-by-tags');
+	
+	$(document).on({
+		mouseenter: function(){
+			$(this).addClass('ui-state-highlight');
+		},
+		mouseleave: function(){
+			$(this).removeClass('ui-state-highlight');
+		}
+	}, 'div.posts-by-tags');
 	
 	$posts.on({
 		mouseover : function(){
@@ -871,6 +938,7 @@ $(function(){
 	
 	$(document).on({
 		click: function(){
+			hidePostasMenu();
 			hideAttachMenu();
 			$entitySuggestions.hide();
 		}
@@ -878,5 +946,5 @@ $(function(){
 	
 	$(window).resize(function(){
 		matchWidths();
-	});	
+	});
 });

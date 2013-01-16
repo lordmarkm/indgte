@@ -82,7 +82,7 @@ window.navbar = {
 		minlength : 3, //god's number trololololol
 		maxDisplay : 5, //god's number plus two!!!
 		url : '<spring:url value="/s/" />',
-		urlBusiness: '<spring:url value="/p/" />',
+		urlBusiness: '<spring:url value="/" />',
 		urlCategory: '<spring:url value="/b/categories/" />',
 		urlProduct: '<spring:url value="/b/products/" />',
 		urlImgur: 'http://i.imgur.com/'

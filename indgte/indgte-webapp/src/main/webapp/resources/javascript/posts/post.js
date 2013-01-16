@@ -11,7 +11,7 @@ $(function(){
 	case 'video':
 		var $container = $('<div class="post-attachment">').appendTo($dataContainer);
 		var $player = $('<div class="player">').appendTo($container);
-		$player.html(post.attachmentIdentifier);
+		$player.html(dgte.htmlDecode(post.attachmentIdentifier));
 		$player.find('iframe').attr('width', '540').attr('height', '405');
 		break;
 	case 'category':
@@ -239,10 +239,16 @@ $(function(){
 
 window.fbAsyncInit = function() {
 	FB.Event.subscribe('comment.create', function(event) {
+		debug('got comment.create event');
 		debug(event);
+		debug('getting login status...');
 		FB.getLoginStatus(function(loginStatus) {
+			debug('got login status');
+			debug(loginStatus);
+			debug('status: ' + loginStatus.status);
 			if (loginStatus.status === 'connected') {
-					//user is logged in. get details and notify poster of new comment
+				debug('user is logged in to Facebook.');
+				//user is logged in. get details and notify poster of new comment
 				FB.api('/me', function(response) {
 						$.post(urls.commentNotify + post.id + '/json', {
 						name : response.name,
@@ -260,7 +266,7 @@ window.fbAsyncInit = function() {
 					providerUsername : 'none'
 				});
 			}
-		});
+		}, true);
 	});
 	
 	FB.Event.subscribe('comment.remove', function(event) {

@@ -107,7 +107,7 @@ $(function(){
 	$category.on({
 		click: function(){
 			if($topbusinesses.find('.overlay').length) return;
-			$('<div class="overlay">').appendTo($topbusinesses);
+			$topbusinesses.spinner(true);
 			var $this = $(this);
 			$category.removeClass('ui-state-active');
 			$this.addClass('ui-state-active');
@@ -157,7 +157,7 @@ $(function(){
 				break;
 			default:
 				debug(response);
-				$('.overlay').delay(800).fadeOut(200, function() { $(this).remove(); });
+				$topbusinesses.fadeSpinner();
 			}
 		});
 	}

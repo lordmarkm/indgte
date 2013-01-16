@@ -9,4 +9,5 @@ public class DgteConstants {
 	public static final String SITE_DESCRIPTION = "Your first destination in Dumaguete City";
 	public static final int REVIEW_PREVIEW_LENGTH = 80;
 	public static final int POST_TAGS_MAX = 3;
+	public static final Object FACEBOOK_CLIENT_ID = "121897737979090";
 }
