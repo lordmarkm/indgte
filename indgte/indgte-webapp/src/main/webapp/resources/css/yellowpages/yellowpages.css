@@ -1,0 +1,50 @@
+.alphabetized {
+	list-style-type: none;
+	padding-left: 0;
+}
+.alphabetized > li {
+	margin-bottom: 15px;
+}
+
+.sublist {
+	list-style-type: none;
+	padding: 0;
+}
+.sublist li {
+	padding: 5px;
+}
+
+.category {
+	cursor: pointer;
+	height: 15px;
+}
+.category:not(.ui-state-active):not(.ui-state-highlight) {
+	border: 1px solid transparent;
+}
+
+.category-name {
+	text-transform: capitalize;
+}
+
+.topbusinesses {
+	position: relative;
+	border: 1px dotted lightskyblue;
+	width: 420px !important;
+	max-width: 420px !important;
+	margin-top: 13px;
+	padding: 5px;
+}
+
+.category-title {
+	text-align: center;
+	text-transform: capitalize;
+}
+
+.autocomplete-container {
+	margin-bottom: 10px;
+	cursor: pointer;
+}
+.autocomplete-container:not(:hover) {
+	max-height: 60px;
+	overflow-y: hidden;
+}

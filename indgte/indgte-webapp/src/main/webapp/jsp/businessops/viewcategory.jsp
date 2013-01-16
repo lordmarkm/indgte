@@ -182,11 +182,11 @@ $(function(){
 				<table>
 					<tr>
 						<td><label for="start-date">Promote from</label></td>
-						<td><input type="date" id="start-date" name="start" readonly="readonly" placeholder="Click to choose" /></td>
+						<td><input type="text" id="start-date" name="start" readonly="readonly" placeholder="Click to choose" /></td>
 					</tr>
 					<tr>
 						<td><label for="end-date">Promote until</label></td>
-						<td><input type="date" id="end-date" name="end" readonly="readonly" placeholder="Click to choose"/></td>
+						<td><input type="text" id="end-date" name="end" readonly="readonly" placeholder="Click to choose"/></td>
 					</tr>
 				</table>
 			</form>
