@@ -177,6 +177,9 @@ public class UserDaoImpl implements UserDao {
 	private UserExtension initialize(UserExtension userExtension, Initializable... initializables) {
 		for(Initializable initializable : initializables) {
 			switch(initializable) {
+			case description:
+				Hibernate.initialize(userExtension.getDescription());
+				break;
 			case wishlist:
 				Hibernate.initialize(userExtension.getWishlist());
 				break;
@@ -233,6 +236,17 @@ public class UserDaoImpl implements UserDao {
 		
 	}
 
+	@Override
+	public String getDescription(String name) {
+		UserExtension user = getExtended(name);
+		return user.getDescription();
+	}
+	
+	@Override
+	public void updateDescription(String name, String description) {
+		UserExtension user = getExtended(name);
+		user.setDescription(description);
+	}
 
 
 }

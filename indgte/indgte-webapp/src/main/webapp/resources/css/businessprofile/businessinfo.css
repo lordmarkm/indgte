@@ -1,0 +1,24 @@
+.tbl-business-info td {
+	vertical-align: top;
+}
+
+.business-info-container {
+	margin-top: 5px;
+}
+
+.form-editinfo-container {
+	margin-top: 5px;
+}
+
+.btn-edit, .btn-cancel {
+	margin-top: 5px;
+}
+
+textarea[name="info"] {
+	width: 670px;
+	height: 400px;
+}
+
+#business-info {
+	padding: 1em !important;
+}

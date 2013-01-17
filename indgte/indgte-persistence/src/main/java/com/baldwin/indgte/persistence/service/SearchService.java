@@ -60,7 +60,7 @@ public class SearchService {
 				break;
 			default:
 				//throw new IllegalArgumentException("Illegal type: " + type);
-				log.warn("Ignoring illegal type: {}", type);
+				log.debug("Ignoring illegal type: {}", type);
 			}
 		}
 		

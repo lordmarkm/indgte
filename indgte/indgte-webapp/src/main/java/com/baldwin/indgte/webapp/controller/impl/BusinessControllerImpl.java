@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,6 +162,18 @@ public class BusinessControllerImpl implements BusinessController {
 		return JSON.ok();
 	}
 
+	@Override
+	public ModelAndView editCategory(Principal principal, @PathVariable long categoryId, String name, String description) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		boolean mod = isModerator(auth);
+		
+		name = Jsoup.clean(name, Whitelist.none());
+		description = Jsoup.clean(description.replace("\n", "jsoupbr2nl"), Whitelist.none()).replace("jsoupbr2nl", "\n");
+		businesses.editCategory(mod, principal.getName(), categoryId, name, description);
+		
+		return redirect("/b/categories/" + categoryId).mav();
+	}
+	
 	@Override
 	public @ResponseBody JSON deleteCategory(Principal principal, @PathVariable long categoryId) {
 		try {

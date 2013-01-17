@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
@@ -126,6 +128,9 @@ public class UserExtension implements Summarizable {
 	
 	@Embedded
 	private Rank rank;
+	
+	@Lob @Basic(fetch=FetchType.LAZY)
+	private String description;
 	
 	public boolean inWishlist(Product product) {
 		for(Wish wish : wishlist) {
@@ -377,5 +382,13 @@ public class UserExtension implements Summarizable {
 
 	public void setRank(Rank rank) {
 		this.rank = rank;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

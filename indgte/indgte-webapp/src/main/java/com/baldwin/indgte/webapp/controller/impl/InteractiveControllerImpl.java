@@ -156,7 +156,7 @@ public class InteractiveControllerImpl implements InteractiveController {
 	@Override
 	public @ResponseBody JSON newstatus(Principal principal, WebRequest request) {
 		try {
-			log.info("New post with title {} by {}", principal.getName(), request.getParameter("title"));
+			log.info("New post with title {} by {}", request.getParameter("title"), principal.getName());
 			
 			log.debug("Poster id: [{}]", request.getParameter("posterId"));
 			log.debug("Poster type: [{}]", request.getParameter("posterType"));

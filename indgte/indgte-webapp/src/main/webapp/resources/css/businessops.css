@@ -26,6 +26,7 @@
 
 .category-welcome h3,
 .product-welcome h3 {
+	max-width: 430px;
 	display: inline-block;
 	vertical-align: bottom;
 	font-size: 1.6em;

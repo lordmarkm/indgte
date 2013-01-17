@@ -53,6 +53,12 @@ public interface ProfileController {
 	
 	@RequestMapping("/businesses")
 	public ModelAndView myBusinesses(Principal principal, WebRequest request);
+
+	@RequestMapping(value = "/description/{username}", method = RequestMethod.GET)
+	public JSON getDescription(String username);
+	
+	@RequestMapping(value = "/editdescription/", method = RequestMethod.POST)
+	public ModelAndView editDescription(Principal principal, String description);
 	
 	/**
 	 * Return a link to the business's existing profile pic
@@ -68,4 +74,5 @@ public interface ProfileController {
 
 	@RequestMapping(value = "/{domain}/coverpic", method = RequestMethod.POST)
 	public JSON newCoverpic(String domain, Imgur coverpic);
+
 }

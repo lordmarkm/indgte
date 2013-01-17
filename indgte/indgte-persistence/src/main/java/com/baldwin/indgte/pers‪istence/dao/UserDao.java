@@ -21,5 +21,7 @@ public interface UserDao {
 	UserExtension getDefault(Initializable... initializables);
 	String getImageUrl(String sender);
 	void changeLocale(String name, String localeStr);
+	String getDescription(String name);
+	void updateDescription(String name, String description);
 
 }

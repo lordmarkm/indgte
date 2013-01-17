@@ -25,4 +25,12 @@ public class UserService {
 		dao.changeLocale(name, localeStr);
 	}
 
+	public String getDescription(String name) {
+		return dao.getDescription(name);
+	}
+	
+	public void updateDescription(String name, String description) {
+		dao.updateDescription(name, description);
+	}
+
 }

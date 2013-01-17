@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import com.baldwin.indgte.persistence.service.InteractiveService;
 import com.baldwin.indgte.persistence.service.UserService;
 import com.baldwin.indgte.webapp.controller.JSON;
 import com.baldwin.indgte.webapp.controller.ProfileController;
+import com.baldwin.indgte.webapp.misc.DgteTagWhitelist;
 import com.baldwin.indgte.webapp.misc.Language;
 
 @Component
@@ -85,9 +87,26 @@ public class ProfileControllerImpl implements ProfileController {
 	}
 	
 	@Override
+	public @ResponseBody JSON getDescription(@PathVariable String username) {
+		return JSON.ok().put("description", users.getDescription(username));
+	}
+	
+	@Override
+	public ModelAndView editDescription(Principal principal, String description) {
+		
+		log.info("{} has updated his description to {}", principal.getName(), description);
+		
+		description = Jsoup.clean(description, DgteTagWhitelist.relaxed());
+		users.updateDescription(principal.getName(), description);
+		
+		return redirect("/p/user/" + principal.getName()).mav();
+	}
+
+	
+	@Override
 	public ModelAndView userProfile(Principal principal, @PathVariable String targetUsername) {
 		UserExtension user = users.getExtended(principal.getName());
-		UserExtension target = users.getExtended(targetUsername, subscriptions, wishlist, buyandsellitems, Initializable.businesses);
+		UserExtension target = users.getExtended(targetUsername, description, subscriptions, wishlist, buyandsellitems, Initializable.businesses);
 
 		log.info("{}'s profile page requested by {}", target.getUsername(), principal == null ? "Anonymous" : principal.getName());
 		

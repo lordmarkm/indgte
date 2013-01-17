@@ -490,4 +490,11 @@ public class BusinessDaoImpl implements BusinessDao {
 		
 		sessions.getCurrentSession().delete(category);
 	}
+
+	@Override
+	public void updateCategory(long categoryId, String categoryName, String description) {
+		Category category = getCategory(categoryId);
+		category.setName(categoryName);
+		category.setDescription(description);
+	}
 }

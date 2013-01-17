@@ -32,7 +32,7 @@
 		</div>
 		<div class="user-menu-partialborder"></div>
 		<div class="user-menu">
-			<div class="user-menu-item"><a href="${urlOwnProfile }">View Profile</a></div>
+			<div class="user-menu-item"><a href="${urlUserProfile }${user.username}">View Profile</a></div>
 			<div class="user-menu-item"><a href="${urlMyBusinesses }">View My Businesses</a></div>
 			<div class="user-menu-divider">&nbsp;</div>
 			<div class="user-menu-item"><a href="${urlManageAccount }">Manage Account</a></div>

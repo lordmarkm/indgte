@@ -45,3 +45,7 @@ div[aria-labelledby="ui-dialog-title-image-upload"] a.ui-dialog-titlebar-close {
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
     filter: alpha(opacity=0);
 }
+
+#form-edit input, #form-edit textarea {
+	width: 100%
+}

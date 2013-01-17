@@ -9,7 +9,7 @@
 
 <ul class="hide">
 <c:forEach items="${businesses }" var="entry">
-	<li class="category ${fn:substring(entry.key, 0, 1)}" categoryName="${entry.key }" categoryId="${entry.value[0] }" businessCount="${entry.value[1] }">
+	<li class="category ${fn:toLowerCase(fn:substring(entry.key, 0, 1))}" categoryName="${entry.key }" categoryId="${entry.value[0] }" businessCount="${entry.value[1] }">
 		<span class="category-name">${entry.key } (${entry.value[1] })</span>
 	</li>
 </c:forEach>

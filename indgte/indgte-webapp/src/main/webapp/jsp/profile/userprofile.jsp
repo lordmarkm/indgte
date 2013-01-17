@@ -4,9 +4,13 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@include file="../tiles/links.jsp" %>
 
+<c:set var="self" value="${target.username eq user.username }" />
+
 <title>${target.user.username } InDumaguete</title>
 <script src="${jsValidator}"></script>
-<script type="text/javascript" src="<spring:url value="/resources/javascript/feed/feed.js" />"></script>
+<script type="text/javascript" src="<spring:url value='/resources/javascript/feed/feed.js' />"></script>
+<script type="text/javascript" src="<spring:url value='/resources/javascript/userprofile/userprofile.js' />" ></script>
+
 <link rel="stylesheet" href="<spring:url value='/resources/css/lists.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/review.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/userprofile/userprofile.css' />" />
@@ -14,13 +18,27 @@
 <div class="grid_9 maingrid">
 
 <section class="userinfo">
-	<div class="section-header">${target.user.username }</div>
 	<div class="container userinfo-container">
 		<img src="${target.user.imageUrl }" />
 		<ul>
 			<li class="userinfo-username">${target.user.username }</li>
 			<li class="userinfo-rank">${target.rank }</li>
-			<li class="userinfo-providername"><a href="${target.user.profileUrl}">${target.user.providerId }</a></li>
+			<li class="userinfo-providername"><a href="${target.user.profileUrl}" class="fatlink">${target.user.providerId }</a></li>
+			<li class="userinfo-description mt5 pd5">${target.description }</li>
+			<c:if test="${self }">
+				<spring:url var="urlTinyMce" value="/resources/tinymce/jscripts/tiny_mce/tiny_mce.js" />
+				<script type="text/javascript" src="${urlTinyMce }"></script>
+				<div class="form-edit-container relative hide mt10">
+					<form id="form-edit-description" action="<spring:url value='/p/editdescription/' />" method="post">
+						<textarea name="description" id="txt-description" class="mceEditor"></textarea>
+						<div class="mt10">
+							<button>Update</button>
+							<button class="btn-cancel-edit-description">Cancel</button>
+						</div>
+					</form>
+				</div>
+				<button class="btn-edit-description mt5">Edit</button>
+			</c:if>
 		</ul>
 	</div>
 </section>
@@ -30,9 +48,8 @@
 	<div class="section-header">Wishlist</div>
 	<div class="container wishlist-container">
 		<ol>
-			<c:forEach items="${target.wishlist }" var="wish" varStatus="status">
+			<c:forEach items="${target.wishlist }" var="wish">
 				<li class="wish">
-					<div class="index">${status.index + 1	}.</div>
 					<div style="display: inline-block;">
 						<img src="${wish.activeImgur.smallSquare }" />
 					</div>
@@ -265,6 +282,8 @@
 </div><!-- grid_8 -->
 
 <sec:authorize access="hasRole('ROLE_ADMIN')">
+<link rel="stylesheet" href="<spring:url value='/resources/css/userprofile/userprofile-admin.css' />" ></script>
+<script src="<spring:url value='/resources/javascript/userprofile/userprofile-admin.js' />" ></script>
 <div class="grid_3 sidebar-section">
 	<div class="sidebar-container">
 		<div class="sidebar-section-header">Admin menu</div>
@@ -278,49 +297,6 @@
 		<input type="number" name="howmany" id="ipt-grant-coconuts" />
 	</form>
 </div>
-<style>
-.btn-grant-coconuts {
-	width: 100%;
-}
-</style>
-
-<script>
-$(function(){
-	var 
-		$btnGrant = $('.btn-grant-coconuts'),
-		$dlgGrant = $('.dlg-grant-coconuts'),
-		$frmGrant = $('#frm-grant-coconuts');
-	
-	$frmGrant.validate({
-		rules : {
-			howmany: {
-				required: true,
-				number: true,
-				range: [1, 1000]
-			}
-		}
-	});
-	
-	$btnGrant.click(function(){
-		$dlgGrant
-			.attr('title', 'Grant coconuts to ' + target.username)
-			.dialog({
-				buttons: {
-					'Grant' : function(){
-						if(!$frmGrant.valid()) {
-							return false;
-						}
-						$frmGrant.submit();
-					},
-					'Cancel': function(){
-						$(this).dialog('close');
-					}
-				}
-			});
-		
-	});
-});
-</script>
 </sec:authorize>
 
 <div class="grid_3 sidebar-section">
@@ -338,6 +314,9 @@ window.urls = {
 	review: '<spring:url value="/i/review/user/" />',
 	allReviews: '<spring:url value="/i/allreviews/user/" />',
 	targetPosts: '<spring:url value="/i/posts/" />', //get the last posts by this user
+	
+	//get, edit user description
+	getDescription: '<spring:url value="/p/description/" />',
 	
 	//copied from businessprofile for feed
 	getProducts : '<spring:url value="/b/products/" />',
@@ -360,7 +339,8 @@ window.urls = {
 }
 
 window.poster = {
-	id: '${target.id}'
+	id: '${target.id}',
+	subscribed: '${subscribed}' === 'true',
 }
 
 window.target = {
@@ -380,49 +360,6 @@ window.reviewconstants = {
 		name: '${target.user.username}'
 	}
 }
-
-$(function(){
-	//subscribe
-	var subscribed = '${subscribed}' === 'true';
-	var $btnSubscribe = $('.btn-subscribe-toggle');
-	
-	function refreshSubsButton() {
-		if(subscribed) {
-			$btnSubscribe
-				.button({label: 'Subscribed', icons: {secondary: 'ui-icon-circle-check'}})
-				.unbind('hover')
-				.hover(function(){
-					$btnSubscribe.button({label: 'Unsubscribe', icons: {}});
-				}, function(){
-					$btnSubscribe.button({label: 'Subscribed', icons:{secondary: 'ui-icon-circle-check'}});
-				});
-		} else {
-			$btnSubscribe
-				.button({label: 'Not subscribed', icons: {secondary: 'ui-icon-circle-close'}})				
-				.unbind('hover')
-				.hover(function(){
-					$btnSubscribe.button({label: 'Subscribe', icons: {}});
-				}, function(){
-					$btnSubscribe.button({label: 'Not subscribed', icons:{secondary: 'ui-icon-circle-close'}});
-				});
-		}
-	}
-	refreshSubsButton();
-
-	$btnSubscribe.click(function(){
-		var url = subscribed ? urls.unsubscribe : urls.subscribe;
-		$.post(url, function(response) {
-			switch(response.status) {
-			case '200':
-				subscribed = !subscribed;
-				refreshSubsButton();
-				break;
-			default:
-				debug(response);
-			}
-		});
-	});
-});
 </script>
 
 <script src="${jsReviews }"></script>

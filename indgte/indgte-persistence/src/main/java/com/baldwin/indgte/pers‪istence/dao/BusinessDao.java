@@ -52,4 +52,5 @@ public interface BusinessDao {
 	void deleteProduct(long productId);
 	List<Summary> getLatestEntities();
 	void deleteCategory(long categoryId);
+	void updateCategory(long categoryId, String categoryName, String description);
 }

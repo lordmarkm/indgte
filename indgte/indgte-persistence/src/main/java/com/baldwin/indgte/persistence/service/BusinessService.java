@@ -13,15 +13,19 @@ import com.baldwin.indgte.persistence.model.BusinessProfile;
 import com.baldwin.indgte.persistence.model.Category;
 import com.baldwin.indgte.persistence.model.Imgur;
 import com.baldwin.indgte.persistence.model.Product;
+import com.baldwin.indgte.persistence.model.UserExtension;
 import com.baldwin.indgte.pers‪istence.dao.BusinessDao;
 import com.baldwin.indgte.pers‪istence.dao.BusinessGroupDao;
+import com.baldwin.indgte.pers‪istence.dao.UserDao;
 
 @Service
 public class BusinessService {
 	static Logger log = LoggerFactory.getLogger(BusinessService.class);
 	
+	@Autowired UserDao users;
 	@Autowired BusinessDao dao;
 	@Autowired BusinessGroupDao cDao;
+	
 	public BusinessProfile get(String domain) {
 		return dao.get(domain);
 	}
@@ -151,6 +155,20 @@ public class BusinessService {
 		}
 		if(moderator || category.getBusiness().getOwner().getUsername().equals(name)) {
 			dao.deleteCategory(category.getId());
+		}
+	}
+	public void editCategory(boolean moderator, String name, long categoryId, String categoryName, String description) {
+		UserExtension user = users.getExtended(name);
+		Category category = dao.getCategory(categoryId);
+		
+		if(category.getBusiness().getOwner().equals(user)) {
+			log.info("{} has updated category with id {}. Name: {} description: {}", name, categoryId, categoryName, description);
+			dao.updateCategory(categoryId, categoryName, description);
+		} else if(moderator) {
+			log.info("[moderator] {} has updated category with id {}. Name: {} description: {}", name, categoryId, categoryName, description);
+			dao.updateCategory(categoryId, categoryName, description);
+		} else {
+			throw new IllegalStateException("You do not have permissions to edit this category.");
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package com.baldwin.indgte.persistence.constants;
 
 public enum Initializable {
+	description,
 	wishlist,
 	reviewqueue,
 	reviewsreceived, 

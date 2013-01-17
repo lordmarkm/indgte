@@ -6,6 +6,9 @@
 <link rel="stylesheet" href="<c:url value='/resources/css/businessops.css' />" />
 <link rel="stylesheet" href="<spring:url value='/resources/css/category/viewcategory.css' />" />
 
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
+<script src="<spring:url value='/resources/javascript/viewcategory/viewcategory.js' />" ></script>
+
 <title>${category.name } &mdash; Dumaguete</title>
 
 <div class="category-container grid_8 maingrid">
@@ -15,7 +18,9 @@
 				<img class="category-welcome-image" />
 			</div>
 			<h3 class="category-name">${category.name }</h3>
-			<div class="category-welcome-description italic">${category.description }</div>
+			
+			<% pageContext.setAttribute("newLineChar", "\n"); %>
+			<div class="category-welcome-description italic">${fn:replace(category.description, newLineChar, "<br>")}</div>
 		</div>
 		<div class="category-welcome-provider">
 			<img class="category-provider-image" />
@@ -55,110 +60,54 @@
 <script>
 window.urls = {
 	urlProducts : '${urlProducts}',
-	deleteCategory: '<spring:url value="/b/categories/delete/" />'
+	deleteCategory: '<spring:url value="/b/categories/delete/" />',
+	profile: '${urlProfile}',
+	products: '${urlProducts}',
+	noimage50: '${noimage50}',
+	noimage: '${noimage}',
+	newproduct: '${urlNewProduct}',
+	categories: '${urlCategories}',
+	spinner: '${spinner}'
 }
 
 window.constants = {
 	domain : '${business.domain}',
-	previewPicsCount : 5
+	previewPicsCount : 5,
+	imgurKey: '${imgurKey}'
+}
+
+window.user = {
+	coconuts: '${user.billingInfo.coconuts}'
 }
 
 window.products = {
 	domain : '${business.domain}',
 	$summary : $('.products-summary'),
-	$products : $('.products-container'),
-	addProduct : function (product, $parent, prepend) {
-		if(!$parent) {
-			$parent = this.$products;
-		}
-		var $summaryItem = $('<li>').appendTo(this.$summary);
-		$('<a href="#' + product.id + '">').text(dgte.htmlDecode(product.name)).appendTo($summaryItem);
-		
-		var $actualItem = $('<li class="product">')
-			.on('mouseover', function(){$(this).addClass('ui-state-highlight');})
-			.on('mouseout', function(){$(this).removeClass('ui-state-highlight');})
-			.appendTo(this.$products);
-		var $container = $('<div class="product-container">').appendTo($actualItem);
-
-		if(product.mainpic) {
-			var $picContainer = $('<div class="product-pic-container">').appendTo($container);
-			$('<img class="product-pic">').attr('src', product.mainpic.smallSquare).appendTo($picContainer);
-		}
-		
-		var $title = $('<a class="fatlink dgte-previewlink"id="' + product.id + '">').attr('previewtype', 'product').attr('href', urls.urlProducts + this.domain + '/' + product.id).appendTo($container);
-		var $productName = $('<strong class="product-name">').text(dgte.htmlDecode(product.name)).appendTo($title)
-		
-		$.get(urls.urlProducts + constants.domain + '/' + product.id + '/pics/' + constants.previewPicsCount + '.json', function(response){
-			switch(response.status){
-			case '200':
-				for(var i = 0; i < response.imgurs.length; ++i) {
-					$('<img class="product-otherpics-preview">').attr('src', response.imgurs[i].smallSquare).appendTo($productName);
-				}
-				break;
-			default:
-				debug('Error: ' + response);
-			}
-		});
-
-		var maxdesc = 240;
-		var desc = product.description.length > maxdesc ? product.description.substring(0, maxdesc) + '...' : product.description;
-		$('<div>').html(desc).appendTo($container);
-	}
+	$products : $('.products-container')
 }
 
-$(function(){
-	var categoryId = '${category.id}',
-		categoryPic = '${categoryPic}',
-		categoryPicImgur = '${categoryPicImgur}',
-		domain = '${business.domain}',
-		businessPic = '${businessPic}',
-		businessPicImgur = '${businessPicImgur}',
-		owner = '${owner}' === 'true';
-	
-	var urlProfile = '${urlProfile}',
-		urlProducts = '${urlProducts}';
-		
-	var noImage = '${noimage}',
-		noImage50 = '${noimage50}';
-	
-	var $categoryPic = $('.category-welcome-image'),
-		$businessPic = $('.category-provider-image'),
-		$summaryContainer = $('.summary-container'),
-		$summary = $('.products-summary'),
-		$products = $('.products');
-	
-	$categoryPic.attr('src', categoryPic ? categoryPic : noImage);
-	$businessPic.attr('src', businessPic ? businessPic : noImage50);
-	
-	if(!owner) {
-		if(categoryPic) {
-			$categoryPic.click(function(){
-				window.location.href = categoryPicImgur;
-			});
-		} else {
-			$categoryPic.css('cursor', 'default');
-		}
-	}
-	
-	$businessPic.click(function(){
-		window.location.href = urlProfile + domain;
-	});
-	
-	$.get(urlProducts + domain + '/' + categoryId + '/json', function(response){
-		switch(response.status){
-		case '200':
-			if(response.products.length < 2) {
-				$summaryContainer.hide();
-			}
-			for(var i = 0, length = response.products.length; i < length; i++) {
-				products.addProduct(response.products[i]);
-			}
-			break;
-		default:
-			debug(response);
-		}
-	});
-});
+window.business = {
+	domain: '${business.domain}',
+	businessPic: '${businessPic}',
+	businessPicImgur: '${businessPicImgur}'
+}
+
+window.category = {
+	id: '${category.id}',
+	name: '<c:out value="${category.name}" />',
+	imageUrl: '${categoryPic}',
+	categoryPicImgur: '${categoryPicImgur}',
+	owner: '${owner}' === 'true',
+	urlParent: '${urlProfile}${category.business.domain}'
+}
+
+window.messages = {
+	uploadtitle: '<spring:message code="category.mainpic.upload.title" />',
+	uploadbutton: "<spring:message code='category.mainpic.upload.button' />",
+	uploadcancel: "<spring:message code='category.mainpic.upload.cancel' />",
+	newproducttitle: '<spring:message code="category.newproduct.title" />',
+	newproductsave: "<spring:message code='category.newproduct.save' />"
+}
 </script>
 
 <sec:authorize access="hasRole('ROLE_MODERATOR')">
@@ -171,9 +120,18 @@ $(function(){
 	<div class="sidebar-container">
 		<div class="sidebar-section-header">Category operations</div>
 		<c:if test="${moderator }">
-			<div class="ui-state-highlight"><spring:message code="mod.warning" /></div>
+			<div class="ui-state-highlight pd5"><spring:message code="mod.warning" /></div>
 		</c:if>
-		<button class="btn-edit-category">Edit</button>
+		<button class="btn-edit">Edit</button>
+		<div class="dialog-edit hide" title="Edit ${category.name }">
+			<form id="form-edit" method="post" action="<spring:url value='/b/categories/edit/${category.id }' />">
+				<div>Name</div>
+				<div><input type="text" name="name" value="${category.name }" /></div>
+				<div>Description</div>
+				<div><textarea name="description" rows="4">${category.description }</textarea></div>
+			</form>
+		</div>
+		
 		<button class="btn-create-product">New product</button>
 		<button class="btn-promote">Promote</button>
 		<div class="dialog-promote hide" title="Promote this Category">
@@ -196,7 +154,6 @@ $(function(){
 	</div>
 </div>
 <script src="<spring:url value='/resources/javascript/promote.js' />" ></script>
-<script src="http://ajax.aspnetcdn.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
 
 <!-- Image upload -->
 <div id="image-upload" style="display: none;">
@@ -225,208 +182,7 @@ $(function(){
 	</div>
 </div>
 
-<script>
-window.user = {
-	coconuts: '${user.billingInfo.coconuts}'
-}
-
-window.category = {
-	id : '${category.id}',
-	urlParent : '${urlProfile}${category.business.domain}'
-}
-
-$(function(){
-	//WARNING: Owner-only script!
-	var businessDomain = '${business.domain}',
-		categoryName = '${category.name}',
-		categoryId = '${category.id}';
-	
-	var categoryPic = '${categoryPic}',
-		categoryPicImgur = '${categoryPicImgur}',
-		owner = '${owner}' === 'true';
-
-	var urlSpinner = '${spinner}',
-		urlCategories = '${urlCategories}',
-		urlNewProduct = '${urlNewProduct}';	
-		
-	var $categoryPicContainer = $('.category-welcome-image-container'),
-		$categoryPic = $('.category-welcome-image'),
-		$btnCreateProduct = $('.btn-create-product'),
-		$createProduct = $('.newproduct');
-	
-	var $upload = $('#image-upload'),
-		$file = $('.image-upload-file'),
-		$newProductName = $('.newproduct-name'),
-		$newProductDescription = $('.newproduct-description'),
-		$btnNewproductPic = $('.btn-newproduct-pic'),
-		$newproductPicContainer = $('.newproduct-pic-container'),
-		$newproductPicDisplay = $('.newproduct-pic-display'),
-		$newproductPicField = $('.newproduct-pic'),
-		$newproductHashField = $('.newproduct-pic-hash'),
-		$newproductDeletehashField = $('.newproduct-pic-deletehash');
-	
-	var $btnDelete = $('.btn-delete');
-	
-	//override jquery ui dialog defaults
-	$.extend($.ui.dialog.prototype.options, {
-	    modal: true,
-	    resizable: false,
-	    maxHeight: 250,
-	    width:500,
-		closeOnEscape: false,
-		hide: {effect: "fade", duration: 200}
-	});
-	
-	//update category main pic
-	$categoryPic.unbind('click').click(function(){
-		$upload.dialog({
-			title: "<spring:message code='category.mainpic.upload.title' />" + categoryName,
-			buttons: {
-				"<spring:message code='category.mainpic.upload.button' />" : function(){
-					$upload.find('div').toggle();
-					$categoryPicContainer.append($('<div class="overlay">'));
-					$upload.dialog('close');
-					//upload($file[0].files[0], urlCategories + businessDomain + '/' + categoryId + '/mainpic/', $categoryPic);
-					
-					var updatePhoto = function(response) {
-						$.post(urlCategories + businessDomain + '/' + categoryId + '/mainpic/',
-								{
-									hash: response.upload.image.hash,
-		        					deletehash: response.upload.image.deletehash
-		        				},
-								function(){
-									$categoryPic.attr('src', response.upload.links.large_thumbnail);
-									$categoryPicContainer.find('.overlay').remove();
-									$upload.find('div').toggle();
-								}
-						);
-					}
-					upload($file[0].files[0], updatePhoto, $categoryPic);
-				},
-				
-				"<spring:message code='category.mainpic.upload.cancel' />" : function(){
-					$upload.dialog('close');
-				}
-			}
-		});
-		return false;
-	});
-	
-	//create new product
-	$btnCreateProduct.click(function(){
-		$createProduct.dialog({
-			title: '<spring:message code="category.newproduct.title" arguments="${category.name}" />',
-			width: 600,
-			buttons: {
-				"<spring:message code='category.newproduct.save' />" : function(){
-					var hash = $newproductHashField.val();
-					var data = JSON.stringify({
-						name: $newProductName.val(),
-						description: $newProductDescription.val(),
-						mainpic: hash ? {
-							hash: hash,
-							deletehash: $newproductDeletehashField.val(),
-							uploaded: new Date()
-						} : null
-					});
-					debug('data: ' + data);
-					$.ajax({
-							url: urlNewProduct + businessDomain + '/' + categoryId + '.json', 
-							type: 'post',
-							data: data, 
-							success: function(response){
-								switch(response.status) {
-								case '200':
-									products.addProduct(response.product, true);
-									$createProduct.dialog('close');
-									break;
-								default:
-									debug(response);
-								}
-							},
-							dataType: 'json',
-							contentType: 'application/json'
-					});
-				},
-				"<spring:message code='category.newproduct.cancel' />" : function() {
-					$createProduct.dialog('close');
-				}
-			}
-		});
-	});
-	
-	$btnNewproductPic.click(function(){
-		$newproductPicField.focus().trigger('click');
-	});
-	$newproductPicDisplay.click(function(){
-		$newproductPicField.focus().trigger('click');
-	})
-	
-	$newproductPicField.change(function(){
-		$newproductPicContainer.append($('<div class="overlay">'));
-		var productFieldOnComplete = function(response){
-			$newproductHashField.val(response.upload.image.hash);
-			$newproductDeletehashField.val(response.upload.image.deletehash);
-			$newproductPicDisplay.attr('src', response.upload.links.large_thumbnail);
-			$newproductPicContainer.find('.overlay').remove();
-		}
-		upload($newproductPicField[0].files[0], productFieldOnComplete, $newproductPicDisplay);
-	});
-	
-	function upload(file, onComplete, $target) {
-	    if (!file || !file.type.match(/image.*/)) return;
-
-	    var fd = new FormData();
-	    fd.append("image", file);
-	    fd.append("key", "${imgurKey}");
-	    
-	    var xhr = new XMLHttpRequest();
-	    xhr.open("POST", "http://api.imgur.com/2/upload.json");
-	    xhr.onload = function() {
-	    	var response = JSON.parse(xhr.responseText);
-	    	onComplete(response);
-	    }
-		xhr.send(fd);		
-	}
-	
-	//delete
-	$btnDelete.click(function() {
-		var $deleteDialog = $('<div>')
-			.attr('title', 'Really delete this category?')
-			.html('Are you sure you want to delete ' + $('.category-name').text() + '? This cannot be undone. <strong>This will also delete all products in this category.</strong>')
-			.dialog({
-				buttons : {
-					'Yep': function(){
-						$.post(urls.deleteCategory + category.id + '/json', function(response) {
-							switch(response.status) {
-							case '200':
-								dgte.operationSuccess('Category deleted.', false, function(){
-									$deleteDialog.dialog('close');
-									window.location.replace(category.urlParent);
-								});
-								break;
-							case '500':
-								dgte.operationFailed(response.message);
-								$deleteDialog.dialog('close');
-								break;
-							default:
-								dgte.operationFailed();
-								$deleteDialog.dialog('close');
-							}
-						}).error(function(){
-							dgte.operationFailed();
-							$deleteDialog.dialog('close');
-						});
-					},
-					
-					'Not really, no': function(){
-						$(this).dialog('close');
-					}
-				}
-			});
-	});
-});
-</script>
+<script src="<spring:url value='/resources/javascript/viewcategory/viewcategory-owner.js' />" ></script>
 </c:if>
 
 <!-- Notifications -->
