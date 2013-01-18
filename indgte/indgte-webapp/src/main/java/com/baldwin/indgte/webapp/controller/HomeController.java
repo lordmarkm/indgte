@@ -28,4 +28,16 @@ public interface HomeController {
 	 */
 	@RequestMapping("/signin")
 	public String failedPermissionsRedirect();
+	
+	/**
+	 * robots.txt
+	 */
+	@RequestMapping("/robots.txt")
+	public String robots(HttpServletRequest request);
+	
+	/**
+	 * Weird favicon.ico exception
+	 */
+	@RequestMapping("/favicon.ico")
+	public void favicon(HttpServletRequest request);
 }

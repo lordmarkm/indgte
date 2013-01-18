@@ -250,7 +250,7 @@
 								<div class="name"><span class="ui-icon ui-icon-image inline-block mr5"></span>Image</div>
 							</div>
 							<div class="attach-option video">
-								<div class="name"><span class="ui-icon ui-icon-video inline-block mr5"></span>Video</div>
+								<div class="name"><span class="ui-icon ui-icon-video inline-block mr5"></span>Embeddable Media</div>
 							</div>
 							<div class="attach-option link">
 								<div class="name"><span class="ui-icon ui-icon-link inline-block mr5"></span>Link</div>

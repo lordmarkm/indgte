@@ -75,7 +75,9 @@ public class HomeControllerImpl implements HomeController {
 				try {
 					business = businesses.get(Long.parseLong(domain));
 				} catch (Exception e) {
-					throw new IllegalArgumentException("Unknown domain " + domain);
+					log.warn("Unknown domain: {}", domain);
+					return redirect("/").mav();
+					//throw new IllegalArgumentException("Unknown domain " + domain);
 				}
 			}
 			
@@ -111,7 +113,9 @@ public class HomeControllerImpl implements HomeController {
 					}
 					return redirect("/" + queriedDomain).mav();
 				} catch (Exception e) {
-					throw new IllegalArgumentException("Unknown domain " + domain);
+					log.warn("Unknown domain: {}", domain);
+					return redirect("/").mav();
+					//throw new IllegalArgumentException("Unknown domain " + domain);
 				}
 			}
 			
@@ -146,5 +150,17 @@ public class HomeControllerImpl implements HomeController {
 	public String exception(Exception e) {
 		log.error("Exception!", e);
 		return "redirect:/error/";
+	}
+
+	@Override
+	public String robots(HttpServletRequest request) {
+	    String userAgent = request.getHeader("User-Agent");
+		log.info("Robots request from {}", userAgent);
+		return "redirect:/resources/robots/robots.txt";
+	}
+	
+	@Override
+	public void favicon(HttpServletRequest request) {
+		log.info("Favicon.ico request from {}, user-agent {}", request.getRemoteAddr(), request.getHeader("User-Agent"));
 	}
 }

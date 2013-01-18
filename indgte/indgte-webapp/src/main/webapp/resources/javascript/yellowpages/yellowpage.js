@@ -131,7 +131,7 @@ $(function(){
 			break;
 		case 'video':
 			var $container = $('<div class="post-attachment">').appendTo($dataContainer);
-			var $playbutton = $('<div class="playbutton">').text('Show Video')
+			var $playbutton = $('<div class="playbutton">').text('Show media')
 				.button({icons: {secondary: 'ui-icon-play'}})
 				.appendTo($container);
 			$playbutton.click(function(){
@@ -142,10 +142,10 @@ $(function(){
 					var $player = $('<div class="player">').appendTo($container);
 					$player.html(post.attachmentIdentifier);
 					$player.find('iframe').attr('width', '400').attr('height', '300');
-					$this.button('option', 'label', 'Hide video').button({icons: {secondary: 'ui-icon-stop'}});
+					$this.button('option', 'label', 'Hide media').button({icons: {secondary: 'ui-icon-stop'}});
 				} else {
 					$container.find('.player').remove();
-					$this.button('option', 'label', 'Show video').button({icons: {secondary: 'ui-icon-play'}});
+					$this.button('option', 'label', 'Show media').button({icons: {secondary: 'ui-icon-play'}});
 				}
 			});
 			break;

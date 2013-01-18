@@ -1,6 +1,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <link rel="stylesheet" href="<spring:url value='/resources/css/grids/sidebarpromos.css' />" />
 
@@ -33,7 +34,7 @@
 						<a href="${summary.url }" class="dgte-previewlink" previewtype="${summary.type}"><img src="${summary.imgur == null ? noimage50 : summary.imgur.smallSquare }" /></a>
 					</div>
 					<div class="sidebar-new-info">
-						<div class="sidebar-new-title"><a href="${summary.url }" class="fatlink dgte-previewlink" href="javascript:;" previewtype="${summary.type}">${summary.title }</a> (${summary.type })</div>
+						<div class="sidebar-new-title"><a href="${summary.url }" class="fatlink dgte-previewlink" href="javascript:;" previewtype="${summary.type}">${summary.title }</a></div>
 						<div class="sidebar-new-description description">${fn:substring(summary.description, 0, 80) }<c:if test="${fn:length(summary.description) > 80 }">...</c:if></div>
 						<div class="newfromnow subtitle">${summary.time.time }</div>
 					</div>
