@@ -85,13 +85,17 @@ $(function(){
 				}
 				
 				var $deepSearch = $('<div class="autocomplete-allresults">').appendTo($autocompleteResults);
-				$('<a>').attr('href', navbar.search.url + term).text('See all results...').appendTo($deepSearch);
+				$('<a class="bold">').attr('href', navbar.search.url + term).text('See all results').appendTo($deepSearch);
+				$('<span class="normalweight">').text(' or ').appendTo($deepSearch);
+				$('<a class="bold">').attr('href', navbar.search.filter + term).text('filter posts for tag "' + term + '"').appendTo($deepSearch);
 				
-				if(visibleResults) {
-					$autocompleteResults.show();
-				} else {
-					$autocompleteResults.hide();
-				}
+				
+				$autocompleteResults.show();
+				//if(visibleResults) {
+				//	$autocompleteResults.show();
+				//} else {
+				//	$autocompleteResults.hide();
+				//}
 				break;
 			default:
 				debug('Error' + JSON.stringify(response));

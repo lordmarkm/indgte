@@ -41,6 +41,7 @@ body {
 /* descriptive-name classes */
 .hide {display: none;}
 .bold {font-weight: bold;}
+.normalweight {font-weight: normal;}
 	/* layout */
 .maingrid {min-height: 1800px;}
 .relative {position: relative;}

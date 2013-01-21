@@ -85,7 +85,8 @@ window.navbar = {
 		urlBusiness: '<spring:url value="/" />',
 		urlCategory: '<spring:url value="/b/categories/" />',
 		urlProduct: '<spring:url value="/b/products/" />',
-		urlImgur: 'http://i.imgur.com/'
+		urlImgur: 'http://i.imgur.com/',
+		filter: '<spring:url value="/filter/" />'
 	}
 }
 </script>

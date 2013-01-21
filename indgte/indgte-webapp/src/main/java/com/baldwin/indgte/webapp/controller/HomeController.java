@@ -21,7 +21,13 @@ public interface HomeController {
 	 * View a business domain directly
 	 */
 	@RequestMapping("/{domain}")
-	public ModelAndView businessProfile(Principal principal, @PathVariable String domain);
+	public ModelAndView businessProfile(Principal principal, String domain);
+	
+	/**
+	 * Link to home with predetermined post filter
+	 */
+	@RequestMapping("/filter/{tag}")
+	public ModelAndView homeWithFilter(HttpServletRequest request, Principal principal, String tag);
 	
 	/**
 	 * Redirect when user denies permission on 3rd party and

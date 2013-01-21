@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 public class BillingInformation {
 
 	@Column
-	private int coconuts = 0;
+	private int coconuts = 25;
 
 	public int getCoconuts() {
 		return coconuts;

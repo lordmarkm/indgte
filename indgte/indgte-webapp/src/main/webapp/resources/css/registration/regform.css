@@ -1,0 +1,35 @@
+.form-container, .bigimg-container {
+	display: inline-block;
+	vertical-align: top;
+}
+#regtable td:nth-child(2) {
+	width: 320px;
+}
+#regform textarea, #regform input[type="text"] {
+	width: 98%;
+	resize: none;
+}
+#regform input[type="text"].ui-state-error {
+	border: 1px solid #CD0A0A;
+}
+
+.registration-label {
+	text-align: right;
+}
+
+label.ui-state-error {
+	background: 0;
+	background-color: white;
+    border: 0;
+	overflow: visible;
+	font-size: 0.8em;
+	color: #CD0A0A;
+}
+
+.bigimg-container {
+}
+.bigimg-container img {
+	max-width: 400px;
+	max-height: 400px;
+	margin-left: 40px;
+}

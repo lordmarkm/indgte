@@ -142,7 +142,8 @@
 <script>
 window.constants = {
 	imgurKey : '${imgurKey}',
-	auth : '<sec:authorize access="hasRole('ROLE_USER')">true</sec:authorize>' === 'true'
+	auth : '<sec:authorize access="hasRole('ROLE_USER')">true</sec:authorize>' === 'true',
+	tag: '${tag}'
 }
 window.urls = {
 	status : '<spring:url value="/i/newstatus.json" />',

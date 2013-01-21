@@ -559,7 +559,10 @@ $(function(){
 	
 	//posts
 	var startPostIndex = 0;
-	var tagFilter = null;
+	var tagFilter = constants.tag;
+	if(tagFilter) {
+		filterAlert('You are filtering posts by the tag "' + tagFilter + '"');
+	}
 	function getPosts() {
 		var sort = $rdoSortPosts.length ? $rdoSortPosts.find(':checked').val() : 'popularity';
 		var hasSticky = $('.post.sticky').length != 0;
@@ -898,6 +901,10 @@ $(function(){
 		clearPosts();
 		$posts.parent().spinner(true);
 		getPosts();
+		
+		if(document.URL.indexOf('/filter/') != -1) {
+			window.history.pushState(null, null, '/');
+		}
 	}
 	
 	$(document).on({

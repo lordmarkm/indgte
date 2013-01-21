@@ -61,6 +61,23 @@ public class HomeControllerImpl implements HomeController {
 		return mav.mav();
 	}
 	
+	public ModelAndView homeWithFilter(HttpServletRequest request, Principal principal, @PathVariable String tag) {
+		MavBuilder mav = render("home");
+		
+		if(null != principal) {
+			log.info("Home page with tag filter {} requested by {}", tag, principal.getName());
+			UserExtension user = users.getExtended(principal.getName(), Initializable.businesses);
+			mav.put("user", user);
+		} else {
+			String remoteIp = request.getHeader("x-forwarded-for");
+			log.info("Home page with filter {} requested by Anonymous, ip = {}", tag, remoteIp);
+		}
+		
+		mav.put("tag", tag);
+		constants.insertConstants(mav);
+		return mav.mav();
+	}
+	
 	@Override
 	public ModelAndView businessProfile(Principal principal, @PathVariable("domain") String domain) {
 		if(null == principal) {
