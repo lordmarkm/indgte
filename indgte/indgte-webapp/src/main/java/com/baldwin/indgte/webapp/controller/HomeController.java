@@ -36,6 +36,12 @@ public interface HomeController {
 	public String robots(HttpServletRequest request);
 	
 	/**
+	 * sitemap
+	 */
+	@RequestMapping("/sitemap.xml")
+	public String sitemap(HttpServletRequest request);
+	
+	/**
 	 * Weird favicon.ico exception
 	 */
 	@RequestMapping("/favicon.ico")

@@ -159,6 +159,15 @@ public class HomeControllerImpl implements HomeController {
 		log.info("Robots request from {}", userAgent);
 		return "redirect:/resources/robots/robots.txt";
 	}
+
+	
+	@Override
+	public String sitemap(HttpServletRequest request) {
+		String userAgent = request.getHeader("User-Agent");
+		log.info("Sitemap request from {}", userAgent);
+		return "redirect:/resources/sitemap/sitemap.xml";
+	}
+
 	
 	@Override
 	public void favicon(HttpServletRequest request) {
