@@ -53,7 +53,8 @@ public class HomeControllerImpl implements HomeController {
 			UserExtension user = users.getExtended(principal.getName(), Initializable.businesses);
 			mav.put("user", user);
 		} else {
-			log.info("Home page requested by Anonymous, ip = {}", request.getRemoteAddr());
+			String remoteIp = request.getHeader("x-forwarded-for");
+			log.info("Home page requested by Anonymous, ip = {}", remoteIp);
 		}
 		
 		constants.insertConstants(mav);
